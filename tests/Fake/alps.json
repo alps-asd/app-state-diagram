@@ -11,7 +11,14 @@
         "type": "semantic",
         "doc": {
           "value": "Index Page"
-        }
+        },
+        "descriptor": [
+          {
+            "id": "blog",
+            "type": "safe",
+            "rt": "#Blog"
+          }
+        ]
       },
       {
         "id": "About",
@@ -50,6 +57,7 @@
             "id": "post",
             "type": "unsafe",
             "def": "http://activitystrea.ms/specs/json/1.0/#post-verb",
+            "rt": "#Blog",
             "descriptor": [
               {"href": "#BlogPosting"}
             ]

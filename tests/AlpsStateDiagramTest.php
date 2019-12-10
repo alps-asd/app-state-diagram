@@ -34,6 +34,11 @@ class AlpsStateDiagramTest extends TestCase
     public function test__invoke() : void
     {
         $dot = ($this->alpsStateDiagram)(__DIR__ . '/Fake/alps.json');
-        $this->assertContains('Index -> Blog', $dot);
+        $this->assertStringContainsString('Index->Blog [label = "blog (safe)"];', $dot);
+        $this->assertStringContainsString('Blog->BlogPosting [label = "blogPosting (safe), item (safe)"];', $dot);
+        $this->assertStringContainsString('Blog->Blog [label = "post (unsafe)"];', $dot);
+        $this->assertStringContainsString('Blog->About [label = "about (safe)"];', $dot);
+        $this->assertStringContainsString('BlogPosting->Blog [label = "collection (safe)"];', $dot);
+        $this->assertStringContainsString('Blog->About', $dot);
     }
 }
