@@ -30,4 +30,10 @@ class AlpsStateDiagramTest extends TestCase
         $this->expectException(AlpsFileNotReadable::class);
         ($this->alpsStateDiagram)('');
     }
+
+    public function test__invoke() : void
+    {
+        $dot = ($this->alpsStateDiagram)(__DIR__ . '/Fake/alps.json');
+        $this->assertContains('Index -> Blog', $dot);
+    }
 }
