@@ -46,11 +46,15 @@ final class AlpsStateDiagram
 
     private function toString() : string
     {
-        $string = '';
+        $graphs = '';
         foreach ($this->links as $link => $label) {
-            $string .= sprintf('%s [label = "%s"];', $link, $label) . PHP_EOL;
+            $graphs .= sprintf('    %s [label = "%s"];', $link, $label) . PHP_EOL;
         }
 
-        return $string;
+        return sprintf('digraph application_state_diagram {
+    node [shape = box, style = "bold,filled"];
+%s
+}
+', $graphs);
     }
 }

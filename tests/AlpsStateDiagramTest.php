@@ -40,5 +40,6 @@ class AlpsStateDiagramTest extends TestCase
         $this->assertStringContainsString('Blog->About [label = "about (safe)"];', $dot);
         $this->assertStringContainsString('BlogPosting->Blog [label = "collection (safe)"];', $dot);
         $this->assertStringContainsString('Blog->About', $dot);
+        file_put_contents(__DIR__ . '/alps.dot', $dot);
     }
 }
