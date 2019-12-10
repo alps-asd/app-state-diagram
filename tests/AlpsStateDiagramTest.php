@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Koriym\AlpsStateDiagram;
 
+use Koriym\AlpsStateDiagram\Exception\AlpsFileNotReadable;
 use PHPUnit\Framework\TestCase;
 
 class AlpsStateDiagramTest extends TestCase
@@ -22,5 +23,11 @@ class AlpsStateDiagramTest extends TestCase
     {
         $actual = $this->alpsStateDiagram;
         $this->assertInstanceOf(AlpsStateDiagram::class, $actual);
+    }
+
+    public function testFileNotReadable() : void
+    {
+        $this->expectException(AlpsFileNotReadable::class);
+        ($this->alpsStateDiagram)('');
     }
 }
