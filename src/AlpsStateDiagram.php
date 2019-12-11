@@ -6,6 +6,7 @@ namespace Koriym\AlpsStateDiagram;
 
 use Koriym\AlpsStateDiagram\Exception\AlpsFileNotReadable;
 use Koriym\AlpsStateDiagram\Exception\InvaliDirPath;
+use Koriym\AlpsStateDiagram\Exception\InvalidJsonException;
 
 final class AlpsStateDiagram
 {
@@ -27,12 +28,16 @@ final class AlpsStateDiagram
         }
     }
 
-    public function setFile(string $alps) : void
+    public function setFile(string $alpsFile) : void
     {
-        if (! file_exists($alps)) {
-            throw new AlpsFileNotReadable($alps);
+        if (! file_exists($alpsFile)) {
+            throw new AlpsFileNotReadable($alpsFile);
         }
-        $alps = json_decode((string) file_get_contents($alps));
+        $alps = json_decode((string) file_get_contents($alpsFile));
+        $jsonError = json_last_error();
+        if ($jsonError) {
+            throw new InvalidJsonException($alpsFile);
+        }
         foreach ($alps->alps->descriptor as $descriptor) {
             if (isset($descriptor->descriptor)) {
                 $this->scanTransition(new SemanticDescriptor($descriptor), $descriptor->descriptor);
@@ -70,7 +75,7 @@ final class AlpsStateDiagram
         $this->links[$fromTo] = isset($this->links[$fromTo]) ? $this->links[$fromTo] . ', ' . $link->label : $link->label;
     }
 
-    private function getIterator($dir) : \RegexIterator
+    private function getIterator(string $dir) : \RegexIterator
     {
         return new \RegexIterator(
             new \RecursiveIteratorIterator(
