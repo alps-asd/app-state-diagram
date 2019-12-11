@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Koriym\AlpsStateDiagram;
 
 use Koriym\AlpsStateDiagram\Exception\AlpsFileNotReadable;
+use Koriym\AlpsStateDiagram\Exception\InvaliDirPath;
 
 final class AlpsStateDiagram
 {
@@ -26,6 +27,13 @@ final class AlpsStateDiagram
         }
 
         return $this->toString();
+    }
+
+    public function scanDir(string $dir) : string
+    {
+        if (! is_dir($dir)) {
+            throw new InvaliDirPath($dir);
+        }
     }
 
     private function scanTransition(SemanticDescriptor $semantic, array $descriptors) : void

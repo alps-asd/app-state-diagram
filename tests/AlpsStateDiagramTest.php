@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Koriym\AlpsStateDiagram;
 
 use Koriym\AlpsStateDiagram\Exception\AlpsFileNotReadable;
+use Koriym\AlpsStateDiagram\Exception\InvaliDirPath;
 use PHPUnit\Framework\TestCase;
 
 class AlpsStateDiagramTest extends TestCase
@@ -41,5 +42,11 @@ class AlpsStateDiagramTest extends TestCase
         $this->assertStringContainsString('BlogPosting->Blog [label = "collection (safe)"];', $dot);
         $this->assertStringContainsString('Blog->About', $dot);
         file_put_contents(__DIR__ . '/alps.dot', $dot);
+    }
+
+    public function testScanDirInvalidPath()
+    {
+        $this->expectException(InvaliDirPath::class);
+        ($this->alpsStateDiagram)->scanDir(__DIR__ . '/__INVALID__');
     }
 }
