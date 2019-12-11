@@ -11,6 +11,11 @@
             "id": "bar",
             "type": "safe",
             "rt": "#Bar"
+          },
+          {
+            "id": "index",
+            "type": "safe",
+            "rt": "alps.json#Index"
           }
         ]
       },
