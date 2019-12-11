@@ -29,12 +29,13 @@ class AlpsStateDiagramTest extends TestCase
     public function testFileNotReadable() : void
     {
         $this->expectException(AlpsFileNotReadable::class);
-        ($this->alpsStateDiagram)('');
+        $this->alpsStateDiagram->setFile('__INVALID__');
     }
 
-    public function test__invoke() : void
+    public function tesSetFile() : void
     {
-        $dot = ($this->alpsStateDiagram)(__DIR__ . '/Fake/alps.json');
+        $this->alpsStateDiagram->setFile(__DIR__ . '/Fake/alps.json');
+        $dot = $this->alpsStateDiagram->toString();
         $this->assertStringContainsString('Index->Blog [label = "blog (safe)"];', $dot);
         $this->assertStringContainsString('Blog->BlogPosting [label = "blogPosting (safe), item (safe)"];', $dot);
         $this->assertStringContainsString('Blog->Blog [label = "post (unsafe)"];', $dot);
@@ -44,9 +45,16 @@ class AlpsStateDiagramTest extends TestCase
         file_put_contents(__DIR__ . '/alps.dot', $dot);
     }
 
-    public function testScanDirInvalidPath()
+    public function testScanDirInvalidPath() : void
     {
         $this->expectException(InvaliDirPath::class);
-        ($this->alpsStateDiagram)->scanDir(__DIR__ . '/__INVALID__');
+        $this->alpsStateDiagram->setDir(__DIR__ . '/__INVALID__');
+    }
+
+    public function testSetDir() : void
+    {
+        $this->alpsStateDiagram->setDir(__DIR__ . '/Fake');
+        $dot = $this->alpsStateDiagram->toString();
+        $this->assertStringContainsString(' Foo->Bar [label = "bar (safe)"];', $dot);
     }
 }

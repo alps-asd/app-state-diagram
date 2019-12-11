@@ -14,7 +14,20 @@ final class AlpsStateDiagram
      */
     private $links = [];
 
-    public function __invoke(string $alps) : string
+    public function setDir(string $dir) : void
+    {
+        if (! is_dir($dir)) {
+            throw new InvaliDirPath($dir);
+        }
+        $iterator = $this->getIterator($dir);
+        foreach ($iterator as $file) {
+            /** @var \SplFileInfo $file */
+            $path = $file->getPathname();
+            $this->setFile($path);
+        }
+    }
+
+    public function setFile(string $alps) : void
     {
         if (! file_exists($alps)) {
             throw new AlpsFileNotReadable($alps);
@@ -25,15 +38,20 @@ final class AlpsStateDiagram
                 $this->scanTransition(new SemanticDescriptor($descriptor), $descriptor->descriptor);
             }
         }
-
-        return $this->toString();
     }
 
-    public function scanDir(string $dir) : string
+    public function toString() : string
     {
-        if (! is_dir($dir)) {
-            throw new InvaliDirPath($dir);
+        $graphs = '';
+        foreach ($this->links as $link => $label) {
+            $graphs .= sprintf('    %s [label = "%s"];', $link, $label) . PHP_EOL;
         }
+
+        return sprintf('digraph application_state_diagram {
+    node [shape = box, style = "bold,filled"];
+%s
+}
+', $graphs);
     }
 
     private function scanTransition(SemanticDescriptor $semantic, array $descriptors) : void
@@ -52,17 +70,18 @@ final class AlpsStateDiagram
         $this->links[$fromTo] = isset($this->links[$fromTo]) ? $this->links[$fromTo] . ', ' . $link->label : $link->label;
     }
 
-    private function toString() : string
+    private function getIterator($dir) : \RegexIterator
     {
-        $graphs = '';
-        foreach ($this->links as $link => $label) {
-            $graphs .= sprintf('    %s [label = "%s"];', $link, $label) . PHP_EOL;
-        }
-
-        return sprintf('digraph application_state_diagram {
-    node [shape = box, style = "bold,filled"];
-%s
-}
-', $graphs);
+        return new \RegexIterator(
+            new \RecursiveIteratorIterator(
+                new \RecursiveDirectoryIterator(
+                    $dir,
+                    \FilesystemIterator::CURRENT_AS_FILEINFO | \FilesystemIterator::KEY_AS_PATHNAME | \FilesystemIterator::SKIP_DOTS
+                ),
+                \RecursiveIteratorIterator::LEAVES_ONLY
+            ),
+            '/^.+\.json/',
+            \RecursiveRegexIterator::MATCH
+        );
     }
 }
