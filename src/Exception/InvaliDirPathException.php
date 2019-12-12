@@ -4,6 +4,6 @@ declare(strict_types=1);
 
 namespace Koriym\AlpsStateDiagram\Exception;
 
-class InvaliDirPath extends \RuntimeException
+class InvaliDirPathException extends \RuntimeException
 {
 }

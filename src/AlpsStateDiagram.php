@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Koriym\AlpsStateDiagram;
 
-use Koriym\AlpsStateDiagram\Exception\AlpsFileNotReadable;
-use Koriym\AlpsStateDiagram\Exception\InvaliDirPath;
+use Koriym\AlpsStateDiagram\Exception\AlpsFileNotReadableException;
+use Koriym\AlpsStateDiagram\Exception\InvaliDirPathException;
 use Koriym\AlpsStateDiagram\Exception\InvalidJsonException;
 
 final class AlpsStateDiagram
@@ -18,7 +18,7 @@ final class AlpsStateDiagram
     public function setDir(string $dir) : void
     {
         if (! is_dir($dir)) {
-            throw new InvaliDirPath($dir);
+            throw new InvaliDirPathException($dir);
         }
         $iterator = $this->getIterator($dir);
         foreach ($iterator as $file) {
@@ -31,7 +31,7 @@ final class AlpsStateDiagram
     public function setFile(string $alpsFile) : void
     {
         if (! file_exists($alpsFile)) {
-            throw new AlpsFileNotReadable($alpsFile);
+            throw new AlpsFileNotReadableException($alpsFile);
         }
         $alps = json_decode((string) file_get_contents($alpsFile));
         $jsonError = json_last_error();
