@@ -22,7 +22,7 @@ final class AlpsStateDiagram
         }
         $iterator = $this->getIterator($dir);
         foreach ($iterator as $file) {
-            /** @var \SplFileInfo $file */
+            assert($file instanceof \SplFileInfo);
             $path = $file->getPathname();
             $this->setFile($path);
         }
