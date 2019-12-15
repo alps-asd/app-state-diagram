@@ -64,6 +64,9 @@
             "id": "about",
             "type": "safe",
             "rt": "#About"
+          },
+          {
+            "href": "Foo.json#Foo"
           }
         ]
       },
