@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Koriym\AlpsStateDiagram;
 
 use Koriym\AlpsStateDiagram\Exception\AlpsFileNotReadableException;
-use Koriym\AlpsStateDiagram\Exception\InvaliDirPathException;
 use PHPUnit\Framework\TestCase;
 
 class AlpsStateDiagramTest extends TestCase
@@ -29,13 +28,12 @@ class AlpsStateDiagramTest extends TestCase
     public function testFileNotReadable() : void
     {
         $this->expectException(AlpsFileNotReadableException::class);
-        $this->alpsStateDiagram->setFile('__INVALID__');
+        ($this->alpsStateDiagram)('__INVALID__');
     }
 
-    public function tesSetFile() : void
+    public function test__invoke() : void
     {
-        $this->alpsStateDiagram->setFile(__DIR__ . '/Fake/alps.json');
-        $dot = $this->alpsStateDiagram->toString();
+        $dot = ($this->alpsStateDiagram)(__DIR__ . '/Fake/alps.json');
         $this->assertStringContainsString('Index->Blog [label = "blog (safe)"];', $dot);
         $this->assertStringContainsString('Blog->BlogPosting [label = "blogPosting (safe), item (safe)"];', $dot);
         $this->assertStringContainsString('Blog->Blog [label = "post (unsafe)"];', $dot);
@@ -43,18 +41,5 @@ class AlpsStateDiagramTest extends TestCase
         $this->assertStringContainsString('BlogPosting->Blog [label = "collection (safe)"];', $dot);
         $this->assertStringContainsString('Blog->About', $dot);
         file_put_contents(__DIR__ . '/alps.dot', $dot);
-    }
-
-    public function testScanDirInvalidPath() : void
-    {
-        $this->expectException(InvaliDirPathException::class);
-        $this->alpsStateDiagram->setDir(__DIR__ . '/__INVALID__');
-    }
-
-    public function testSetDir() : void
-    {
-        $this->alpsStateDiagram->setDir(__DIR__ . '/Fake');
-        $dot = $this->alpsStateDiagram->toString();
-        $this->assertStringContainsString(' Foo->Bar [label = "bar (safe)"];', $dot);
     }
 }
