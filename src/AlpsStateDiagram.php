@@ -48,9 +48,15 @@ final class AlpsStateDiagram
     private function scanTransition(SemanticDescriptor $semantic, array $descriptors) : void
     {
         foreach ($descriptors as $descriptor) {
+            $isExternal = isset($descriptor->href) && $descriptor->href[0] !== '#';
+            if ($isExternal) {
+                $descriptor = $this->getExternDescriptor($descriptor->href);
+            }
             $isTransDescriptor = isset($descriptor->type) && in_array($descriptor->type, ['safe', 'unsafe', 'idempotent'], true);
             if ($isTransDescriptor) {
                 $this->addLink(new Link($semantic, new TransDescriptor($descriptor, $semantic)));
+
+                continue;
             }
         }
     }

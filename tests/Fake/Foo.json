@@ -21,6 +21,15 @@
       {
         "id": "Bar",
         "type": "semantic"
+      },
+      {
+        "id": "baz",
+        "type": "safe",
+        "rt": "#Baz"
+      },
+      {
+        "id": "Baz",
+        "type": "semantic"
       }
     ]
   }

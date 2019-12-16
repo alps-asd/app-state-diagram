@@ -65,4 +65,12 @@ class AlpsStateDiagramTest extends TestCase
         $this->expectException(DescriptorNotFoundException::class);
         ($this->alpsStateDiagram)(__DIR__ . '/Fake/alps.invalid_href_desc.json');
     }
+
+    /**
+     * @depends test__invoke
+     */
+    public function testExternalHref(string $dot) : void
+    {
+        $this->assertStringContainsString('Blog->Baz', $dot);
+    }
 }
