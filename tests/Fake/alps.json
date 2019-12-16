@@ -18,7 +18,7 @@
       },
       {
         "id": "About",
-        "type": "semantic",
+        "type": "semantic"
       },
       {
         "id": "Blog",
@@ -56,11 +56,7 @@
               {"href": "#BlogPosting"}
             ]
           },
-          {
-            "id": "about",
-            "type": "safe",
-            "rt": "#About"
-          }
+          {"href": "#about"}
         ]
       },
       {
@@ -92,10 +88,18 @@
             "id": "collection",
             "type": "safe",
             "rt": "#Blog"
+          },
+          {
+            "href": "#about"
           }
         ]
       },
-      {"href": "Foo.json#Foo"}
+      {"href": "Foo.json#Foo"},
+      {
+        "id": "about",
+        "type": "safe",
+        "rt": "#About"
+      }
     ]
   }
 }
