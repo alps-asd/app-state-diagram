@@ -30,7 +30,7 @@ final class AlpsStateDiagram
         return $this->toString();
     }
 
-    private function scanDescriptor(\stdClass $descriptor)
+    private function scanDescriptor(\stdClass $descriptor) : void
     {
         if (isset($descriptor->descriptor)) {
             $this->scanTransition(new SemanticDescriptor($descriptor), $descriptor->descriptor);
@@ -39,7 +39,7 @@ final class AlpsStateDiagram
         }
         $isExternal = isset($descriptor->href) && $descriptor->href[0] !== '#';
         if ($isExternal) {
-            $this->extern($descriptor->href);
+            $this->scanDescriptor($this->extern($descriptor->href));
         }
     }
 
@@ -53,11 +53,16 @@ final class AlpsStateDiagram
         }
     }
 
-    private function extern(string $href)
+    private function extern(string $href) : \stdClass
     {
-        [$file, $descriptor] = explode('#', $href);
+        [$file, $descriptorId] = explode('#', $href);
         $alps = $this->fileGetContents("{$this->dir}/{$file}");
-
+        $descriptors = $alps->alps->descriptor;
+        foreach ($descriptors as $descriptor) {
+            if ($descriptor->id === $descriptorId) {
+                return $descriptor;
+            }
+        }
     }
 
     private function addLink(Link $link) : void
@@ -80,12 +85,12 @@ final class AlpsStateDiagram
 ', $graphs);
     }
 
-    private function fileGetContents(string $alpsFile): object
+    private function fileGetContents(string $alpsFile) : object
     {
-        if (!file_exists($alpsFile)) {
+        if (! file_exists($alpsFile)) {
             throw new AlpsFileNotReadableException($alpsFile);
         }
-        $alps = json_decode((string)file_get_contents($alpsFile));
+        $alps = json_decode((string) file_get_contents($alpsFile));
         $jsonError = json_last_error();
         if ($jsonError) {
             throw new InvalidJsonException($alpsFile);

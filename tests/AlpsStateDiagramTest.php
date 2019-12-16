@@ -48,10 +48,8 @@ class AlpsStateDiagramTest extends TestCase
     /**
      * @depends test__invoke
      */
-    public function testIncludeFile(string $dot)
+    public function testIncludeFile(string $dot) : void
     {
         $this->assertStringContainsString('Foo->Bar', $dot);
-
     }
-
 }
