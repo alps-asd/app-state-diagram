@@ -14,23 +14,33 @@ final class AlpsStateDiagram
      */
     private $links = [];
 
+    /**
+     * @var string
+     */
+    private $dir;
+
     public function __invoke(string $alpsFile) : string
     {
-        if (! file_exists($alpsFile)) {
-            throw new AlpsFileNotReadableException($alpsFile);
-        }
-        $alps = json_decode((string) file_get_contents($alpsFile));
-        $jsonError = json_last_error();
-        if ($jsonError) {
-            throw new InvalidJsonException($alpsFile);
-        }
+        $this->dir = dirname($alpsFile);
+        $alps = $this->fileGetContents($alpsFile);
         foreach ($alps->alps->descriptor as $descriptor) {
-            if (isset($descriptor->descriptor)) {
-                $this->scanTransition(new SemanticDescriptor($descriptor), $descriptor->descriptor);
-            }
+            $this->scanDescriptor($descriptor);
         }
 
         return $this->toString();
+    }
+
+    private function scanDescriptor(\stdClass $descriptor)
+    {
+        if (isset($descriptor->descriptor)) {
+            $this->scanTransition(new SemanticDescriptor($descriptor), $descriptor->descriptor);
+
+            return;
+        }
+        $isExternal = isset($descriptor->href) && $descriptor->href[0] !== '#';
+        if ($isExternal) {
+            $this->extern($descriptor->href);
+        }
     }
 
     private function scanTransition(SemanticDescriptor $semantic, array $descriptors) : void
@@ -41,6 +51,13 @@ final class AlpsStateDiagram
                 $this->addLink(new Link($semantic, new TransDescriptor($descriptor, $semantic)));
             }
         }
+    }
+
+    private function extern(string $href)
+    {
+        [$file, $descriptor] = explode('#', $href);
+        $alps = $this->fileGetContents("{$this->dir}/{$file}");
+
     }
 
     private function addLink(Link $link) : void
@@ -61,5 +78,19 @@ final class AlpsStateDiagram
 %s
 }
 ', $graphs);
+    }
+
+    private function fileGetContents(string $alpsFile): object
+    {
+        if (!file_exists($alpsFile)) {
+            throw new AlpsFileNotReadableException($alpsFile);
+        }
+        $alps = json_decode((string)file_get_contents($alpsFile));
+        $jsonError = json_last_error();
+        if ($jsonError) {
+            throw new InvalidJsonException($alpsFile);
+        }
+
+        return $alps;
     }
 }

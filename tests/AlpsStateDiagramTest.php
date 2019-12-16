@@ -31,7 +31,7 @@ class AlpsStateDiagramTest extends TestCase
         ($this->alpsStateDiagram)('__INVALID__');
     }
 
-    public function test__invoke() : void
+    public function test__invoke() : string
     {
         $dot = ($this->alpsStateDiagram)(__DIR__ . '/Fake/alps.json');
         $this->assertStringContainsString('Index->Blog [label = "blog (safe)"];', $dot);
@@ -41,5 +41,17 @@ class AlpsStateDiagramTest extends TestCase
         $this->assertStringContainsString('BlogPosting->Blog [label = "collection (safe)"];', $dot);
         $this->assertStringContainsString('Blog->About', $dot);
         file_put_contents(__DIR__ . '/alps.dot', $dot);
+
+        return $dot;
     }
+
+    /**
+     * @depends test__invoke
+     */
+    public function testIncludeFile(string $dot)
+    {
+        $this->assertStringContainsString('Foo->Bar', $dot);
+
+    }
+
 }

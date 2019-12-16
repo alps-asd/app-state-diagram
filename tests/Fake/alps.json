@@ -22,7 +22,8 @@
       },
       {
         "id": "About",
-        "type": "semantic"
+        "type": "semantic",
+        "def": "https://www.iana.org/assignments/link-relations/link-relations.xhtml"
       },
       {
         "id": "Blog",
@@ -46,6 +47,7 @@
           {
             "id": "item",
             "type": "safe",
+            "def": "https://www.iana.org/assignments/link-relations/link-relations.xml",
             "rt": "#BlogPosting",
             "descriptor": [
               {"href": "#id"}
@@ -64,9 +66,6 @@
             "id": "about",
             "type": "safe",
             "rt": "#About"
-          },
-          {
-            "href": "Foo.json#Foo"
           }
         ]
       },
@@ -98,10 +97,12 @@
           {
             "id": "collection",
             "type": "safe",
+            "def": "https://www.iana.org/assignments/link-relations/link-relations.xhtml",
             "rt": "#Blog"
           }
         ]
-      }
+      },
+      {"href": "Foo.json#Foo"}
     ]
   }
 }
