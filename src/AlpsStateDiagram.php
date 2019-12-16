@@ -41,7 +41,7 @@ final class AlpsStateDiagram
         }
         $isExternal = isset($descriptor->href) && $descriptor->href[0] !== '#';
         if ($isExternal) {
-            $this->scanDescriptor($this->extern($descriptor->href));
+            $this->scanDescriptor($this->getExternDescriptor($descriptor->href));
         }
     }
 
@@ -55,17 +55,27 @@ final class AlpsStateDiagram
         }
     }
 
-    private function extern(string $href) : \stdClass
+    private function getExternDescriptor(string $href) : \stdClass
     {
         [$file, $descriptorId] = explode('#', $href);
         $descriptors = $this->getAlpsDescriptors("{$this->dir}/{$file}");
+        $descriptor = $this->getDescriptor($descriptors, $descriptorId);
+        if (! $descriptor) {
+            throw new DescriptorNotFoundException($href);
+        }
+
+        return $descriptor;
+    }
+
+    private function getDescriptor(array $descriptors, string $descriptorId)
+    {
         foreach ($descriptors as $descriptor) {
             if ($descriptor->id === $descriptorId) {
                 return $descriptor;
             }
         }
 
-        throw new DescriptorNotFoundException($href);
+        return false;
     }
 
     private function addLink(Link $link) : void
