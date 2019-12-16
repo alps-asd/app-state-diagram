@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Koriym\AlpsStateDiagram;
 
 use Koriym\AlpsStateDiagram\Exception\AlpsFileNotReadableException;
+use Koriym\AlpsStateDiagram\Exception\DescriptorNotFoundException;
 use PHPUnit\Framework\TestCase;
 
 class AlpsStateDiagramTest extends TestCase
@@ -51,5 +52,17 @@ class AlpsStateDiagramTest extends TestCase
     public function testIncludeFile(string $dot) : void
     {
         $this->assertStringContainsString('Foo->Bar', $dot);
+    }
+
+    public function testInvalidExternalFile() : void
+    {
+        $this->expectException(AlpsFileNotReadableException::class);
+        ($this->alpsStateDiagram)(__DIR__ . '/Fake/alps.invalid_href_file.json');
+    }
+
+    public function testInvalidExternalDescriptor() : void
+    {
+        $this->expectException(DescriptorNotFoundException::class);
+        ($this->alpsStateDiagram)(__DIR__ . '/Fake/alps.invalid_href_desc.json');
     }
 }

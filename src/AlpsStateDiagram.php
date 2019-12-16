@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Koriym\AlpsStateDiagram;
 
 use Koriym\AlpsStateDiagram\Exception\AlpsFileNotReadableException;
+use Koriym\AlpsStateDiagram\Exception\DescriptorNotFoundException;
+use Koriym\AlpsStateDiagram\Exception\InvalidAlpsException;
 use Koriym\AlpsStateDiagram\Exception\InvalidJsonException;
 
 final class AlpsStateDiagram
@@ -17,13 +19,13 @@ final class AlpsStateDiagram
     /**
      * @var string
      */
-    private $dir;
+    private $dir = '';
 
     public function __invoke(string $alpsFile) : string
     {
         $this->dir = dirname($alpsFile);
-        $alps = $this->fileGetContents($alpsFile);
-        foreach ($alps->alps->descriptor as $descriptor) {
+        $descriptors = $this->getAlpsDescriptors($alpsFile);
+        foreach ($descriptors as $descriptor) {
             $this->scanDescriptor($descriptor);
         }
 
@@ -56,13 +58,14 @@ final class AlpsStateDiagram
     private function extern(string $href) : \stdClass
     {
         [$file, $descriptorId] = explode('#', $href);
-        $alps = $this->fileGetContents("{$this->dir}/{$file}");
-        $descriptors = $alps->alps->descriptor;
+        $descriptors = $this->getAlpsDescriptors("{$this->dir}/{$file}");
         foreach ($descriptors as $descriptor) {
             if ($descriptor->id === $descriptorId) {
                 return $descriptor;
             }
         }
+
+        throw new DescriptorNotFoundException($href);
     }
 
     private function addLink(Link $link) : void
@@ -85,7 +88,7 @@ final class AlpsStateDiagram
 ', $graphs);
     }
 
-    private function fileGetContents(string $alpsFile) : object
+    private function getAlpsDescriptors(string $alpsFile) : array
     {
         if (! file_exists($alpsFile)) {
             throw new AlpsFileNotReadableException($alpsFile);
@@ -95,7 +98,10 @@ final class AlpsStateDiagram
         if ($jsonError) {
             throw new InvalidJsonException($alpsFile);
         }
+        if (! isset($alps->alps->descriptor)) {
+            throw new InvalidAlpsException($alpsFile);
+        }
 
-        return $alps;
+        return $alps->alps->descriptor;
     }
 }
