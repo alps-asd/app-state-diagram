@@ -56,12 +56,8 @@
               {"href": "#BlogPosting"}
             ]
           },
-          {
-            "id": "about",
-            "type": "safe",
-            "rt": "#About"
-          },
-          {"href": "Foo.json#baz"}
+          {"href": "Foo.json#baz"},
+          {"href": "#about"}
         ]
       },
       {
