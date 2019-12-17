@@ -1,7 +1,6 @@
 {
   "$schema": "https://raw.githubusercontent.com/koriym/spec/master/schemas/alps.json",
   "alps": {
-    "version": "0.1",
     "descriptor": [
       {
         "id": "Foo",
@@ -21,6 +20,15 @@
       },
       {
         "id": "Bar",
+        "type": "semantic"
+      },
+      {
+        "id": "baz",
+        "type": "safe",
+        "rt": "#Baz"
+      },
+      {
+        "id": "Baz",
         "type": "semantic"
       }
     ]

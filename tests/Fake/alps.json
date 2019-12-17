@@ -1,10 +1,6 @@
 {
   "$schema": "https://raw.githubusercontent.com/koriym/spec/master/schemas/alps.json",
   "alps": {
-    "doc": {
-      "value": "[Example] ALPS Profile"
-    },
-    "version": "0.1",
     "descriptor": [
       {
         "id": "Index",
@@ -60,14 +56,8 @@
               {"href": "#BlogPosting"}
             ]
           },
-          {
-            "id": "about",
-            "type": "safe",
-            "rt": "#About"
-          },
-          {
-            "href": "Foo.json#Foo"
-          }
+          {"href": "Foo.json#baz"},
+          {"href": "#about"}
         ]
       },
       {
@@ -99,8 +89,17 @@
             "id": "collection",
             "type": "safe",
             "rt": "#Blog"
+          },
+          {
+            "href": "#about"
           }
         ]
+      },
+      {"href": "Foo.json#Foo"},
+      {
+        "id": "about",
+        "type": "safe",
+        "rt": "#About"
       }
     ]
   }
