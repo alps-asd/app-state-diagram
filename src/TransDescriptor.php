@@ -27,7 +27,7 @@ final class TransDescriptor
     /**
      * @var SemanticDescriptor
      */
-    public $paren;
+    public $parent;
 
     public function __construct(\stdClass $descriptor, SemanticDescriptor $parent)
     {
@@ -41,6 +41,6 @@ final class TransDescriptor
             throw new RtMissingException($descriptor->id);
         }
         $this->rt = substr($descriptor->rt, $pos + 1);
-        $this->paren = $parent;
+        $this->parent = $parent;
     }
 }
