@@ -17,7 +17,7 @@ class SemanticScannerTest extends TestCase
 
     public function test__invoke() : void
     {
-        $alps = json_decode(file_get_contents(__DIR__ . '/Fake/alps.json'));
+        $alps = json_decode((string) file_get_contents(__DIR__ . '/Fake/alps.json'));
         $semantics = ($this->scanner)($alps->alps->descriptor);
         $this->assertArrayHasKey('Index', $semantics);
         $this->assertArrayHasKey('About', $semantics);

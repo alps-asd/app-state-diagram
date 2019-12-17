@@ -6,23 +6,22 @@ namespace Koriym\AlpsStateDiagram;
 
 final class SemanticScanner
 {
-    /**
-     * @var IsSemantic
-     */
-    private $isSemantic;
-
-    public function __construct()
-    {
-        $this->isSemantic = new IsSemantic;
-    }
-
     public function __invoke(array $descriptors) : array
     {
         $semantics = [];
         foreach ($descriptors as $descriptor) {
+            assert($descriptor instanceof \stdClass);
             if (isset($descriptor->type) && $descriptor->type === 'semantic') {
                 assert(isset($descriptor->id));
                 $semantics[$descriptor->id] = new SemanticDescriptor($descriptor);
+            }
+            $isTransDescriptor = isset($descriptor->type) && in_array($descriptor->type, ['safe', 'unsafe', 'idempotent'], true);
+            if ($isTransDescriptor) {
+                $nullParentSemantic = new class {
+                    /** @var string */ public $id = '';
+                    /** @var string */ public $type = 'semantic';
+                };
+                $semantics[$descriptor->id] = new TransDescriptor($descriptor, new SemanticDescriptor($nullParentSemantic));
             }
             if (isset($descriptor->descriptor)) {
                 $semantics = $this->sacnInlineDescriptor($descriptor, $semantics);
@@ -32,7 +31,7 @@ final class SemanticScanner
         return $semantics;
     }
 
-    private function sacnInlineDescriptor($descriptor, array $semantics) : array
+    private function sacnInlineDescriptor(\stdClass $descriptor, array $semantics) : array
     {
         $inLineSemantics = $this->__invoke($descriptor->descriptor);
         if ($inLineSemantics !== []) {

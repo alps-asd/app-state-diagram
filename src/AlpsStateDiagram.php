@@ -21,10 +21,25 @@ final class AlpsStateDiagram
      */
     private $dir = '';
 
+    /**
+     * @var SemanticScanner
+     */
+    private $scanner;
+
+    /**
+     * @var array
+     */
+    private $semantics = [];
+
+    public function __construct()
+    {
+        $this->scanner = new SemanticScanner;
+    }
+
     public function __invoke(string $alpsFile) : string
     {
         $this->dir = dirname($alpsFile);
-        $descriptors = $this->getAlpsDescriptors($alpsFile);
+        $descriptors = $this->scanAlpsFile($alpsFile);
         foreach ($descriptors as $descriptor) {
             $this->scanDescriptor($descriptor);
         }
@@ -39,9 +54,18 @@ final class AlpsStateDiagram
 
             return;
         }
-        $isExternal = isset($descriptor->href) && $descriptor->href[0] !== '#';
+        if (isset($descriptor->href)) {
+            $this->href($descriptor);
+        }
+    }
+
+    private function href(\stdClass $descriptor) : void
+    {
+        $isExternal = $descriptor->href[0] !== '#';
         if ($isExternal) {
             $this->scanDescriptor($this->getExternDescriptor($descriptor->href));
+
+            return;
         }
     }
 
@@ -52,6 +76,12 @@ final class AlpsStateDiagram
             if ($isExternal) {
                 $descriptor = $this->getExternDescriptor($descriptor->href);
             }
+            $isInternal = isset($descriptor->href) && $descriptor->href[0] === '#';
+            if ($isInternal) {
+                $this->addInternalLink($semantic, $descriptor->href);
+
+                continue;
+            }
             $isTransDescriptor = isset($descriptor->type) && in_array($descriptor->type, ['safe', 'unsafe', 'idempotent'], true);
             if ($isTransDescriptor) {
                 $this->addLink(new Link($semantic, new TransDescriptor($descriptor, $semantic)));
@@ -61,19 +91,25 @@ final class AlpsStateDiagram
         }
     }
 
+    private function addInternalLink(SemanticDescriptor $semantic, string $href) : void
+    {
+        [,$descriptorId] = explode('#', $href);
+        $isTransDescrpitor = isset($this->semantics[$descriptorId]) && $this->semantics[$descriptorId] instanceof TransDescriptor;
+        if ($isTransDescrpitor) {
+            $transSemantic = $this->semantics[$descriptorId];
+            $this->addLink(new Link($semantic, $transSemantic));
+        }
+    }
+
     private function getExternDescriptor(string $href) : \stdClass
     {
         [$file, $descriptorId] = explode('#', $href);
-        $descriptors = $this->getAlpsDescriptors("{$this->dir}/{$file}");
-        $descriptor = $this->getDescriptor($descriptors, $descriptorId);
-        if (! $descriptor) {
-            throw new DescriptorNotFoundException($href);
-        }
+        $descriptors = $this->scanAlpsFile("{$this->dir}/{$file}");
 
-        return $descriptor;
+        return $this->getDescriptor($descriptors, $descriptorId, $href);
     }
 
-    private function getDescriptor(array $descriptors, string $descriptorId)
+    private function getDescriptor(array $descriptors, string $descriptorId, string $href) : \stdClass
     {
         foreach ($descriptors as $descriptor) {
             if ($descriptor->id === $descriptorId) {
@@ -81,7 +117,7 @@ final class AlpsStateDiagram
             }
         }
 
-        return false;
+        throw new DescriptorNotFoundException($href);
     }
 
     private function addLink(Link $link) : void
@@ -104,7 +140,7 @@ final class AlpsStateDiagram
 ', $graphs);
     }
 
-    private function getAlpsDescriptors(string $alpsFile) : array
+    private function scanAlpsFile(string $alpsFile) : array
     {
         if (! file_exists($alpsFile)) {
             throw new AlpsFileNotReadableException($alpsFile);
@@ -117,6 +153,7 @@ final class AlpsStateDiagram
         if (! isset($alps->alps->descriptor)) {
             throw new InvalidAlpsException($alpsFile);
         }
+        $this->semantics = array_merge($this->semantics, ($this->scanner)($alps->alps->descriptor));
 
         return $alps->alps->descriptor;
     }
