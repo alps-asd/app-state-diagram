@@ -22,18 +22,18 @@ final class AlpsStateDiagram
     private $dir = '';
 
     /**
-     * @var SemanticScanner
+     * @var DescriptorScanner
      */
     private $scanner;
 
     /**
      * @var array
      */
-    private $semantics = [];
+    private $descriptors = [];
 
     public function __construct()
     {
-        $this->scanner = new SemanticScanner;
+        $this->scanner = new DescriptorScanner;
     }
 
     public function __invoke(string $alpsFile) : string
@@ -94,9 +94,9 @@ final class AlpsStateDiagram
     private function addInternalLink(SemanticDescriptor $semantic, string $href) : void
     {
         [,$descriptorId] = explode('#', $href);
-        $isTransDescrpitor = isset($this->semantics[$descriptorId]) && $this->semantics[$descriptorId] instanceof TransDescriptor;
+        $isTransDescrpitor = isset($this->descriptors[$descriptorId]) && $this->descriptors[$descriptorId] instanceof TransDescriptor;
         if ($isTransDescrpitor) {
-            $transSemantic = $this->semantics[$descriptorId];
+            $transSemantic = $this->descriptors[$descriptorId];
             $this->addLink(new Link($semantic, $transSemantic));
         }
     }
@@ -153,7 +153,7 @@ final class AlpsStateDiagram
         if (! isset($alps->alps->descriptor)) {
             throw new InvalidAlpsException($alpsFile);
         }
-        $this->semantics = array_merge($this->semantics, ($this->scanner)($alps->alps->descriptor));
+        $this->descriptors = array_merge($this->descriptors, ($this->scanner)($alps->alps->descriptor));
 
         return $alps->alps->descriptor;
     }

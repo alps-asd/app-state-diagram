@@ -12,7 +12,7 @@ class SemanticScannerTest extends TestCase
 
     protected function setUp() : void
     {
-        $this->scanner = new SemanticScanner;
+        $this->scanner = new DescriptorScanner;
     }
 
     public function test__invoke() : void
