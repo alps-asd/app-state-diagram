@@ -27,7 +27,7 @@ final class AlpsStateDiagram
     private $scanner;
 
     /**
-     * @var array
+     * @var DescriptorInterface[]
      */
     private $descriptors = [];
 
@@ -97,6 +97,7 @@ final class AlpsStateDiagram
         $isTransDescrpitor = isset($this->descriptors[$descriptorId]) && $this->descriptors[$descriptorId] instanceof TransDescriptor;
         if ($isTransDescrpitor) {
             $transSemantic = $this->descriptors[$descriptorId];
+            assert($transSemantic instanceof TransDescriptor);
             $this->addLink(new Link($semantic, $transSemantic));
         }
     }

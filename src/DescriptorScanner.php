@@ -16,9 +16,8 @@ final class DescriptorScanner
         return $descriptors;
     }
 
-    private function scan($descriptor, array $descriptors) : array
+    private function scan(\stdClass $descriptor, array $descriptors) : array
     {
-        assert($descriptor instanceof \stdClass);
         if (isset($descriptor->type) && $descriptor->type === 'semantic') {
             assert(isset($descriptor->id));
             $descriptors[$descriptor->id] = new SemanticDescriptor($descriptor);

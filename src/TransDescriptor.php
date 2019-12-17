@@ -7,7 +7,7 @@ namespace Koriym\AlpsStateDiagram;
 use Koriym\AlpsStateDiagram\Exception\RtMissingException;
 use Koriym\AlpsStateDiagram\Exception\TypeSemanticException;
 
-final class TransDescriptor
+final class TransDescriptor implements DescriptorInterface
 {
     /**
      * @var string
