@@ -1,0 +1,31 @@
+{
+  "id": "BlogPosting",
+  "type": "semantic",
+  "def": "https://schema.org/BlogPosting",
+  "doc": {
+    "value": "Blog entry item page"
+  },
+  "descriptor": [
+    {
+      "id": "id",
+      "type": "semantic",
+      "doc": {
+        "value": "Blog entry id"
+      }
+    },
+    {
+      "id": "articleBody",
+      "type": "semantic"
+    },
+    {
+      "id": "dateCreated",
+      "type": "semantic"
+    },
+    {
+      "id": "collection",
+      "type": "safe",
+      "rt": "#Blog"
+    }
+  ]
+}
+

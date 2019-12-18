@@ -47,7 +47,7 @@ final class AlpsStateDiagram
         }
         $array = (array) $links;
 
-        return ($this->toString)($array);
+        return ($this->toString)($array, $this->descriptors);
     }
 
     private function scanDescriptor(\stdClass $descriptor, \ArrayObject $links) : void
