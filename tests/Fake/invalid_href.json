@@ -1,0 +1,10 @@
+{
+  "id": "InvalidHref",
+  "type": "semantic",
+  "descriptor": [
+    {
+      "href": "#about"
+    }
+  ]
+}
+

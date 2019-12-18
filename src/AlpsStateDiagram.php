@@ -12,11 +12,6 @@ use Koriym\AlpsStateDiagram\Exception\InvalidJsonException;
 final class AlpsStateDiagram
 {
     /**
-     * @var array
-     */
-    private $links = [];
-
-    /**
      * @var string
      */
     private $dir = '';
@@ -31,45 +26,53 @@ final class AlpsStateDiagram
      */
     private $descriptors = [];
 
+    /**
+     * @var ToString
+     */
+    private $toString;
+
     public function __construct()
     {
         $this->scanner = new DescriptorScanner;
+        $this->toString = new ToString;
     }
 
     public function __invoke(string $alpsFile) : string
     {
         $this->dir = dirname($alpsFile);
         $descriptors = $this->scanAlpsFile($alpsFile);
+        $links = new \ArrayObject;
         foreach ($descriptors as $descriptor) {
-            $this->scanDescriptor($descriptor);
+            $this->scanDescriptor($descriptor, $links);
         }
+        $array = (array) $links;
 
-        return $this->toString();
+        return ($this->toString)($array, $this->descriptors);
     }
 
-    private function scanDescriptor(\stdClass $descriptor) : void
+    private function scanDescriptor(\stdClass $descriptor, \ArrayObject $links) : void
     {
         if (isset($descriptor->descriptor)) {
-            $this->scanTransition(new SemanticDescriptor($descriptor), $descriptor->descriptor);
+            $this->scanTransition(new SemanticDescriptor($descriptor), $descriptor->descriptor, $links);
 
             return;
         }
         if (isset($descriptor->href)) {
-            $this->href($descriptor);
+            $this->href($descriptor, $links);
         }
     }
 
-    private function href(\stdClass $descriptor) : void
+    private function href(\stdClass $descriptor, \ArrayObject $links) : void
     {
         $isExternal = $descriptor->href[0] !== '#';
         if ($isExternal) {
-            $this->scanDescriptor($this->getExternDescriptor($descriptor->href));
+            $this->scanDescriptor($this->getExternDescriptor($descriptor->href), $links);
 
             return;
         }
     }
 
-    private function scanTransition(SemanticDescriptor $semantic, array $descriptors) : void
+    private function scanTransition(SemanticDescriptor $semantic, array $descriptors, \ArrayObject $links) : void
     {
         foreach ($descriptors as $descriptor) {
             $isExternal = isset($descriptor->href) && $descriptor->href[0] !== '#';
@@ -78,27 +81,27 @@ final class AlpsStateDiagram
             }
             $isInternal = isset($descriptor->href) && $descriptor->href[0] === '#';
             if ($isInternal) {
-                $this->addInternalLink($semantic, $descriptor->href);
+                $this->addInternalLink($semantic, $descriptor->href, $links);
 
                 continue;
             }
             $isTransDescriptor = isset($descriptor->type) && in_array($descriptor->type, ['safe', 'unsafe', 'idempotent'], true);
             if ($isTransDescriptor) {
-                $this->addLink(new Link($semantic, new TransDescriptor($descriptor, $semantic)));
+                $this->addLink(new Link($semantic, new TransDescriptor($descriptor, $semantic)), $links);
 
                 continue;
             }
         }
     }
 
-    private function addInternalLink(SemanticDescriptor $semantic, string $href) : void
+    private function addInternalLink(SemanticDescriptor $semantic, string $href, \ArrayObject $links) : void
     {
         [,$descriptorId] = explode('#', $href);
         $isTransDescrpitor = isset($this->descriptors[$descriptorId]) && $this->descriptors[$descriptorId] instanceof TransDescriptor;
         if ($isTransDescrpitor) {
             $transSemantic = $this->descriptors[$descriptorId];
             assert($transSemantic instanceof TransDescriptor);
-            $this->addLink(new Link($semantic, $transSemantic));
+            $this->addLink(new Link($semantic, $transSemantic), $links);
         }
     }
 
@@ -121,24 +124,10 @@ final class AlpsStateDiagram
         throw new DescriptorNotFoundException($href);
     }
 
-    private function addLink(Link $link) : void
+    private function addLink(Link $link, \ArrayObject $links) : void
     {
         $fromTo = sprintf('%s->%s', $link->from, $link->to);
-        $this->links[$fromTo] = isset($this->links[$fromTo]) ? $this->links[$fromTo] . ', ' . $link->label : $link->label;
-    }
-
-    private function toString() : string
-    {
-        $graphs = '';
-        foreach ($this->links as $link => $label) {
-            $graphs .= sprintf('    %s [label = "%s"];', $link, $label) . PHP_EOL;
-        }
-
-        return sprintf('digraph application_state_diagram {
-    node [shape = box, style = "bold,filled"];
-%s
-}
-', $graphs);
+        $links[$fromTo] = isset($links[$fromTo]) ? $links[$fromTo] . ', ' . $link->label : $link->label;
     }
 
     private function scanAlpsFile(string $alpsFile) : array
