@@ -26,6 +26,9 @@ final class AlpsStateDiagram
      */
     private $descriptors = [];
 
+    /**
+     * @var ToString
+     */
     private $toString;
 
     public function __construct()
