@@ -44,6 +44,7 @@ final class AlpsStateDiagram
 
     public function __invoke(string $alpsFile) : string
     {
+        $this->dir = dirname($alpsFile);
         $this->scan($alpsFile);
 
         return ($this->toString)($this->links, $this->descriptors);
@@ -51,7 +52,6 @@ final class AlpsStateDiagram
 
     private function scan(string $alpsFile) : void
     {
-        $this->dir = dirname($alpsFile);
         $descriptors = $this->scanAlpsFile($alpsFile);
         foreach ($descriptors as $descriptor) {
             $this->scanDescriptor($descriptor);
@@ -116,7 +116,9 @@ final class AlpsStateDiagram
     private function getExternDescriptor(string $href) : \stdClass
     {
         [$file, $descriptorId] = explode('#', $href);
-        $descriptors = $this->scanAlpsFile("{$this->dir}/{$file}");
+        $file = "{$this->dir}/{$file}";
+        $this->scan($file);
+        $descriptors = $this->scanAlpsFile($file);
 
         return $this->getDescriptor($descriptors, $descriptorId, $href);
     }

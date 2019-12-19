@@ -64,7 +64,7 @@ final class ToString
         assert(is_iterable($descriptor->descriptor));
         foreach ($descriptor->descriptor as $item) {
             if ($this->isSemanticHref($item)) {
-                $props[] = $item->href;
+                $props[] = substr($item->href, (int) strpos($item->href, '#') + 1);
             }
             $isSemantic = isset($item->type) && $item->type === 'semantic';
             if ($isSemantic) {
@@ -86,7 +86,8 @@ final class ToString
         }
         $id = substr($item->href, $pos + 1);
         if (! isset($this->descriptors[$id])) {
-            throw new InvalidHrefException($id);
+            return false;
+            throw new InvalidHrefException($item->href);
         }
         $descriptor = $this->descriptors[$id];
 
