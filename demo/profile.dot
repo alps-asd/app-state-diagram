@@ -1,0 +1,17 @@
+digraph application_state_diagram {
+    node [shape = box, style = "bold,filled"];
+Blog [style=solid, margin=0.02, label=<<table cellspacing="0" cellpadding="5" cellborder="1" border="0"><tr>
+    <td bgcolor="#dddddd">Blog<br />(BlogPosting)<br /></td>
+    </tr></table>>,shape=box
+]
+BlogPosting [style=solid, margin=0.02, label=<<table cellspacing="0" cellpadding="5" cellborder="1" border="0"><tr>
+    <td bgcolor="#dddddd">BlogPosting<br />(id)<br />(articleBody)<br />(dateCreated)<br /></td>
+    </tr></table>>,shape=box
+]
+    Index->Blog [label = "blog (safe)"];
+    Blog->BlogPosting [label = "blogPosting (safe), item (safe)"];
+    Blog->Blog [label = "post (unsafe)"];
+    Blog->About [label = "about (safe)"];
+    BlogPosting->Blog [label = "collection (safe)"];
+
+}
