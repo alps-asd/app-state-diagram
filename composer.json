@@ -1,6 +1,6 @@
 {
     "name": "koriym/app-state-diagram",
-    "description": "",
+    "description": "An Application Diagram Generator",
     "license": "MIT",
     "authors": [
         {
