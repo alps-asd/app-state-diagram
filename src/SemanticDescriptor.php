@@ -6,7 +6,7 @@ namespace Koriym\AlpsStateDiagram;
 
 use Koriym\AlpsStateDiagram\Exception\InvalidSemanticsException;
 
-class SemanticDescriptor implements DescriptorInterface
+final class SemanticDescriptor implements DescriptorInterface
 {
     /**
      * @var string
