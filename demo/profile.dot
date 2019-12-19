@@ -11,11 +11,7 @@ BlogPosting [style=solid, margin=0.02, label=<<table cellspacing="0" cellpadding
     Index->Blog [label = "blog (safe)"];
     Blog->BlogPosting [label = "blogPosting (safe), item (safe)"];
     Blog->Blog [label = "post (unsafe)"];
-    Foo->Bar [label = "bar (safe), bar (safe), bar (safe)"];
-    Foo->Index [label = "index (safe), index (safe), index (safe)"];
-    Blog->Baz [label = "baz (safe)"];
     Blog->About [label = "about (safe)"];
     BlogPosting->Blog [label = "collection (safe)"];
-    BlogPosting->About [label = "about (safe)"];
 
 }

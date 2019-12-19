@@ -3,7 +3,7 @@
 
 declare(strict_types=1);
 
-use Koriym\AlpsStateDiagram\AlpsStateDiagram;
+use Koriym\AppStateDiagram\AppStateDiagram;
 
 foreach ([__DIR__ . '/../../../autoload.php', __DIR__ . '/../vendor/autoload.php'] as $file) {
     if (file_exists($file)) {
@@ -18,8 +18,9 @@ if ($argc !== 2) {
     exit(1);
 }
 [, $profile] = $argv;
-$dot = (new AlpsStateDiagram)($profile);
-var_dump($dot);
+$dot = (new AppStateDiagram)($profile);
 
-$outputfile = $profile . '.dot';
+$outputfile = str_replace('.json', '.dot', $profile);
 file_put_contents($outputfile, $dot);
+
+echo "{$outputfile} is generated." . PHP_EOL;

@@ -1,6 +1,6 @@
 {
-    "name": "koriym/alps-state-diagram",
-    "description": "",
+    "name": "koriym/app-state-diagram",
+    "description": "An Application Diagram Generator",
     "license": "MIT",
     "authors": [
         {
@@ -17,12 +17,12 @@
     },
     "autoload": {
         "psr-4": {
-            "Koriym\\AlpsStateDiagram\\": "src/"
+            "Koriym\\AppStateDiagram\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Koriym\\AlpsStateDiagram\\": [
+            "Koriym\\AppStateDiagram\\": [
                 "tests/",
                 "tests/Fake"
             ]

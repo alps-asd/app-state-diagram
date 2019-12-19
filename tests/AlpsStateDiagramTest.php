@@ -2,28 +2,28 @@
 
 declare(strict_types=1);
 
-namespace Koriym\AlpsStateDiagram;
+namespace Koriym\AppStateDiagram;
 
-use Koriym\AlpsStateDiagram\Exception\AlpsFileNotReadableException;
-use Koriym\AlpsStateDiagram\Exception\DescriptorNotFoundException;
+use Koriym\AppStateDiagram\Exception\AlpsFileNotReadableException;
+use Koriym\AppStateDiagram\Exception\DescriptorNotFoundException;
 use PHPUnit\Framework\TestCase;
 
 class AlpsStateDiagramTest extends TestCase
 {
     /**
-     * @var AlpsStateDiagram
+     * @var AppStateDiagram
      */
     protected $alpsStateDiagram;
 
     protected function setUp() : void
     {
-        $this->alpsStateDiagram = new AlpsStateDiagram;
+        $this->alpsStateDiagram = new AppStateDiagram;
     }
 
     public function testIsInstanceOfAlpsStateDiagram() : void
     {
         $actual = $this->alpsStateDiagram;
-        $this->assertInstanceOf(AlpsStateDiagram::class, $actual);
+        $this->assertInstanceOf(AppStateDiagram::class, $actual);
     }
 
     public function testFileNotReadable() : void

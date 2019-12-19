@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Koriym\AlpsStateDiagram;
+namespace Koriym\AppStateDiagram;
 
 final class DescriptorScanner
 {
