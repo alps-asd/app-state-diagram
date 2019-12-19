@@ -18,7 +18,13 @@ if ($argc !== 2) {
     exit(1);
 }
 [, $profile] = $argv;
-$dot = (new AppStateDiagram)($profile);
+try {
+    $dot = (new AppStateDiagram)($profile);
+} catch (\Exception $e) {
+    $path = explode('\\', get_class($e));
+    echo sprintf("%s: %s\n", end($path), $e->getMessage());
+    exit(1);
+}
 
 $outputfile = str_replace('.json', '.dot', $profile);
 file_put_contents($outputfile, $dot);
