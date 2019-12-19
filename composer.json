@@ -28,6 +28,9 @@
             ]
         }
     },
+    "bin": [
+        "/bin/asd"
+    ],
     "scripts": {
         "test": [
             "vendor/bin/phpunit"
