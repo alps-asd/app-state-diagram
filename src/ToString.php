@@ -87,6 +87,7 @@ final class ToString
         $id = substr($item->href, $pos + 1);
         if (! isset($this->descriptors[$id])) {
             return false;
+
             throw new InvalidHrefException($item->href);
         }
         $descriptor = $this->descriptors[$id];
