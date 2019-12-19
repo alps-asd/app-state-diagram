@@ -3,7 +3,7 @@
 
 declare(strict_types=1);
 
-use Koriym\AlpsStateDiagram\AlpsStateDiagram;
+use Koriym\AppStateDiagram\AppStateDiagram;
 
 foreach ([__DIR__ . '/../../../autoload.php', __DIR__ . '/../vendor/autoload.php'] as $file) {
     if (file_exists($file)) {
@@ -18,7 +18,7 @@ if ($argc !== 2) {
     exit(1);
 }
 [, $profile] = $argv;
-$dot = (new AlpsStateDiagram)($profile);
+$dot = (new AppStateDiagram)($profile);
 var_dump($dot);
 
 $outputfile = $profile . '.dot';

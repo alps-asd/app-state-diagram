@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Koriym\AlpsStateDiagram\Exception;
+namespace Koriym\AppStateDiagram\Exception;
 
 class RtMissingException extends \RuntimeException
 {

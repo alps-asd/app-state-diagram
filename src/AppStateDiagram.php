@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Koriym\AlpsStateDiagram;
+namespace Koriym\AppStateDiagram;
 
-use Koriym\AlpsStateDiagram\Exception\AlpsFileNotReadableException;
-use Koriym\AlpsStateDiagram\Exception\DescriptorNotFoundException;
-use Koriym\AlpsStateDiagram\Exception\InvalidAlpsException;
-use Koriym\AlpsStateDiagram\Exception\InvalidJsonException;
+use Koriym\AppStateDiagram\Exception\AlpsFileNotReadableException;
+use Koriym\AppStateDiagram\Exception\DescriptorNotFoundException;
+use Koriym\AppStateDiagram\Exception\InvalidAlpsException;
+use Koriym\AppStateDiagram\Exception\InvalidJsonException;
 
-final class AlpsStateDiagram
+final class AppStateDiagram
 {
     /**
      * @var string

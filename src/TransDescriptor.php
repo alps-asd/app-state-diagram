@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Koriym\AlpsStateDiagram;
+namespace Koriym\AppStateDiagram;
 
-use Koriym\AlpsStateDiagram\Exception\RtMissingException;
-use Koriym\AlpsStateDiagram\Exception\TypeSemanticException;
+use Koriym\AppStateDiagram\Exception\RtMissingException;
+use Koriym\AppStateDiagram\Exception\TypeSemanticException;
 
 final class TransDescriptor implements DescriptorInterface
 {

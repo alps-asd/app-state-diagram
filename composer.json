@@ -1,5 +1,5 @@
 {
-    "name": "koriym/alps-state-diagram",
+    "name": "koriym/app-state-diagram",
     "description": "",
     "license": "MIT",
     "authors": [
@@ -17,12 +17,12 @@
     },
     "autoload": {
         "psr-4": {
-            "Koriym\\AlpsStateDiagram\\": "src/"
+            "Koriym\\AppStateDiagram\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Koriym\\AlpsStateDiagram\\": [
+            "Koriym\\AppStateDiagram\\": [
                 "tests/",
                 "tests/Fake"
             ]

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Koriym\AlpsStateDiagram;
+namespace Koriym\AppStateDiagram;
 
-use Koriym\AlpsStateDiagram\Exception\InvalidSemanticsException;
+use Koriym\AppStateDiagram\Exception\InvalidSemanticsException;
 
 final class SemanticDescriptor implements DescriptorInterface
 {
