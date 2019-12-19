@@ -19,7 +19,8 @@ if ($argc !== 2) {
 }
 [, $profile] = $argv;
 $dot = (new AppStateDiagram)($profile);
-var_dump($dot);
 
-$outputfile = $profile . '.dot';
+$outputfile = str_replace('.json', '.dot', $profile);
 file_put_contents($outputfile, $dot);
+
+echo "{$outputfile} is generated." . PHP_EOL;
