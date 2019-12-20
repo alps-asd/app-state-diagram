@@ -17,16 +17,20 @@ final class ToString
     public function __invoke(iterable $links, array $descriptors) : string
     {
         $this->descriptors = $descriptors;
-        $dot = $this->getNodes();
+        $nodes = $this->getNodes();
+        $graph = '';
         foreach ($links as $link => $label) {
-            $dot .= sprintf('    %s [label = "%s"];', $link, $label) . PHP_EOL;
+            $graph .= sprintf('    %s [label = "%s"];', $link, $label) . PHP_EOL;
         }
-
-        return sprintf('digraph application_state_diagram {
+        $template = <<<'EOT'
+digraph application_state_diagram {
     node [shape = box, style = "bold,filled"];
+
 %s
-}
-', $dot);
+
+%s}
+EOT;
+        return sprintf($template, $nodes, $graph);
     }
 
     public function getNodes() : string
@@ -97,11 +101,7 @@ final class ToString
     private function template(string $stateName, string $props) : string
     {
         $template = <<<'EOT'
-%s [style=solid, margin=0.02, label=<<table cellspacing="0" cellpadding="5" cellborder="1" border="0"><tr>
-    <td bgcolor="#dddddd">%s<br />%s</td>
-    </tr></table>>,shape=box
-]
-
+    %s [style=solid, margin=0.02, label=<<table cellspacing="0" cellpadding="5" cellborder="1" border="0"><tr><td bgcolor="#dddddd">%s<br />%s</td></tr></table>>,shape=box]
 EOT;
 
         return sprintf($template, $stateName, $stateName, $props);
