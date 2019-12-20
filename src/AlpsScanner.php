@@ -30,7 +30,7 @@ final class AlpsScanner
     /**
      * @var string
      */
-    private $dir;
+    private $dir = '';
 
     public function __construct()
     {
