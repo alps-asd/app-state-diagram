@@ -21,7 +21,7 @@ final class SemanticDescriptor implements DescriptorInterface
     public function __construct(object $descriptor)
     {
         if (! isset($descriptor->type, $descriptor->id) || $descriptor->type !== 'semantic') {
-            throw new InvalidSemanticsException(json_encode($descriptor));
+            throw new InvalidSemanticsException((string) json_encode($descriptor));
         }
         $this->id = $descriptor->id;
         $this->descriptor = $descriptor->descriptor ?? null;
