@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Koriym\AppStateDiagram;
 
 use Koriym\AppStateDiagram\Exception\InvalidHrefException;
+use stdClass;
 
 final class ToString
 {
@@ -75,7 +76,7 @@ final class ToString
         return $props;
     }
 
-    private function isSemanticHref(\stdClass $item) : bool
+    private function isSemanticHref(stdClass $item) : bool
     {
         if (! isset($item->href)) {
             return false;

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Koriym\AppStateDiagram;
 
 use Koriym\AppStateDiagram\Exception\InvalidDescriptorException;
+use stdClass;
 
 final class DescriptorScanner
 {
@@ -18,7 +19,7 @@ final class DescriptorScanner
         return $descriptors;
     }
 
-    private function scan(\stdClass $descriptor, array $descriptors) : array
+    private function scan(stdClass $descriptor, array $descriptors) : array
     {
         $hasNoId = ! isset($descriptor->href) && ! isset($descriptor->id);
         $hasNoType = ! isset($descriptor->href) && ! isset($descriptor->type);
@@ -46,7 +47,7 @@ final class DescriptorScanner
         return $descriptors;
     }
 
-    private function scanInlineDescriptor(\stdClass $descriptor, array $descriptors) : array
+    private function scanInlineDescriptor(stdClass $descriptor, array $descriptors) : array
     {
         $inLineSemantics = $this->__invoke($descriptor->descriptor);
         if ($inLineSemantics !== []) {

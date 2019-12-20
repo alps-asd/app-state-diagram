@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Koriym\AppStateDiagram\Exception;
 
-class DescriptorNotFoundException extends \RuntimeException
+use RuntimeException;
+
+class DescriptorNotFoundException extends RuntimeException
 {
 }

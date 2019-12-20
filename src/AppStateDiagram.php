@@ -8,6 +8,7 @@ use Koriym\AppStateDiagram\Exception\AlpsFileNotReadableException;
 use Koriym\AppStateDiagram\Exception\DescriptorNotFoundException;
 use Koriym\AppStateDiagram\Exception\InvalidAlpsException;
 use Koriym\AppStateDiagram\Exception\InvalidJsonException;
+use stdClass;
 
 final class AppStateDiagram
 {
@@ -58,7 +59,7 @@ final class AppStateDiagram
         }
     }
 
-    private function scanDescriptor(\stdClass $descriptor) : void
+    private function scanDescriptor(stdClass $descriptor) : void
     {
         if (isset($descriptor->descriptor)) {
             $this->scanTransition(new SemanticDescriptor($descriptor), $descriptor->descriptor);
@@ -70,7 +71,7 @@ final class AppStateDiagram
         }
     }
 
-    private function href(\stdClass $descriptor) : void
+    private function href(stdClass $descriptor) : void
     {
         $isExternal = $descriptor->href[0] !== '#';
         if ($isExternal) {
@@ -113,7 +114,7 @@ final class AppStateDiagram
         }
     }
 
-    private function getExternalDescriptor(string $href) : \stdClass
+    private function getExternalDescriptor(string $href) : stdClass
     {
         [$file, $descriptorId] = explode('#', $href);
         $file = "{$this->dir}/{$file}";
@@ -123,7 +124,7 @@ final class AppStateDiagram
         return $this->getDescriptor($descriptors, $descriptorId, $href);
     }
 
-    private function getDescriptor(array $descriptors, string $descriptorId, string $href) : \stdClass
+    private function getDescriptor(array $descriptors, string $descriptorId, string $href) : stdClass
     {
         foreach ($descriptors as $descriptor) {
             if ($descriptor->id === $descriptorId) {

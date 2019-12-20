@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Koriym\AppStateDiagram\Exception;
 
-class InvalidHrefException extends \RuntimeException
+use RuntimeException;
+
+class InvalidHrefException extends RuntimeException
 {
 }

@@ -6,6 +6,7 @@ namespace Koriym\AppStateDiagram;
 
 use Koriym\AppStateDiagram\Exception\RtMissingException;
 use Koriym\AppStateDiagram\Exception\TypeSemanticException;
+use stdClass;
 
 final class TransDescriptor implements DescriptorInterface
 {
@@ -29,7 +30,7 @@ final class TransDescriptor implements DescriptorInterface
      */
     public $parent;
 
-    public function __construct(\stdClass $descriptor, SemanticDescriptor $parent)
+    public function __construct(stdClass $descriptor, SemanticDescriptor $parent)
     {
         if ($descriptor->type === 'semantic') {
             throw new TypeSemanticException($descriptor->id);

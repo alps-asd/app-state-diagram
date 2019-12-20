@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Koriym\AppStateDiagram\Exception;
 
-class TypeSemanticException extends \RuntimeException
+use RuntimeException;
+
+class TypeSemanticException extends RuntimeException
 {
 }
