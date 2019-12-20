@@ -27,6 +27,11 @@ final class AlpsScanner
      */
     private $scanner;
 
+    /**
+     * @var string
+     */
+    private $dir;
+
     public function __construct()
     {
         $this->scanner = new DescriptorScanner;
