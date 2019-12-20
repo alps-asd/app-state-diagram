@@ -26,7 +26,7 @@ try {
     exit(1);
 }
 
-$outputfile = str_replace('.json', '.dot', $profile);
-file_put_contents($outputfile, $dot);
+$file = str_replace('.json', '.dot', $profile);
+file_put_contents($file, $dot);
 
-echo "{$outputfile} is generated." . PHP_EOL;
+echo "{$file} is generated." . PHP_EOL;
