@@ -40,13 +40,13 @@ final class DescriptorScanner
             $descriptors[$descriptor->id] = new TransDescriptor($descriptor, new SemanticDescriptor($nullParentSemantic));
         }
         if (isset($descriptor->descriptor)) {
-            $descriptors = $this->sacnInlineDescriptor($descriptor, $descriptors);
+            $descriptors = $this->scanInlineDescriptor($descriptor, $descriptors);
         }
 
         return $descriptors;
     }
 
-    private function sacnInlineDescriptor(\stdClass $descriptor, array $descriptors) : array
+    private function scanInlineDescriptor(\stdClass $descriptor, array $descriptors) : array
     {
         $inLineSemantics = $this->__invoke($descriptor->descriptor);
         if ($inLineSemantics !== []) {

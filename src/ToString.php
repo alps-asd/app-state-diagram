@@ -40,8 +40,8 @@ final class ToString
 
     private function getNode(DescriptorInterface $descriptor) : string
     {
-        $hasDesciptor = $descriptor instanceof SemanticDescriptor && isset($descriptor->descriptor);
-        if (! $hasDesciptor) {
+        $hasDescriptor = $descriptor instanceof SemanticDescriptor && isset($descriptor->descriptor);
+        if (! $hasDescriptor) {
             return '';
         }
         assert($descriptor instanceof SemanticDescriptor);
@@ -55,7 +55,7 @@ final class ToString
             $inlineDescriptors .= sprintf('(%s)<br />', $prop);
         }
 
-        return $this->tempalte($descriptor->id, $inlineDescriptors);
+        return $this->template($descriptor->id, $inlineDescriptors);
     }
 
     private function getNodeProps(SemanticDescriptor $descriptor, array $props) : array
@@ -93,7 +93,7 @@ final class ToString
         return $descriptor instanceof SemanticDescriptor;
     }
 
-    private function tempalte(string $stateName, string $props) : string
+    private function template(string $stateName, string $props) : string
     {
         $template = <<<'EOT'
 %s [style=solid, margin=0.02, label=<<table cellspacing="0" cellpadding="5" cellborder="1" border="0"><tr>

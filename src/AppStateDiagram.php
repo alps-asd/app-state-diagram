@@ -74,7 +74,7 @@ final class AppStateDiagram
     {
         $isExternal = $descriptor->href[0] !== '#';
         if ($isExternal) {
-            $this->scanDescriptor($this->getExternDescriptor($descriptor->href));
+            $this->scanDescriptor($this->getExternalDescriptor($descriptor->href));
 
             return;
         }
@@ -85,7 +85,7 @@ final class AppStateDiagram
         foreach ($descriptors as $descriptor) {
             $isExternal = isset($descriptor->href) && $descriptor->href[0] !== '#';
             if ($isExternal) {
-                $descriptor = $this->getExternDescriptor($descriptor->href);
+                $descriptor = $this->getExternalDescriptor($descriptor->href);
             }
             $isInternal = isset($descriptor->href) && $descriptor->href[0] === '#';
             if ($isInternal) {
@@ -105,15 +105,15 @@ final class AppStateDiagram
     private function addInternalLink(SemanticDescriptor $semantic, string $href) : void
     {
         [,$descriptorId] = explode('#', $href);
-        $isTransDescrpitor = isset($this->descriptors[$descriptorId]) && $this->descriptors[$descriptorId] instanceof TransDescriptor;
-        if ($isTransDescrpitor) {
+        $isTransDescriptor = isset($this->descriptors[$descriptorId]) && $this->descriptors[$descriptorId] instanceof TransDescriptor;
+        if ($isTransDescriptor) {
             $transSemantic = $this->descriptors[$descriptorId];
             assert($transSemantic instanceof TransDescriptor);
             $this->addLink(new Link($semantic, $transSemantic));
         }
     }
 
-    private function getExternDescriptor(string $href) : \stdClass
+    private function getExternalDescriptor(string $href) : \stdClass
     {
         [$file, $descriptorId] = explode('#', $href);
         $file = "{$this->dir}/{$file}";
