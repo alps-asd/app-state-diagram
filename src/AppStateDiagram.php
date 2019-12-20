@@ -146,7 +146,7 @@ final class AppStateDiagram
         if (! file_exists($alpsFile)) {
             throw new AlpsFileNotReadableException($alpsFile);
         }
-        $alps = json_decode((string) file_get_contents($alpsFile));
+        $alps = json_decode((string) file_get_contents($alpsFile), false);
         $jsonError = json_last_error();
         if ($jsonError) {
             throw new InvalidJsonException($alpsFile);
