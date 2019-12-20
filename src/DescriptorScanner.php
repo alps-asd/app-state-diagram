@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Koriym\AppStateDiagram;
 
+use Koriym\AppStateDiagram\Exception\InvalidDescriptorException;
+
 final class DescriptorScanner
 {
     public function __invoke(array $descriptorsArray) : array
@@ -18,6 +20,11 @@ final class DescriptorScanner
 
     private function scan(\stdClass $descriptor, array $descriptors) : array
     {
+        $hasNoId = ! isset($descriptor->href) && ! isset($descriptor->id);
+        $hasNoType = ! isset($descriptor->href) && ! isset($descriptor->type);
+        if ($hasNoId || $hasNoType) {
+            throw new InvalidDescriptorException((string) json_encode($descriptor));
+        }
         if (isset($descriptor->type) && $descriptor->type === 'semantic') {
             assert(isset($descriptor->id));
             $descriptors[$descriptor->id] = new SemanticDescriptor($descriptor);

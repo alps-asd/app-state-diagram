@@ -34,6 +34,9 @@ final class TransDescriptor implements DescriptorInterface
         if ($descriptor->type === 'semantic') {
             throw new TypeSemanticException($descriptor->id);
         }
+        if (! isset($descriptor->rt)) {
+            throw new RtMissingException($descriptor->id);
+        }
         $this->id = $descriptor->id;
         $this->type = $descriptor->type;
         $pos = strpos($descriptor->rt, '#');
