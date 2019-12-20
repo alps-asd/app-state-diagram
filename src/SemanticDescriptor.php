@@ -24,6 +24,6 @@ final class SemanticDescriptor implements DescriptorInterface
             throw new InvalidSemanticsException();
         }
         $this->id = $descriptor->id;
-        $this->descriptor = isset($descriptor->descriptor) ? $descriptor->descriptor : null;
+        $this->descriptor = $descriptor->descriptor ?? null;
     }
 }
