@@ -30,6 +30,7 @@ digraph application_state_diagram {
 
 %s}
 EOT;
+
         return sprintf($template, $nodes, $graph);
     }
 
