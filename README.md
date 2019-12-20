@@ -2,7 +2,11 @@
 
 Generates an application state diagram dot file from [ALPS](http://alps.io/) document.
 
+## Usage
+
 ```
+composer require koriym/app-state-diagram
+
 ./vendor/bin/asd demo/profile.json 
 dot -Tpng demo/profile.dot -o demo/profile.png 
 ```
