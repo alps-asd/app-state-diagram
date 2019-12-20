@@ -13,7 +13,7 @@ composer require koriym/app-state-diagram
 dot -Tpng demo/profile.dot -o demo/profile.png 
 ```
 
-### Output
+## Output
 
 Application State Diagram
 
