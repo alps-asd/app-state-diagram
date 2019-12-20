@@ -1,0 +1,100 @@
+{
+  "$schema": "https://raw.githubusercontent.com/koriym/spec/master/schemas/alps.json",
+  "alps": {
+    "doc": {
+      "value": "ALPS profile example"
+    },
+    "descriptor": [
+      {
+        "id": "Index",
+        "type": "semantic",
+        "doc": {
+          "value": "Index Page"
+        },
+        "descriptor": [
+          {
+            "id": "blog",
+            "type": "safe",
+            "rt": "#Blog"
+          }
+        ]
+      },
+      {
+        "id": "About",
+        "type": "semantic"
+      },
+      {
+        "id": "Blog",
+        "type": "semantic",
+        "def": "https://schema.org/Blog",
+        "doc": {
+          "value": "Blog entry list page"
+        },
+        "descriptor": [
+          {
+            "href": "#BlogPosting"
+          },
+          {
+            "id": "blogPosting",
+            "type": "safe",
+            "rt": "#BlogPosting",
+            "descriptor": [
+              {"href": "#id"}
+            ]
+          },
+          {
+            "id": "item",
+            "type": "safe",
+            "rt": "#BlogPosting"
+          },
+          {
+            "id": "post",
+            "type": "unsafe",
+            "def": "http://activitystrea.ms/specs/json/1.0/#post-verb",
+            "descriptor": [
+              {"href": "#BlogPosting"}
+            ],
+            "rt": "#Blog"
+          },
+          {
+            "id": "about",
+            "type": "safe",
+            "rt": "#About"
+          }
+        ]
+      },
+      {
+        "id": "BlogPosting",
+        "type": "semantic",
+        "def": "https://schema.org/BlogPosting",
+        "doc": {
+          "value": "Blog entry item page"
+        },
+        "descriptor": [
+          {
+            "id": "id",
+            "type": "semantic",
+            "doc": {
+              "value": "Blog entry id"
+            }
+          },
+          {
+            "id": "articleBody",
+            "type": "semantic",
+            "def": "https://schema.org/articleBody"
+          },
+          {
+            "id": "dateCreated",
+            "type": "semantic",
+            "def": "https://schema.org/BlogPosting#dateCreated"
+          },
+          {
+            "id": "collection",
+            "type": "safe",
+            "rt": "#Blog"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -32,6 +32,9 @@
         "/bin/asd"
     ],
     "scripts": {
+        "asd:example" : [
+            "bin/asd demo/profile.example.json && dot -Tpng ./demo/profile.example.dot -o ./demo/profile.png"
+        ],
         "test": [
             "vendor/bin/phpunit"
         ],
