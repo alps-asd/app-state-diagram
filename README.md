@@ -1,7 +1,5 @@
 # app-state-diagram
 
-An Application State Diagram Generator
-
 Generates an application state diagram dot file from [ALPS](http://alps.io/) document.
 
 ## Usage
@@ -18,3 +16,20 @@ dot -Tpng demo/profile.dot -o demo/profile.png
 Application State Diagram
 
 <img src="demo/profile.png">
+
+## Requirement
+
+Converting `.dot` int `.png` file requires a working `graphviz` installation.
+
+On Debian or Ubuntu, one may do:
+
+```
+sudo apt install graphviz
+```
+
+On OSX, one may do after installing Homebrew:
+
+```
+sudo brew install graphviz
+```
+
