@@ -1,4 +1,6 @@
-# Application State Diagram Generator
+# app-state-diagram
+
+An Application State Diagram Generator
 
 Generates an application state diagram dot file from [ALPS](http://alps.io/) document.
 
@@ -11,6 +13,8 @@ composer require koriym/app-state-diagram
 dot -Tpng demo/profile.dot -o demo/profile.png 
 ```
 
-### Application State Diagram
+### Output
+
+Application State Diagram
 
 <img src="demo/profile.png">
