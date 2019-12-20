@@ -6,11 +6,10 @@ digraph application_state_diagram {
     Index->Blog [label = "blog (safe)"];
     Blog->BlogPosting [label = "blogPosting (safe), item (safe)"];
     Blog->Blog [label = "post (unsafe)"];
-    Foo->Bar [label = "bar (safe), bar (safe), bar (safe)"];
-    Foo->Index [label = "index (safe), index (safe), index (safe)"];
+    Foo->Bar [label = "bar (safe)"];
+    Foo->Index [label = "index (safe)"];
     Blog->Baz [label = "baz (safe)"];
     Blog->About [label = "about (safe)"];
     BlogPosting->Blog [label = "collection (safe)"];
     BlogPosting->About [label = "about (safe)"];
-
 }

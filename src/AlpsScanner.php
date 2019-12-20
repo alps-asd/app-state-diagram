@@ -18,7 +18,7 @@ final class AlpsScanner
     public $descriptors = [];
 
     /**
-     * @var array
+     * @var Link[]
      */
     public $links = [];
 
@@ -32,7 +32,7 @@ final class AlpsScanner
         $this->scanner = new DescriptorScanner;
     }
 
-    public function __invoke(string $alpsFile)
+    public function __invoke(string $alpsFile) : void
     {
         $this->dir = dirname($alpsFile);
         $this->scan($alpsFile);
@@ -125,7 +125,7 @@ final class AlpsScanner
     private function addLink(Link $link) : void
     {
         $fromTo = sprintf('%s->%s', $link->from, $link->to);
-        $this->links[$fromTo] = isset($this->links[$fromTo]) ? $this->links[$fromTo] . ', ' . $link->label : $link->label;
+        $this->links[$fromTo] = isset($this->links[$fromTo]) ? $this->links[$fromTo]->add($link) : $link;
     }
 
     private function scanAlpsFile(string $alpsFile) : array

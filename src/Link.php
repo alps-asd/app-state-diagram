@@ -21,10 +21,32 @@ final class Link
      */
     public $label;
 
+    /**
+     * @var array
+     */
+    private $labels = [];
+
     public function __construct(SemanticDescriptor $semantic, TransDescriptor $trans)
     {
         $this->from = $semantic->id;
         $this->to = $trans->rt;
         $this->label = sprintf('%s (%s)', $trans->id, $trans->type);
+        $this->labels[] = $this->label;
+    }
+
+    public function __toString()
+    {
+        return $this->label;
+    }
+
+    public function add(self $link) : self
+    {
+        if (in_array($link->label, $this->labels, true)) {
+            return $this;
+        }
+
+        $this->label .= ", {$link->label}";
+
+        return $this;
     }
 }
