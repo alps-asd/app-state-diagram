@@ -7,13 +7,13 @@ namespace Koriym\AppStateDiagram;
 use Koriym\AppStateDiagram\Exception\InvalidHrefException;
 use PHPUnit\Framework\TestCase;
 
-class ToStringTest extends TestCase
+class AsdRendererTest extends TestCase
 {
     private $toString;
 
     protected function setUp() : void
     {
-        $this->toString = new ToString;
+        $this->toString = new AsdRenderer;
     }
 
     public function test__invoke() : void

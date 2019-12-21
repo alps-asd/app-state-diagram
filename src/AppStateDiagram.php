@@ -11,6 +11,6 @@ final class AppStateDiagram
         $alpsScanner = new AlpsScanner;
         $alpsScanner($alpsFile);
 
-        return (new ToString)($alpsScanner->links, $alpsScanner->descriptors);
+        return (new AsdRenderer)($alpsScanner->links, $alpsScanner->descriptors);
     }
 }

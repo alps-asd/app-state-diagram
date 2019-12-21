@@ -7,7 +7,7 @@ namespace Koriym\AppStateDiagram;
 use Koriym\AppStateDiagram\Exception\InvalidHrefException;
 use stdClass;
 
-final class ToString
+final class AsdRenderer
 {
     /**
      * @var DescriptorInterface[]
