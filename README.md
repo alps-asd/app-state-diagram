@@ -1,6 +1,6 @@
 # app-state-diagram
 
-Generates an application state diagram image and vocabulary list file from [ALPS](http://alps.io/) document.
+Generates an application state diagram image and vocabulary (semantic descriptors) file from [ALPS](http://alps.io/) document.
 
 ## Usage
 
