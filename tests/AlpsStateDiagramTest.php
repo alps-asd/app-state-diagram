@@ -17,7 +17,7 @@ class AlpsStateDiagramTest extends TestCase
 
     protected function setUp() : void
     {
-        $this->alpsStateDiagram = new AppStateDiagram;
+        $this->alpsStateDiagram = new AppStateDiagram(__DIR__ . '/Fake/alps.json');
     }
 
     public function testIsInstanceOfAlpsStateDiagram() : void
@@ -29,12 +29,12 @@ class AlpsStateDiagramTest extends TestCase
     public function testFileNotReadable() : void
     {
         $this->expectException(AlpsFileNotReadableException::class);
-        ($this->alpsStateDiagram)('__INVALID__');
+        new AppStateDiagram('__INVALID__');
     }
 
     public function test__invoke() : string
     {
-        $dot = ($this->alpsStateDiagram)(__DIR__ . '/Fake/alps.json');
+        $dot = ($this->alpsStateDiagram)();
         $this->assertStringContainsString('Index->Blog [label = "blog (safe)"];', $dot);
         $this->assertStringContainsString('Blog->BlogPosting [label = "blogPosting (safe), item (safe)"];', $dot);
         $this->assertStringContainsString('Blog->Blog [label = "post (unsafe)"];', $dot);
@@ -57,13 +57,13 @@ class AlpsStateDiagramTest extends TestCase
     public function testInvalidExternalFile() : void
     {
         $this->expectException(AlpsFileNotReadableException::class);
-        ($this->alpsStateDiagram)(__DIR__ . '/Fake/alps.invalid_href_file.json');
+        new AppStateDiagram(__DIR__ . '/Fake/alps.invalid_href_file.json');
     }
 
     public function testInvalidExternalDescriptor() : void
     {
         $this->expectException(DescriptorNotFoundException::class);
-        ($this->alpsStateDiagram)(__DIR__ . '/Fake/alps.invalid_href_desc.json');
+        new AppStateDiagram(__DIR__ . '/Fake/alps.invalid_href_desc.json');
     }
 
     /**

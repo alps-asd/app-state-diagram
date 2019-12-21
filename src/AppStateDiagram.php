@@ -6,11 +6,19 @@ namespace Koriym\AppStateDiagram;
 
 final class AppStateDiagram
 {
-    public function __invoke(string $alpsFile) : string
-    {
-        $alpsScanner = new AlpsScanner;
-        $alpsScanner($alpsFile);
+    /**
+     * @var AlpsScanner
+     */
+    private $alps;
 
-        return (new AsdRenderer)($alpsScanner->links, $alpsScanner->descriptors);
+    public function __construct(string $alpsFile)
+    {
+        $this->alps = new AlpsScanner;
+        ($this->alps)($alpsFile);
+    }
+
+    public function __invoke() : string
+    {
+        return (new AsdRenderer)($this->alps->links, $this->alps->descriptors);
     }
 }
