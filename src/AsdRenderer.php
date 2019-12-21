@@ -67,7 +67,6 @@ EOT;
     private function getNodeProps(SemanticDescriptor $descriptor, array $props) : array
     {
         assert(isset($descriptor->descriptor));
-        assert(is_iterable($descriptor->descriptor));
         foreach ($descriptor->descriptor as $item) {
             if ($this->isSemanticHref($item)) {
                 $props[] = substr($item->href, (int) strpos($item->href, '#') + 1);

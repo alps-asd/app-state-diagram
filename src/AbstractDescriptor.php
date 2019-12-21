@@ -25,7 +25,7 @@ abstract class AbstractDescriptor
     public $doc;
 
     /**
-     * @var null|stdClass
+     * @var array
      */
     public $descriptor;
 
@@ -37,6 +37,6 @@ abstract class AbstractDescriptor
         $this->id = $descriptor->id;
         $this->def = isset($descriptor->def) ? $descriptor->def : null;
         $this->doc = isset($descriptor->doc) ? $descriptor->doc : null;
-        $this->descriptor = isset($descriptor->descriptor) ? $descriptor->descriptor : null;
+        $this->descriptor = isset($descriptor->descriptor) ? $descriptor->descriptor : [];
     }
 }
