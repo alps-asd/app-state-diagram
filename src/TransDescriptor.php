@@ -26,9 +26,19 @@ final class TransDescriptor implements DescriptorInterface
     public $rt;
 
     /**
+     * @var null|string
+     */
+    public $def;
+
+    /**
      * @var SemanticDescriptor
      */
     public $parent;
+
+    /**
+     * @var string
+     */
+    public $doc;
 
     public function __construct(stdClass $descriptor, SemanticDescriptor $parent)
     {
@@ -46,5 +56,7 @@ final class TransDescriptor implements DescriptorInterface
         }
         $this->rt = substr($descriptor->rt, $pos + 1);
         $this->parent = $parent;
+        $this->def = isset($descriptor->def) ? $descriptor->def : null;
+        $this->doc = isset($descriptor->doc) ? $descriptor->doc : '';
     }
 }

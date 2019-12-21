@@ -89,6 +89,7 @@ final class AlpsScanner
             $isTransDescriptor = isset($descriptor->type) && in_array($descriptor->type, ['safe', 'unsafe', 'idempotent'], true);
             if ($isTransDescriptor) {
                 $this->addLink(new Link($semantic, new TransDescriptor($descriptor, $semantic)));
+                $this->descriptors[$descriptor->id] = new TransDescriptor($descriptor, $semantic);
 
                 continue;
             }

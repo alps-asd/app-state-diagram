@@ -18,6 +18,16 @@ final class SemanticDescriptor implements DescriptorInterface
      */
     public $descriptor;
 
+    /**
+     * @var null|string
+     */
+    public $def;
+
+    /**
+     * @var string
+     */
+    public $doc;
+
     public function __construct(object $descriptor)
     {
         if (! isset($descriptor->type, $descriptor->id) || $descriptor->type !== 'semantic') {
@@ -25,5 +35,7 @@ final class SemanticDescriptor implements DescriptorInterface
         }
         $this->id = $descriptor->id;
         $this->descriptor = isset($descriptor->descriptor) ? $descriptor->descriptor : null;
+        $this->def = isset($descriptor->def) ? $descriptor->def : null;
+        $this->doc = isset($descriptor->doc) ? $descriptor->doc : '';
     }
 }
