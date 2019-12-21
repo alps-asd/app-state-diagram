@@ -7,13 +7,13 @@ namespace Koriym\AppStateDiagram;
 final class AppStateDiagram
 {
     /**
-     * @var AlpsScanner
+     * @var AlpsProfile
      */
     private $alps;
 
     public function __construct(string $alpsFile)
     {
-        $this->alps = new AlpsScanner($alpsFile);
+        $this->alps = new AlpsProfile($alpsFile);
     }
 
     public function __invoke() : string

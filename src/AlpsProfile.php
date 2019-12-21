@@ -10,7 +10,7 @@ use Koriym\AppStateDiagram\Exception\InvalidAlpsException;
 use Koriym\AppStateDiagram\Exception\InvalidJsonException;
 use stdClass;
 
-final class AlpsScanner
+final class AlpsProfile
 {
     /**
      * @var DescriptorInterface[]

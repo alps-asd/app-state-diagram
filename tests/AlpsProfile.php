@@ -6,16 +6,16 @@ namespace Koriym\AppStateDiagram;
 
 use PHPUnit\Framework\TestCase;
 
-class AlpsScannerTest extends TestCase
+class AlpsProfile extends TestCase
 {
     /**
-     * @var AlpsScanner
+     * @var AlpsProfile
      */
     protected $alpsScanner;
 
     protected function setUp() : void
     {
-        $this->alpsScanner = new AlpsScanner(__DIR__ . '/Fake/alps.json');
+        $this->alpsScanner = new AlpsProfile(__DIR__ . '/Fake/alps.json');
     }
 
     public function test() : void

@@ -10,7 +10,7 @@ class VocabularyTest extends TestCase
 {
     public function test__invoke() : void
     {
-        $scanner = new AlpsScanner(__DIR__ . '/Fake/alps.json');
+        $scanner = new AlpsProfile(__DIR__ . '/Fake/alps.json');
         $md = (new Vocabulary)($scanner->descriptors);
         file_put_contents(__DIR__ . '/vocabulary.md', $md);
         $this->assertStringContainsString('* `Index`: Index Page', $md);
