@@ -52,7 +52,7 @@ EOT;
         foreach ($semantics as $semantic) {
             if ($semantic->def) {
                 $doc = isset($semantic->doc->value) ? $semantic->doc->value : '';
-                $lines[] .= sprintf(' * `%s`: [%s](%s) %s', $semantic->id, $semantic->def, $semantic->def, $doc) . PHP_EOL;
+                $lines[] = sprintf(' * `%s`: [%s](%s) %s', $semantic->id, $semantic->def, $semantic->def, $doc) . PHP_EOL;
 
                 continue;
             }
