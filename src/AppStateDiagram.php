@@ -16,7 +16,7 @@ final class AppStateDiagram
         $this->alps = new AlpsProfile($alpsFile);
     }
 
-    public function __invoke() : string
+    public function getDot() : string
     {
         return (new AsdRenderer)($this->alps->links, $this->alps->descriptors);
     }

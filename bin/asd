@@ -19,7 +19,8 @@ if ($argc !== 2) {
 }
 [, $profile] = $argv;
 try {
-    $dot = (new AppStateDiagram)($profile);
+    $asd = new AppStateDiagram($profile);
+    $dot = $asd->getDot();
 } catch (\Exception $e) {
     $path = explode('\\', get_class($e));
     echo sprintf("%s: %s\n", end($path), $e->getMessage());
