@@ -27,7 +27,6 @@ digraph application_state_diagram {
     node [shape = box, style = "bold,filled"];
 
 %s
-
 %s}
 EOT;
 
@@ -102,6 +101,7 @@ EOT;
     {
         $template = <<<'EOT'
     %s [style=solid, margin=0.02, label=<<table cellspacing="0" cellpadding="5" cellborder="1" border="0"><tr><td bgcolor="#dddddd">%s<br />%s</td></tr></table>>,shape=box]
+
 EOT;
 
         return sprintf($template, $stateName, $stateName, $props);
