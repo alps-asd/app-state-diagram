@@ -8,7 +8,7 @@
  * `Index`: Index Page
  * `articleBody`: [https://schema.org/articleBody](https://schema.org/articleBody) 
  * `dateCreated`: [https://schema.org/BlogPosting#dateCreated](https://schema.org/BlogPosting#dateCreated) 
- * `id`: Blog entry id
+ * `id`: [http://schema.org/identifier](http://schema.org/identifier) 
 
 
 ## Links

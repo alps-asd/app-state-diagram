@@ -73,10 +73,7 @@
         "descriptor": [
           {
             "id": "id",
-            "type": "semantic",
-            "doc": {
-              "value": "Blog entry id"
-            }
+            "href": "#id"
           },
           {
             "id": "articleBody",
@@ -94,6 +91,11 @@
             "rt": "#Blog"
           }
         ]
+      },
+      {
+        "id": "id",
+        "type": "semantic",
+        "def": "http://schema.org/identifier"
       }
     ]
   }
