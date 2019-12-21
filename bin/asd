@@ -30,8 +30,8 @@ try {
 
 $file = str_replace('.json', '.dot', $profile);
 file_put_contents($file, $dot);
-echo "{$file} is generated." . PHP_EOL;
+echo "Diagram: {$file} is generated." . PHP_EOL;
 
 $mdFile = str_replace('.json', '.md', $profile);
 file_put_contents($mdFile, $vocabulary->index);
-echo "{$mdFile} is generated." . PHP_EOL;
+echo "Vocabulary: {$mdFile} is generated." . PHP_EOL;
