@@ -7,10 +7,10 @@ namespace Koriym\AppStateDiagram;
 use Koriym\AppStateDiagram\Exception\InvalidHrefException;
 use stdClass;
 
-final class ToString
+final class AsdRenderer
 {
     /**
-     * @var DescriptorInterface[]
+     * @var AbstractDescriptor[]
      */
     private $descriptors = [];
 
@@ -30,6 +30,7 @@ digraph application_state_diagram {
 
 %s}
 EOT;
+
         return sprintf($template, $nodes, $graph);
     }
 
@@ -43,7 +44,7 @@ EOT;
         return $dot;
     }
 
-    private function getNode(DescriptorInterface $descriptor) : string
+    private function getNode(AbstractDescriptor $descriptor) : string
     {
         $hasDescriptor = $descriptor instanceof SemanticDescriptor && isset($descriptor->descriptor);
         if (! $hasDescriptor) {
@@ -66,7 +67,6 @@ EOT;
     private function getNodeProps(SemanticDescriptor $descriptor, array $props) : array
     {
         assert(isset($descriptor->descriptor));
-        assert(is_iterable($descriptor->descriptor));
         foreach ($descriptor->descriptor as $item) {
             if ($this->isSemanticHref($item)) {
                 $props[] = substr($item->href, (int) strpos($item->href, '#') + 1);

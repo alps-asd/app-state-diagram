@@ -35,6 +35,10 @@
             "id": "blogPosting",
             "type": "safe",
             "rt": "#BlogPosting",
+            "def": "https://schema.org/BlogPosting",
+            "doc": {
+              "value": "ブログ個別ページへ"
+            },
             "descriptor": [
               {"href": "#id"}
             ]

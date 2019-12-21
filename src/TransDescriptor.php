@@ -8,13 +8,8 @@ use Koriym\AppStateDiagram\Exception\RtMissingException;
 use Koriym\AppStateDiagram\Exception\TypeSemanticException;
 use stdClass;
 
-final class TransDescriptor implements DescriptorInterface
+final class TransDescriptor extends AbstractDescriptor
 {
-    /**
-     * @var string
-     */
-    public $id;
-
     /**
      * @var string
      */
@@ -32,14 +27,14 @@ final class TransDescriptor implements DescriptorInterface
 
     public function __construct(stdClass $descriptor, SemanticDescriptor $parent)
     {
+        parent::__construct($descriptor);
+        $this->type = $descriptor->type;
         if ($descriptor->type === 'semantic') {
             throw new TypeSemanticException($descriptor->id);
         }
         if (! isset($descriptor->rt)) {
             throw new RtMissingException($descriptor->id);
         }
-        $this->id = $descriptor->id;
-        $this->type = $descriptor->type;
         $pos = strpos($descriptor->rt, '#');
         if ($pos === false) {
             throw new RtMissingException($descriptor->id);
