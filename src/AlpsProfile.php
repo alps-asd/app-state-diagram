@@ -13,7 +13,7 @@ use stdClass;
 final class AlpsProfile
 {
     /**
-     * @var DescriptorInterface[]
+     * @var AbstractDescriptor[]
      */
     public $descriptors = [];
 

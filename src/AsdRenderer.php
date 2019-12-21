@@ -10,7 +10,7 @@ use stdClass;
 final class AsdRenderer
 {
     /**
-     * @var DescriptorInterface[]
+     * @var AbstractDescriptor[]
      */
     private $descriptors = [];
 
@@ -44,7 +44,7 @@ EOT;
         return $dot;
     }
 
-    private function getNode(DescriptorInterface $descriptor) : string
+    private function getNode(AbstractDescriptor $descriptor) : string
     {
         $hasDescriptor = $descriptor instanceof SemanticDescriptor && isset($descriptor->descriptor);
         if (! $hasDescriptor) {

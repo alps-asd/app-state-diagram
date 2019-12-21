@@ -16,7 +16,7 @@ final class Vocabulary
     public $index;
 
     /**
-     * @param DescriptorInterface[] $descriptors
+     * @param AbstractDescriptor[] $descriptors
      */
     public function __construct(array $descriptors)
     {
@@ -63,10 +63,10 @@ EOT;
         return implode($lines);
     }
 
-    private function getName(DescriptorInterface $semantic) : string
+    private function getName(AbstractDescriptor $semantic) : string
     {
         $desc = [];
-        if (isset($semantic, $semantic->doc->value)) {
+        if (isset($semantic->doc->value)) {
             $desc[] = $semantic->doc->value;
         }
 
