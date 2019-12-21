@@ -13,8 +13,7 @@ final class AppStateDiagram
 
     public function __construct(string $alpsFile)
     {
-        $this->alps = new AlpsScanner;
-        ($this->alps)($alpsFile);
+        $this->alps = new AlpsScanner($alpsFile);
     }
 
     public function __invoke() : string

@@ -32,13 +32,9 @@ final class AlpsScanner
      */
     private $dir = '';
 
-    public function __construct()
+    public function __construct(string $alpsFile)
     {
         $this->scanner = new DescriptorScanner;
-    }
-
-    public function __invoke(string $alpsFile) : void
-    {
         $this->dir = dirname($alpsFile);
         $this->scan($alpsFile);
     }

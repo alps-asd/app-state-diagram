@@ -15,12 +15,11 @@ class AlpsScannerTest extends TestCase
 
     protected function setUp() : void
     {
-        $this->alpsScanner = new AlpsScanner;
+        $this->alpsScanner = new AlpsScanner(__DIR__ . '/Fake/alps.json');
     }
 
     public function test() : void
     {
-        ($this->alpsScanner)(__DIR__ . '/Fake/alps.json');
         $this->assertSame('bar (safe)', (string) $this->alpsScanner->links['Foo->Bar']);
     }
 }
