@@ -1,6 +1,6 @@
 # app-state-diagram
 
-Generates an application state diagram image and vocabulary (semantic descriptors) file from [ALPS](http://alps.io/) document.
+Generates an application state diagram image and vocabulary file from [ALPS](http://alps.io/) document.
 
 ## Usage
 
@@ -17,7 +17,7 @@ dot -Tpng demo/profile.dot -o demo/profile.png
 
 <img src="demo/profile.png">
 
-* Vocabulary
+* Vocabulary as semantic descriptors
 
  [profile.md](demo/profile.example.md)
 
