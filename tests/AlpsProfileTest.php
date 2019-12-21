@@ -6,20 +6,20 @@ namespace Koriym\AppStateDiagram;
 
 use PHPUnit\Framework\TestCase;
 
-class AlpsProfile extends TestCase
+class AlpsProfileTest extends TestCase
 {
     /**
      * @var AlpsProfile
      */
-    protected $alpsScanner;
+    protected $profile;
 
     protected function setUp() : void
     {
-        $this->alpsScanner = new self(__DIR__ . '/Fake/alps.json');
+        $this->profile = new AlpsProfile(__DIR__ . '/Fake/alps.json');
     }
 
     public function test() : void
     {
-        $this->assertSame('bar (safe)', (string) $this->alpsScanner->links['Foo->Bar']);
+        $this->assertSame('bar (safe)', (string) $this->profile->links['Foo->Bar']);
     }
 }
