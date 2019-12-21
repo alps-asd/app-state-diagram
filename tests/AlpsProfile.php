@@ -15,7 +15,7 @@ class AlpsProfile extends TestCase
 
     protected function setUp() : void
     {
-        $this->alpsScanner = new AlpsProfile(__DIR__ . '/Fake/alps.json');
+        $this->alpsScanner = new self(__DIR__ . '/Fake/alps.json');
     }
 
     public function test() : void

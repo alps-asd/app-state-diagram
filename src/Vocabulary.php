@@ -11,9 +11,14 @@ use function sprintf;
 final class Vocabulary
 {
     /**
+     * @var string
+     */
+    public $index;
+
+    /**
      * @param DescriptorInterface[] $descriptors
      */
-    public function __invoke(array $descriptors) : string
+    public function __construct(array $descriptors)
     {
         ksort($descriptors);
         $semantics = $links = [];
@@ -28,7 +33,7 @@ final class Vocabulary
         $semantics = $this->semantics($semantics);
         $links = $this->semantics($links);
 
-        return <<<EOT
+        $this->index = <<<EOT
 # Vocabulary
 
 ## Semantic

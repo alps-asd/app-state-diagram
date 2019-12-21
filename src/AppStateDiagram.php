@@ -20,4 +20,9 @@ final class AppStateDiagram
     {
         return (new AsdRenderer)($this->alps->links, $this->alps->descriptors);
     }
+
+    public function getVocabulary() : Vocabulary
+    {
+        return new Vocabulary($this->alps->descriptors);
+    }
 }
