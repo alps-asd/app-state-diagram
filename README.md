@@ -7,15 +7,15 @@ Generates an application state diagram image and vocabulary file from [ALPS](htt
 ```
 composer require koriym/app-state-diagram
 
-./vendor/bin/asd demo/profile.json 
-dot -Tpng demo/profile.dot -o demo/profile.png 
+./vendor/bin/asd demo/profile.example.json 
+dot -Tsvg demo/profile.example.dot -o demo/profile.example.svg 
 ```
 
 ## Output
 
 * Application State Diagram
 
-<img src="demo/profile.png">
+<img src="demo/profile.example.svg">
 
 * Vocabulary as semantic descriptors
 
