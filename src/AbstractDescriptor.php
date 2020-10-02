@@ -35,7 +35,7 @@ abstract class AbstractDescriptor
             throw new InvalidSemanticsException((string) json_encode($descriptor));
         }
         $this->id = $descriptor->id;
-        $this->def = isset($descriptor->def) ? $descriptor->def : null;
+        $this->def = $descriptor->def ?? $descriptor->ref ?? $descriptor->src ?? null;
         $this->doc = isset($descriptor->doc) ? $descriptor->doc : null;
         $this->descriptor = isset($descriptor->descriptor) ? $descriptor->descriptor : [];
     }
