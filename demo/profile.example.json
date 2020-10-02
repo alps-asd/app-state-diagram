@@ -43,11 +43,6 @@
             ]
           },
           {
-            "id": "item",
-            "type": "safe",
-            "rt": "#BlogPosting"
-          },
-          {
             "id": "post",
             "type": "unsafe",
             "def": "http://activitystrea.ms/specs/json/1.0/#post-verb",
@@ -84,11 +79,6 @@
             "id": "dateCreated",
             "type": "semantic",
             "def": "https://schema.org/BlogPosting#dateCreated"
-          },
-          {
-            "id": "collection",
-            "type": "safe",
-            "rt": "#Blog"
           }
         ]
       },

@@ -16,6 +16,4 @@
  * `about`: 
  * `blog`: 
  * `blogPosting`: 
- * `collection`: 
- * `item`: 
  * `post`: [http://activitystrea.ms/specs/json/1.0/#post-verb](http://activitystrea.ms/specs/json/1.0/#post-verb) 
