@@ -38,6 +38,7 @@
             "id": "blogPosting",
             "type": "safe",
             "rt": "#BlogPosting",
+            "rel": "item",
             "descriptor": [
               {"href": "#id"}
             ]
@@ -79,6 +80,12 @@
             "id": "dateCreated",
             "type": "semantic",
             "def": "https://schema.org/BlogPosting#dateCreated"
+          },
+          {
+            "id": "blog",
+            "type": "safe",
+            "rt": "#Blog",
+            "rel": "collection"
           }
         ]
       },
