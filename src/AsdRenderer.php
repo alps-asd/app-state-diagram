@@ -7,21 +7,31 @@ namespace Koriym\AppStateDiagram;
 use Koriym\AppStateDiagram\Exception\InvalidHrefException;
 use stdClass;
 
+use function assert;
+use function sprintf;
+use function strpos;
+use function substr;
+
+use const PHP_EOL;
+
 final class AsdRenderer
 {
-    /**
-     * @var AbstractDescriptor[]
-     */
+    /** @var AbstractDescriptor[] */
     private $descriptors = [];
 
-    public function __invoke(iterable $links, array $descriptors) : string
+    /**
+     * @param array<string, string|Link> $links
+     * @param array<AbstractDescriptor>  $descriptors
+     */
+    public function __invoke(array $links, array $descriptors): string
     {
         $this->descriptors = $descriptors;
         $nodes = $this->getNodes();
         $graph = '';
         foreach ($links as $link => $label) {
-            $graph .= sprintf('    %s [label = "%s"];', $link, $label) . PHP_EOL;
+            $graph .= sprintf('    %s [label = "%s"];', $link, (string) $label) . PHP_EOL;
         }
+
         $template = <<<'EOT'
 digraph application_state_diagram {
     node [shape = box, style = "bold,filled"];
@@ -33,7 +43,7 @@ EOT;
         return sprintf($template, $nodes, $graph);
     }
 
-    public function getNodes() : string
+    public function getNodes(): string
     {
         $dot = '';
         foreach ($this->descriptors as $descriptor) {
@@ -43,18 +53,20 @@ EOT;
         return $dot;
     }
 
-    private function getNode(AbstractDescriptor $descriptor) : string
+    private function getNode(AbstractDescriptor $descriptor): string
     {
         $hasDescriptor = $descriptor instanceof SemanticDescriptor && isset($descriptor->descriptor);
         if (! $hasDescriptor) {
             return '';
         }
+
         assert($descriptor instanceof SemanticDescriptor);
         $props = [];
         $props = $this->getNodeProps($descriptor, $props);
         if ($props === []) {
             return '';
         }
+
         $inlineDescriptors = '';
         foreach ($props as $prop) {
             $inlineDescriptors .= sprintf('(%s)<br />', $prop);
@@ -63,13 +75,19 @@ EOT;
         return $this->template($descriptor->id, $inlineDescriptors);
     }
 
-    private function getNodeProps(SemanticDescriptor $descriptor, array $props) : array
+    /**
+     * @param list<stdClass> $props
+     *
+     * @return list<string>
+     */
+    private function getNodeProps(SemanticDescriptor $descriptor, array $props): array
     {
         assert(isset($descriptor->descriptor));
         foreach ($descriptor->descriptor as $item) {
             if ($this->isSemanticHref($item)) {
                 $props[] = substr($item->href, (int) strpos($item->href, '#') + 1);
             }
+
             $isSemantic = isset($item->type) && $item->type === 'semantic';
             if ($isSemantic) {
                 $props[] = $item->id;
@@ -79,25 +97,28 @@ EOT;
         return $props;
     }
 
-    private function isSemanticHref(stdClass $item) : bool
+    private function isSemanticHref(stdClass $item): bool
     {
         if (! isset($item->href)) {
             return false;
         }
+
         $pos = strpos($item->href, '#');
         if ($pos === false) {
             throw new InvalidHrefException($item->href);
         }
+
         $id = substr($item->href, $pos + 1);
         if (! isset($this->descriptors[$id])) {
             throw new InvalidHrefException($item->href);
         }
+
         $descriptor = $this->descriptors[$id];
 
         return $descriptor instanceof SemanticDescriptor;
     }
 
-    private function template(string $stateName, string $props) : string
+    private function template(string $stateName, string $props): string
     {
         $template = <<<'EOT'
     %s [style=solid, margin=0.02, label=<<table cellspacing="0" cellpadding="5" cellborder="1" border="0"><tr><td bgcolor="#dddddd">%s<br />%s</td></tr></table>>,shape=box]

@@ -10,36 +10,39 @@ use Koriym\AppStateDiagram\Exception\InvalidAlpsException;
 use Koriym\AppStateDiagram\Exception\InvalidJsonException;
 use stdClass;
 
+use function array_merge;
+use function assert;
+use function dirname;
+use function explode;
+use function file_exists;
+use function file_get_contents;
+use function in_array;
+use function json_decode;
+use function json_last_error;
+use function sprintf;
+
 final class AlpsProfile
 {
-    /**
-     * @var AbstractDescriptor[]
-     */
+    /** @var AbstractDescriptor[] */
     public $descriptors = [];
 
-    /**
-     * @var Link[]
-     */
+    /** @var Link[] */
     public $links = [];
 
-    /**
-     * @var DescriptorScanner
-     */
+    /** @var DescriptorScanner */
     private $scanner;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     private $dir = '';
 
     public function __construct(string $alpsFile)
     {
-        $this->scanner = new DescriptorScanner;
+        $this->scanner = new DescriptorScanner();
         $this->dir = dirname($alpsFile);
         $this->scan($alpsFile);
     }
 
-    private function scan(string $alpsFile) : void
+    private function scan(string $alpsFile): void
     {
         $descriptors = $this->scanAlpsFile($alpsFile);
         foreach ($descriptors as $descriptor) {
@@ -47,19 +50,20 @@ final class AlpsProfile
         }
     }
 
-    private function scanDescriptor(stdClass $descriptor) : void
+    private function scanDescriptor(stdClass $descriptor): void
     {
         if (isset($descriptor->descriptor)) {
             $this->scanTransition(new SemanticDescriptor($descriptor), $descriptor->descriptor);
 
             return;
         }
+
         if (isset($descriptor->href)) {
             $this->href($descriptor);
         }
     }
 
-    private function href(stdClass $descriptor) : void
+    private function href(stdClass $descriptor): void
     {
         $isExternal = $descriptor->href[0] !== '#';
         if ($isExternal) {
@@ -69,19 +73,24 @@ final class AlpsProfile
         }
     }
 
-    private function scanTransition(SemanticDescriptor $semantic, array $descriptors) : void
+    /**
+     * @param list<stdClass> $descriptors
+     */
+    private function scanTransition(SemanticDescriptor $semantic, array $descriptors): void
     {
         foreach ($descriptors as $descriptor) {
             $isExternal = isset($descriptor->href) && $descriptor->href[0] !== '#';
             if ($isExternal) {
                 $descriptor = $this->getExternalDescriptor($descriptor->href);
             }
+
             $isInternal = isset($descriptor->href) && $descriptor->href[0] === '#';
             if ($isInternal) {
                 $this->addInternalLink($semantic, $descriptor->href);
 
                 continue;
             }
+
             $isTransDescriptor = isset($descriptor->type) && in_array($descriptor->type, ['safe', 'unsafe', 'idempotent'], true);
             if ($isTransDescriptor) {
                 $this->addLink(new Link($semantic, new TransDescriptor($descriptor, $semantic)));
@@ -92,9 +101,9 @@ final class AlpsProfile
         }
     }
 
-    private function addInternalLink(SemanticDescriptor $semantic, string $href) : void
+    private function addInternalLink(SemanticDescriptor $semantic, string $href): void
     {
-        [,$descriptorId] = explode('#', $href);
+        [, $descriptorId] = explode('#', $href);
         $isTransDescriptor = isset($this->descriptors[$descriptorId]) && $this->descriptors[$descriptorId] instanceof TransDescriptor;
         if ($isTransDescriptor) {
             $transSemantic = $this->descriptors[$descriptorId];
@@ -103,7 +112,7 @@ final class AlpsProfile
         }
     }
 
-    private function getExternalDescriptor(string $href) : stdClass
+    private function getExternalDescriptor(string $href): stdClass
     {
         [$file, $descriptorId] = explode('#', $href);
         $file = "{$this->dir}/{$file}";
@@ -113,7 +122,10 @@ final class AlpsProfile
         return $this->getDescriptor($descriptors, $descriptorId, $href);
     }
 
-    private function getDescriptor(array $descriptors, string $descriptorId, string $href) : stdClass
+    /**
+     * @param list<stdClass> $descriptors
+     */
+    private function getDescriptor(array $descriptors, string $descriptorId, string $href): stdClass
     {
         foreach ($descriptors as $descriptor) {
             if ($descriptor->id === $descriptorId) {
@@ -124,25 +136,31 @@ final class AlpsProfile
         throw new DescriptorNotFoundException($href);
     }
 
-    private function addLink(Link $link) : void
+    private function addLink(Link $link): void
     {
         $fromTo = sprintf('%s->%s', $link->from, $link->to);
         $this->links[$fromTo] = isset($this->links[$fromTo]) ? $this->links[$fromTo]->add($link) : $link;
     }
 
-    private function scanAlpsFile(string $alpsFile) : array
+    /**
+     * @return  list<stdClass>
+     */
+    private function scanAlpsFile(string $alpsFile): array
     {
         if (! file_exists($alpsFile)) {
             throw new AlpsFileNotReadableException($alpsFile);
         }
+
         $alps = json_decode((string) file_get_contents($alpsFile), false);
         $jsonError = json_last_error();
         if ($jsonError) {
             throw new InvalidJsonException($alpsFile);
         }
+
         if (! isset($alps->alps->descriptor)) {
             throw new InvalidAlpsException($alpsFile);
         }
+
         $this->descriptors = array_merge($this->descriptors, ($this->scanner)($alps->alps->descriptor));
 
         return $alps->alps->descriptor;

@@ -6,9 +6,7 @@ namespace Koriym\AppStateDiagram;
 
 final class SemanticDescriptor extends AbstractDescriptor
 {
-    /**
-     * @var string
-     */
+    /** @var string */
     public $doc;
 
     public function __construct(object $descriptor)

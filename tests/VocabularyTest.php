@@ -6,9 +6,11 @@ namespace Koriym\AppStateDiagram;
 
 use PHPUnit\Framework\TestCase;
 
+use function file_put_contents;
+
 class VocabularyTest extends TestCase
 {
-    public function test__invoke() : void
+    public function testInvoke(): void
     {
         $scanner = new AlpsProfile(__DIR__ . '/Fake/alps.json');
         $md = (new Vocabulary($scanner->descriptors))->index;

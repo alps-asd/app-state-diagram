@@ -8,31 +8,31 @@ use Koriym\AppStateDiagram\Exception\AlpsFileNotReadableException;
 use Koriym\AppStateDiagram\Exception\DescriptorNotFoundException;
 use PHPUnit\Framework\TestCase;
 
+use function file_put_contents;
+
 class AlpsStateDiagramTest extends TestCase
 {
-    /**
-     * @var AppStateDiagram
-     */
+    /** @var AppStateDiagram */
     protected $alpsStateDiagram;
 
-    protected function setUp() : void
+    protected function setUp(): void
     {
         $this->alpsStateDiagram = new AppStateDiagram(__DIR__ . '/Fake/alps.json');
     }
 
-    public function testIsInstanceOfAlpsStateDiagram() : void
+    public function testIsInstanceOfAlpsStateDiagram(): void
     {
         $actual = $this->alpsStateDiagram;
         $this->assertInstanceOf(AppStateDiagram::class, $actual);
     }
 
-    public function testFileNotReadable() : void
+    public function testFileNotReadable(): void
     {
         $this->expectException(AlpsFileNotReadableException::class);
         new AppStateDiagram('__INVALID__');
     }
 
-    public function test__invoke() : string
+    public function testInvoke(): string
     {
         $dot = $this->alpsStateDiagram->getDot();
         $this->assertStringContainsString('Index->Blog [label = "blog (safe)"];', $dot);
@@ -47,29 +47,29 @@ class AlpsStateDiagramTest extends TestCase
     }
 
     /**
-     * @depends test__invoke
+     * @depends testInvoke
      */
-    public function testIncludeFile(string $dot) : void
+    public function testIncludeFile(string $dot): void
     {
         $this->assertStringContainsString('Foo->Bar', $dot);
     }
 
-    public function testInvalidExternalFile() : void
+    public function testInvalidExternalFile(): void
     {
         $this->expectException(AlpsFileNotReadableException::class);
         new AppStateDiagram(__DIR__ . '/Fake/alps.invalid_href_file.json');
     }
 
-    public function testInvalidExternalDescriptor() : void
+    public function testInvalidExternalDescriptor(): void
     {
         $this->expectException(DescriptorNotFoundException::class);
         new AppStateDiagram(__DIR__ . '/Fake/alps.invalid_href_desc.json');
     }
 
     /**
-     * @depends test__invoke
+     * @depends testInvoke
      */
-    public function testExternalHref(string $dot) : void
+    public function testExternalHref(string $dot): void
     {
         $this->assertStringContainsString('Blog->Baz', $dot);
     }

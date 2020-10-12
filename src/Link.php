@@ -4,26 +4,21 @@ declare(strict_types=1);
 
 namespace Koriym\AppStateDiagram;
 
+use function in_array;
+use function sprintf;
+
 final class Link
 {
-    /**
-     * @var string
-     */
+    /** @var string */
     public $from;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     public $to;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     public $label;
 
-    /**
-     * @var array
-     */
+    /** @var list<string> */
     private $labels = [];
 
     public function __construct(SemanticDescriptor $semantic, TransDescriptor $trans)
@@ -34,12 +29,12 @@ final class Link
         $this->labels[] = $this->label;
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return $this->label;
     }
 
-    public function add(self $link) : self
+    public function add(self $link): self
     {
         if (in_array($link->label, $this->labels, true)) {
             return $this;

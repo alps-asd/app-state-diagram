@@ -6,16 +6,20 @@ namespace Koriym\AppStateDiagram;
 
 use PHPUnit\Framework\TestCase;
 
+use function file_get_contents;
+use function json_decode;
+
 class SemanticScannerTest extends TestCase
 {
+    /** @var DescriptorScanner */
     private $scanner;
 
-    protected function setUp() : void
+    protected function setUp(): void
     {
-        $this->scanner = new DescriptorScanner;
+        $this->scanner = new DescriptorScanner();
     }
 
-    public function test__invoke() : void
+    public function testInvoke(): void
     {
         $alps = json_decode((string) file_get_contents(__DIR__ . '/Fake/alps.json'));
         $semantics = ($this->scanner)($alps->alps->descriptor);
