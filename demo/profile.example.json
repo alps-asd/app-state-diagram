@@ -1,5 +1,5 @@
 {
-  "$schema": "https://raw.githubusercontent.com/koriym/spec/master/schemas/alps.json",
+  "$schema": "schema/alps.json",
   "alps": {
     "doc": {
       "value": "ALPS profile example"
@@ -7,7 +7,7 @@
     "descriptor": [
       {
         "id": "Index",
-        "type": "semantic",
+        "type": "safe",
         "doc": {
           "value": "Index Page"
         },
