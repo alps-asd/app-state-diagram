@@ -23,6 +23,9 @@ abstract class AbstractDescriptor
     /** @var list<stdClass> */
     public $descriptor;
 
+    /** @var string */
+    public $type = 'semantic';
+
     public function __construct(object $descriptor)
     {
         if (! isset($descriptor->type, $descriptor->id)) {
@@ -33,5 +36,31 @@ abstract class AbstractDescriptor
         $this->def = $descriptor->def ?? $descriptor->ref ?? $descriptor->src ?? null; // @phpstan-ignore-line
         $this->doc = $descriptor->doc ?? null; // @phpstan-ignore-line
         $this->descriptor = $descriptor->descriptor ?? []; // @phpstan-ignore-line
+    }
+
+    /**
+     * @return array<string, string|array>
+     */
+    public function normalize(): stdClass
+    {
+        $alps = new stdClass();
+        if ($this->doc) {
+            $alps->doc = $this->doc;
+        }
+
+        $descriptor = new stdClass();
+        $descriptor->id = $this->id;
+        if ($this->def) {
+            $descriptor->ref = $this->def;
+        }
+
+        $descriptor->type = $this->type;
+        $alps->descriptor = [$descriptor];
+        $alpsDoc = new stdClass();
+        $schema = '$schema';
+        $alpsDoc->{$schema} = '../alps.json';
+        $alpsDoc->alps = $alps;
+
+        return $alpsDoc;
     }
 }

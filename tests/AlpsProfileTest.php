@@ -16,7 +16,7 @@ class AlpsProfileTest extends TestCase
         $this->profile = new AlpsProfile(__DIR__ . '/Fake/alps.json');
     }
 
-    public function test(): void
+    public function testProfile(): void
     {
         $this->assertSame('bar (safe)', (string) $this->profile->links['Foo->Bar']);
     }
