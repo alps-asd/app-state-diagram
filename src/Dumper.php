@@ -57,9 +57,9 @@ final class Dumper
     private function save(string $dir, string $type, string $id, stdClass $class): void
     {
         $file = sprintf('%s/%s.json', $this->mkDir($dir, $type), $id);
-        $jsonSpace4 =  json_encode($class, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
-        $jsonSpace2 = preg_replace('/^(  +?)\\1(?=[^ ])/m', '$1', $jsonSpace4);
-        file_put_contents($file, $jsonSpace2);
+        $jsonTabSpace4 = json_encode($class, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+        $json =  $this->convertTabSpaceTwo($jsonTabSpace4);
+        file_put_contents($file, $json);
     }
 
     private function mkDir(string $dir, string $type): string
@@ -70,5 +70,10 @@ final class Dumper
         }
 
         return $dir;
+    }
+
+    private function convertTabSpaceTwo(string $json): string
+    {
+        return preg_replace('/^(  +?)\\1(?=[^ ])/m', '$1', $json);
     }
 }
