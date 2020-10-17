@@ -41,7 +41,7 @@ abstract class AbstractDescriptor
     /**
      * @return array<string, string|array>
      */
-    public function normalize(): stdClass
+    public function normalize(string $schema): stdClass
     {
         $alps = new stdClass();
         if ($this->doc) {
@@ -57,8 +57,7 @@ abstract class AbstractDescriptor
         $descriptor->type = $this->type;
         $alps->descriptor = [$descriptor];
         $alpsDoc = new stdClass();
-        $schema = '$schema';
-        $alpsDoc->{$schema} = '../alps.json';
+        $alpsDoc->{'$schema'} = $schema;
         $alpsDoc->alps = $alps;
 
         return $alpsDoc;

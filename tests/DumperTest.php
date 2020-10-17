@@ -20,6 +20,6 @@ class DumperTest extends TestCase
     {
         $alpsFile = __DIR__ . '/Fake/alps.json';
         $profile = new AlpsProfile($alpsFile);
-        $this->dumper->__invoke($profile->descriptors, $alpsFile);
+        $this->dumper->__invoke($profile->descriptors, $alpsFile, $profile->schema);
     }
 }

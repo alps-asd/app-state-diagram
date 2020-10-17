@@ -23,18 +23,18 @@ final class Dumper
     /**
      * @param array<string, AbstractDescriptor> $descriptors
      */
-    public function __invoke(array $descriptors, string $alpsFile): void
+    public function __invoke(array $descriptors, string $alpsFile, string $schema): void
     {
         ksort($descriptors);
         foreach ($descriptors as $descriptor) {
-            $this->dumpSemantic($descriptor, dirname($alpsFile));
+            $this->dumpSemantic($descriptor, dirname($alpsFile), $schema);
         }
     }
 
-    private function dumpSemantic(AbstractDescriptor $descriptor, string $dir)
+    private function dumpSemantic(AbstractDescriptor $descriptor, string $dir, string $schema)
     {
         $type = $descriptor->type ?? 'semantic';
-        $normarlizedDescriptor = $descriptor->normalize();
+        $normarlizedDescriptor = $descriptor->normalize($schema);
         $this->save($dir, $type, $descriptor->id, $normarlizedDescriptor);
     }
 
@@ -63,7 +63,7 @@ final class Dumper
     {
         $dir = sprintf('%s/descriptor/%s', $dir, $type);
         if (! is_dir($dir)) {
-            mkdir($dir);
+            mkdir($dir, 0777, true);
         }
 
         return $dir;
