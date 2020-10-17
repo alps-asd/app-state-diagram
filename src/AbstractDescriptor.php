@@ -8,6 +8,7 @@ use Koriym\AppStateDiagram\Exception\InvalidSemanticsException;
 use stdClass;
 
 use function json_encode;
+use function sprintf;
 
 abstract class AbstractDescriptor
 {
@@ -26,7 +27,10 @@ abstract class AbstractDescriptor
     /** @var string */
     public $type = 'semantic';
 
-    public function __construct(object $descriptor)
+    /** @var ?stdClass */
+    public $parent;
+
+    public function __construct(object $descriptor, ?stdClass $parentDescriptor = null)
     {
         if (! isset($descriptor->type, $descriptor->id)) {
             throw new InvalidSemanticsException((string) json_encode($descriptor));
@@ -36,6 +40,7 @@ abstract class AbstractDescriptor
         $this->def = $descriptor->def ?? $descriptor->ref ?? $descriptor->src ?? null; // @phpstan-ignore-line
         $this->doc = $descriptor->doc ?? null; // @phpstan-ignore-line
         $this->descriptor = $descriptor->descriptor ?? []; // @phpstan-ignore-line
+        $this->parent = $parentDescriptor;
     }
 
     /**
@@ -59,6 +64,11 @@ abstract class AbstractDescriptor
         $alpsDoc = new stdClass();
         $alpsDoc->{'$schema'} = $schema;
         $alpsDoc->alps = $alps;
+        if ($this->parent instanceof stdClass) {
+            $path = $this->parent->type === 'semantic' ? '' : "../{$this->parent->type}/";
+            $jsonPath = sprintf('%s%s.json', $path, $this->parent->id);
+            $alpsDoc->link[] = ['rel' => 'parent', 'href' => $jsonPath];
+        }
 
         return $alpsDoc;
     }

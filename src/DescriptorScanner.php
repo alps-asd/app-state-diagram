@@ -19,11 +19,11 @@ final class DescriptorScanner
      *
      * @return array<string, AbstractDescriptor>
      */
-    public function __invoke(array $descriptorsArray): array
+    public function __invoke(array $descriptorsArray, $parentDescriptor = null): array
     {
         $descriptors = [];
         foreach ($descriptorsArray as $descriptor) {
-            $descriptors = $this->scan($descriptor, $descriptors);
+            $descriptors = $this->scan($descriptor, $descriptors, $parentDescriptor);
         }
 
         return $descriptors;
@@ -34,7 +34,7 @@ final class DescriptorScanner
      *
      * @return array<AbstractDescriptor>
      */
-    private function scan(stdClass $descriptor, array $descriptors): array
+    private function scan(stdClass $descriptor, array $descriptors, ?stdClass $parentDescriptor): array
     {
         $hasNoId = ! isset($descriptor->href) && ! isset($descriptor->id);
         $hasNoType = ! isset($descriptor->href) && ! isset($descriptor->type);
@@ -44,7 +44,7 @@ final class DescriptorScanner
 
         if (isset($descriptor->type) && $descriptor->type === 'semantic') {
             assert(isset($descriptor->id));
-            $descriptors[$descriptor->id] = new SemanticDescriptor($descriptor);
+            $descriptors[$descriptor->id] = new SemanticDescriptor($descriptor, $parentDescriptor);
         }
 
         $isTransDescriptor = isset($descriptor->type) && in_array($descriptor->type, ['safe', 'unsafe', 'idempotent'], true);
@@ -74,7 +74,7 @@ final class DescriptorScanner
      */
     private function scanInlineDescriptor(stdClass $descriptor, array $descriptors): array
     {
-        $inLineSemantics = $this->__invoke($descriptor->descriptor);
+        $inLineSemantics = $this->__invoke($descriptor->descriptor, $descriptor);
         if ($inLineSemantics !== []) {
             $descriptors = $this->addInlineSemantics($descriptors, $inLineSemantics);
         }
