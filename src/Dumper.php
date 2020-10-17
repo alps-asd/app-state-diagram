@@ -13,6 +13,7 @@ use function is_dir;
 use function json_encode;
 use function ksort;
 use function mkdir;
+use function preg_replace;
 use function sprintf;
 
 use const JSON_PRETTY_PRINT;
@@ -56,7 +57,9 @@ final class Dumper
     private function save(string $dir, string $type, string $id, stdClass $class): void
     {
         $file = sprintf('%s/%s.json', $this->mkDir($dir, $type), $id);
-        file_put_contents($file, json_encode($class, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+        $jsonSpace4 =  json_encode($class, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+        $jsonSpace2 = preg_replace('/^(  +?)\\1(?=[^ ])/m', '$1', $jsonSpace4);
+        file_put_contents($file, $jsonSpace2);
     }
 
     private function mkDir(string $dir, string $type): string
