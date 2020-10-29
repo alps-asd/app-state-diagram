@@ -25,35 +25,40 @@ final class AsdRenderer
      */
     public function __invoke(array $links, array $descriptors): string
     {
+        $appSate = new AppState($links, $descriptors);
         $this->descriptors = $descriptors;
-        $nodes = $this->getNodes();
+        $nodes = $this->getNodes($appSate);
         $graph = '';
         foreach ($links as $link => $label) {
-            $graph .= sprintf('    %s [label = "%s"];', $link, (string) $label) . PHP_EOL;
+            $url = sprintf('docs/%s.%s.md', $label->transDescriptor->type, $label->transDescriptor->id);
+            $graph .= sprintf('    %s [label = "%s" URL="%s"];', $link, (string) $label, $url) . PHP_EOL;
         }
 
+        $appSateWithNoLink = (string) $appSate;
         $template = <<<'EOT'
 digraph application_state_diagram {
     node [shape = box, style = "bold,filled"];
 
 %s
-%s}
+%s
+%s
+}
 EOT;
 
-        return sprintf($template, $nodes, $graph);
+        return sprintf($template, $nodes, $graph, $appSateWithNoLink);
     }
 
-    public function getNodes(): string
+    public function getNodes(AppState $appSate): string
     {
         $dot = '';
         foreach ($this->descriptors as $descriptor) {
-            $dot .= $this->getNode($descriptor);
+            $dot .= $this->getNode($descriptor, $appSate);
         }
 
         return $dot;
     }
 
-    private function getNode(AbstractDescriptor $descriptor): string
+    private function getNode(AbstractDescriptor $descriptor, AppState $appSate): string
     {
         $hasDescriptor = $descriptor instanceof SemanticDescriptor && isset($descriptor->descriptor);
         if (! $hasDescriptor) {
@@ -72,7 +77,9 @@ EOT;
             $inlineDescriptors .= sprintf('(%s)<br />', $prop);
         }
 
-        return $this->template($descriptor->id, $inlineDescriptors);
+        $appSate->remove($descriptor->id);
+
+        return $this->template($descriptor, $inlineDescriptors);
     }
 
     /**
@@ -118,13 +125,15 @@ EOT;
         return $descriptor instanceof SemanticDescriptor;
     }
 
-    private function template(string $stateName, string $props): string
+    private function template(AbstractDescriptor $descriptor, string $props): string
     {
         $template = <<<'EOT'
-    %s [style=solid, margin=0.02, label=<<table cellspacing="0" cellpadding="5" cellborder="1" border="0"><tr><td bgcolor="#dddddd">%s<br />%s</td></tr></table>>,shape=box]
+    %s [style=solid, margin=0.02, label=<<table cellspacing="0" cellpadding="5" cellborder="1" border="0"><tr><td bgcolor="#dddddd">%s<br />%s</td></tr></table>>,shape=box URL="%s"]
 
 EOT;
 
-        return sprintf($template, $stateName, $stateName, $props);
+        $url = sprintf('docs/%s.%s.md', $descriptor->type, $descriptor->id);
+
+        return sprintf($template, $descriptor->id, $descriptor->id, $props, $url);
     }
 }
