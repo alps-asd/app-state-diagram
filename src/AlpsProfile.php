@@ -35,6 +35,9 @@ final class AlpsProfile
     /** @var string */
     private $dir = '';
 
+    /** @var string */
+    public $schema = '';
+
     public function __construct(string $alpsFile)
     {
         $this->scanner = new DescriptorScanner();
@@ -153,6 +156,10 @@ final class AlpsProfile
 
         $alps = json_decode((string) file_get_contents($alpsFile), false);
         $jsonError = json_last_error();
+        if ($alps->{'$schema'}) {
+            $this->schema = $alps->{'$schema'};
+        }
+
         if ($jsonError) {
             throw new InvalidJsonException($alpsFile);
         }
