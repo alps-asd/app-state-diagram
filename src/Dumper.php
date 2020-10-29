@@ -40,21 +40,6 @@ final class Dumper
         $this->save($writeDir, $type, $descriptor->id, $normarlizedDescriptor);
     }
 
-    private function restructure(array &$descriptor): array
-    {
-        foreach ($descriptor as $key => $value) {
-            if ($value === null) {
-                unset($descriptor[$key]);
-            }
-
-            if (is_array($value) && $value) {
-                $this->restructure($value);
-            }
-        }
-
-        return $descriptor;
-    }
-
     private function save(string $dir, string $type, string $id, stdClass $class): void
     {
         $file = sprintf('%s/%s.%s.json', $dir, $type, $id);
