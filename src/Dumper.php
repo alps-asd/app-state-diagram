@@ -34,9 +34,10 @@ final class Dumper
 
     private function dumpSemantic(AbstractDescriptor $descriptor, string $dir, string $schema)
     {
+        $writeDir = $this->mkDir($dir);
         $type = $descriptor->type ?? 'semantic';
         $normarlizedDescriptor = $descriptor->normalize($schema);
-        $this->save($dir, $type, $descriptor->id, $normarlizedDescriptor);
+        $this->save($writeDir, $type, $descriptor->id, $normarlizedDescriptor);
     }
 
     private function restructure(array &$descriptor): array
@@ -56,15 +57,15 @@ final class Dumper
 
     private function save(string $dir, string $type, string $id, stdClass $class): void
     {
-        $file = sprintf('%s/%s.json', $this->mkDir($dir, $type), $id);
+        $file = sprintf('%s/%s.%s.json', $dir, $type, $id);
         $jsonTabSpace4 = json_encode($class, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
         $json =  $this->convertTabSpaceTwo($jsonTabSpace4);
         file_put_contents($file, $json);
     }
 
-    private function mkDir(string $dir, string $type): string
+    private function mkDir(string $dir): string
     {
-        $dir = sprintf('%s/descriptor/%s', $dir, $type);
+        $dir = sprintf('%s/descriptor', $dir);
         if (! is_dir($dir)) {
             mkdir($dir, 0777, true);
         }
