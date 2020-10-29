@@ -6,6 +6,7 @@ namespace Koriym\AppStateDiagram;
 
 use stdClass;
 
+use function assert;
 use function dirname;
 use function file_put_contents;
 use function is_dir;
@@ -17,9 +18,18 @@ use function sprintf;
 
 use const JSON_PRETTY_PRINT;
 use const JSON_UNESCAPED_SLASHES;
+use const PHP_EOL;
 
 final class Dumper
 {
+    /** @var DescriptorScanner */
+    private $scanner;
+
+    public function __construct()
+    {
+        $this->scanner = new DescriptorScanner();
+    }
+
     /**
      * @param array<string, AbstractDescriptor> $descriptors
      */
@@ -27,8 +37,12 @@ final class Dumper
     {
         ksort($descriptors);
         $descriptorDir = $this->mkDir(dirname($alpsFile), 'descriptor');
+        $docsDir = $this->mkDir(dirname($alpsFile), 'docs');
         foreach ($descriptors as $descriptor) {
             $this->dumpSemantic($descriptor, $descriptorDir, $schema);
+            $markDown = $descriptor->type === 'semantic' ? $this->getSemanticDoc($descriptor, $docsDir, $schema) : $this->getSemanticDoc($descriptor, $docsDir, $schema);
+            $path = sprintf('%s/%s.%s.md', $docsDir, $descriptor->type, $descriptor->id);
+            file_put_contents($path, $markDown);
         }
     }
 
@@ -60,5 +74,63 @@ final class Dumper
     private function convertTabSpaceTwo(string $json): string
     {
         return preg_replace('/^(  +?)\\1(?=[^ ])/m', '$1', $json);
+    }
+
+    private function getSemanticDoc(AbstractDescriptor $descriptor, string $dir, string $schema): string
+    {
+        $doc = $descriptor->doc->value ?? '';
+        $descriptorSemantic = $this->getDescriptorInDescriptor($descriptor);
+        $rt = $this->getRt($descriptor);
+
+        return <<<EOT
+## {$descriptor->id}
+
+Type: {$descriptor->type}
+
+doc: {$doc}
+
+ref: {$descriptor->def}
+{$rt}
+
+{$descriptorSemantic}
+
+---
+
+source: [{$descriptor->type}.{$descriptor->id}.json](../descriptor/{$descriptor->type}.{$descriptor->id}.json)
+EOT;
+    }
+
+    private function getDescriptorInDescriptor(AbstractDescriptor $descriptor): string
+    {
+        if ($descriptor->descriptor === []) {
+            return '';
+        }
+
+        $descriptors = ($this->scanner)($descriptor->descriptor);
+        if ($descriptors === []) {
+            return '';
+        }
+
+        $table = '## Descriptor' . PHP_EOL . '| id | type |' . PHP_EOL . '|---|---|' . PHP_EOL;
+        foreach ($descriptors as $descriptor) {
+            $id = sprintf('[%s](%s.%s.md)', $descriptor->id, $descriptor->type, $descriptor->id);
+            $table .= sprintf('%s | %s', $id, $descriptor->type) . PHP_EOL;
+        }
+
+        return $table;
+    }
+
+    private function getRt(AbstractDescriptor $descriptor): string
+    {
+        if ($descriptor instanceof SemanticDescriptor) {
+            return '';
+        }
+
+        assert($descriptor instanceof TransDescriptor);
+
+        return <<<EOT
+
+rt: [$descriptor->rt](semantic.{$descriptor->rt}.md)      
+EOT;
     }
 }
