@@ -1,0 +1,14 @@
+{
+  "$schema": "schema/alps.json",
+  "alps": {
+    "doc": {
+      "value": "Index Page"
+    },
+    "descriptor": [
+      {
+        "id": "Index",
+        "type": "semantic"
+      }
+    ]
+  }
+}

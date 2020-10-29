@@ -1,0 +1,18 @@
+{
+  "$schema": "schema/alps.json",
+  "alps": {
+    "descriptor": [
+      {
+        "id": "articleBody",
+        "ref": "https://schema.org/articleBody",
+        "type": "semantic"
+      }
+    ]
+  },
+  "link": [
+    {
+      "rel": "parent",
+      "href": "semantic.BlogPosting.json"
+    }
+  ]
+}

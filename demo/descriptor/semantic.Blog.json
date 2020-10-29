@@ -1,0 +1,15 @@
+{
+  "$schema": "schema/alps.json",
+  "alps": {
+    "doc": {
+      "value": "Blog entry list page"
+    },
+    "descriptor": [
+      {
+        "id": "Blog",
+        "ref": "https://schema.org/Blog",
+        "type": "semantic"
+      }
+    ]
+  }
+}

@@ -1,12 +1,16 @@
 digraph application_state_diagram {
     node [shape = box, style = "bold,filled"];
 
-    Blog [style=solid, margin=0.02, label=<<table cellspacing="0" cellpadding="5" cellborder="1" border="0"><tr><td bgcolor="#dddddd">Blog<br />(BlogPosting)<br /></td></tr></table>>,shape=box]
-    BlogPosting [style=solid, margin=0.02, label=<<table cellspacing="0" cellpadding="5" cellborder="1" border="0"><tr><td bgcolor="#dddddd">BlogPosting<br />(id)<br />(articleBody)<br />(dateCreated)<br /></td></tr></table>>,shape=box]
+    Blog [style=solid, margin=0.02, label=<<table cellspacing="0" cellpadding="5" cellborder="1" border="0"><tr><td bgcolor="#dddddd">Blog<br />(BlogPosting)<br /></td></tr></table>>,shape=box URL="docs/semantic.Blog.md"]
+    BlogPosting [style=solid, margin=0.02, label=<<table cellspacing="0" cellpadding="5" cellborder="1" border="0"><tr><td bgcolor="#dddddd">BlogPosting<br />(id)<br />(articleBody)<br />(dateCreated)<br /></td></tr></table>>,shape=box URL="docs/semantic.BlogPosting.md"]
 
-    Index->Blog [label = "blog (safe)"];
-    Blog->BlogPosting [label = "blogPosting (safe)"];
-    Blog->Blog [label = "post (unsafe)"];
-    Blog->About [label = "about (safe)"];
-    BlogPosting->Blog [label = "blog (safe)"];
+    Index->Blog [label = "blog (safe)" URL="docs/safe.blog.md"];
+    Blog->BlogPosting [label = "blogPosting (safe)" URL="docs/safe.blogPosting.md"];
+    Blog->Blog [label = "post (unsafe)" URL="docs/unsafe.post.md"];
+    Blog->About [label = "about (safe)" URL="docs/safe.about.md"];
+    BlogPosting->Blog [label = "blog (safe)" URL="docs/safe.blog.md"];
+
+    Index [URL="docs/semantic.Index.md"]
+    About [URL="docs/semantic.About.md"]
+
 }

@@ -7,7 +7,7 @@
     "descriptor": [
       {
         "id": "Index",
-        "type": "safe",
+        "type": "semantic",
         "doc": {
           "value": "Index Page"
         },
