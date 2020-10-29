@@ -3,7 +3,9 @@
 
 declare(strict_types=1);
 
+use Koriym\AppStateDiagram\AlpsProfile;
 use Koriym\AppStateDiagram\AppStateDiagram;
+use Koriym\AppStateDiagram\Dumper;
 
 foreach ([__DIR__ . '/../../../autoload.php', __DIR__ . '/../vendor/autoload.php'] as $file) {
     if (file_exists($file)) {
@@ -22,9 +24,12 @@ try {
     $asd = new AppStateDiagram($profile);
     $dot = $asd->getDot();
     $vocabulary = $asd->getVocabulary();
+    // dump docs/
+    $alpsProfile = new AlpsProfile($profile);
+    (new Dumper())($alpsProfile->descriptors, $profile, $alpsProfile->schema);
 } catch (\Exception $e) {
     $path = explode('\\', get_class($e));
-    echo sprintf("%s: %s\n", end($path), $e->getMessage());
+    echo sprintf("%s: %s in %s:%s\n", end($path), $e->getMessage(), $e->getFile(), (string) $e->getLine());
     exit(1);
 }
 
