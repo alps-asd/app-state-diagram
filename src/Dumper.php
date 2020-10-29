@@ -8,7 +8,6 @@ use stdClass;
 
 use function dirname;
 use function file_put_contents;
-use function is_array;
 use function is_dir;
 use function json_encode;
 use function ksort;
@@ -27,17 +26,17 @@ final class Dumper
     public function __invoke(array $descriptors, string $alpsFile, string $schema): void
     {
         ksort($descriptors);
+        $descriptorDir = $this->mkDir(dirname($alpsFile), 'descriptor');
         foreach ($descriptors as $descriptor) {
-            $this->dumpSemantic($descriptor, dirname($alpsFile), $schema);
+            $this->dumpSemantic($descriptor, $descriptorDir, $schema);
         }
     }
 
     private function dumpSemantic(AbstractDescriptor $descriptor, string $dir, string $schema)
     {
-        $writeDir = $this->mkDir($dir);
         $type = $descriptor->type ?? 'semantic';
         $normarlizedDescriptor = $descriptor->normalize($schema);
-        $this->save($writeDir, $type, $descriptor->id, $normarlizedDescriptor);
+        $this->save($dir, $type, $descriptor->id, $normarlizedDescriptor);
     }
 
     private function save(string $dir, string $type, string $id, stdClass $class): void
@@ -48,9 +47,9 @@ final class Dumper
         file_put_contents($file, $json);
     }
 
-    private function mkDir(string $dir): string
+    private function mkDir(string $baseDir, string $dirName): string
     {
-        $dir = sprintf('%s/descriptor', $dir);
+        $dir = sprintf('%s/%s', $baseDir, $dirName);
         if (! is_dir($dir)) {
             mkdir($dir, 0777, true);
         }
