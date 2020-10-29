@@ -2,7 +2,7 @@
 
 Type: semantic
 
-doc: Blog entry list page
+doc: 
 
 ref: https://schema.org/Blog
 

@@ -27,9 +27,6 @@
         "id": "Blog",
         "type": "semantic",
         "def": "https://schema.org/Blog",
-        "doc": {
-          "value": "Blog entry list page"
-        },
         "descriptor": [
           {
             "href": "#BlogPosting"
@@ -63,9 +60,6 @@
         "id": "BlogPosting",
         "type": "semantic",
         "def": "https://schema.org/BlogPosting",
-        "doc": {
-          "value": "Blog entry item page"
-        },
         "descriptor": [
           {
             "id": "id",

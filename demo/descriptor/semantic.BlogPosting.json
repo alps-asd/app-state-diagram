@@ -1,9 +1,6 @@
 {
   "$schema": "schema/alps.json",
   "alps": {
-    "doc": {
-      "value": "Blog entry item page"
-    },
     "descriptor": [
       {
         "id": "BlogPosting",
