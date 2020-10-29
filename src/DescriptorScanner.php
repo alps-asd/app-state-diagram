@@ -49,15 +49,10 @@ final class DescriptorScanner
 
         $isTransDescriptor = isset($descriptor->type) && in_array($descriptor->type, ['safe', 'unsafe', 'idempotent'], true);
         if ($isTransDescriptor) {
-            $nullParentSemantic = new class {
-                /** @var string */
-                public $id = '';
-
-                /** @var string */
-                public $type = 'semantic';
-            };
+            $parant = $parentDescriptor ?? new NullDescriptor();
             assert(is_string($descriptor->id));
-            $descriptors[$descriptor->id] = new TransDescriptor($descriptor, new SemanticDescriptor($nullParentSemantic));
+
+            $descriptors[$descriptor->id] = new TransDescriptor($descriptor, new SemanticDescriptor($parant));
         }
 
         if (isset($descriptor->descriptor)) {

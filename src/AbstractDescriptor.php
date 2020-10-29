@@ -64,8 +64,8 @@ abstract class AbstractDescriptor
         $alpsDoc = new stdClass();
         $alpsDoc->{'$schema'} = $schema;
         $alpsDoc->alps = $alps;
-        if ($this->parent instanceof stdClass) {
-            $path = $this->parent->type === 'semantic' ? '' : "../{$this->parent->type}/";
+        if ($this->parent instanceof stdClass || ($this->parent instanceof SemanticDescriptor && $this->parent->id)) {
+            $path = $this->type === 'semantic' ? '' : "../{$this->parent->type}/";
             $jsonPath = sprintf('%s%s.json', $path, $this->parent->id);
             $alpsDoc->link[] = ['rel' => 'parent', 'href' => $jsonPath];
         }
