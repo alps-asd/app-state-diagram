@@ -40,3 +40,6 @@ echo "Diagram: {$file} is generated." . PHP_EOL;
 $mdFile = str_replace('.json', '.md', $profile);
 file_put_contents($mdFile, $vocabulary->index);
 echo "Vocabulary: {$mdFile} is generated." . PHP_EOL;
+
+$cmd = "dot -Tsvg {$file} -o {$file}.svg";
+echo "Generate SVG file:\n$cmd" . PHP_EOL;
