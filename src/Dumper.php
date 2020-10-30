@@ -67,7 +67,7 @@ final class Dumper
             min-width: 200px;
             max-width: 980px;
             margin: 0 auto;
-            padding: 45px;
+            padding: 25px;
         }
     
         @media (max-width: 767px) {
@@ -118,6 +118,7 @@ EOT;
     private function getSemanticDoc(AbstractDescriptor $descriptor, string $dir, string $schema): string
     {
         $descriptorSemantic = $this->getDescriptorInDescriptor($descriptor);
+        $rel = $this->getRel($descriptor);
         $rt = $this->getRt($descriptor);
         $description = '';
         $description .= $this->getDescriptorProp('type', $descriptor);
@@ -126,6 +127,7 @@ EOT;
         $description .= $this->getDescriptorProp('def', $descriptor);
         $description .= $this->getDescriptorProp('ref', $descriptor);
         $description .= $this->getDescriptorProp('src', $descriptor);
+        $description .= $this->getDescriptorProp('rel', $descriptor);
 
         return <<<EOT
 # {$descriptor->id}
@@ -194,4 +196,17 @@ EOT;
 
         return $table;
     }
-}
+
+    private function getRel(AbstractDescriptor $descriptor): string
+    {
+        if ($descriptor->parent === []) {
+            return '';
+        }
+
+        $table = ' * links' . PHP_EOL . '| id | type |' . PHP_EOL . '|---|---|' . PHP_EOL;
+        foreach ($descriptors as $descriptor) {
+            $table .= sprintf('| %s | %s |', $descriptor->htmlLink(), $descriptor->type) . PHP_EOL;
+        }
+
+        return $table;
+    }}

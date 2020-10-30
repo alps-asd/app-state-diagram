@@ -9,3 +9,4 @@
 .phpcs-cache
 tests/Fake/docs/
 tests/Fake/descriptor/
+lsp/

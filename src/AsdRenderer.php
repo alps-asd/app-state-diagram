@@ -30,7 +30,7 @@ final class AsdRenderer
         $nodes = $this->getNodes($appSate);
         $graph = '';
         foreach ($links as $link => $label) {
-            $url = sprintf('docs/%s.%s.md', $label->transDescriptor->type, $label->transDescriptor->id);
+            $url = sprintf('docs/%s.%s.html', $label->transDescriptor->type, $label->transDescriptor->id);
             $graph .= sprintf('    %s [label = "%s" URL="%s"];', $link, (string) $label, $url) . PHP_EOL;
         }
 
@@ -132,7 +132,7 @@ EOT;
 
 EOT;
 
-        $url = sprintf('docs/%s.%s.md', $descriptor->type, $descriptor->id);
+        $url = sprintf('docs/%s.%s.html', $descriptor->type, $descriptor->id);
 
         return sprintf($template, $descriptor->id, $descriptor->id, $props, $url);
     }
