@@ -1,0 +1,7 @@
+digraph application_state_diagram {
+    node [shape = box, style = "bold,filled"];
+
+
+
+
+}

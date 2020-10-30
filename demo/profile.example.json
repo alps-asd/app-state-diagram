@@ -15,6 +15,7 @@
           {
             "id": "blog",
             "type": "safe",
+            "rel": "item",
             "rt": "#Blog"
           }
         ]
