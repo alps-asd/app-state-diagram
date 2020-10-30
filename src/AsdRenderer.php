@@ -20,8 +20,8 @@ final class AsdRenderer
     private $descriptors = [];
 
     /**
-     * @param array<string, string|Link> $links
-     * @param array<AbstractDescriptor>  $descriptors
+     * @param array<string, Link>       $links
+     * @param array<AbstractDescriptor> $descriptors
      */
     public function __invoke(array $links, array $descriptors): string
     {

@@ -1,16 +1,23 @@
 digraph application_state_diagram {
     node [shape = box, style = "bold,filled"];
 
-    Blog [style=solid, margin=0.02, label=<<table cellspacing="0" cellpadding="5" cellborder="1" border="0"><tr><td bgcolor="#dddddd">Blog<br />(BlogPosting)<br /></td></tr></table>>,shape=box]
-    BlogPosting [style=solid, margin=0.02, label=<<table cellspacing="0" cellpadding="5" cellborder="1" border="0"><tr><td bgcolor="#dddddd">BlogPosting<br />(id)<br />(articleBody)<br />(dateCreated)<br /></td></tr></table>>,shape=box]
+    Blog [style=solid, margin=0.02, label=<<table cellspacing="0" cellpadding="5" cellborder="1" border="0"><tr><td bgcolor="#dddddd">Blog<br />(BlogPosting)<br /></td></tr></table>>,shape=box URL="docs/semantic.Blog.md"]
+    BlogPosting [style=solid, margin=0.02, label=<<table cellspacing="0" cellpadding="5" cellborder="1" border="0"><tr><td bgcolor="#dddddd">BlogPosting<br />(id)<br />(articleBody)<br />(dateCreated)<br /></td></tr></table>>,shape=box URL="docs/semantic.BlogPosting.md"]
 
-    Index->Blog [label = "blog (safe)"];
-    Blog->BlogPosting [label = "blogPosting (safe), item (safe)"];
-    Blog->Blog [label = "post (unsafe)"];
-    Foo->Bar [label = "bar (safe)"];
-    Foo->Index [label = "index (safe)"];
-    Blog->Baz [label = "baz (safe)"];
-    Blog->About [label = "about (safe)"];
-    BlogPosting->Blog [label = "collection (safe)"];
-    BlogPosting->About [label = "about (safe)"];
+    Index->Blog [label = "blog (safe)" URL="docs/safe.blog.md"];
+    Blog->BlogPosting [label = "blogPosting (safe), item (safe)" URL="docs/safe.blogPosting.md"];
+    Blog->Blog [label = "post (unsafe)" URL="docs/unsafe.post.md"];
+    Foo->Bar [label = "bar (safe)" URL="docs/safe.bar.md"];
+    Foo->Index [label = "index (safe)" URL="docs/safe.index.md"];
+    Blog->Baz [label = "baz (safe)" URL="docs/safe.baz.md"];
+    Blog->About [label = "about (safe)" URL="docs/safe.about.md"];
+    BlogPosting->Blog [label = "collection (safe)" URL="docs/safe.collection.md"];
+    BlogPosting->About [label = "about (safe)" URL="docs/safe.about.md"];
+
+    Index [URL="docs/semantic.Index.md"]
+    Foo [URL="docs/semantic.Foo.md"]
+    Bar [URL="docs/semantic.Bar.md"]
+    Baz [URL="docs/semantic.Baz.md"]
+    About [URL="docs/semantic.About.md"]
+
 }

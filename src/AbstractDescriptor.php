@@ -27,12 +27,12 @@ abstract class AbstractDescriptor
     /** @var string */
     public $type = 'semantic';
 
-    /** @var ?stdClass */
+    /** @var stdClass|SemanticDescriptor|null */
     public $parent;
 
     public function __construct(object $descriptor, ?stdClass $parentDescriptor = null)
     {
-        if (! isset($descriptor->type, $descriptor->id)) {
+        if (! isset($descriptor->id)) {
             throw new InvalidSemanticsException((string) json_encode($descriptor));
         }
 
@@ -43,9 +43,6 @@ abstract class AbstractDescriptor
         $this->parent = $parentDescriptor;
     }
 
-    /**
-     * @return array<string, string|array>
-     */
     public function normalize(string $schema): stdClass
     {
         $alps = new stdClass();
@@ -64,11 +61,22 @@ abstract class AbstractDescriptor
         $alpsDoc = new stdClass();
         $alpsDoc->{'$schema'} = $schema;
         $alpsDoc->alps = $alps;
-        if ($this->parent instanceof stdClass || ($this->parent instanceof SemanticDescriptor && $this->parent->id)) {
+        $parent = $this->parent;
+        if ($this->parent instanceof stdClass || ($this->parent instanceof SemanticDescriptor)) {
             $jsonPath = sprintf('%s.%s.json', $this->parent->type, $this->parent->id);
             $alpsDoc->link[] = ['rel' => 'parent', 'href' => $jsonPath];
         }
 
         return $alpsDoc;
+    }
+
+    public function htmlLink(): string
+    {
+        return sprintf('[%s](%s.%s.html)', $this->id, $this->type, $this->id);
+    }
+
+    public function jsonLink(): string
+    {
+        return sprintf('[%s.%s.json](../descriptor/%s.%s.json)', $this->type, $this->id, $this->type, $this->id);
     }
 }

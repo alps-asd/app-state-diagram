@@ -10,7 +10,8 @@
     ],
     "require": {
         "php": ">=7.2.0",
-        "ext-json": "*"
+        "ext-json": "*",
+        "michelf/php-markdown": "^1.9"
     },
     "require-dev": {
         "phpunit/phpunit": "^8.5"

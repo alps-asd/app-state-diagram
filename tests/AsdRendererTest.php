@@ -13,31 +13,31 @@ use function json_decode;
 class AsdRendererTest extends TestCase
 {
     /** @var AsdRenderer */
-    private $toString;
+    private $renderer;
 
     protected function setUp(): void
     {
-        $this->toString = new AsdRenderer();
+        $this->renderer = new AsdRenderer();
     }
 
     public function testInvoke(): void
     {
-        $links = ['Index->Blog' => 'blog (safe)'];
-        $dot = ($this->toString)($links, []);
-        $this->assertStringContainsString('Index->Blog [label = "blog (safe)"]', $dot);
+        $alps = new AlpsProfile(__DIR__ . '/Fake/alps.json');
+        $dot = ($this->renderer)($alps->links, $alps->descriptors);
+        $this->assertStringContainsString('Index->Blog [label = "blog (safe)"', $dot);
     }
 
     public function testInvalidHref(): void
     {
         $this->expectException(InvalidHrefException::class);
         $descriptor = new SemanticDescriptor(json_decode((string) file_get_contents(__DIR__ . '/Fake/invalid_href.json')));
-        ($this->toString)([], [$descriptor]);
+        ($this->renderer)([], [$descriptor]);
     }
 
     public function testBox(): void
     {
         $descriptor = new SemanticDescriptor(json_decode((string) file_get_contents(__DIR__ . '/Fake/BlogPosting.json')));
-        $dot = ($this->toString)([], [$descriptor]);
+        $dot = ($this->renderer)([], [$descriptor]);
         $this->assertStringContainsString('(articleBody)', $dot);
         $this->assertStringContainsString('(dateCreated)', $dot);
     }

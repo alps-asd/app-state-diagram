@@ -8,18 +8,12 @@ use PHPUnit\Framework\TestCase;
 
 class DumperTest extends TestCase
 {
-    /** @var Dumper */
-    protected $dumper;
-
-    protected function setUp(): void
-    {
-        $this->dumper = new Dumper();
-    }
-
-    public function testInvoke()
+    public function testInvoke(): void
     {
         $alpsFile = __DIR__ . '/Fake/alps.json';
         $profile = new AlpsProfile($alpsFile);
-        $this->dumper->__invoke($profile->descriptors, $alpsFile, $profile->schema);
+        (new Dumper())($profile->descriptors, $alpsFile, $profile->schema);
+        $this->assertFileExists(__DIR__ . '/Fake/descriptor/semantic.Index.json');
+        $this->assertFileExists(__DIR__ . '/Fake/descriptor/safe.about.json');
     }
 }

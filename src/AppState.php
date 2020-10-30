@@ -12,6 +12,7 @@ use const PHP_EOL;
 
 final class AppState
 {
+    /** @var array<int, string> */
     private $states;
 
     /** @var array<AbstractDescriptor> */

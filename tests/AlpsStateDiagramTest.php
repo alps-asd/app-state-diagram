@@ -35,11 +35,11 @@ class AlpsStateDiagramTest extends TestCase
     public function testInvoke(): string
     {
         $dot = $this->alpsStateDiagram->getDot();
-        $this->assertStringContainsString('Index->Blog [label = "blog (safe)"];', $dot);
-        $this->assertStringContainsString('Blog->BlogPosting [label = "blogPosting (safe), item (safe)"];', $dot);
-        $this->assertStringContainsString('Blog->Blog [label = "post (unsafe)"];', $dot);
-        $this->assertStringContainsString('Blog->About [label = "about (safe)"];', $dot);
-        $this->assertStringContainsString('BlogPosting->Blog [label = "collection (safe)"];', $dot);
+        $this->assertStringContainsString('Index->Blog [label = "blog (safe)"', $dot);
+        $this->assertStringContainsString('Blog->BlogPosting [label = "blogPosting (safe), item (safe)"', $dot);
+        $this->assertStringContainsString('Blog->Blog [label = "post (unsafe)"', $dot);
+        $this->assertStringContainsString('Blog->About [label = "about (safe)"', $dot);
+        $this->assertStringContainsString('BlogPosting->Blog [label = "collection (safe)"', $dot);
         $this->assertStringContainsString('Blog->About', $dot);
         file_put_contents(__DIR__ . '/alps.dot', $dot);
 
