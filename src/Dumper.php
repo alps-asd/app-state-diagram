@@ -38,14 +38,13 @@ final class Dumper
      */
     public function __invoke(array $descriptors, string $alpsFile, string $schema): void
     {
-        $this->alpsFile = $alpsFile;
         ksort($descriptors);
         $this->descriptors = $descriptors;
         $descriptorDir = $this->mkDir(dirname($alpsFile), 'descriptor');
         $docsDir = $this->mkDir(dirname($alpsFile), 'docs');
         foreach ($descriptors as $descriptor) {
             $this->dumpSemantic($descriptor, $descriptorDir, $schema);
-            $asdFile = str_replace(['xml', 'json'], 'svg', $alpsFile);
+            $asdFile = sprintf('../%s', basename(str_replace(['xml', 'json'], 'svg', $alpsFile)));
             $markDown = $this->getSemanticDoc($descriptor, $asdFile);
             $path = sprintf('%s/%s.%s.html', $docsDir, $descriptor->type, $descriptor->id);
             $html = $this->convertHtml($descriptor, $markDown);
