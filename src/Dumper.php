@@ -18,6 +18,7 @@ use function parse_url;
 use function preg_replace;
 use function property_exists;
 use function sprintf;
+use function str_replace;
 use function strpos;
 use function substr;
 use function usort;
@@ -37,13 +38,15 @@ final class Dumper
      */
     public function __invoke(array $descriptors, string $alpsFile, string $schema): void
     {
+        $this->alpsFile = $alpsFile;
         ksort($descriptors);
         $this->descriptors = $descriptors;
         $descriptorDir = $this->mkDir(dirname($alpsFile), 'descriptor');
         $docsDir = $this->mkDir(dirname($alpsFile), 'docs');
         foreach ($descriptors as $descriptor) {
             $this->dumpSemantic($descriptor, $descriptorDir, $schema);
-            $markDown = $this->getSemanticDoc($descriptor, $docsDir, $schema));
+            $asdFile = str_replace(['xml', 'json'], 'svg', $alpsFile);
+            $markDown = $this->getSemanticDoc($descriptor, $asdFile);
             $path = sprintf('%s/%s.%s.html', $docsDir, $descriptor->type, $descriptor->id);
             $html = $this->convertHtml($descriptor, $markDown);
             file_put_contents($path, $html);
@@ -86,7 +89,7 @@ final class Dumper
         return (string) preg_replace('/^(  +?)\\1(?=[^ ])/m', '$1', $json);
     }
 
-    private function getSemanticDoc(AbstractDescriptor $descriptor, string $dir, string $schema): string
+    private function getSemanticDoc(AbstractDescriptor $descriptor, string $asd): string
     {
         $descriptorSemantic = $this->getDescriptorInDescriptor($descriptor);
         $rt = $this->getRt($descriptor);
@@ -105,7 +108,7 @@ final class Dumper
 {$descriptorSemantic}
 ---
 
-source: {$descriptor->jsonLink()}
+[home](../index.html) > [asd]($asd) > {$descriptor->jsonLink()}
 EOT;
     }
 
