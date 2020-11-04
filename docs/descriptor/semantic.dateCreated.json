@@ -1,0 +1,18 @@
+{
+  "$schema": "schema/alps.json",
+  "alps": {
+    "descriptor": [
+      {
+        "id": "dateCreated",
+        "ref": "https://schema.org/dateCreated",
+        "type": "semantic"
+      }
+    ]
+  },
+  "link": [
+    {
+      "rel": "parent",
+      "href": "semantic.BlogPosting.json"
+    }
+  ]
+}

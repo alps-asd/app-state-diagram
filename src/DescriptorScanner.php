@@ -19,7 +19,7 @@ final class DescriptorScanner
      *
      * @return array<string, AbstractDescriptor>
      */
-    public function __invoke(array $descriptorsArray, $parentDescriptor = null): array
+    public function __invoke(array $descriptorsArray, ?stdClass $parentDescriptor = null): array
     {
         $descriptors = [];
         foreach ($descriptorsArray as $descriptor) {

@@ -7,7 +7,7 @@
     "descriptor": [
       {
         "id": "Index",
-        "type": "safe",
+        "type": "semantic",
         "doc": {
           "value": "Index Page"
         },
@@ -15,21 +15,24 @@
           {
             "id": "blog",
             "type": "safe",
+            "rel": "item",
             "rt": "#Blog"
           }
         ]
       },
       {
         "id": "About",
-        "type": "semantic"
+        "type": "semantic",
+        "descriptor": [
+          {
+            "href": "#blog"
+          }
+        ]
       },
       {
         "id": "Blog",
         "type": "semantic",
         "def": "https://schema.org/Blog",
-        "doc": {
-          "value": "Blog entry list page"
-        },
         "descriptor": [
           {
             "href": "#BlogPosting"
@@ -63,9 +66,6 @@
         "id": "BlogPosting",
         "type": "semantic",
         "def": "https://schema.org/BlogPosting",
-        "doc": {
-          "value": "Blog entry item page"
-        },
         "descriptor": [
           {
             "id": "id",
@@ -79,7 +79,7 @@
           {
             "id": "dateCreated",
             "type": "semantic",
-            "def": "https://schema.org/BlogPosting#dateCreated"
+            "def": "https://schema.org/dateCreated"
           },
           {
             "id": "blog",

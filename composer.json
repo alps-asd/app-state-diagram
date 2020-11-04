@@ -10,9 +10,12 @@
     ],
     "require": {
         "php": ">=7.2.0",
-        "ext-json": "*"
+        "ext-json": "*",
+        "ext-filter": "*",
+        "michelf/php-markdown": "^1.9"
     },
     "require-dev": {
+        "roave/security-advisories": "dev-master",
         "phpunit/phpunit": "^8.5"
     },
     "autoload": {
@@ -33,7 +36,7 @@
     ],
     "scripts": {
         "asd:example" : [
-            "bin/asd demo/profile.example.json && dot -Tpng ./demo/profile.example.dot -o ./demo/profile.png"
+          "bin/asd docs/profile.example.json && dot -Tpng ./demo/profile.example.dot -o ./demo/profile.png"
         ],
         "test": ["phpunit"],
         "tests": ["@cs", "@sa", "@test"],

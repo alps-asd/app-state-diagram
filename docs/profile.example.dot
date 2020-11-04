@@ -5,19 +5,13 @@ digraph application_state_diagram {
     BlogPosting [style=solid, margin=0.02, label=<<table cellspacing="0" cellpadding="5" cellborder="1" border="0"><tr><td bgcolor="#dddddd">BlogPosting<br />(id)<br />(articleBody)<br />(dateCreated)<br /></td></tr></table>>,shape=box URL="docs/semantic.BlogPosting.html"]
 
     Index->Blog [label = "blog (safe)" URL="docs/safe.blog.html"];
-    Blog->BlogPosting [label = "blogPosting (safe), item (safe)" URL="docs/safe.blogPosting.html"];
+    About->Blog [label = "blog (safe)" URL="docs/safe.blog.html"];
+    Blog->BlogPosting [label = "blogPosting (safe)" URL="docs/safe.blogPosting.html"];
     Blog->Blog [label = "post (unsafe)" URL="docs/unsafe.post.html"];
-    Foo->Bar [label = "bar (safe)" URL="docs/safe.bar.html"];
-    Foo->Index [label = "index (safe)" URL="docs/safe.index.html"];
-    Blog->Baz [label = "baz (safe)" URL="docs/safe.baz.html"];
     Blog->About [label = "about (safe)" URL="docs/safe.about.html"];
-    BlogPosting->Blog [label = "collection (safe)" URL="docs/safe.collection.html"];
-    BlogPosting->About [label = "about (safe)" URL="docs/safe.about.html"];
+    BlogPosting->Blog [label = "blog (safe)" URL="docs/safe.blog.html"];
 
     Index [URL="docs/semantic.Index.html"]
-    Foo [URL="docs/semantic.Foo.html"]
-    Bar [URL="docs/semantic.Bar.html"]
-    Baz [URL="docs/semantic.Baz.html"]
     About [URL="docs/semantic.About.html"]
 
 }

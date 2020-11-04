@@ -6,17 +6,13 @@ namespace Koriym\AppStateDiagram;
 
 use PHPUnit\Framework\TestCase;
 
-use function file_put_contents;
-
 class VocabularyTest extends TestCase
 {
     public function testInvoke(): void
     {
+        $alpsFile = __DIR__ . '/Fake/alps.json';
         $scanner = new AlpsProfile(__DIR__ . '/Fake/alps.json');
-        $md = (new Vocabulary($scanner->descriptors))->index;
-        file_put_contents(__DIR__ . '/vocabulary.md', $md);
-        $this->assertStringContainsString('* `Index`: Index Page', $md);
-        $this->assertStringContainsString('* `articleBody`: [https://schema.org/articleBody](https://schema.org/articleBody) ', $md);
-        $this->assertStringContainsString('`blogPosting`: [https://schema.org/BlogPosting](https://schema.org/BlogPosting) ブログ個別ページへ', $md);
+        $html = (new Vocabulary($scanner->descriptors, $alpsFile))->index;
+        $this->assertStringContainsString('<li><a href="docs/semantic.About.html">About</a> (semantic)</li>', $html);
     }
 }

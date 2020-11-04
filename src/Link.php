@@ -18,6 +18,9 @@ final class Link
     /** @var string */
     public $label;
 
+    /** @var TransDescriptor */
+    public $transDescriptor;
+
     /** @var list<string> */
     private $labels = [];
 
@@ -27,6 +30,7 @@ final class Link
         $this->to = $trans->rt;
         $this->label = sprintf('%s (%s)', $trans->id, $trans->type);
         $this->labels[] = $this->label;
+        $this->transDescriptor = $trans;
     }
 
     public function __toString(): string

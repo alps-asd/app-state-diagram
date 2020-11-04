@@ -15,11 +15,11 @@ dot -Tsvg demo/profile.example.dot -o demo/profile.example.svg
 
 * Application State Diagram
 
-<img src="demo/profile.example.svg">
+<img src="docs/profile.example.svg">
 
 * Vocabulary as semantic descriptors
 
- [profile.md](demo/profile.example.md)
+ [profile.md](docs/profile.example.md)
 
 ## Requirement
 
