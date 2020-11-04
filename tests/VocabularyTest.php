@@ -6,8 +6,6 @@ namespace Koriym\AppStateDiagram;
 
 use PHPUnit\Framework\TestCase;
 
-use function file_put_contents;
-
 class VocabularyTest extends TestCase
 {
     public function testInvoke(): void

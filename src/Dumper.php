@@ -7,6 +7,7 @@ namespace Koriym\AppStateDiagram;
 use stdClass;
 
 use function assert;
+use function basename;
 use function dirname;
 use function file_put_contents;
 use function filter_var;
