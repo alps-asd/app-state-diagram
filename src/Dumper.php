@@ -43,7 +43,7 @@ final class Dumper
         $docsDir = $this->mkDir(dirname($alpsFile), 'docs');
         foreach ($descriptors as $descriptor) {
             $this->dumpSemantic($descriptor, $descriptorDir, $schema);
-            $markDown = $descriptor->type === 'semantic' ? $this->getSemanticDoc($descriptor, $docsDir, $schema) : $this->getSemanticDoc($descriptor, $docsDir, $schema);
+            $markDown = $this->getSemanticDoc($descriptor, $docsDir, $schema));
             $path = sprintf('%s/%s.%s.html', $docsDir, $descriptor->type, $descriptor->id);
             $html = $this->convertHtml($descriptor, $markDown);
             file_put_contents($path, $html);
