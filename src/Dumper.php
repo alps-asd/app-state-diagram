@@ -202,7 +202,7 @@ EOT;
         if ($descriptor->parent === []) {
             return '';
         }
-
+        return '';
         $table = ' * links' . PHP_EOL . '| id | type |' . PHP_EOL . '|---|---|' . PHP_EOL;
         foreach ($descriptors as $descriptor) {
             $table .= sprintf('| %s | %s |', $descriptor->htmlLink(), $descriptor->type) . PHP_EOL;
