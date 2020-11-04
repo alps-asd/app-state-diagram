@@ -22,7 +22,12 @@
       },
       {
         "id": "About",
-        "type": "semantic"
+        "type": "semantic",
+        "descriptor": [
+          {
+            "href": "#blog"
+          }
+        ]
       },
       {
         "id": "Blog",
@@ -74,7 +79,7 @@
           {
             "id": "dateCreated",
             "type": "semantic",
-            "def": "https://schema.org/BlogPosting#dateCreated"
+            "def": "https://schema.org/dateCreated"
           },
           {
             "id": "blog",

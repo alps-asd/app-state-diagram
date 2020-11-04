@@ -7,7 +7,7 @@
  * `BlogPosting`: [https://schema.org/BlogPosting](https://schema.org/BlogPosting) 
  * `Index`: Index Page
  * `articleBody`: [https://schema.org/articleBody](https://schema.org/articleBody) 
- * `dateCreated`: [https://schema.org/BlogPosting#dateCreated](https://schema.org/BlogPosting#dateCreated) 
+ * `dateCreated`: [https://schema.org/dateCreated](https://schema.org/dateCreated) 
  * `id`: [http://schema.org/identifier](http://schema.org/identifier) 
 
 

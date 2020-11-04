@@ -4,7 +4,7 @@
     "descriptor": [
       {
         "id": "dateCreated",
-        "ref": "https://schema.org/BlogPosting#dateCreated",
+        "ref": "https://schema.org/dateCreated",
         "type": "semantic"
       }
     ]
