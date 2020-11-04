@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace Koriym\AppStateDiagram;
 
 use function implode;
-use function ksort;
 use function sprintf;
+use function str_replace;
+use function strtoupper;
+use function usort;
 
 use const PHP_EOL;
 
@@ -18,34 +20,27 @@ final class Vocabulary
     /**
      * @param AbstractDescriptor[] $descriptors
      */
-    public function __construct(array $descriptors)
+    public function __construct(array $descriptors, string $alpsFile)
     {
-        ksort($descriptors);
-        $semantics = $links = [];
-        foreach ($descriptors as $id => $descriptor) {
-            if ($descriptor instanceof SemanticDescriptor) {
-                $semantics[$id] = $descriptor;
+        usort($descriptors, static function (AbstractDescriptor $a, AbstractDescriptor $b): int {
+            $comparaId = strtoupper($a->id) <=> strtoupper($b->id);
+            if ($comparaId !== 0) {
+                return $comparaId;
             }
 
-            if ($descriptor instanceof TransDescriptor) {
-                $links[$id] = $descriptor;
-            }
-        }
+            $order = ['semantic' => 0, 'safe' => 1, 'unsafe' => 2, 'idempotent' => 3];
 
-        $semantics = $this->semantics($semantics);
-        $links = $this->semantics($links);
-
-        $this->index = <<<EOT
-# Vocabulary
-
-## Semantic
-
+            return $order[$a->type] <=> $order[$b->type];
+        });
+        $semantics = $this->semantics($descriptors);
+        $svgFile = str_replace(['json', 'xml'], 'svg', $alpsFile);
+        $md = <<<EOT
+ * [ALPS]({$alpsFile})
+ * [Application State Diagram]({$svgFile})
+ * Semantic Descriptors
 {$semantics}
-
-## Links
-
-{$links}
 EOT;
+        $this->index = (new MdToHtml())('ALPS', $md);
     }
 
     /**
@@ -55,27 +50,10 @@ EOT;
     {
         $lines = [];
         foreach ($semantics as $semantic) {
-            if ($semantic->def) {
-                $doc = $semantic->doc->value ?? '';
-                $lines[] = sprintf(' * `%s`: [%s](%s) %s', $semantic->id, $semantic->def, $semantic->def, $doc) . PHP_EOL;
-
-                continue;
-            }
-
-            $name = $this->getName($semantic);
-            $lines[] = sprintf(' * `%s`: %s', $semantic->id, $name) . PHP_EOL;
+            $href = sprintf('docs/%s.%s.html', $semantic->type, $semantic->id);
+            $lines[] = sprintf('   * [%s](%s) (%s)', $semantic->id, $href, $semantic->type) . PHP_EOL;
         }
 
         return implode($lines);
-    }
-
-    private function getName(AbstractDescriptor $semantic): string
-    {
-        $desc = [];
-        if (isset($semantic->doc->value)) {
-            $desc[] = $semantic->doc->value;
-        }
-
-        return implode(', ', $desc);
     }
 }

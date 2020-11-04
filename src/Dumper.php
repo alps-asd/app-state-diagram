@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Koriym\AppStateDiagram;
 
-use Michelf\MarkdownExtra;
 use stdClass;
 
 use function assert;
@@ -53,36 +52,9 @@ final class Dumper
 
     private function convertHtml(AbstractDescriptor $descriptor, string $markdown): string
     {
-        $htmlDiv = MarkdownExtra::defaultTransform($markdown);
+        $title = "{$descriptor->id} ($descriptor->type)";
 
-        return /** @lang HTML */<<<EOT
-<html lang="en">
-<head>
-    <title>{$descriptor->id} ($descriptor->type)</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/3.0.1/github-markdown.min.css">
-    <style>
-        .markdown-body {
-            box-sizing: border-box;
-            min-width: 200px;
-            max-width: 980px;
-            margin: 0 auto;
-            padding: 25px;
-        }
-    
-        @media (max-width: 767px) {
-            .markdown-body {
-                padding: 15px;
-            }
-        }
-    </style>
-</head>
-<body>
-    <div class="markdown-body">
-        {$htmlDiv}
-    </div>
-</body>
-</html>
-EOT;
+        return (new MdToHtml())($title, $markdown);
     }
 
     private function dumpSemantic(AbstractDescriptor $descriptor, string $dir, string $schema): void
