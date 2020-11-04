@@ -53,7 +53,6 @@ jobs:
       script:
         - composer global exec -v -- phpstan analyse -c phpstan.neon --no-progress --no-interaction
         - composer global exec -v -- psalm --show-info=false --shepherd
-        - composer global exec -v -- psalm -c psalm.compiler.xml --show-info=true
         - composer global exec -v -- phpmetrics --exclude=Exception src
         - composer global exec -v -- composer-require-checker check ./composer.json
 
