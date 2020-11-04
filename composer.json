@@ -34,7 +34,7 @@
     ],
     "scripts": {
         "asd:example" : [
-            "bin/asd demo/profile.example.json && dot -Tpng ./demo/profile.example.dot -o ./demo/profile.png"
+          "bin/asd docs/profile.example.json && dot -Tpng ./demo/profile.example.dot -o ./demo/profile.png"
         ],
         "test": ["phpunit"],
         "tests": ["@cs", "@sa", "@test"],
