@@ -27,13 +27,11 @@ abstract class AbstractDescriptor
     /** @var string */
     public $type = 'semantic';
 
-    /**
-     * @var ?string
-     */
+    /** @var ?string */
     public $rel;
 
     /** @var stdClass|SemanticDescriptor|null */
-    public $parent = [];
+    public $parent;
 
     public function __construct(object $descriptor, ?stdClass $parentDescriptor = null)
     {
@@ -46,7 +44,6 @@ abstract class AbstractDescriptor
         $this->doc = $descriptor->doc ?? null; // @phpstan-ignore-line
         $this->descriptor = $descriptor->descriptor ?? []; // @phpstan-ignore-line
         $this->parent = $parentDescriptor;
-        $this->rel = $descriptor->rel ?? null;
     }
 
     public function normalize(string $schema): stdClass

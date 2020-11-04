@@ -19,6 +19,9 @@ use function parse_url;
 use function preg_replace;
 use function property_exists;
 use function sprintf;
+use function strpos;
+use function substr;
+use function usort;
 
 use const FILTER_VALIDATE_URL;
 use const JSON_PRETTY_PRINT;
@@ -27,13 +30,8 @@ use const PHP_EOL;
 
 final class Dumper
 {
-    /** @var DescriptorScanner */
-    private $scanner;
-
-    public function __construct()
-    {
-        $this->scanner = new DescriptorScanner();
-    }
+    /** @var array<string, AbstractDescriptor> */
+    private $descriptors = [];
 
     /**
      * @param array<string, AbstractDescriptor> $descriptors
@@ -41,6 +39,7 @@ final class Dumper
     public function __invoke(array $descriptors, string $alpsFile, string $schema): void
     {
         ksort($descriptors);
+        $this->descriptors = $descriptors;
         $descriptorDir = $this->mkDir(dirname($alpsFile), 'descriptor');
         $docsDir = $this->mkDir(dirname($alpsFile), 'docs');
         foreach ($descriptors as $descriptor) {
@@ -118,7 +117,6 @@ EOT;
     private function getSemanticDoc(AbstractDescriptor $descriptor, string $dir, string $schema): string
     {
         $descriptorSemantic = $this->getDescriptorInDescriptor($descriptor);
-        $rel = $this->getRel($descriptor);
         $rt = $this->getRt($descriptor);
         $description = '';
         $description .= $this->getDescriptorProp('type', $descriptor);
@@ -184,7 +182,7 @@ EOT;
             return '';
         }
 
-        $descriptors = ($this->scanner)($descriptor->descriptor);
+        $descriptors = $this->getInlineDescritors($descriptor->descriptor);
         if ($descriptors === []) {
             return '';
         }
@@ -197,16 +195,30 @@ EOT;
         return $table;
     }
 
-    private function getRel(AbstractDescriptor $descriptor): string
+    /**
+     * @param list<stdClass> $inlineDescriptors
+     *
+     * @return list<AbstractDescriptor>
+     */
+    private function getInlineDescritors(array $inlineDescriptors): array
     {
-        if ($descriptor->parent === []) {
-            return '';
-        }
-        return '';
-        $table = ' * links' . PHP_EOL . '| id | type |' . PHP_EOL . '|---|---|' . PHP_EOL;
-        foreach ($descriptors as $descriptor) {
-            $table .= sprintf('| %s | %s |', $descriptor->htmlLink(), $descriptor->type) . PHP_EOL;
+        $descriptors = [];
+        foreach ($inlineDescriptors as $descriptor) {
+            if (isset($descriptor->id)) {
+                $descriptors[] = $this->descriptors[$descriptor->id];
+                continue;
+            }
+
+            $id = substr($descriptor->href, (int) strpos($descriptor->href, '#') + 1);
+            $descriptors[] = $this->descriptors[$id];
         }
 
-        return $table;
-    }}
+        usort($descriptors, static function (AbstractDescriptor $a, AbstractDescriptor $b): int {
+            $order = ['semantic' => 0, 'safe' => 1, 'unsafe' => 2, 'idempotent' => 3];
+
+            return $order[$a->type] <=> $order[$b->type];
+        });
+
+        return $descriptors;
+    }
+}
