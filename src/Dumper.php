@@ -70,7 +70,7 @@ final class Dumper
     {
         $file = sprintf('%s/%s.%s.json', $dir, $type, $id);
         $jsonTabSpace4 = (string) json_encode($class, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
-        $json =  $this->convertTabSpaceTwo($jsonTabSpace4);
+        $json =  $this->convertTabSpaceTwo($jsonTabSpace4) . PHP_EOL;
         file_put_contents($file, $json);
     }
 

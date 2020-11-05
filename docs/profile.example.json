@@ -13,21 +13,15 @@
         },
         "descriptor": [
           {
-            "id": "blog",
+            "id": "start",
             "type": "safe",
-            "rel": "item",
             "rt": "#Blog"
           }
         ]
       },
       {
         "id": "About",
-        "type": "semantic",
-        "descriptor": [
-          {
-            "href": "#blog"
-          }
-        ]
+        "type": "semantic"
       },
       {
         "id": "Blog",

@@ -3,16 +3,15 @@
   "alps": {
     "descriptor": [
       {
-        "id": "articleBody",
-        "ref": "https://schema.org/articleBody",
-        "type": "semantic"
+        "id": "start",
+        "type": "safe"
       }
     ]
   },
   "link": [
     {
       "rel": "parent",
-      "href": "semantic.BlogPosting.json"
+      "href": "semantic.Index.json"
     }
   ]
 }
