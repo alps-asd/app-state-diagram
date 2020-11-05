@@ -28,7 +28,8 @@ final class Link
     {
         $this->from = $semantic->id;
         $this->to = $trans->rt;
-        $this->label = sprintf('%s (%s)', $trans->id, $trans->type);
+        $title = $trans->rel ? sprintf('%s, %s', $trans->id, $trans->rel) : $trans->id;
+        $this->label = sprintf('%s (%s)', $title, $trans->type);
         $this->labels[] = $this->label;
         $this->transDescriptor = $trans;
     }

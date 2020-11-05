@@ -36,17 +36,10 @@
             "type": "safe",
             "rt": "#BlogPosting",
             "def": "https://schema.org/BlogPosting",
+            "rel": "item",
             "doc": {
               "value": "ブログ個別ページへ"
             },
-            "descriptor": [
-              {"href": "#id"}
-            ]
-          },
-          {
-            "id": "item",
-            "type": "safe",
-            "rt": "#BlogPosting",
             "descriptor": [
               {"href": "#id"}
             ]
@@ -90,9 +83,10 @@
             "def": "https://schema.org/BlogPosting#dateCreated"
           },
           {
-            "id": "collection",
+            "id": "blog",
             "type": "safe",
-            "rt": "#Blog"
+            "rt": "#Blog",
+            "rel": "colletion"
           },
           {
             "href": "#about"
