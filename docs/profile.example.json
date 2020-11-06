@@ -24,7 +24,9 @@
         "type": "semantic",
         "descriptor": [
           {
-            "href": "#backToBlog"
+            "id": "backToBlog",
+            "type": "safe",
+            "rt": "#Blog"
           }
         ]
       },
@@ -57,14 +59,7 @@
           {
             "id": "about",
             "type": "safe",
-            "rt": "#About",
-            "descriptor": [
-              {
-                "id": "backToBlog",
-                "type": "safe",
-                "rt": "#Blog"
-              }
-            ]
+            "rt": "#About"
           }
         ]
       },
