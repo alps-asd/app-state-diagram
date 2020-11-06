@@ -21,7 +21,12 @@
       },
       {
         "id": "About",
-        "type": "semantic"
+        "type": "semantic",
+        "descriptor": [
+          {
+            "href": "#backToBlog"
+          }
+        ]
       },
       {
         "id": "Blog",
@@ -45,14 +50,21 @@
             "type": "unsafe",
             "def": "http://activitystrea.ms/specs/json/1.0/#post-verb",
             "descriptor": [
-              {"href": "#BlogPosting"}
+              {"href": "#articleBody"}
             ],
             "rt": "#Blog"
           },
           {
             "id": "about",
             "type": "safe",
-            "rt": "#About"
+            "rt": "#About",
+            "descriptor": [
+              {
+                "id": "backToBlog",
+                "type": "safe",
+                "rt": "#Blog"
+              }
+            ]
           }
         ]
       },

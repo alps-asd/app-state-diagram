@@ -5,6 +5,7 @@ digraph application_state_diagram {
     BlogPosting [style=solid, margin=0.02, label=<<table cellspacing="0" cellpadding="5" cellborder="1" border="0"><tr><td bgcolor="#dddddd">BlogPosting<br />(id)<br />(articleBody)<br />(dateCreated)<br /></td></tr></table>>,shape=box URL="docs/semantic.BlogPosting.html"]
 
     Index->Blog [label = "start (safe)" URL="docs/safe.start.html"];
+    About->Blog [label = "backToBlog (safe)" URL="docs/safe.backToBlog.html"];
     Blog->BlogPosting [label = "blogPosting, item (safe)" URL="docs/safe.blogPosting.html"];
     Blog->Blog [label = "post (unsafe)" URL="docs/unsafe.post.html"];
     Blog->About [label = "about (safe)" URL="docs/safe.about.html"];
