@@ -2,7 +2,7 @@
 
 Generates an application state diagram image and vocabulary file from [ALPS](http://alps.io/) document.
 
-<img src="https://koriym.github.io/app-state-diagram/profile.example.svg">
+<a href="https://koriym.github.io/app-state-diagram/profile.example.svg"><img src="https://koriym.github.io/app-state-diagram/profile.example.svg"></a>
 
 ## Requirement
 
