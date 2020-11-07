@@ -24,8 +24,8 @@ dot - graphviz version 2.44.1 (20200629.0846)
 
 ## Installation
 
- 1. [Install composer](https://getcomposer.org/)
- 2. `% php composer.phar global require koriym/app-state-diagram`
+ 1. [Install composer](https://getcomposer.org/doc/00-intro.md)
+ 2. `% composer global require koriym/app-state-diagram`
 
 ## Usage
 
