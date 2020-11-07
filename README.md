@@ -2,7 +2,7 @@
 
 Generates an application state diagram image and semantic descriptor index and doculemnts from [ALPS](http://alps.io/) file.
 
-The images are hypermedia in SVG format with application states and state transitions linked to the respective semantic descriptor document HTML. The semantic descriptor document HTML is also linked to each other to represent the structure of the REST application.
+The images is hypermedia in SVG format with application states and state transitions linked to the respective semantic descriptor document HTML. The semantic descriptor document HTML is also linked to each other to represent the structure of the REST application.
 
 <a href="https://koriym.github.io/app-state-diagram/profile.example.svg"><img src="https://koriym.github.io/app-state-diagram/profile.example.svg"></a>
 
