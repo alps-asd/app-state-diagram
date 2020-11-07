@@ -39,9 +39,8 @@ See [https://koriym.github.io/app-state-diagram/](https://koriym.github.io/app-s
 
 ### Run demo
 
+Download [profile.example.json](https://koriym.github.io/app-state-diagram/profile.example.json)
 ```
-% git clone git@github.com:koriym/app-state-diagram.git
-% cp ./app-state-diagram/docs/profile.example.json .
 % composer global exec asd ./profile.example.json 
 Changed current directory to /Users/akihito/.composer
 ASD generated. ./index.html
