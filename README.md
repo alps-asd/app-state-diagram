@@ -1,6 +1,6 @@
 # app-state-diagram
 
-Generates an application state diagram image and semantic descriptor index and doculemnts from [ALPS](http://alps.io/) file.
+Generates an application state diagram image and semantic descriptor index and documents from [ALPS](http://alps.io/) file.
 
 The images is hypermedia in SVG format with application states and state transitions linked to the respective semantic descriptor document HTML. The semantic descriptor document HTML is also linked to each other to represent the structure of the REST application.
 
@@ -36,7 +36,7 @@ composer global require koriym/app-state-diagram
 composer global exec asd {$alpsFile}
 ```
 
-This will generate the semantic descritpor's document HTML and the application state diagram SVG.
+This will generate the semantic descriptor's document HTML and the application state diagram SVG.
 
 ## Try demo output
 
