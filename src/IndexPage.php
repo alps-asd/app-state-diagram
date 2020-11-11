@@ -12,7 +12,7 @@ use function usort;
 
 use const PHP_EOL;
 
-final class Vocabulary
+final class IndexPage
 {
     /** @var string */
     public $index;
@@ -20,7 +20,7 @@ final class Vocabulary
     /**
      * @param AbstractDescriptor[] $descriptors
      */
-    public function __construct(array $descriptors, string $alpsFile)
+    public function __construct(array $descriptors, string $alpsFile, string $title)
     {
         usort($descriptors, static function (AbstractDescriptor $a, AbstractDescriptor $b): int {
             $comparaId = strtoupper($a->id) <=> strtoupper($b->id);
@@ -35,6 +35,8 @@ final class Vocabulary
         $semantics = $this->semantics($descriptors);
         $svgFile = str_replace(['json', 'xml'], 'svg', $alpsFile);
         $md = <<<EOT
+# {$title}
+
  * [ALPS]({$alpsFile})
  * [Application State Diagram]({$svgFile})
  * Semantic Descriptors
