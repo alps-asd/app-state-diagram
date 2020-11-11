@@ -2,7 +2,7 @@ digraph application_state_diagram {
   graph [
     labelloc="b";
     fontname="Helvetica"
-    label="ALPS profile example";
+    label="ALPS example";
     URL="index.html"
   ];
   node [shape = box, style = "bold,filled"];
