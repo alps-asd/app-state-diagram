@@ -41,7 +41,7 @@ final class Dumper
      */
     public function __invoke(array $descriptors, string $alpsFile, string $schema): void
     {
-        $alpsRoot = json_decode(file_get_contents($alpsFile));
+        $alpsRoot = json_decode((string) file_get_contents($alpsFile));
         $title = $alpsRoot->alps->title ?? '';
         ksort($descriptors);
         $this->descriptors = $descriptors;
