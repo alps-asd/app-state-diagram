@@ -25,8 +25,8 @@ final class AppStateDiagram
         return (new AsdRenderer())($this->alps->links, $this->alps->descriptors, $this->alps->title);
     }
 
-    public function getVocabulary(): Vocabulary
+    public function getVocabulary(): IndexPage
     {
-        return new Vocabulary($this->alps->descriptors, $this->alpsFile);
+        return new IndexPage($this->alps->descriptors, $this->alpsFile, $this->alps->title);
     }
 }

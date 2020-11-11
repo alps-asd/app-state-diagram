@@ -12,7 +12,7 @@ class VocabularyTest extends TestCase
     {
         $alpsFile = __DIR__ . '/Fake/alps.json';
         $scanner = new AlpsProfile(__DIR__ . '/Fake/alps.json');
-        $html = (new Vocabulary($scanner->descriptors, $alpsFile))->index;
+        $html = (new IndexPage($scanner->descriptors, $alpsFile, ''))->index;
         $this->assertStringContainsString('<li><a href="docs/semantic.About.html">About</a> (semantic)</li>', $html);
     }
 }
