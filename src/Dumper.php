@@ -9,9 +9,11 @@ use stdClass;
 use function assert;
 use function basename;
 use function dirname;
+use function file_get_contents;
 use function file_put_contents;
 use function filter_var;
 use function is_dir;
+use function json_decode;
 use function json_encode;
 use function ksort;
 use function mkdir;
@@ -39,6 +41,8 @@ final class Dumper
      */
     public function __invoke(array $descriptors, string $alpsFile, string $schema): void
     {
+        $alpsRoot = json_decode((string) file_get_contents($alpsFile));
+        $title = $alpsRoot->alps->title ?? '';
         ksort($descriptors);
         $this->descriptors = $descriptors;
         $descriptorDir = $this->mkDir(dirname($alpsFile), 'descriptor');
@@ -46,7 +50,7 @@ final class Dumper
         foreach ($descriptors as $descriptor) {
             $this->dumpSemantic($descriptor, $descriptorDir, $schema);
             $asdFile = sprintf('../%s', basename(str_replace(['xml', 'json'], 'svg', $alpsFile)));
-            $markDown = $this->getSemanticDoc($descriptor, $asdFile);
+            $markDown = $this->getSemanticDoc($descriptor, $asdFile, $title);
             $path = sprintf('%s/%s.%s.html', $docsDir, $descriptor->type, $descriptor->id);
             $html = $this->convertHtml($descriptor, $markDown);
             file_put_contents($path, $html);
@@ -89,7 +93,7 @@ final class Dumper
         return (string) preg_replace('/^(  +?)\\1(?=[^ ])/m', '$1', $json);
     }
 
-    private function getSemanticDoc(AbstractDescriptor $descriptor, string $asd): string
+    private function getSemanticDoc(AbstractDescriptor $descriptor, string $asd, string $title): string
     {
         $descriptorSemantic = $this->getDescriptorInDescriptor($descriptor);
         $rt = $this->getRt($descriptor);
@@ -101,8 +105,10 @@ final class Dumper
         $description .= $this->getDescriptorProp('ref', $descriptor);
         $description .= $this->getDescriptorProp('src', $descriptor);
         $description .= $this->getDescriptorProp('rel', $descriptor);
+        $titleHeader = $title ? sprintf('%s', $title) : '';
 
         return <<<EOT
+{$titleHeader}
 # {$descriptor->id}
 {$description}{$rt}
 {$descriptorSemantic}
