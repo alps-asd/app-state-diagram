@@ -1,5 +1,11 @@
 digraph application_state_diagram {
-    node [shape = box, style = "bold,filled"];
+  graph [
+    labelloc="b";
+    fontname="Helvetica"
+    label="ALPS profile example";
+    URL="index.html"
+  ];
+  node [shape = box, style = "bold,filled"];
 
     Blog [style=solid, margin=0.02, label=<<table cellspacing="0" cellpadding="5" cellborder="1" border="0"><tr><td bgcolor="#dddddd">Blog<br />(BlogPosting)<br /></td></tr></table>>,shape=box URL="docs/semantic.Blog.html"]
     BlogPosting [style=solid, margin=0.02, label=<<table cellspacing="0" cellpadding="5" cellborder="1" border="0"><tr><td bgcolor="#dddddd">BlogPosting<br />(id)<br />(articleBody)<br />(dateCreated)<br /></td></tr></table>>,shape=box URL="docs/semantic.BlogPosting.html"]

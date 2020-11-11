@@ -1,9 +1,7 @@
 {
   "$schema": "schema/alps.json",
   "alps": {
-    "doc": {
-      "value": "ALPS profile example"
-    },
+    "title": "ALPS profile example",
     "descriptor": [
       {
         "id": "Index",
