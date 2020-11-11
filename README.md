@@ -56,3 +56,8 @@ Open `index.html` with browser.
 ```
 open ./index.html
 ```
+## Update
+
+```
+composer global update koriym/app-state-diagram
+```
