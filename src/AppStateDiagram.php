@@ -22,7 +22,7 @@ final class AppStateDiagram
 
     public function getDot(): string
     {
-        return (new AsdRenderer())($this->alps->links, $this->alps->descriptors);
+        return (new AsdRenderer())($this->alps->links, $this->alps->descriptors, $this->alps->title); // @phpstan-ignore-line
     }
 
     public function getVocabulary(): Vocabulary

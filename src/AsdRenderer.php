@@ -23,7 +23,7 @@ final class AsdRenderer
      * @param array<string, Link>       $links
      * @param array<AbstractDescriptor> $descriptors
      */
-    public function __invoke(array $links, array $descriptors): string
+    public function __invoke(array $links, array $descriptors, string $title = ''): string
     {
         $appSate = new AppState($links, $descriptors);
         $this->descriptors = $descriptors;
@@ -37,7 +37,13 @@ final class AsdRenderer
         $appSateWithNoLink = (string) $appSate;
         $template = <<<'EOT'
 digraph application_state_diagram {
-    node [shape = box, style = "bold,filled"];
+  graph [
+    labelloc="b";
+    fontname="Helvetica"
+    label="%s";
+    URL="index.html"
+  ];
+  node [shape = box, style = "bold,filled"];
 
 %s
 %s
@@ -45,7 +51,7 @@ digraph application_state_diagram {
 }
 EOT;
 
-        return sprintf($template, $nodes, $graph, $appSateWithNoLink);
+        return sprintf($template, $title, $nodes, $graph, $appSateWithNoLink);
     }
 
     public function getNodes(AppState $appSate): string
