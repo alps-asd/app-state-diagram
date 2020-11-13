@@ -8,6 +8,7 @@ use Koriym\AppStateDiagram\Exception\AlpsFileNotReadableException;
 use Koriym\AppStateDiagram\Exception\DescriptorNotFoundException;
 use Koriym\AppStateDiagram\Exception\InvalidAlpsException;
 use Koriym\AppStateDiagram\Exception\InvalidJsonException;
+use Koriym\AppStateDiagram\Exception\SharpMissingInHrefException;
 use stdClass;
 
 use function array_merge;
@@ -20,6 +21,7 @@ use function in_array;
 use function json_decode;
 use function json_last_error;
 use function sprintf;
+use function strpos;
 
 final class AlpsProfile
 {
@@ -120,6 +122,10 @@ final class AlpsProfile
 
     private function getExternalDescriptor(string $href): stdClass
     {
+        if (strpos($href, '#') === false) {
+            throw new SharpMissingInHrefException($href);
+        }
+
         [$file, $descriptorId] = explode('#', $href);
         $file = "{$this->dir}/{$file}";
         $this->scan($file);
