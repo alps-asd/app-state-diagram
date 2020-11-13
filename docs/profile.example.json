@@ -11,9 +11,7 @@
         },
         "descriptor": [
           {
-            "id": "start",
-            "type": "safe",
-            "rt": "#Blog"
+            "href": "#start"
           }
         ]
       },
@@ -22,9 +20,7 @@
         "type": "semantic",
         "descriptor": [
           {
-            "id": "backToBlog",
-            "type": "safe",
-            "rt": "#Blog"
+            "href": "#backToBlog"
           }
         ]
       },
@@ -37,27 +33,13 @@
             "href": "#BlogPosting"
           },
           {
-            "id": "blogPosting",
-            "type": "safe",
-            "rt": "#BlogPosting",
-            "rel": "item",
-            "descriptor": [
-              {"href": "#id"}
-            ]
+            "href": "#blogPosting"
           },
           {
-            "id": "post",
-            "type": "unsafe",
-            "def": "http://activitystrea.ms/specs/json/1.0/#post-verb",
-            "descriptor": [
-              {"href": "#articleBody"}
-            ],
-            "rt": "#Blog"
+            "href": "#post"
           },
           {
-            "id": "about",
-            "type": "safe",
-            "rt": "#About"
+            "href": "#about"
           }
         ]
       },
@@ -67,24 +49,16 @@
         "def": "https://schema.org/BlogPosting",
         "descriptor": [
           {
-            "id": "id",
             "href": "#id"
           },
           {
-            "id": "articleBody",
-            "type": "semantic",
-            "def": "https://schema.org/articleBody"
+            "href": "#articleBody"
           },
           {
-            "id": "dateCreated",
-            "type": "semantic",
-            "def": "https://schema.org/dateCreated"
+            "href": "#dateCreated"
           },
           {
-            "id": "blog",
-            "type": "safe",
-            "rt": "#Blog",
-            "rel": "collection"
+            "href": "#blog"
           }
         ]
       },
@@ -92,6 +66,59 @@
         "id": "id",
         "type": "semantic",
         "def": "http://schema.org/identifier"
+      },
+      {
+        "id": "start",
+        "type": "safe",
+        "rt": "#Blog"
+      },
+      {
+        "id": "backToBlog",
+        "type": "safe",
+        "rt": "#Blog"
+      },
+      {
+        "id": "blogPosting",
+        "type": "safe",
+        "rt": "#BlogPosting",
+        "rel": "item",
+        "descriptor": [
+          {
+            "href": "#id"
+          }
+        ]
+      },
+      {
+        "id": "articleBody",
+        "type": "semantic",
+        "def": "https://schema.org/articleBody"
+      },
+      {
+        "id": "dateCreated",
+        "type": "semantic",
+        "def": "https://schema.org/dateCreated"
+      },
+      {
+        "id": "post",
+        "type": "unsafe",
+        "def": "http://activitystrea.ms/specs/json/1.0/#post-verb",
+        "descriptor": [
+          {
+            "href": "#articleBody"
+          }
+        ],
+        "rt": "#Blog"
+      },
+      {
+        "id": "about",
+        "type": "safe",
+        "rt": "#About"
+      },
+      {
+        "id": "blog",
+        "type": "safe",
+        "rt": "#Blog",
+        "rel": "collection"
       }
     ]
   }
