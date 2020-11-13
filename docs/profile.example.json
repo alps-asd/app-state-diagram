@@ -26,9 +26,11 @@
           {"href": "#blog"}
         ]
       },
+
       {"id": "id", "type": "semantic", "def": "http://schema.org/identifier"},
       {"id": "articleBody", "type": "semantic", "def": "https://schema.org/articleBody"},
       {"id": "dateCreated", "type": "semantic", "def": "https://schema.org/dateCreated"},
+
       {"id": "start", "type": "safe", "rt": "#Blog"},
       {"id": "backToBlog", "type": "safe", "rt": "#Blog"},
       {"id": "blogPosting", "type": "safe", "rt": "#BlogPosting", "rel": "item", "descriptor": [
