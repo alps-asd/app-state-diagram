@@ -150,8 +150,8 @@ final class AlpsProfile
 
     private function addLink(Link $link): void
     {
-        $fromTo = sprintf('%s->%s', $link->from, $link->to);
-        $this->links[$fromTo] = isset($this->links[$fromTo]) ? $this->links[$fromTo]->add($link) : $link;
+        $arrowId = sprintf('%s->%s:%s', $link->from, $link->to, $link->transDescriptor->id);
+        $this->links[$arrowId] = isset($this->links[$arrowId]) ? $this->links[$arrowId]->add($link) : $link;
     }
 
     /**

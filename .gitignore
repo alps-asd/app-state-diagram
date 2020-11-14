@@ -10,3 +10,5 @@
 tests/Fake/docs/
 tests/Fake/descriptor/
 lsp/
+tests/Fake/multiple_link/multiple_link.dot
+tests/Fake/multiple_link/multiple_link.svg
