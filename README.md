@@ -1,12 +1,12 @@
 # app-state-diagram
 
-Generates an application state diagram image and semantic descriptor index and documents from [ALPS](http://alps.io/) file.
+Produces a full application state diagram and hyperlinked documentation from [ALPS](http://alps.io/) file. See [demo output](https://koriym.github.io/app-state-diagram/).
 
-The images is hypermedia in SVG format with application states and state transitions linked to the respective semantic descriptor document HTML. The semantic descriptor document HTML is also linked to each other to represent the structure of the REST application.
+The diagram is hypermedia in SVG format with application states and state transitions linked to the respective semantic descriptor document HTML. The semantic descriptor document HTML is also linked to each other to represent the structure of the REST application.
 
 <a href="https://koriym.github.io/app-state-diagram/profile.example.svg"><img src="https://koriym.github.io/app-state-diagram/profile.example.svg"></a>
 
-This version only supports JSON format ALPS. Use [ALPS cli](https://github.com/filip26/alps) to convert the file.
+This version only supports JSON format ALPS. Use [ALPS cli](https://github.com/filip26/alps) to convert the XML file.
 
 ## Requirement
 
@@ -37,10 +37,6 @@ composer global exec asd {$alpsFile}
 ```
 
 This will generate the semantic descriptor's document HTML and the application state diagram SVG.
-
-## Try demo output
-
-See [https://koriym.github.io/app-state-diagram/](https://koriym.github.io/app-state-diagram/)
 
 ### Run demo
 
