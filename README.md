@@ -30,6 +30,13 @@ dot - graphviz version 2.44.1 (20200629.0846)
 ```
 composer global require koriym/app-state-diagram
 ```
+
+## Update
+
+```
+composer global update koriym/app-state-diagram
+```
+
 ## Usage
 
 ```
@@ -37,6 +44,7 @@ composer global exec asd {$alpsFile}
 ```
 
 This will generate the semantic descriptor's document HTML and the application state diagram SVG.
+
 
 ### Run demo
 
@@ -51,9 +59,4 @@ Open `index.html` with browser.
 
 ```
 open ./index.html
-```
-## Update
-
-```
-composer global update koriym/app-state-diagram
 ```
