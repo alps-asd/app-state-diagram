@@ -3,26 +3,30 @@
   "alps": {
     "title": "ALPS example",
     "descriptor": [
-      {"id": "Index", "type": "semantic", "doc": {"value": "Index Page"}, "descriptor": [
+      {
+        "id": "Index", "type": "semantic", "doc": {"value": "Index Page"},
+        "descriptor": [
           {"href": "#start"}
         ]
       },
-      {"id": "About", "type": "semantic", "descriptor": [
+      {
+        "id": "About", "type": "semantic",
+        "descriptor": [
           {"href": "#backToBlog"}
         ]
       },
       {
-        "id": "Blog", "type": "semantic", "def": "https://schema.org/Blog", "descriptor": [
-          {"href": "#BlogPosting"},
-          {"href": "#blogPosting"},
+        "id": "Blog", "type": "semantic", "def": "https://schema.org/Blog",
+        "descriptor": [
+          {"href": "#BlogPosting"}, {"href": "#blogPosting"},
           {"href": "#post"},
           {"href": "#about"}
         ]
       },
-      {"id": "BlogPosting", "type": "semantic", "def": "https://schema.org/BlogPosting", "descriptor": [
-          {"href": "#id"},
-          {"href": "#articleBody"},
-          {"href": "#dateCreated"},
+      {
+        "id": "BlogPosting", "type": "semantic", "def": "https://schema.org/BlogPosting",
+        "descriptor": [
+          {"href": "#id"}, {"href": "#articleBody"}, {"href": "#dateCreated"},
           {"href": "#blog"}
         ]
       },
@@ -33,11 +37,14 @@
 
       {"id": "start", "type": "safe", "rt": "#Blog"},
       {"id": "backToBlog", "type": "safe", "rt": "#Blog"},
-      {"id": "blogPosting", "type": "safe", "rt": "#BlogPosting", "rel": "item", "descriptor": [
+      {
+        "id": "blogPosting", "type": "safe", "rt": "#BlogPosting", "rel": "item",
+        "descriptor": [
           {"href": "#id"}
         ]
       },
-      {"id": "post", "type": "unsafe", "def": "http://activitystrea.ms/specs/json/1.0/#post-verb", "rt": "#Blog",
+      {
+        "id": "post", "type": "unsafe", "def": "http://activitystrea.ms/specs/json/1.0/#post-verb", "rt": "#Blog",
         "descriptor": [
           {"href": "#articleBody"}
         ]
