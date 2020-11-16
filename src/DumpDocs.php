@@ -82,7 +82,7 @@ final class DumpDocs
     {
         $dir = sprintf('%s/%s', $baseDir, $dirName);
         if (! is_dir($dir)) {
-            mkdir($dir, 0777, true);
+            mkdir($dir, 0777, true); // @codeCoverageIgnore
         }
 
         return $dir;
