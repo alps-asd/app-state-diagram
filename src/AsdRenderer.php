@@ -8,7 +8,6 @@ use Koriym\AppStateDiagram\Exception\InvalidHrefException;
 use stdClass;
 
 use function assert;
-use function explode;
 use function sprintf;
 use function strpos;
 use function substr;
@@ -29,12 +28,8 @@ final class AsdRenderer
         $appSate = new AppState($links, $descriptors);
         $this->descriptors = $descriptors;
         $nodes = $this->getNodes($appSate);
-        $graph = '';
-        foreach ($links as $arrowId => $label) {
-            [$arrow] = explode(':', $arrowId);
-            $url = sprintf('docs/%s.%s.html', $label->transDescriptor->type, $label->transDescriptor->id);
-            $graph .= sprintf('    %s [label = "%s" URL="%s"];', $arrow, (string) $label, $url) . PHP_EOL;
-        }
+        $edge = new Edge($links);
+        $graph = (string) $edge;
 
         $appSateWithNoLink = (string) $appSate;
         $template = <<<'EOT'
