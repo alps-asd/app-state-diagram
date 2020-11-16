@@ -27,6 +27,6 @@ final class AppStateDiagram
 
     public function getVocabulary(): IndexPage
     {
-        return new IndexPage($this->alps->descriptors, $this->alpsFile, $this->alps->title);
+        return new IndexPage($this->alps->descriptors, $this->alpsFile, $this->alps);
     }
 }

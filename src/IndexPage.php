@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Koriym\AppStateDiagram;
 
+use function htmlspecialchars;
 use function implode;
+use function nl2br;
 use function sprintf;
 use function str_replace;
 use function strtoupper;
@@ -20,7 +22,7 @@ final class IndexPage
     /**
      * @param AbstractDescriptor[] $descriptors
      */
-    public function __construct(array $descriptors, string $alpsFile, string $title)
+    public function __construct(array $descriptors, string $alpsFile, AlpsProfile $profile)
     {
         usort($descriptors, static function (AbstractDescriptor $a, AbstractDescriptor $b): int {
             $comparaId = strtoupper($a->id) <=> strtoupper($b->id);
@@ -34,8 +36,12 @@ final class IndexPage
         });
         $semantics = $this->semantics($descriptors);
         $svgFile = str_replace(['json', 'xml'], 'svg', $alpsFile);
+        $htmlTitle = htmlspecialchars($profile->title);
+        $htmlDoc = nl2br(htmlspecialchars($profile->doc));
         $md = <<<EOT
-# {$title}
+# {$htmlTitle}
+
+{$htmlDoc}
 
  * [ALPS]({$alpsFile})
  * [Application State Diagram]({$svgFile})

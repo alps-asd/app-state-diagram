@@ -43,6 +43,9 @@ final class AlpsProfile
     /** @var string */
     public $title = '';
 
+    /** @var string */
+    public $doc = '';
+
     public function __construct(string $alpsFile)
     {
         $this->scanner = new DescriptorScanner();
@@ -163,26 +166,25 @@ final class AlpsProfile
             throw new AlpsFileNotReadableException($alpsFile);
         }
 
-        $alps = json_decode((string) file_get_contents($alpsFile), false);
+        $profile = json_decode((string) file_get_contents($alpsFile), false);
         $jsonError = json_last_error();
-        if ($alps->{'$schema'}) {
-            $this->schema = $alps->{'$schema'};
+        if ($profile->{'$schema'}) {
+            $this->schema = $profile->{'$schema'};
         }
 
-        if (isset($alps->alps->title)) {
-            $this->title = $alps->alps->title;
-        }
+        $this->title = $profile->alps->title ?? '';
+        $this->doc = $profile->alps->doc->value ?? '';
 
         if ($jsonError) {
             throw new InvalidJsonException($alpsFile);
         }
 
-        if (! isset($alps->alps->descriptor)) {
+        if (! isset($profile->alps->descriptor)) {
             throw new InvalidAlpsException($alpsFile);
         }
 
-        $this->descriptors = array_merge($this->descriptors, ($this->scanner)($alps->alps->descriptor));
+        $this->descriptors = array_merge($this->descriptors, ($this->scanner)($profile->alps->descriptor));
 
-        return $alps->alps->descriptor;
+        return $profile->alps->descriptor;
     }
 }
