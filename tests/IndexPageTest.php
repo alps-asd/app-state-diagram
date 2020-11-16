@@ -6,13 +6,13 @@ namespace Koriym\AppStateDiagram;
 
 use PHPUnit\Framework\TestCase;
 
-class VocabularyTest extends TestCase
+class IndexPageTest extends TestCase
 {
     public function testInvoke(): void
     {
         $alpsFile = __DIR__ . '/Fake/alps.json';
         $scanner = new AlpsProfile(__DIR__ . '/Fake/alps.json');
-        $html = (new IndexPage($scanner->descriptors, $alpsFile, ''))->index;
+        $html = (new IndexPage($scanner->descriptors, $alpsFile, new AlpsProfile($alpsFile)))->index;
         $this->assertStringContainsString('<li><a href="docs/semantic.About.html">About</a> (semantic)</li>', $html);
     }
 }
