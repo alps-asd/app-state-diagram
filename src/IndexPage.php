@@ -21,6 +21,7 @@ final class IndexPage
 
     public function __construct(AlpsProfile $profile)
     {
+        $profilePath = pathinfo($profile->alpsFile, PATHINFO_BASENAME);
         $descriptors = $profile->descriptors;
         usort($descriptors, static function (AbstractDescriptor $a, AbstractDescriptor $b): int {
             $comparaId = strtoupper($a->id) <=> strtoupper($b->id);
@@ -33,7 +34,7 @@ final class IndexPage
             return $order[$a->type] <=> $order[$b->type];
         });
         $semantics = $this->semantics($descriptors);
-        $svgFile = str_replace(['json', 'xml'], 'svg', $profile->alpsFile);
+        $svgFile = str_replace(['json', 'xml'], 'svg', $profilePath);
         $htmlTitle = htmlspecialchars($profile->title);
         $htmlDoc = nl2br(htmlspecialchars($profile->doc));
         $md = <<<EOT
@@ -41,7 +42,7 @@ final class IndexPage
 
 {$htmlDoc}
 
- * [ALPS]({$profile->alpsFile})
+ * [ALPS]({$profilePath})
  * [Application State Diagram]({$svgFile})
  * Semantic Descriptors
 {$semantics}
