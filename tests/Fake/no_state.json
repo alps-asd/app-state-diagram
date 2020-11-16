@@ -1,0 +1,48 @@
+{
+  "$schema": "schema/alps.json",
+  "alps": {
+    "descriptor": [
+      {
+        "id": "Index",
+        "type": "semantic",
+        "descriptor": [
+          {
+            "id": "user",
+            "rt": "#User",
+            "type": "safe"
+          }
+        ]
+      },
+      {
+        "id": "User",
+        "type": "semantic",
+        "descriptor": [
+          {
+            "id": "index",
+            "rt": "#Index",
+            "type": "safe"
+          },
+          {
+            "href": "#name"
+          }
+        ]
+      },
+      {
+        "id": "name",
+        "type": "semantic",
+        "descriptor": [
+          {
+            "id": "giveName",
+            "type": "semantic",
+            "def": "https://schema.org/givenName"
+          },
+          {
+            "id": "familyName",
+            "type": "semantic",
+            "def": "https://schema.org/familyName"
+          }
+        ]
+      }
+    ]
+  }
+}
