@@ -1,0 +1,12 @@
+{
+  "$schema": "schema/alps.json",
+  "alps": {
+    "descriptor": [
+      {
+        "id": "title",
+        "ref": "http://schema.org/title",
+        "type": "semantic"
+      }
+    ]
+  }
+}

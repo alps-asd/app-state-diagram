@@ -1,0 +1,18 @@
+digraph application_state_diagram {
+  graph [
+    labelloc="b";
+    fontname="Helvetica"
+    label="";
+    URL="index.html"
+  ];
+  node [shape = box, style = "bold,filled"];
+
+
+    Index->Foo [label = "foo (safe)" URL="docs/safe.foo.html"];
+    Index->Foo [label = "foo1 (safe)" URL="docs/safe.foo1.html"];
+    Index->Foo [label = "foo2 (safe)" URL="docs/safe.foo2.html"];
+
+    Index [URL="docs/semantic.Index.html"]
+    Foo [URL="docs/semantic.Foo.html"]
+
+}

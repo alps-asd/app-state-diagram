@@ -1,0 +1,29 @@
+digraph application_state_diagram {
+  graph [
+    labelloc="b";
+    fontname="Helvetica"
+    label="MVC ToDo List";
+    URL="index.html"
+  ];
+  node [shape = box, style = "bold,filled"];
+
+    todoList [style=solid, margin=0.02, label=<<table cellspacing="0" cellpadding="5" cellborder="1" border="0"><tr><td bgcolor="#dddddd">todoList<br />(id)<br />(title)<br />(completed)<br /></td></tr></table>>,shape=box URL="docs/semantic.todoList.html"]
+    todoItem [style=solid, margin=0.02, label=<<table cellspacing="0" cellpadding="5" cellborder="1" border="0"><tr><td bgcolor="#dddddd">todoItem<br />(id)<br />(title)<br />(completed)<br /></td></tr></table>>,shape=box URL="docs/semantic.todoItem.html"]
+
+    home -> todoList [fontsize=12 label = "listAll (safe)" URL="docs/safe.listAll.html"];
+    home -> related [fontsize=12 label = "goRelated (safe)" URL="docs/safe.goRelated.html"];
+    related -> home [fontsize=12 label = "goHome (safe)" URL="docs/safe.goHome.html"];
+    related -> todoList [fontsize=12 label=<<table  border="0"><tr><td align="left" href="docs/safe.listAll.html">listAll (safe)</td></tr><tr><td align="left" href="docs/safe.listActive.html">listActive (safe)</td></tr><tr><td align="left" href="docs/safe.listCompleted.html">listCompleted (safe)</td></tr><tr><td align="left" href="docs/idempotent.remove.html">remove (idempotent)</td></tr></table>>];
+    related -> todoItem [fontsize=12 label=<<table  border="0"><tr><td align="left" href="docs/safe.read.html">read (safe)</td></tr><tr><td align="left" href="docs/unsafe.add.html">add (unsafe)</td></tr><tr><td align="left" href="docs/idempotent.edit.html">edit (idempotent)</td></tr></table>>];
+    todoList -> todoItem [fontsize=12 label=<<table  border="0"><tr><td align="left" href="docs/safe.read.html">read (safe)</td></tr><tr><td align="left" href="docs/unsafe.add.html">add (unsafe)</td></tr></table>>];
+    todoList -> todoList [fontsize=12 label=<<table  border="0"><tr><td align="left" href="docs/safe.listAll.html">listAll (safe)</td></tr><tr><td align="left" href="docs/safe.listActive.html">listActive (safe)</td></tr><tr><td align="left" href="docs/safe.listCompleted.html">listCompleted (safe)</td></tr><tr><td align="left" href="docs/safe.goFirst.html">goFirst (safe)</td></tr><tr><td align="left" href="docs/safe.goNext.html">goNext (safe)</td></tr><tr><td align="left" href="docs/safe.goPrevious.html">goPrevious (safe)</td></tr><tr><td align="left" href="docs/safe.goLast.html">goLast (safe)</td></tr></table>>];
+    todoList -> home [fontsize=12 label = "goHome (safe)" URL="docs/safe.goHome.html"];
+    todoList -> related [fontsize=12 label = "goRelated (safe)" URL="docs/safe.goRelated.html"];
+    todoItem -> todoList [fontsize=12 label=<<table  border="0"><tr><td align="left" href="docs/safe.listAll.html">listAll (safe)</td></tr><tr><td align="left" href="docs/idempotent.remove.html">remove (idempotent)</td></tr></table>>];
+    todoItem -> todoItem [fontsize=12 label=<<table  border="0"><tr><td align="left" href="docs/idempotent.edit.html">edit (idempotent)</td></tr><tr><td align="left" href="docs/idempotent.markCompleted.html">markCompleted (idempotent)</td></tr><tr><td align="left" href="docs/idempotent.clearCompleted.html">clearCompleted (idempotent)</td></tr></table>>];
+    todoItem -> related [fontsize=12 label = "goRelated (safe)" URL="docs/safe.goRelated.html"];
+
+    home [URL="docs/semantic.home.html"]
+    related [URL="docs/semantic.related.html"]
+
+}
