@@ -8,11 +8,5 @@
         "type": "semantic"
       }
     ]
-  },
-  "link": [
-    {
-      "rel": "parent",
-      "href": "semantic.BlogPosting.json"
-    }
-  ]
+  }
 }
