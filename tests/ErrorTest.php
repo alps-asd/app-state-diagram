@@ -49,4 +49,10 @@ class ErrorTest extends TestCase
         $this->expectException(RtDescriptorMissingException::class);
         (new DrawDiagram())(new AlpsProfile(__DIR__ . '/Fake/invalid_missing_rt_descriptor.json'));
     }
+
+    public function testNullJsonException(): void
+    {
+        $this->expectException(InvalidDescriptorException::class);
+        (new DrawDiagram())(new AlpsProfile(__DIR__ . '/Fake/invalid_null.json'));
+    }
 }
