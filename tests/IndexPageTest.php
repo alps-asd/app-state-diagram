@@ -11,8 +11,7 @@ class IndexPageTest extends TestCase
     public function testInvoke(): void
     {
         $alpsFile = __DIR__ . '/Fake/alps.json';
-        $scanner = new AlpsProfile(__DIR__ . '/Fake/alps.json');
-        $html = (new IndexPage($scanner->descriptors, $alpsFile, new AlpsProfile($alpsFile)))->index;
+        $html = (new IndexPage(new AlpsProfile($alpsFile)))->index;
         $this->assertStringContainsString('<li><a href="docs/semantic.About.html">About</a> (semantic)</li>', $html);
     }
 }

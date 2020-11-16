@@ -4,6 +4,7 @@
     "descriptor": [
       {
         "id": "Index",
+        "type": "semantic",
         "doc": {
           "value": "Index Page"
         },

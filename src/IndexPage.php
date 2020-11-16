@@ -7,11 +7,13 @@ namespace Koriym\AppStateDiagram;
 use function htmlspecialchars;
 use function implode;
 use function nl2br;
+use function pathinfo;
 use function sprintf;
 use function str_replace;
 use function strtoupper;
 use function usort;
 
+use const PATHINFO_BASENAME;
 use const PHP_EOL;
 
 final class IndexPage
@@ -19,11 +21,10 @@ final class IndexPage
     /** @var string */
     public $index;
 
-    /**
-     * @param AbstractDescriptor[] $descriptors
-     */
-    public function __construct(array $descriptors, string $alpsFile, AlpsProfile $profile)
+    public function __construct(AlpsProfile $profile)
     {
+        $profilePath = pathinfo($profile->alpsFile, PATHINFO_BASENAME);
+        $descriptors = $profile->descriptors;
         usort($descriptors, static function (AbstractDescriptor $a, AbstractDescriptor $b): int {
             $comparaId = strtoupper($a->id) <=> strtoupper($b->id);
             if ($comparaId !== 0) {
@@ -35,7 +36,7 @@ final class IndexPage
             return $order[$a->type] <=> $order[$b->type];
         });
         $semantics = $this->semantics($descriptors);
-        $svgFile = str_replace(['json', 'xml'], 'svg', $alpsFile);
+        $svgFile = str_replace(['json', 'xml'], 'svg', $profilePath);
         $htmlTitle = htmlspecialchars($profile->title);
         $htmlDoc = nl2br(htmlspecialchars($profile->doc));
         $md = <<<EOT
@@ -43,7 +44,7 @@ final class IndexPage
 
 {$htmlDoc}
 
- * [ALPS]({$alpsFile})
+ * [ALPS]({$profilePath})
  * [Application State Diagram]({$svgFile})
  * Semantic Descriptors
 {$semantics}

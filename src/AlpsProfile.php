@@ -8,9 +8,11 @@ use Koriym\AppStateDiagram\Exception\AlpsFileNotReadableException;
 use Koriym\AppStateDiagram\Exception\DescriptorNotFoundException;
 use Koriym\AppStateDiagram\Exception\InvalidAlpsException;
 use Koriym\AppStateDiagram\Exception\InvalidJsonException;
+use Koriym\AppStateDiagram\Exception\RtDescriptorMissingException;
 use Koriym\AppStateDiagram\Exception\SharpMissingInHrefException;
 use stdClass;
 
+use function array_keys;
 use function array_merge;
 use function assert;
 use function dirname;
@@ -18,13 +20,19 @@ use function explode;
 use function file_exists;
 use function file_get_contents;
 use function in_array;
+use function is_array;
+use function is_readable;
 use function json_decode;
 use function json_last_error;
+use function json_last_error_msg;
 use function sprintf;
 use function strpos;
 
 final class AlpsProfile
 {
+    /** @var string */
+    public $alpsFile;
+
     /** @var AbstractDescriptor[] */
     public $descriptors = [];
 
@@ -48,9 +56,15 @@ final class AlpsProfile
 
     public function __construct(string $alpsFile)
     {
+        if (! is_readable($alpsFile)) {
+            throw new AlpsFileNotReadableException($alpsFile);
+        }
+
+        $this->alpsFile = $alpsFile;
         $this->scanner = new DescriptorScanner();
         $this->dir = dirname($alpsFile);
         $this->scan($alpsFile);
+        $this->validateRtNotMissing();
     }
 
     private function scan(string $alpsFile): void
@@ -77,11 +91,11 @@ final class AlpsProfile
     private function href(stdClass $descriptor): void
     {
         $isExternal = $descriptor->href[0] !== '#';
-        if ($isExternal) {
-            $this->scanDescriptor($this->getExternalDescriptor($descriptor->href));
-
+        if (! $isExternal) {
             return;
         }
+
+        $this->scanDescriptor($this->getExternalDescriptor($descriptor->href));
     }
 
     /**
@@ -153,8 +167,8 @@ final class AlpsProfile
 
     private function addLink(Link $link): void
     {
-        $arrowId = sprintf('%s->%s:%s', $link->from, $link->to, $link->transDescriptor->id);
-        $this->links[$arrowId] = isset($this->links[$arrowId]) ? $this->links[$arrowId]->add($link) : $link;
+        $edgeId = sprintf('%s->%s:%s', $link->from, $link->to, $link->transDescriptor->id);
+        $this->links[$edgeId] = $link;
     }
 
     /**
@@ -167,24 +181,35 @@ final class AlpsProfile
         }
 
         $profile = json_decode((string) file_get_contents($alpsFile), false);
-        $jsonError = json_last_error();
-        if ($profile->{'$schema'}) {
+        if (json_last_error()) {
+            throw new InvalidJsonException(json_last_error_msg());
+        }
+
+        if (isset($profile->{'$schema'})) {
             $this->schema = $profile->{'$schema'};
         }
 
         $this->title = $profile->alps->title ?? '';
         $this->doc = $profile->alps->doc->value ?? '';
 
-        if ($jsonError) {
-            throw new InvalidJsonException($alpsFile);
-        }
-
-        if (! isset($profile->alps->descriptor)) {
+        if (! isset($profile->alps->descriptor) || ! is_array($profile->alps->descriptor)) {
             throw new InvalidAlpsException($alpsFile);
         }
 
         $this->descriptors = array_merge($this->descriptors, ($this->scanner)($profile->alps->descriptor));
 
         return $profile->alps->descriptor;
+    }
+
+    private function validateRtNotMissing(): void
+    {
+        foreach ($this->descriptors as $descriptor) {
+            $descriptorKeys = array_keys($this->descriptors);
+            if ($descriptor->type !== 'semantic') {
+                if (isset($descriptor->rt) && ! in_array($descriptor->rt, $descriptorKeys)) {
+                    throw new RtDescriptorMissingException($descriptor->rt);
+                }
+            }
+        }
     }
 }
