@@ -9,6 +9,7 @@ use Koriym\AppStateDiagram\Exception\SharpMissingInHrefException;
 use stdClass;
 
 use function assert;
+use function in_array;
 use function sprintf;
 use function strpos;
 use function substr;
@@ -20,9 +21,10 @@ final class DrawDiagram
 
     public function __invoke(AlpsProfile $profile): string
     {
+        $transNodes = $this->getTransNodes($profile);
         $appSate = new AppState($profile->links, $profile->descriptors);
         $this->descriptors = $profile->descriptors;
-        $nodes = $this->getNodes($appSate);
+        $nodes = $this->getNodes($appSate, $transNodes);
         $edge = new Edge($profile);
         $graph = (string) $edge;
 
@@ -46,14 +48,40 @@ EOT;
         return sprintf($template, $profile->title, $nodes, $graph, $appSateWithNoLink);
     }
 
-    public function getNodes(AppState $appSate): string
+    /**
+     * @param list<string> $transNodes
+     */
+    public function getNodes(AppState $appSate, array $transNodes): string
     {
         $dot = '';
         foreach ($this->descriptors as $descriptor) {
+            if (! in_array($descriptor->id, $transNodes)) {
+                continue;
+            }
+
             $dot .= $this->getNode($descriptor, $appSate);
         }
 
         return $dot;
+    }
+
+    /**
+     * @return list<string>
+     */
+    private function getTransNodes(AlpsProfile $profile): array
+    {
+        $transNodes = [];
+        foreach ($profile->links as $link) {
+            if (! in_array($link->from, $transNodes)) {
+                $transNodes[] = $link->from;
+            }
+
+            if (! in_array($link->to, $transNodes)) {
+                $transNodes[] = $link->to;
+            }
+        }
+
+        return $transNodes;
     }
 
     private function getNode(AbstractDescriptor $descriptor, AppState $appSate): string

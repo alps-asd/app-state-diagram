@@ -48,18 +48,10 @@ class DrawDiagramTest extends TestCase
         $this->assertSame(1, $numberOfArrow);
     }
 
-//    public function testInvalidHref(): void
-//    {
-//        $this->expectException(InvalidHrefException::class);
-//        $descriptor = new SemanticDescriptor(json_decode((string) file_get_contents(__DIR__ . '/Fake/invalid_href.json')));
-//        ($this->drawDiagram)([], [$descriptor]);
-//    }
-//
-//    public function testBox(): void
-//    {
-//        $descriptor = new SemanticDescriptor(json_decode((string) file_get_contents(__DIR__ . '/Fake/BlogPosting.json')));
-//        $dot = ($this->drawDiagram)([], [$descriptor]);
-//        $this->assertStringContainsString('(articleBody)', $dot);
-//        $this->assertStringContainsString('(dateCreated)', $dot);
-//    }
+    public function testNoState(): void
+    {
+        $alpsFile = __DIR__ . '/Fake/no_state.json';
+        $dot = ($this->drawDiagram)(new AlpsProfile($alpsFile));
+        $this->assertStringNotContainsString('name [', $dot);
+    }
 }
