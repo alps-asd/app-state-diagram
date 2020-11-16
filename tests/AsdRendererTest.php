@@ -24,7 +24,7 @@ class AsdRendererTest extends TestCase
     {
         $alps = new AlpsProfile(__DIR__ . '/Fake/alps.json');
         $dot = ($this->renderer)($alps->links, $alps->descriptors);
-        $this->assertStringContainsString('Index->Blog [label = "blog (safe)"', $dot);
+        $this->assertStringContainsString('Index -> Blog [label = "blog (safe)"', $dot);
     }
 
     public function testInvalidHref(): void

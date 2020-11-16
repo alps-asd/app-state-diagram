@@ -12,8 +12,6 @@ use function sprintf;
 use function strpos;
 use function substr;
 
-use const PHP_EOL;
-
 final class AsdRenderer
 {
     /** @var AbstractDescriptor[] */
@@ -28,11 +26,8 @@ final class AsdRenderer
         $appSate = new AppState($links, $descriptors);
         $this->descriptors = $descriptors;
         $nodes = $this->getNodes($appSate);
-        $graph = '';
-        foreach ($links as $link => $label) {
-            $url = sprintf('docs/%s.%s.html', $label->transDescriptor->type, $label->transDescriptor->id);
-            $graph .= sprintf('    %s [label = "%s" URL="%s"];', $link, (string) $label, $url) . PHP_EOL;
-        }
+        $edge = new Edge($links);
+        $graph = (string) $edge;
 
         $appSateWithNoLink = (string) $appSate;
         $template = <<<'EOT'

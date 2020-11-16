@@ -18,6 +18,6 @@ class AlpsProfileTest extends TestCase
 
     public function testProfile(): void
     {
-        $this->assertSame('bar (safe)', (string) $this->profile->links['Foo->Bar']);
+        $this->assertSame('bar (safe)', (string) $this->profile->links['Foo->Bar:bar']);
     }
 }

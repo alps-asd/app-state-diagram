@@ -1,0 +1,16 @@
+{
+  "$schema": "https://raw.githubusercontent.com/koriym/spec/master/schemas/alps.json",
+  "alps": {
+    "descriptor": [
+      {"id": "Index", "type": "semantic", "descriptor": [
+        {"href": "#foo"},
+        {"href": "#foo1"},
+        {"href": "#foo2"}
+      ]},
+      {"id": "Foo", "type": "semantic"},
+      {"id": "foo", "type": "safe", "rt": "#Foo"},
+      {"id": "foo1", "type": "safe", "rt": "#Foo"},
+      {"id": "foo2", "type": "safe", "rt": "#Foo"}
+    ]
+  }
+}

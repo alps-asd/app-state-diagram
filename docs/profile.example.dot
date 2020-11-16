@@ -10,12 +10,12 @@ digraph application_state_diagram {
     Blog [style=solid, margin=0.02, label=<<table cellspacing="0" cellpadding="5" cellborder="1" border="0"><tr><td bgcolor="#dddddd">Blog<br />(BlogPosting)<br /></td></tr></table>>,shape=box URL="docs/semantic.Blog.html"]
     BlogPosting [style=solid, margin=0.02, label=<<table cellspacing="0" cellpadding="5" cellborder="1" border="0"><tr><td bgcolor="#dddddd">BlogPosting<br />(id)<br />(articleBody)<br />(dateCreated)<br /></td></tr></table>>,shape=box URL="docs/semantic.BlogPosting.html"]
 
-    Index->Blog [label = "start (safe)" URL="docs/safe.start.html"];
-    About->Blog [label = "backToBlog (safe)" URL="docs/safe.backToBlog.html"];
-    Blog->BlogPosting [label = "blogPosting, item (safe)" URL="docs/safe.blogPosting.html"];
-    Blog->Blog [label = "post (unsafe)" URL="docs/unsafe.post.html"];
-    Blog->About [label = "about (safe)" URL="docs/safe.about.html"];
-    BlogPosting->Blog [label = "blog, collection (safe)" URL="docs/safe.blog.html"];
+    Index -> Blog [fontsize=12 label = "start (safe)" URL="docs/safe.start.html"];
+    About -> Blog [fontsize=12 label = "backToBlog (safe)" URL="docs/safe.backToBlog.html"];
+    Blog -> BlogPosting [fontsize=12 label = "blogPosting, item (safe)" URL="docs/safe.blogPosting.html"];
+    Blog -> Blog [fontsize=12 label = "post (unsafe)" URL="docs/unsafe.post.html"];
+    Blog -> About [fontsize=12 label = "about (safe)" URL="docs/safe.about.html"];
+    BlogPosting -> Blog [fontsize=12 label = "blog, collection (safe)" URL="docs/safe.blog.html"];
 
     Index [URL="docs/semantic.Index.html"]
     About [URL="docs/semantic.About.html"]
