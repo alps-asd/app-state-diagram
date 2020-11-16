@@ -91,11 +91,11 @@ final class AlpsProfile
     private function href(stdClass $descriptor): void
     {
         $isExternal = $descriptor->href[0] !== '#';
-        if ($isExternal) {
-            $this->scanDescriptor($this->getExternalDescriptor($descriptor->href));
-
+        if (! $isExternal) {
             return;
         }
+
+        $this->scanDescriptor($this->getExternalDescriptor($descriptor->href));
     }
 
     /**

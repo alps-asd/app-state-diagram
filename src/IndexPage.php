@@ -7,11 +7,13 @@ namespace Koriym\AppStateDiagram;
 use function htmlspecialchars;
 use function implode;
 use function nl2br;
+use function pathinfo;
 use function sprintf;
 use function str_replace;
 use function strtoupper;
 use function usort;
 
+use const PATHINFO_BASENAME;
 use const PHP_EOL;
 
 final class IndexPage
