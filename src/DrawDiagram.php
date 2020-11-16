@@ -12,21 +12,17 @@ use function sprintf;
 use function strpos;
 use function substr;
 
-final class AsdRenderer
+final class DrawDiagram
 {
     /** @var AbstractDescriptor[] */
     private $descriptors = [];
 
-    /**
-     * @param array<string, Link>       $links
-     * @param array<AbstractDescriptor> $descriptors
-     */
-    public function __invoke(array $links, array $descriptors, string $title = ''): string
+    public function __invoke(AlpsProfile $profile): string
     {
-        $appSate = new AppState($links, $descriptors);
-        $this->descriptors = $descriptors;
+        $appSate = new AppState($profile->links, $profile->descriptors);
+        $this->descriptors = $profile->descriptors;
         $nodes = $this->getNodes($appSate);
-        $edge = new Edge($links);
+        $edge = new Edge($profile);
         $graph = (string) $edge;
 
         $appSateWithNoLink = (string) $appSate;
@@ -46,7 +42,7 @@ digraph application_state_diagram {
 }
 EOT;
 
-        return sprintf($template, $title, $nodes, $graph, $appSateWithNoLink);
+        return sprintf($template, $profile->title, $nodes, $graph, $appSateWithNoLink);
     }
 
     public function getNodes(AppState $appSate): string

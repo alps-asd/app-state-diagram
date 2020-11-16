@@ -5,7 +5,9 @@ declare(strict_types=1);
 
 use Koriym\AppStateDiagram\AlpsProfile;
 use Koriym\AppStateDiagram\AppStateDiagram;
-use Koriym\AppStateDiagram\Dumper;
+use Koriym\AppStateDiagram\DrawDiagram;
+use Koriym\AppStateDiagram\DumpDocs;
+use Koriym\AppStateDiagram\IndexPage;
 
 foreach ([__DIR__ . '/../../../autoload.php', __DIR__ . '/../vendor/autoload.php'] as $file) {
     if (file_exists($file)) {
@@ -21,11 +23,10 @@ if ($argc !== 2) {
 }
 [, $profile] = $argv;
 try {
-    $asd = new AppStateDiagram($profile);
-    $dot = $asd->getDot();
-    // dump docs/
     $alpsProfile = new AlpsProfile($profile);
-    (new Dumper())($alpsProfile->descriptors, $profile, $alpsProfile->schema);
+    $dot = (new DrawDiagram)($alpsProfile);
+    // dump docs/
+    (new DumpDocs())($alpsProfile->descriptors, $profile, $alpsProfile->schema);
 } catch (\Exception $e) {
     $path = explode('\\', get_class($e));
     echo sprintf("%s: %s in %s:%s\n", end($path), $e->getMessage(), $e->getFile(), (string) $e->getLine());
@@ -38,9 +39,9 @@ $svgFile = str_replace(['xml', 'json'], 'svg', $profile);
 $cmd = "dot -Tsvg {$file} -o {$svgFile}";
 passthru($cmd, $status);
 if ($status !== 0) {
-    echo 'Warning: Graphviz not installed. https://graphviz.org/download/' . PHP_EOL;
+    echo 'Warning: Graphviz error. https://graphviz.org/download/' . PHP_EOL;
 }
 
 $indexHtml = dirname($profile) . '/index.html';
-file_put_contents($indexHtml, $vocabulary->index);
+file_put_contents($indexHtml, (new IndexPage($alpsProfile))->index);
 echo "ASD generated. {$indexHtml}" . PHP_EOL;

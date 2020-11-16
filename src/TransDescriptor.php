@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Koriym\AppStateDiagram;
 
 use Koriym\AppStateDiagram\Exception\RtMissingException;
-use Koriym\AppStateDiagram\Exception\TypeSemanticException;
 use stdClass;
 
 use function strpos;
@@ -26,10 +25,6 @@ final class TransDescriptor extends AbstractDescriptor
     {
         parent::__construct($descriptor);
         $this->type = $descriptor->type;
-        if ($descriptor->type === 'semantic') {
-            throw new TypeSemanticException($descriptor->id);
-        }
-
         if (! isset($descriptor->rt)) {
             throw new RtMissingException($descriptor->id);
         }

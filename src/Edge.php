@@ -12,21 +12,18 @@ use const PHP_EOL;
 
 final class Edge
 {
-    /** @var array<string, Link> */
-    private $links = [];
+    /** @var AlpsProfile */
+    private $profile;
 
-    /**
-     * @param array<string, Link> $links
-     */
-    public function __construct(array $links)
+    public function __construct(AlpsProfile $profile)
     {
-        $this->links = $links;
+        $this->profile = $profile;
     }
 
     public function __toString(): string
     {
         $graph = '';
-        $groupedLinks = $this->groupEdges($this->links);
+        $groupedLinks = $this->groupEdges($this->profile->links);
         foreach ($groupedLinks as $fromtTo => $link) {
             $graph .= count($link) === 1 ? $this->singleLink($link) : $this->multipleLink($fromtTo, $link);
         }

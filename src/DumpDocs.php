@@ -31,7 +31,7 @@ use const JSON_PRETTY_PRINT;
 use const JSON_UNESCAPED_SLASHES;
 use const PHP_EOL;
 
-final class Dumper
+final class DumpDocs
 {
     /** @var array<string, AbstractDescriptor> */
     private $descriptors = [];

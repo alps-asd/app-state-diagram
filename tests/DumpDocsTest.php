@@ -6,13 +6,13 @@ namespace Koriym\AppStateDiagram;
 
 use PHPUnit\Framework\TestCase;
 
-class DumperTest extends TestCase
+class DumpDocsTest extends TestCase
 {
     public function testInvoke(): void
     {
         $alpsFile = __DIR__ . '/Fake/alps.json';
         $profile = new AlpsProfile($alpsFile);
-        (new Dumper())($profile->descriptors, $alpsFile, $profile->schema);
+        (new DumpDocs())($profile->descriptors, $alpsFile, $profile->schema);
         $this->assertFileExists(__DIR__ . '/Fake/descriptor/semantic.Index.json');
         $this->assertFileExists(__DIR__ . '/Fake/descriptor/safe.about.json');
     }

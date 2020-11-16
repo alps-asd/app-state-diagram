@@ -1,0 +1,9 @@
+{
+  "$schema": "https://raw.githubusercontent.com/koriym/spec/master/schemas/alps.json",
+  "alps": {
+    "descriptor": [
+      {"id": "Bar"},
+      {"id": "foo", "type": "safe", "rt": "#MissingBar"}
+    ]
+  }
+}

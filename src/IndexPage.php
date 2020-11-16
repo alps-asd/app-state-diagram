@@ -19,11 +19,9 @@ final class IndexPage
     /** @var string */
     public $index;
 
-    /**
-     * @param AbstractDescriptor[] $descriptors
-     */
-    public function __construct(array $descriptors, string $alpsFile, AlpsProfile $profile)
+    public function __construct(AlpsProfile $profile)
     {
+        $descriptors = $profile->descriptors;
         usort($descriptors, static function (AbstractDescriptor $a, AbstractDescriptor $b): int {
             $comparaId = strtoupper($a->id) <=> strtoupper($b->id);
             if ($comparaId !== 0) {
@@ -35,7 +33,7 @@ final class IndexPage
             return $order[$a->type] <=> $order[$b->type];
         });
         $semantics = $this->semantics($descriptors);
-        $svgFile = str_replace(['json', 'xml'], 'svg', $alpsFile);
+        $svgFile = str_replace(['json', 'xml'], 'svg', $profile->alpsFile);
         $htmlTitle = htmlspecialchars($profile->title);
         $htmlDoc = nl2br(htmlspecialchars($profile->doc));
         $md = <<<EOT
@@ -43,7 +41,7 @@ final class IndexPage
 
 {$htmlDoc}
 
- * [ALPS]({$alpsFile})
+ * [ALPS]({$profile->alpsFile})
  * [Application State Diagram]({$svgFile})
  * Semantic Descriptors
 {$semantics}

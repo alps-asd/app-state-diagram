@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Koriym\AppStateDiagram;
 
-use function in_array;
 use function sprintf;
 
 final class Link
@@ -37,16 +36,5 @@ final class Link
     public function __toString(): string
     {
         return $this->label;
-    }
-
-    public function add(self $link): self
-    {
-        if (in_array($link->label, $this->labels, true)) {
-            return $this;
-        }
-
-        $this->label .= ", {$link->label}";
-
-        return $this;
     }
 }
