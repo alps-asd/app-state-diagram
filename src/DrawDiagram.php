@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Koriym\AppStateDiagram;
 
 use Koriym\AppStateDiagram\Exception\InvalidHrefException;
+use Koriym\AppStateDiagram\Exception\SharpMissingInHrefException;
 use stdClass;
 
 use function assert;
@@ -109,7 +110,7 @@ EOT;
 
         $pos = strpos($item->href, '#');
         if ($pos === false) {
-            throw new InvalidHrefException($item->href);
+            throw new SharpMissingInHrefException($item->href);
         }
 
         $id = substr($item->href, $pos + 1);
