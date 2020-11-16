@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Koriym\AppStateDiagram;
 
+use function assert;
 use function count;
 use function sprintf;
 

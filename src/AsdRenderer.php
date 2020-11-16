@@ -12,8 +12,6 @@ use function sprintf;
 use function strpos;
 use function substr;
 
-use const PHP_EOL;
-
 final class AsdRenderer
 {
     /** @var AbstractDescriptor[] */
