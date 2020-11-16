@@ -41,7 +41,7 @@ final class Edge
     {
         $link = $links[0];
 
-        return sprintf('    %s -> %s [fontsize=12 label = "%s" URL="docs/%s.%s.html"];', $link->from, $link->to, $link->label, $link->transDescriptor->type, $link->transDescriptor->id) . PHP_EOL;
+        return sprintf('    %s -> %s [label = "%s" URL="docs/%s.%s.html" fontsize=13];', $link->from, $link->to, $link->label, $link->transDescriptor->type, $link->transDescriptor->id) . PHP_EOL;
     }
 
     /**
@@ -55,7 +55,7 @@ final class Edge
             $trs .= sprintf('<tr><td align="left" href="docs/%s.%s.html">%s (%s)</td></tr>', $link->transDescriptor->type, $link->transDescriptor->id, $link->transDescriptor->id, $link->transDescriptor->type);
         }
 
-        return sprintf('    %s -> %s [fontsize=13 label=<<table  border="0">%s</table>>];', $links[0]->from, $links[0]->to, $trs) . PHP_EOL;
+        return sprintf('    %s -> %s [label=<<table  border="0">%s</table>> fontsize=13];', $links[0]->from, $links[0]->to, $trs) . PHP_EOL;
     }
 
     /**

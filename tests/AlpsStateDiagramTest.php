@@ -34,12 +34,12 @@ class AlpsStateDiagramTest extends TestCase
     public function testInvoke(AppStateDiagram $alpsStateDiagram): string
     {
         $dot = $alpsStateDiagram->getDot();
-        $this->assertStringContainsString('Index->Blog [label = "blog (safe)"', $dot);
-        $this->assertStringContainsString('Blog->BlogPosting [label = "blogPosting, item (safe)"', $dot);
-        $this->assertStringContainsString('Blog->Blog [label = "post (unsafe)"', $dot);
-        $this->assertStringContainsString('Blog->About [label = "about (safe)"', $dot);
-        $this->assertStringContainsString('BlogPosting->Blog [label = "blog, colletion (safe)"', $dot);
-        $this->assertStringContainsString('Blog->About', $dot);
+        $this->assertStringContainsString('Index -> Blog [label = "blog (safe)"', $dot);
+        $this->assertStringContainsString('Blog -> BlogPosting [label = "blogPosting, item (safe)"', $dot);
+        $this->assertStringContainsString('Blog -> Blog [label = "post (unsafe)"', $dot);
+        $this->assertStringContainsString('Blog -> About [label = "about (safe)"', $dot);
+        $this->assertStringContainsString('BlogPosting -> Blog [label = "blog, colletion (safe)"', $dot);
+        $this->assertStringContainsString('Blog -> About', $dot);
         file_put_contents(__DIR__ . '/alps.dot', $dot);
 
         return $dot;
@@ -50,7 +50,7 @@ class AlpsStateDiagramTest extends TestCase
      */
     public function testIncludeFile(string $dot): void
     {
-        $this->assertStringContainsString('Foo->Bar', $dot);
+        $this->assertStringContainsString('Foo -> Bar', $dot);
     }
 
     public function testInvalidExternalFile(): void
@@ -70,7 +70,7 @@ class AlpsStateDiagramTest extends TestCase
      */
     public function testExternalHref(string $dot): void
     {
-        $this->assertStringContainsString('Blog->Baz', $dot);
+        $this->assertStringContainsString('Blog -> Baz', $dot);
     }
 
     public function testMultipleLink(): void
@@ -78,7 +78,7 @@ class AlpsStateDiagramTest extends TestCase
         $alpsFile = __DIR__ . '/Fake/multiple_link/multiple_link.json';
         $asd = new AppStateDiagram($alpsFile);
         $dot = $asd->getDot();
-        $numberOfArrow = substr_count($dot, 'Index->Foo');
-        $this->assertSame(3, $numberOfArrow);
+        $numberOfArrow = substr_count($dot, 'Index -> Foo');
+        $this->assertSame(1, $numberOfArrow);
     }
 }
