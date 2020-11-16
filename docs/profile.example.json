@@ -2,6 +2,9 @@
   "$schema": "schema/alps.json",
   "alps": {
     "title": "ALPS example",
+    "doc": {
+      "value": "This is ALPS example."
+    },
     "descriptor": [
       {
         "id": "Index", "type": "semantic", "doc": {"value": "Index Page"},

@@ -23,7 +23,6 @@ if ($argc !== 2) {
 try {
     $asd = new AppStateDiagram($profile);
     $dot = $asd->getDot();
-    $vocabulary = $asd->getVocabulary();
     // dump docs/
     $alpsProfile = new AlpsProfile($profile);
     (new Dumper())($alpsProfile->descriptors, $profile, $alpsProfile->schema);
