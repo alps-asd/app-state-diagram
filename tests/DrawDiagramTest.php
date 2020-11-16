@@ -52,6 +52,6 @@ class DrawDiagramTest extends TestCase
     {
         $alpsFile = __DIR__ . '/Fake/no_state.json';
         $dot = ($this->drawDiagram)(new AlpsProfile($alpsFile));
-        $this->assertStringNotContainsString('name [style=solid', $dot);
+        $this->assertStringNotContainsString('name [', $dot);
     }
 }
