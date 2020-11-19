@@ -1,0 +1,11 @@
+{
+  "$schema": "schema/alps.json",
+  "alps": {
+    "descriptor": [
+      {
+        "id": "todoList",
+        "type": "semantic"
+      }
+    ]
+  }
+}

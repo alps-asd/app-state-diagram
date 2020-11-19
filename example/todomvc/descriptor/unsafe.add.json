@@ -1,0 +1,17 @@
+{
+  "$schema": "schema/alps.json",
+  "alps": {
+    "descriptor": [
+      {
+        "id": "add",
+        "type": "unsafe"
+      }
+    ]
+  },
+  "link": [
+    {
+      "rel": "parent",
+      "href": "semantic..json"
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "$schema": "schema/alps.json",
+  "alps": {
+    "descriptor": [
+      {
+        "id": "goHome",
+        "type": "safe"
+      }
+    ]
+  },
+  "link": [
+    {
+      "rel": "parent",
+      "href": "semantic..json"
+    }
+  ]
+}
