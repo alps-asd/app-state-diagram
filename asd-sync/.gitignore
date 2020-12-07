@@ -1,0 +1,5 @@
+node_modules/
+*/*.dot
+*/*.svg
+*/*.html
+alps/*

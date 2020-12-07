@@ -17,11 +17,22 @@ foreach ([__DIR__ . '/../../../autoload.php', __DIR__ . '/../vendor/autoload.php
     }
 }
 
-if ($argc !== 2) {
-    echo 'usage: asd <alps>' . PHP_EOL;
+$watchMode = (in_array('watch', array_keys(getopt('', ['watch']))));
+$alpsFile = $argv[$argc - 1];
+$profile = realpath($alpsFile);
+if ($argc === 1) {
+    echo 'usage: asd <alps> [--watch]' . PHP_EOL;
     exit(1);
 }
-[, $profile] = $argv;
+if (! $profile) {
+    echo 'Not readable: ' . $alpsFile . PHP_EOL;
+    exit(1);
+}
+if ($watchMode) {
+    chdir(dirname(__DIR__) . '/asd-sync');
+    passthru('npm start -- --profile ' . $profile);
+    exit();
+}
 try {
     $alpsProfile = new AlpsProfile($profile);
     $dot = (new DrawDiagram)($alpsProfile);

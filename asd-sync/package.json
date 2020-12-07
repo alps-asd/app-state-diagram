@@ -1,0 +1,17 @@
+{
+  "name": "asd-sync",
+  "version": "0.1.0",
+  "description": "ASD browser sync",
+  "author": "Akihito Koriyama <akihito.koriyama@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "start": "gulp"
+  },
+  "devDependencies": {
+    "browser-sync": "^2.26.13",
+    "child_process": "^1.0.2",
+    "gulp": "^4.0.2",
+    "minimist": "^1.2.5",
+    "path": "^0.12.7"
+  }
+}
