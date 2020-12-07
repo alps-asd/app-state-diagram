@@ -29,7 +29,8 @@ try {
     (new DumpDocs())($alpsProfile->descriptors, $profile, $alpsProfile->schema);
 } catch (\Exception $e) {
     $path = explode('\\', get_class($e));
-    echo sprintf("%s: %s in %s:%s\n", end($path), $e->getMessage(), $e->getFile(), (string) $e->getLine());
+    $msg = sprintf("%s: %s\n", end($path), $e->getMessage());
+    file_put_contents('php://stderr', $msg);
     exit(1);
 }
 $file = str_replace('.json', '.dot', $profile);

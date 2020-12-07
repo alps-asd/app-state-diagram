@@ -8,7 +8,6 @@ use Koriym\AppStateDiagram\Exception\InvalidHrefException;
 use Koriym\AppStateDiagram\Exception\SharpMissingInHrefException;
 use stdClass;
 
-use function assert;
 use function in_array;
 use function sprintf;
 use function strpos;
@@ -91,9 +90,8 @@ EOT;
             return '';
         }
 
-        assert($descriptor instanceof SemanticDescriptor);
         $props = [];
-        $props = $this->getNodeProps($descriptor, $props);
+        $props = $this->getNodeProps($descriptor, $props); // @phpstan-ignore-line
         if ($props === []) {
             return '';
         }
@@ -115,7 +113,6 @@ EOT;
      */
     private function getNodeProps(SemanticDescriptor $descriptor, array $props): array
     {
-        assert(isset($descriptor->descriptor));
         foreach ($descriptor->descriptor as $item) {
             if ($this->isSemanticHref($item)) {
                 $props[] = substr($item->href, (int) strpos($item->href, '#') + 1);
