@@ -60,7 +60,7 @@ final class DumpDocs
         $this->dumpImageHtml($title, $docsDir, $imgSrc);
     }
 
-    private function dumpImageHtml(string $title, string $docsDir, string $imgSrc)
+    private function dumpImageHtml(string $title, string $docsDir, string $imgSrc): void
     {
         $html = <<<EOT
 <html lang="en">
