@@ -55,6 +55,25 @@ final class DumpDocs
             $html = $this->convertHtml($descriptor, $markDown);
             file_put_contents($path, $html);
         }
+
+        $imgSrc = str_replace(['json', 'xml'], 'svg', basename($alpsFile));
+        $this->dumpImageHtml($title, $docsDir, $imgSrc);
+    }
+
+    private function dumpImageHtml(string $title, string $docsDir, string $imgSrc)
+    {
+        $html = <<<EOT
+<html lang="en">
+<head>
+    <title>{$title}</title>
+</head>
+<body>
+    <iframe src="../{$imgSrc}" style="border:0; width:100%; height:95%" allow="fullscreen"></iframe>
+</body>
+</html>
+
+EOT;
+        file_put_contents($docsDir . '/asd.html', $html);
     }
 
     private function convertHtml(AbstractDescriptor $descriptor, string $markdown): string

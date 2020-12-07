@@ -45,7 +45,7 @@ final class IndexPage
 {$htmlDoc}
 
  * [ALPS]({$profilePath})
- * [Application State Diagram]({$svgFile})
+ * [Application State Diagram](docs/asd.html)
  * Semantic Descriptors
 {$semantics}
 EOT;

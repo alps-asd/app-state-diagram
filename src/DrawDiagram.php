@@ -35,7 +35,7 @@ digraph application_state_diagram {
     labelloc="b";
     fontname="Helvetica"
     label="%s";
-    URL="index.html"
+    URL="index.html" target="_parent"
   ];
   node [shape = box, style = "bold,filled"];
 
@@ -154,7 +154,7 @@ EOT;
     private function template(AbstractDescriptor $descriptor, string $props): string
     {
         $template = <<<'EOT'
-    %s [style=solid, margin=0.02, label=<<table cellspacing="0" cellpadding="5" cellborder="1" border="0"><tr><td bgcolor="#dddddd">%s<br />%s</td></tr></table>>,shape=box URL="%s"]
+    %s [style=solid, margin=0.02, label=<<table cellspacing="0" cellpadding="5" cellborder="1" border="0"><tr><td bgcolor="#dddddd">%s<br />%s</td></tr></table>>,shape=box URL="%s" target="_parent"]
 
 EOT;
 
