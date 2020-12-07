@@ -36,6 +36,9 @@
         "/bin/asd"
     ],
     "scripts": {
+        "post-update-cmd": [
+            "cd asd-sync && npm install"
+        ],
         "asd:example" : [
           "bin/asd example/blog/profile.json && bin/asd example/todomvc/profile.json"
         ],

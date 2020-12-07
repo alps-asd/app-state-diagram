@@ -7,13 +7,13 @@ namespace Koriym\AppStateDiagram;
 use Koriym\AppStateDiagram\Exception\AlpsFileNotReadableException;
 use Koriym\AppStateDiagram\Exception\DescriptorNotFoundException;
 use Koriym\AppStateDiagram\Exception\InvalidAlpsException;
+use Koriym\AppStateDiagram\Exception\InvalidJsonException;
 use Koriym\AppStateDiagram\Exception\RtDescriptorMissingException;
 use Koriym\AppStateDiagram\Exception\SharpMissingInHrefException;
 use stdClass;
 
 use function array_keys;
 use function array_merge;
-use function assert;
 use function dirname;
 use function explode;
 use function file_exists;
@@ -21,7 +21,8 @@ use function file_get_contents;
 use function in_array;
 use function is_array;
 use function is_readable;
-use function property_exists;
+use function json_last_error;
+use function json_last_error_msg;
 use function sprintf;
 use function strpos;
 
@@ -129,7 +130,7 @@ final class AlpsProfile
         $isTransDescriptor = isset($this->descriptors[$descriptorId]) && $this->descriptors[$descriptorId] instanceof TransDescriptor;
         if ($isTransDescriptor) {
             $transSemantic = $this->descriptors[$descriptorId];
-            $this->addLink(new Link($semantic, $transSemantic)); // @phpstan-ignore-line
+            $this->addLink(new Link($semantic, $transSemantic));  // @phpstan-ignore-line
         }
     }
 
@@ -177,15 +178,18 @@ final class AlpsProfile
         }
 
         $profile = (new JsonDecode())((string) file_get_contents($alpsFile));
+        if (json_last_error()) {
+            throw new InvalidJsonException(json_last_error_msg());
+        }
+
         if (isset($profile->{'$schema'})) {
             $this->schema = $profile->{'$schema'};
         }
 
-        assert(property_exists($profile, 'alps'));
-        $this->title = $profile->alps->title ?? '';
-        $this->doc = $profile->alps->doc->value ?? '';
+        $this->title = $profile->alps->title ?? ''; // @phpstan-ignore-line
+        $this->doc = $profile->alps->doc->value ?? ''; // @phpstan-ignore-line
 
-        if (! isset($profile->alps->descriptor) || ! is_array($profile->alps->descriptor)) {
+        if (! isset($profile->alps->descriptor) || ! is_array($profile->alps->descriptor)) { // @phpstan-ignore-line
             throw new InvalidAlpsException($alpsFile);
         }
 

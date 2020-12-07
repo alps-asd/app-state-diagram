@@ -13,6 +13,7 @@ This version only supports JSON format ALPS. Use [ALPS cli](https://github.com/f
  * php 7.2+
  * [composer](https://getcomposer.org/)
  * [graphviz](https://graphviz.org/download/)
+ * [npm](https://nodejs.org/en/download/)
 
 ```
 % php -v
@@ -20,6 +21,9 @@ PHP 7.4.10 (cli) (built: Sep  3 2020 18:21:42) ( NTS )
 
 % dot -V    
 dot - graphviz version 2.44.1 (20200629.0846)
+
+% npm -v
+6.14.9
 ```
 
 ## Installation
@@ -45,6 +49,15 @@ composer global exec asd {$alpsFile}
 
 This will generate the semantic descriptor's document HTML and the application state diagram SVG.
 
+
+## Watch mode
+
+You can start ASD development server with watch mode.
+It detects profile file change and reloaded for updated diagram and hyper documents. 
+
+```
+composer global exec asd -- --watch {$alpsFile}
+```
 
 ### Run demo
 
