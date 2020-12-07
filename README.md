@@ -56,7 +56,7 @@ You can start ASD development server with watch mode.
 It detects profile file change and reloaded for updated diagram and hyper documents. 
 
 ```
-composer global exec asd --watch {$alpsFile}
+~/.composer/vendor/bin/asd --watch {$alpsFile}
 ```
 
 
