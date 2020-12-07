@@ -7,7 +7,6 @@ namespace Koriym\AppStateDiagram;
 use Koriym\AppStateDiagram\Exception\AlpsFileNotReadableException;
 use Koriym\AppStateDiagram\Exception\DescriptorNotFoundException;
 use Koriym\AppStateDiagram\Exception\InvalidAlpsException;
-use Koriym\AppStateDiagram\Exception\InvalidJsonException;
 use Koriym\AppStateDiagram\Exception\RtDescriptorMissingException;
 use Koriym\AppStateDiagram\Exception\SharpMissingInHrefException;
 use stdClass;
@@ -22,9 +21,7 @@ use function file_get_contents;
 use function in_array;
 use function is_array;
 use function is_readable;
-use function json_decode;
-use function json_last_error;
-use function json_last_error_msg;
+use function property_exists;
 use function sprintf;
 use function strpos;
 
@@ -132,8 +129,7 @@ final class AlpsProfile
         $isTransDescriptor = isset($this->descriptors[$descriptorId]) && $this->descriptors[$descriptorId] instanceof TransDescriptor;
         if ($isTransDescriptor) {
             $transSemantic = $this->descriptors[$descriptorId];
-            assert($transSemantic instanceof TransDescriptor);
-            $this->addLink(new Link($semantic, $transSemantic));
+            $this->addLink(new Link($semantic, $transSemantic)); // @phpstan-ignore-line
         }
     }
 
@@ -180,15 +176,12 @@ final class AlpsProfile
             throw new AlpsFileNotReadableException($alpsFile);
         }
 
-        $profile = json_decode((string) file_get_contents($alpsFile), false);
-        if (json_last_error()) {
-            throw new InvalidJsonException(json_last_error_msg());
-        }
-
+        $profile = (new JsonDecode())((string) file_get_contents($alpsFile));
         if (isset($profile->{'$schema'})) {
             $this->schema = $profile->{'$schema'};
         }
 
+        assert(property_exists($profile, 'alps'));
         $this->title = $profile->alps->title ?? '';
         $this->doc = $profile->alps->doc->value ?? '';
 

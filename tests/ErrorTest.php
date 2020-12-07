@@ -6,17 +6,17 @@ namespace Koriym\AppStateDiagram;
 
 use Koriym\AppStateDiagram\Exception\DescriptorIsNotArrayException;
 use Koriym\AppStateDiagram\Exception\InvalidDescriptorException;
-use Koriym\AppStateDiagram\Exception\InvalidJsonException;
 use Koriym\AppStateDiagram\Exception\RtDescriptorMissingException;
 use Koriym\AppStateDiagram\Exception\RtMissingException;
 use PHPUnit\Framework\TestCase;
+use Seld\JsonLint\ParsingException;
 
 class ErrorTest extends TestCase
 {
     public function testInvalidJson(): void
     {
-        $this->expectException(InvalidJsonException::class);
-        $this->expectErrorMessage('Syntax error');
+        $this->expectException(ParsingException::class);
+        $this->expectErrorMessage('" does not contain valid JSON');
         new AlpsProfile(__DIR__ . '/Fake/invalid.json');
     }
 

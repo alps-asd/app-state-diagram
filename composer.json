@@ -12,7 +12,8 @@
         "php": ">=7.2.0",
         "ext-json": "*",
         "ext-filter": "*",
-        "michelf/php-markdown": "^1.9"
+        "michelf/php-markdown": "^1.9",
+        "seld/jsonlint": "^1.8"
     },
     "require-dev": {
         "roave/security-advisories": "dev-master",

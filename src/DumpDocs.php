@@ -13,7 +13,6 @@ use function file_get_contents;
 use function file_put_contents;
 use function filter_var;
 use function is_dir;
-use function json_decode;
 use function json_encode;
 use function ksort;
 use function mkdir;
@@ -41,7 +40,8 @@ final class DumpDocs
      */
     public function __invoke(array $descriptors, string $alpsFile, string $schema): void
     {
-        $alpsRoot = json_decode((string) file_get_contents($alpsFile));
+        $alpsRoot = (new JsonDecode())((string) file_get_contents($alpsFile));
+        assert(isset($alpsRoot->alps));
         $title = $alpsRoot->alps->title ?? '';
         ksort($descriptors);
         $this->descriptors = $descriptors;
