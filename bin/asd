@@ -30,8 +30,12 @@ if (! $profile) {
 }
 if ($watchMode) {
     chdir(dirname(__DIR__) . '/asd-sync');
+    $isFirstRun = ! is_dir(dirname(__DIR__) . '/asd-sync/node_modules');
+    if ($isFirstRun) {
+        passthru('npm install');
+    }
     passthru('npm start -- --profile ' . $profile);
-    exit();
+    exit(0);
 }
 try {
     $alpsProfile = new AlpsProfile($profile);
