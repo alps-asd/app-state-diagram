@@ -46,7 +46,7 @@ final class AppState
         $dot = '';
         foreach ($this->states as $state) {
             $descriptor = $this->descriptors[$state];
-            $dot .= sprintf('    %s [URL="docs/%s.%s.html"]' . PHP_EOL, $descriptor->id, $descriptor->type, $descriptor->id);
+            $dot .= sprintf('    %s [URL="docs/%s.%s.html" target="_parent"]' . PHP_EOL, $descriptor->id, $descriptor->type, $descriptor->id);
         }
 
         return $dot;
