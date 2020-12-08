@@ -15,9 +15,15 @@ This version only supports JSON format ALPS. Use [ALPS cli](https://github.com/f
  * [graphviz](https://graphviz.org/download/)
  * [npm](https://nodejs.org/en/download/)
 
+
+You can check with the following command.
+
 ```
 % php -v
 PHP 7.4.10 (cli) (built: Sep  3 2020 18:21:42) ( NTS )
+
+% composer -V
+Composer version 2.0.7 2020-11-13 17:31:06
 
 % dot -V    
 dot - graphviz version 2.44.1 (20200629.0846)
@@ -27,9 +33,6 @@ dot - graphviz version 2.44.1 (20200629.0846)
 ```
 
 ## Installation
-
- 1. [Install composer](https://getcomposer.org/doc/00-intro.md)
- 2. Insall `asd` utility with following command.
 
 ```
 composer global require koriym/app-state-diagram
@@ -52,8 +55,8 @@ This will generate the semantic descriptor's document HTML and the application s
 
 ## Watch mode
 
-You can start ASD development server with watch mode.
-It detects profile file change and reloaded for updated diagram and hyper documents. 
+You can start ASD development server with watch mode. 
+Each time the profile file changes, the page is reloaded.
 
 ```
 composer global exec asd -- --watch {$alpsFile}
