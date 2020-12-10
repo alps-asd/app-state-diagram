@@ -1,12 +1,19 @@
 # app-state-diagram
 
-Produces a full application state diagram and hyperlinked documentation from [ALPS](http://alps.io/) file. See [demo output](https://koriym.github.io/app-state-diagram/).
+Produces a full application state diagram and hyperlinked documentation from [ALPS](http://alps.io/) file. 
 
 The diagram is hypermedia in SVG format with application states and state transitions linked to the respective semantic descriptor document HTML. The semantic descriptor document HTML is also linked to each other to represent the structure of the REST application.
 
-<a href="https://koriym.github.io/app-state-diagram/profile.example.svg"><img src="https://koriym.github.io/app-state-diagram/profile.example.svg"></a>
+<a href="https://koriym.github.io/app-state-diagram/blog/profile.svg"><img src="https://koriym.github.io/app-state-diagram/blog/profile.svg"></a>
 
 This version only supports JSON format ALPS. Use [ALPS cli](https://github.com/filip26/alps) to convert the XML file.
+
+## Demo
+
+See online demo.
+
+ * [blog](https://koriym.github.io/app-state-diagram/blog/)
+ * [todomvc](https://koriym.github.io/app-state-diagram/todomvc/)
 
 ## Requirement
 
