@@ -16,7 +16,7 @@
 <!-- todoList -->
 <g id="node1" class="node">
 <title>todoList</title>
-<g id="a_node1"><a xlink:href="docs/semantic.todoList.html" xlink:title="&lt;TABLE&gt;" target="_parent">
+<g id="a_node1"><a xlink:href="blog/semantic.todoList.html" xlink:title="&lt;TABLE&gt;" target="_parent">
 <polygon fill="none" stroke="black" points="404,-511 323,-511 323,-437 404,-437 404,-511"/>
 <polygon fill="#dddddd" stroke="transparent" points="324.5,-438 324.5,-510 403.5,-510 403.5,-438 324.5,-438"/>
 <polygon fill="none" stroke="black" points="324.5,-438 324.5,-510 403.5,-510 403.5,-438 324.5,-438"/>
@@ -32,31 +32,31 @@
 <title>todoList&#45;&gt;todoList</title>
 <path fill="none" stroke="black" d="M404.23,-494.34C414.4,-492.92 422,-486.14 422,-474 422,-466.22 418.88,-460.65 413.97,-457.27"/>
 <polygon fill="black" stroke="black" points="414.83,-453.85 404.23,-453.66 412.39,-460.42 414.83,-453.85"/>
-<g id="a_edge7_0"><a xlink:href="docs/safe.listAll.html" xlink:title="&lt;TABLE&gt;">
+<g id="a_edge7_0"><a xlink:href="blog/safe.listAll.html" xlink:title="&lt;TABLE&gt;">
 <text text-anchor="start" x="426.5" y="-530.6" font-family="Times,serif" font-size="13.00">listAll (safe)</text>
 </a>
 </g>
-<g id="a_edge7_1"><a xlink:href="docs/safe.listActive.html" xlink:title="&lt;TABLE&gt;">
+<g id="a_edge7_1"><a xlink:href="blog/safe.listActive.html" xlink:title="&lt;TABLE&gt;">
 <text text-anchor="start" x="426.5" y="-510.6" font-family="Times,serif" font-size="13.00">listActive (safe)</text>
 </a>
 </g>
-<g id="a_edge7_2"><a xlink:href="docs/safe.listCompleted.html" xlink:title="&lt;TABLE&gt;">
+<g id="a_edge7_2"><a xlink:href="blog/safe.listCompleted.html" xlink:title="&lt;TABLE&gt;">
 <text text-anchor="start" x="426.5" y="-490.6" font-family="Times,serif" font-size="13.00">listCompleted (safe)</text>
 </a>
 </g>
-<g id="a_edge7_3"><a xlink:href="docs/safe.goFirst.html" xlink:title="&lt;TABLE&gt;">
+<g id="a_edge7_3"><a xlink:href="blog/safe.goFirst.html" xlink:title="&lt;TABLE&gt;">
 <text text-anchor="start" x="426.5" y="-470.6" font-family="Times,serif" font-size="13.00">goFirst (safe)</text>
 </a>
 </g>
-<g id="a_edge7_4"><a xlink:href="docs/safe.goNext.html" xlink:title="&lt;TABLE&gt;">
+<g id="a_edge7_4"><a xlink:href="blog/safe.goNext.html" xlink:title="&lt;TABLE&gt;">
 <text text-anchor="start" x="426.5" y="-450.6" font-family="Times,serif" font-size="13.00">goNext (safe)</text>
 </a>
 </g>
-<g id="a_edge7_5"><a xlink:href="docs/safe.goPrevious.html" xlink:title="&lt;TABLE&gt;">
+<g id="a_edge7_5"><a xlink:href="blog/safe.goPrevious.html" xlink:title="&lt;TABLE&gt;">
 <text text-anchor="start" x="426.5" y="-430.6" font-family="Times,serif" font-size="13.00">goPrevious (safe)</text>
 </a>
 </g>
-<g id="a_edge7_6"><a xlink:href="docs/safe.goLast.html" xlink:title="&lt;TABLE&gt;">
+<g id="a_edge7_6"><a xlink:href="blog/safe.goLast.html" xlink:title="&lt;TABLE&gt;">
 <text text-anchor="start" x="426.5" y="-410.6" font-family="Times,serif" font-size="13.00">goLast (safe)</text>
 </a>
 </g>
@@ -64,7 +64,7 @@
 <!-- todoItem -->
 <g id="node2" class="node">
 <title>todoItem</title>
-<g id="a_node2"><a xlink:href="docs/semantic.todoItem.html" xlink:title="&lt;TABLE&gt;" target="_parent">
+<g id="a_node2"><a xlink:href="blog/semantic.todoItem.html" xlink:title="&lt;TABLE&gt;" target="_parent">
 <polygon fill="none" stroke="black" points="81,-321 0,-321 0,-247 81,-247 81,-321"/>
 <polygon fill="#dddddd" stroke="transparent" points="1.5,-248 1.5,-320 80.5,-320 80.5,-248 1.5,-248"/>
 <polygon fill="none" stroke="black" points="1.5,-248 1.5,-320 80.5,-320 80.5,-248 1.5,-248"/>
@@ -80,11 +80,11 @@
 <title>todoList&#45;&gt;todoItem</title>
 <path fill="none" stroke="black" d="M322.75,-473.43C257.83,-471.78 131.26,-458.6 62.5,-385 49.09,-370.64 43.15,-350.04 40.74,-331.26"/>
 <polygon fill="black" stroke="black" points="44.2,-330.68 39.74,-321.07 37.24,-331.37 44.2,-330.68"/>
-<g id="a_edge6_7"><a xlink:href="docs/safe.read.html" xlink:title="&lt;TABLE&gt;">
+<g id="a_edge6_7"><a xlink:href="blog/safe.read.html" xlink:title="&lt;TABLE&gt;">
 <text text-anchor="start" x="67" y="-370.6" font-family="Times,serif" font-size="13.00">read (safe)</text>
 </a>
 </g>
-<g id="a_edge6_8"><a xlink:href="docs/unsafe.add.html" xlink:title="&lt;TABLE&gt;">
+<g id="a_edge6_8"><a xlink:href="blog/unsafe.add.html" xlink:title="&lt;TABLE&gt;">
 <text text-anchor="start" x="67" y="-350.6" font-family="Times,serif" font-size="13.00">add (unsafe)</text>
 </a>
 </g>
@@ -92,7 +92,7 @@
 <!-- home -->
 <g id="node3" class="node">
 <title>home</title>
-<g id="a_node3"><a xlink:href="docs/semantic.home.html" xlink:title="home" target="_parent">
+<g id="a_node3"><a xlink:href="blog/semantic.home.html" xlink:title="home" target="_parent">
 <polygon fill="lightgrey" stroke="black" stroke-width="2" points="533.5,-59 479.5,-59 479.5,-23 533.5,-23 533.5,-59"/>
 <text text-anchor="middle" x="506.5" y="-37.3" font-family="Times,serif" font-size="14.00">home</text>
 </a>
@@ -101,12 +101,12 @@
 <!-- todoList&#45;&gt;home -->
 <g id="edge8" class="edge">
 <title>todoList&#45;&gt;home</title>
-<g id="a_edge8"><a xlink:href="docs/safe.goHome.html" xlink:title="goHome (safe)" target="_parent">
+<g id="a_edge8"><a xlink:href="blog/safe.goHome.html" xlink:title="goHome (safe)" target="_parent">
 <path fill="none" stroke="black" d="M404.13,-450.29C444.02,-425.41 502.42,-381.42 527.5,-325 538.25,-300.82 539.06,-141.1 523.5,-77 522.81,-74.17 521.87,-71.3 520.79,-68.48"/>
 <polygon fill="black" stroke="black" points="523.95,-66.97 516.69,-59.25 517.55,-69.81 523.95,-66.97"/>
 </a>
 </g>
-<g id="a_edge8&#45;label"><a xlink:href="docs/safe.goHome.html" xlink:title="goHome (safe)" target="_parent">
+<g id="a_edge8&#45;label"><a xlink:href="blog/safe.goHome.html" xlink:title="goHome (safe)" target="_parent">
 <text text-anchor="middle" x="574.5" y="-190.6" font-family="Times,serif" font-size="13.00">goHome (safe)</text>
 </a>
 </g>
@@ -114,7 +114,7 @@
 <!-- related -->
 <g id="node4" class="node">
 <title>related</title>
-<g id="a_node4"><a xlink:href="docs/semantic.related.html" xlink:title="related" target="_parent">
+<g id="a_node4"><a xlink:href="blog/semantic.related.html" xlink:title="related" target="_parent">
 <polygon fill="lightgrey" stroke="black" stroke-width="2" points="336.5,-145 282.5,-145 282.5,-109 336.5,-109 336.5,-145"/>
 <text text-anchor="middle" x="309.5" y="-123.3" font-family="Times,serif" font-size="14.00">related</text>
 </a>
@@ -123,12 +123,12 @@
 <!-- todoList&#45;&gt;related -->
 <g id="edge9" class="edge">
 <title>todoList&#45;&gt;related</title>
-<g id="a_edge9"><a xlink:href="docs/safe.goRelated.html" xlink:title="goRelated (safe)" target="_parent">
+<g id="a_edge9"><a xlink:href="blog/safe.goRelated.html" xlink:title="goRelated (safe)" target="_parent">
 <path fill="none" stroke="black" d="M343.59,-436.89C328.68,-407.7 309.54,-365.01 301.5,-325 289.53,-265.44 298,-193.78 304.33,-155.42"/>
 <polygon fill="black" stroke="black" points="307.86,-155.53 306.11,-145.08 300.96,-154.34 307.86,-155.53"/>
 </a>
 </g>
-<g id="a_edge9&#45;label"><a xlink:href="docs/safe.goRelated.html" xlink:title="goRelated (safe)" target="_parent">
+<g id="a_edge9&#45;label"><a xlink:href="blog/safe.goRelated.html" xlink:title="goRelated (safe)" target="_parent">
 <text text-anchor="middle" x="346" y="-280.6" font-family="Times,serif" font-size="13.00">goRelated (safe)</text>
 </a>
 </g>
@@ -138,11 +138,11 @@
 <title>todoItem&#45;&gt;todoList</title>
 <path fill="none" stroke="black" d="M81.26,-304.48C99.65,-314.45 120.91,-327.71 137.5,-343 154.37,-358.55 149.75,-370.46 167.5,-385 210.91,-420.56 270.99,-444.71 313.15,-458.59"/>
 <polygon fill="black" stroke="black" points="312.34,-462 322.93,-461.73 314.48,-455.34 312.34,-462"/>
-<g id="a_edge10_9"><a xlink:href="docs/safe.listAll.html" xlink:title="&lt;TABLE&gt;">
+<g id="a_edge10_9"><a xlink:href="blog/safe.listAll.html" xlink:title="&lt;TABLE&gt;">
 <text text-anchor="start" x="171.5" y="-370.6" font-family="Times,serif" font-size="13.00">listAll (safe)</text>
 </a>
 </g>
-<g id="a_edge10_10"><a xlink:href="docs/idempotent.remove.html" xlink:title="&lt;TABLE&gt;">
+<g id="a_edge10_10"><a xlink:href="blog/idempotent.remove.html" xlink:title="&lt;TABLE&gt;">
 <text text-anchor="start" x="171.5" y="-350.6" font-family="Times,serif" font-size="13.00">remove (idempotent)</text>
 </a>
 </g>
@@ -152,15 +152,15 @@
 <title>todoItem&#45;&gt;todoItem</title>
 <path fill="none" stroke="black" d="M81.23,-298.79C91.4,-297.76 99,-292.83 99,-284 99,-278.34 95.88,-274.29 90.97,-271.83"/>
 <polygon fill="black" stroke="black" points="91.8,-268.43 81.23,-269.21 89.98,-275.19 91.8,-268.43"/>
-<g id="a_edge11_11"><a xlink:href="docs/idempotent.edit.html" xlink:title="&lt;TABLE&gt;">
+<g id="a_edge11_11"><a xlink:href="blog/idempotent.edit.html" xlink:title="&lt;TABLE&gt;">
 <text text-anchor="start" x="103" y="-300.6" font-family="Times,serif" font-size="13.00">edit (idempotent)</text>
 </a>
 </g>
-<g id="a_edge11_12"><a xlink:href="docs/idempotent.markCompleted.html" xlink:title="&lt;TABLE&gt;">
+<g id="a_edge11_12"><a xlink:href="blog/idempotent.markCompleted.html" xlink:title="&lt;TABLE&gt;">
 <text text-anchor="start" x="103" y="-280.6" font-family="Times,serif" font-size="13.00">markCompleted (idempotent)</text>
 </a>
 </g>
-<g id="a_edge11_13"><a xlink:href="docs/idempotent.clearCompleted.html" xlink:title="&lt;TABLE&gt;">
+<g id="a_edge11_13"><a xlink:href="blog/idempotent.clearCompleted.html" xlink:title="&lt;TABLE&gt;">
 <text text-anchor="start" x="103" y="-260.6" font-family="Times,serif" font-size="13.00">clearCompleted (idempotent)</text>
 </a>
 </g>
@@ -168,12 +168,12 @@
 <!-- todoItem&#45;&gt;related -->
 <g id="edge12" class="edge">
 <title>todoItem&#45;&gt;related</title>
-<g id="a_edge12"><a xlink:href="docs/safe.goRelated.html" xlink:title="goRelated (safe)" target="_parent">
+<g id="a_edge12"><a xlink:href="blog/safe.goRelated.html" xlink:title="goRelated (safe)" target="_parent">
 <path fill="none" stroke="black" d="M32.31,-246.76C28.6,-220.12 28.86,-184.89 49.5,-163 79.1,-131.61 207.28,-127.51 271.93,-127.5"/>
 <polygon fill="black" stroke="black" points="272.09,-131 282.1,-127.53 272.12,-124 272.09,-131"/>
 </a>
 </g>
-<g id="a_edge12&#45;label"><a xlink:href="docs/safe.goRelated.html" xlink:title="goRelated (safe)" target="_parent">
+<g id="a_edge12&#45;label"><a xlink:href="blog/safe.goRelated.html" xlink:title="goRelated (safe)" target="_parent">
 <text text-anchor="middle" x="94" y="-190.6" font-family="Times,serif" font-size="13.00">goRelated (safe)</text>
 </a>
 </g>
@@ -181,12 +181,12 @@
 <!-- home&#45;&gt;todoList -->
 <g id="edge1" class="edge">
 <title>home&#45;&gt;todoList</title>
-<g id="a_edge1"><a xlink:href="docs/safe.listAll.html" xlink:title="listAll (safe)" target="_parent">
+<g id="a_edge1"><a xlink:href="blog/safe.listAll.html" xlink:title="listAll (safe)" target="_parent">
 <path fill="none" stroke="black" d="M533.8,-49.78C550.69,-55.48 572.19,-64.44 588.5,-77 645.71,-121.05 669.72,-154.21 655.5,-225 640.31,-300.58 643.66,-331.14 588.5,-385 540.35,-432.02 464.18,-454.67 414.02,-465.02"/>
 <polygon fill="black" stroke="black" points="413.17,-461.62 404.04,-466.99 414.53,-468.49 413.17,-461.62"/>
 </a>
 </g>
-<g id="a_edge1&#45;label"><a xlink:href="docs/safe.listAll.html" xlink:title="listAll (safe)" target="_parent">
+<g id="a_edge1&#45;label"><a xlink:href="blog/safe.listAll.html" xlink:title="listAll (safe)" target="_parent">
 <text text-anchor="middle" x="692.5" y="-190.6" font-family="Times,serif" font-size="13.00">listAll (safe)</text>
 </a>
 </g>
@@ -194,12 +194,12 @@
 <!-- home&#45;&gt;related -->
 <g id="edge2" class="edge">
 <title>home&#45;&gt;related</title>
-<g id="a_edge2"><a xlink:href="docs/safe.goRelated.html" xlink:title="goRelated (safe)" target="_parent">
+<g id="a_edge2"><a xlink:href="blog/safe.goRelated.html" xlink:title="goRelated (safe)" target="_parent">
 <path fill="none" stroke="black" d="M479.4,-55.5C458.57,-65.7 428.97,-79.8 402.5,-91 384.17,-98.75 363.48,-106.62 346.27,-112.94"/>
 <polygon fill="black" stroke="black" points="344.79,-109.75 336.59,-116.46 347.18,-116.33 344.79,-109.75"/>
 </a>
 </g>
-<g id="a_edge2&#45;label"><a xlink:href="docs/safe.goRelated.html" xlink:title="goRelated (safe)" target="_parent">
+<g id="a_edge2&#45;label"><a xlink:href="blog/safe.goRelated.html" xlink:title="goRelated (safe)" target="_parent">
 <text text-anchor="middle" x="475" y="-80.6" font-family="Times,serif" font-size="13.00">goRelated (safe)</text>
 </a>
 </g>
@@ -209,19 +209,19 @@
 <title>related&#45;&gt;todoList</title>
 <path fill="none" stroke="black" d="M327.73,-145.01C348.53,-165.8 381.37,-203.15 394.5,-243 414.8,-304.63 397.29,-379.74 381.51,-426.98"/>
 <polygon fill="black" stroke="black" points="378.14,-426.03 378.18,-436.62 384.75,-428.31 378.14,-426.03"/>
-<g id="a_edge4_14"><a xlink:href="docs/safe.listAll.html" xlink:title="&lt;TABLE&gt;">
+<g id="a_edge4_14"><a xlink:href="blog/safe.listAll.html" xlink:title="&lt;TABLE&gt;">
 <text text-anchor="start" x="407.5" y="-310.6" font-family="Times,serif" font-size="13.00">listAll (safe)</text>
 </a>
 </g>
-<g id="a_edge4_15"><a xlink:href="docs/safe.listActive.html" xlink:title="&lt;TABLE&gt;">
+<g id="a_edge4_15"><a xlink:href="blog/safe.listActive.html" xlink:title="&lt;TABLE&gt;">
 <text text-anchor="start" x="407.5" y="-290.6" font-family="Times,serif" font-size="13.00">listActive (safe)</text>
 </a>
 </g>
-<g id="a_edge4_16"><a xlink:href="docs/safe.listCompleted.html" xlink:title="&lt;TABLE&gt;">
+<g id="a_edge4_16"><a xlink:href="blog/safe.listCompleted.html" xlink:title="&lt;TABLE&gt;">
 <text text-anchor="start" x="407.5" y="-270.6" font-family="Times,serif" font-size="13.00">listCompleted (safe)</text>
 </a>
 </g>
-<g id="a_edge4_17"><a xlink:href="docs/idempotent.remove.html" xlink:title="&lt;TABLE&gt;">
+<g id="a_edge4_17"><a xlink:href="blog/idempotent.remove.html" xlink:title="&lt;TABLE&gt;">
 <text text-anchor="start" x="407.5" y="-250.6" font-family="Times,serif" font-size="13.00">remove (idempotent)</text>
 </a>
 </g>
@@ -231,15 +231,15 @@
 <title>related&#45;&gt;todoItem</title>
 <path fill="none" stroke="black" d="M282.32,-130.49C255.79,-134.05 215.32,-142.62 186.5,-163 158.91,-182.51 167.56,-202.33 142.5,-225 127.19,-238.85 108.02,-250.82 90.44,-260.23"/>
 <polygon fill="black" stroke="black" points="88.68,-257.2 81.42,-264.92 91.91,-263.41 88.68,-257.2"/>
-<g id="a_edge5_18"><a xlink:href="docs/safe.read.html" xlink:title="&lt;TABLE&gt;">
+<g id="a_edge5_18"><a xlink:href="blog/safe.read.html" xlink:title="&lt;TABLE&gt;">
 <text text-anchor="start" x="191" y="-210.6" font-family="Times,serif" font-size="13.00">read (safe)</text>
 </a>
 </g>
-<g id="a_edge5_19"><a xlink:href="docs/unsafe.add.html" xlink:title="&lt;TABLE&gt;">
+<g id="a_edge5_19"><a xlink:href="blog/unsafe.add.html" xlink:title="&lt;TABLE&gt;">
 <text text-anchor="start" x="191" y="-190.6" font-family="Times,serif" font-size="13.00">add (unsafe)</text>
 </a>
 </g>
-<g id="a_edge5_20"><a xlink:href="docs/idempotent.edit.html" xlink:title="&lt;TABLE&gt;">
+<g id="a_edge5_20"><a xlink:href="blog/idempotent.edit.html" xlink:title="&lt;TABLE&gt;">
 <text text-anchor="start" x="191" y="-170.6" font-family="Times,serif" font-size="13.00">edit (idempotent)</text>
 </a>
 </g>
@@ -247,12 +247,12 @@
 <!-- related&#45;&gt;home -->
 <g id="edge3" class="edge">
 <title>related&#45;&gt;home</title>
-<g id="a_edge3"><a xlink:href="docs/safe.goHome.html" xlink:title="goHome (safe)" target="_parent">
+<g id="a_edge3"><a xlink:href="blog/safe.goHome.html" xlink:title="goHome (safe)" target="_parent">
 <path fill="none" stroke="black" d="M308.11,-108.81C308.23,-98.25 310.31,-85.21 318.5,-77 339.14,-56.31 420.33,-47.52 469.01,-44.05"/>
 <polygon fill="black" stroke="black" points="469.42,-47.53 479.16,-43.37 468.95,-40.55 469.42,-47.53"/>
 </a>
 </g>
-<g id="a_edge3&#45;label"><a xlink:href="docs/safe.goHome.html" xlink:title="goHome (safe)" target="_parent">
+<g id="a_edge3&#45;label"><a xlink:href="blog/safe.goHome.html" xlink:title="goHome (safe)" target="_parent">
 <text text-anchor="middle" x="358.5" y="-80.6" font-family="Times,serif" font-size="13.00">goHome (safe)</text>
 </a>
 </g>
