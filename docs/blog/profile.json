@@ -1,5 +1,5 @@
 {
-  "$schema": "schema/alps.json",
+  "$schema": "https://raw.githubusercontent.com/alps-io/spec/master/schemas/alps.json",
   "alps": {
     "title": "ALPS example",
     "doc": {
