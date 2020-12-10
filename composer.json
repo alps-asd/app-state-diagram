@@ -36,17 +36,15 @@
         "/bin/asd"
     ],
     "scripts": {
-        "post-update-cmd": [
-            "cd asd-sync && npm install"
-        ],
+        "post-update-cmd": "cd asd-sync && npm install",
         "docs" : "bin/asd docs/blog/profile.json && bin/asd docs/todomvc/profile.json",
-        "test": ["phpunit"],
+        "test": "phpunit",
         "tests": ["@cs", "@sa", "@test"],
-        "coverage": ["php -dzend_extension=xdebug.so ./vendor/bin/phpunit --coverage-text --coverage-html=build/coverage"],
-        "pcov": ["php -d pcov.enabled=1 ./vendor/bin/phpunit --coverage-text --coverage-html=build/coverage"],
-        "cs": ["phpcs"],
-        "cs-fix": ["phpcbf"],
+        "coverage": "php -dzend_extension=xdebug.so ./vendor/bin/phpunit --coverage-text --coverage-html=build/coverage",
+        "pcov": "php -d pcov.enabled=1 ./vendor/bin/phpunit --coverage-text --coverage-html=build/coverage",
+        "cs": "phpcs",
+        "cs-fix": "phpcbf",
         "sa": ["phpstan analyse -c phpstan.neon", "psalm --show-info=true"],
-        "metrics": ["phpmetrics --report-html=build/metrics/ --extensions=php src,composer.json,composer.lock"]
+        "metrics": "phpmetrics --report-html=build/metrics/ --extensions=php src,composer.json,composer.lock"
     }
 }
