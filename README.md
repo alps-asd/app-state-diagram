@@ -71,7 +71,7 @@ composer global exec asd -- --watch {$alpsFile}
 
 ### Run demo
 
-Download [profile.example.json](https://koriym.github.io/app-state-diagram/profile.example.json)
+Download [profile.example.json](https://koriym.github.io/app-state-diagram/blog/profile.json)
 ```
 % composer global exec asd ./profile.example.json 
 Changed current directory to /Users/akihito/.composer
