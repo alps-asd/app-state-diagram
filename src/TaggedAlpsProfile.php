@@ -14,12 +14,20 @@ final class TaggedAlpsProfile extends AbstractProfile
      */
     public function __construct(AbstractProfile $alpsFile, array $orTags, array $andTags)
     {
-        $filtered = [];
+        $descriptors = new Descriptors();
         foreach ($alpsFile->descriptors as $descriptor) {
             if ($this->isFilteredAnd($descriptor, $andTags)) {
-                $filtered[] = $descriptor;
+                $descriptors->add($descriptor);
             }
         }
+
+        foreach ($alpsFile->descriptors as $descriptor) {
+            if ($this->isFilteredOr($descriptor, $orTags)) {
+                $descriptors->add($descriptor);
+            }
+        }
+
+        $this->descriptors = $descriptors->descriptors;
     }
 
     private function isFilteredAnd(AbstractDescriptor $descriptor, array $andTags): bool
@@ -31,5 +39,16 @@ final class TaggedAlpsProfile extends AbstractProfile
         }
 
         return true;
+    }
+
+    private function isFilteredOr(AbstractDescriptor $descriptor, array $andTags): bool
+    {
+        foreach ($andTags as $tag) {
+            if (in_array($tag, $descriptor->tags)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
