@@ -39,6 +39,7 @@ final class AlpsProfile extends AbstractProfile
         if (! is_readable($alpsFile)) {
             throw new AlpsFileNotReadableException($alpsFile);
         }
+
         $this->alpsFile = $alpsFile;
         $this->scanner = new DescriptorScanner();
         $this->dir = dirname($alpsFile);
