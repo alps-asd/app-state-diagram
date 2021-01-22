@@ -1,0 +1,17 @@
+{
+  "$schema": "https://raw.githubusercontent.com/alps-io/schemas/draft06/alps.json",
+  "alps": {
+    "descriptor": [
+      {"id": "s1", "tag": "admin", "descriptor": [
+        {"id": "t1", "type": "safe", "rt": "#s2", "tag": "admin user"}
+      ]},
+      {"id": "s2", "tag": "admin", "descriptor": [
+        {"id": "t2", "type": "safe", "rt": "#s3", "tag": "user"}
+      ]},
+      {"id": "s3", "tag": "admin", "descriptor": [
+        {"id": "t3", "type": "safe", "rt": "#s4", "tag": "user"}
+      ]},
+      {"id": "s4"}
+    ]
+  }
+}
