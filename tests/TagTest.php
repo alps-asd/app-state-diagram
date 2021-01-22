@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Koriym\AppStateDiagram;
 
-use Koriym\AppStateDiagram\Exception\AlpsFileNotReadableException;
-use Koriym\AppStateDiagram\Exception\DescriptorNotFoundException;
 use PHPUnit\Framework\TestCase;
 
 class TagTest extends TestCase
@@ -15,7 +13,15 @@ class TagTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->profile = new AlpsProfile(__DIR__ . '/Fake/alps_tag.json');
+        $orTags = ['admin'];
+        $andTags = [];
+        $this->profile = (
+            new TaggedAlpsProfile(
+                new AlpsProfile(__DIR__ . '/Fake/alps_tag.json'),
+                $orTags,
+                $andTags
+            )
+        );
     }
 
     public function testFilteredBtTag(): void
