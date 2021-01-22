@@ -13,8 +13,8 @@ class TagTest extends TestCase
 
     protected function setUp(): void
     {
-        $orTags = ['admin'];
-        $andTags = [];
+        $andTags = ['a', 'b'];
+        $orTags = [];
         $this->profile = (
             new TaggedAlpsProfile(
                 new AlpsProfile(__DIR__ . '/Fake/alps_tag.json'),
