@@ -48,7 +48,7 @@ abstract class AbstractDescriptor
         $this->doc = $descriptor->doc ?? null; // @phpstan-ignore-line
         $this->descriptor = $descriptor->descriptor ?? []; // @phpstan-ignore-line
         $this->parent = $parentDescriptor;
-        $this->tags = explode(' ', $descriptor->tag ?? '');
+        $this->tags = explode(' ', $descriptor->tag ?? ''); // @phpstan-ignore-line
     }
 
     public function normalize(string $schema): stdClass

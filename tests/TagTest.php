@@ -8,7 +8,7 @@ use PHPUnit\Framework\TestCase;
 
 class TagTest extends TestCase
 {
-    /** @var AlpsProfile */
+    /** @var TaggedAlpsProfile */
     protected $profile;
 
     protected function setUp(): void

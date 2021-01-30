@@ -4,11 +4,8 @@ declare(strict_types=1);
 
 namespace Koriym\AppStateDiagram;
 
-class AbstractProfile
+abstract class AbstractProfile
 {
-    /** @var string */
-    public $alpsFile;
-
     /** @var AbstractDescriptor[] */
     public $descriptors = [];
 

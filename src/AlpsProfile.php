@@ -28,6 +28,9 @@ use function strpos;
 
 final class AlpsProfile extends AbstractProfile
 {
+    /** @var string */
+    public $alpsFile;
+
     /** @var DescriptorScanner */
     private $scanner;
 
