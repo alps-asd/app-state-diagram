@@ -2,16 +2,21 @@
   "$schema": "https://raw.githubusercontent.com/alps-io/schemas/draft06/alps.json",
   "alps": {
     "descriptor": [
-      {"id": "s1", "tag": "a b", "descriptor": [
-        {"id": "t1", "type": "safe", "rt": "#s2", "tag": "a b"}
+      {"id": "s1", "descriptor": [
+        {"id": "t1", "type": "safe", "rt": "#s2", "tag": "a b"},
+        {"href": "#id"},
+        {"href": "alps_tag_external.json#t5"}
       ]},
-      {"id": "s2", "tag": "a b", "descriptor": [
-        {"id": "t2", "type": "safe", "rt": "#s3", "tag": "a b"}
+      {"id": "s2", "descriptor": [
+        {"id": "t2", "type": "safe", "rt": "#s3", "tag": "a b"},
+        {"href": "#t4"}
       ]},
-      {"id": "s3", "tag": "a", "descriptor": [
+      {"id": "s3", "descriptor": [
         {"id": "t3", "type": "safe", "rt": "#s4", "tag": "a"}
       ]},
-      {"id": "s4"}
+      {"id": "s4"},
+      {"id": "id"},
+      {"id": "t4", "type": "safe", "rt": "#s4"}
     ]
   }
 }

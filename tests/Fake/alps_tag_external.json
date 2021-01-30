@@ -1,0 +1,12 @@
+{
+  "$schema": "https://raw.githubusercontent.com/koriym/spec/master/schemas/alps.json",
+  "alps": {
+    "descriptor": [
+      {"id": "s5", "type": "semantic", "descriptor": [
+        {"id": "t6", "type": "safe", "rt": "#s6", "tag": "a"}
+      ]},
+      {"id": "t5", "type": "safe", "rt": "#s5", "tag": "a b"},
+      {"id": "s6"}
+    ]
+  }
+}
