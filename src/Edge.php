@@ -12,10 +12,10 @@ use const PHP_EOL;
 
 final class Edge
 {
-    /** @var AlpsProfile */
+    /** @var AbstractProfile */
     private $profile;
 
-    public function __construct(AlpsProfile $profile)
+    public function __construct(AbstractProfile $profile)
     {
         $this->profile = $profile;
     }

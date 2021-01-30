@@ -18,7 +18,7 @@ final class DrawDiagram
     /** @var AbstractDescriptor[] */
     private $descriptors = [];
 
-    public function __invoke(AlpsProfile $profile): string
+    public function __invoke(AbstractProfile $profile): string
     {
         $transNodes = $this->getTransNodes($profile);
         $appSate = new AppState($profile->links, $profile->descriptors);
@@ -67,7 +67,7 @@ EOT;
     /**
      * @return list<string>
      */
-    private function getTransNodes(AlpsProfile $profile): array
+    private function getTransNodes(AbstractProfile $profile): array
     {
         $transNodes = [];
         foreach ($profile->links as $link) {
