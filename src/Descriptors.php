@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace Koriym\AppStateDiagram;
 
-use function array_keys;
-use function in_array;
-use function spl_object_id;
+use function array_key_exists;
 
 class Descriptors
 {
@@ -18,12 +16,11 @@ class Descriptors
 
     public function add(AbstractDescriptor $descriptor): void
     {
-        $objectId = spl_object_id($descriptor);
-        if (in_array($objectId, array_keys($this->descriptors))) {
+        if (array_key_exists($descriptor->id, $this->descriptors)) {
             return;
         }
 
         /** @psalm-suppress InaccessibleProperty */
-        $this->descriptors[(string) $objectId] = $descriptor;
+        $this->descriptors[$descriptor->id] = $descriptor;
     }
 }
