@@ -53,4 +53,4 @@ jobs:
         run: "./vendor/bin/phpunit"
 
       - name: "Run demo"
-        run: "bin/asd example/blog/profile.json && bin/asd example/todomvc/profile.json"
+        run: "bin/asd docs/blog/profile.json && bin/asd docs/todomvc/profile.json"
