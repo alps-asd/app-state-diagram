@@ -33,8 +33,8 @@ final class Edge
     {
         $graph = '';
         $groupedLinks = $this->groupEdges($this->profile->links);
-        foreach ($groupedLinks as $fromtTo => $link) {
-            $graph .= count($link) === 1 ? $this->singleLink($link) : $this->multipleLink($fromtTo, $link);
+        foreach ($groupedLinks as $fromTo => $link) {
+            $graph .= count($link) === 1 ? $this->singleLink($link) : $this->multipleLink($fromTo, $link);
         }
 
         return $graph;
@@ -62,7 +62,7 @@ final class Edge
     /**
      * @param list<Link> $links
      */
-    private function multipleLink(string $fromtTo, array $links): string
+    private function multipleLink(string $fromTo, array $links): string
     {
         assert(isset($links[0]));
         $trs = '';
