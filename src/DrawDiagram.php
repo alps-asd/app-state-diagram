@@ -13,20 +13,29 @@ use function sprintf;
 use function strpos;
 use function substr;
 
+use const PHP_EOL;
+
 final class DrawDiagram
 {
     /** @var AbstractDescriptor[] */
     private $descriptors = [];
 
-    public function __invoke(AbstractProfile $profile): string
+    /** @var ?TaggedAlpsProfile */
+    private $taggedProfile;
+
+    /** @var ?string */
+    private $color;
+
+    public function __invoke(AbstractProfile $profile, ?TaggedAlpsProfile $taggedProfile = null, ?string $color = null): string
     {
         $transNodes = $this->getTransNodes($profile);
-        $appSate = new AppState($profile->links, $profile->descriptors);
+        $appSate = new AppState($profile->links, $profile->descriptors, $taggedProfile, $color);
         $this->descriptors = $profile->descriptors;
+        $this->taggedProfile = $taggedProfile;
+        $this->color = $color;
         $nodes = $this->getNodes($appSate, $transNodes);
-        $edge = new Edge($profile);
+        $edge = new Edge($profile, $taggedProfile, $color);
         $graph = (string) $edge;
-
         $appSateWithNoLink = (string) $appSate;
         $template = <<<'EOT'
 digraph application_state_diagram {
@@ -36,7 +45,7 @@ digraph application_state_diagram {
     label="%s";
     URL="index.html" target="_parent"
   ];
-  node [shape = box, style = "bold,filled"];
+  node [shape = box, style = "bold,filled" fillcolor="lightgray"];
 
 %s
 %s
@@ -150,13 +159,16 @@ EOT;
 
     private function template(AbstractDescriptor $descriptor, string $props): string
     {
-        $template = <<<'EOT'
-    %s [style=solid, margin=0.02, label=<<table cellspacing="0" cellpadding="5" cellborder="1" border="0"><tr><td bgcolor="#dddddd">%s<br />%s</td></tr></table>>,shape=box URL="%s" target="_parent"]
-
+        $base = <<<'EOT'
+    %s [margin=0.02, label=<<table cellspacing="0" cellpadding="5" border="0"><tr><td>%s<br />%s</td></tr></table>>,shape=box URL="%s" target="_parent"
 EOT;
 
         $url = sprintf('docs/%s.%s.html', $descriptor->type, $descriptor->id);
 
-        return sprintf($template, $descriptor->id, $descriptor->id, $props, $url);
+        if (isset($this->color, $this->taggedProfile) && in_array($descriptor, $this->taggedProfile->descriptors)) {
+            return sprintf($base . ' color="%s"]' . PHP_EOL, $descriptor->id, $descriptor->id, $props, $url, $this->color);
+        }
+
+        return sprintf($base . ']' . PHP_EOL, $descriptor->id, $descriptor->id, $props, $url);
     }
 }

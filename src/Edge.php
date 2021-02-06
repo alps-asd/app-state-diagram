@@ -6,6 +6,7 @@ namespace Koriym\AppStateDiagram;
 
 use function assert;
 use function count;
+use function in_array;
 use function sprintf;
 
 use const PHP_EOL;
@@ -15,9 +16,17 @@ final class Edge
     /** @var AbstractProfile */
     private $profile;
 
-    public function __construct(AbstractProfile $profile)
+    /** @var ?string */
+    private $color;
+
+    /** @var ?TaggedAlpsProfile */
+    private $taggedProfile;
+
+    public function __construct(AbstractProfile $profile, ?TaggedAlpsProfile $taggedProfile = null, ?string $color = null)
     {
         $this->profile = $profile;
+        $this->color = $color;
+        $this->taggedProfile = $taggedProfile;
     }
 
     public function __toString(): string
@@ -37,8 +46,17 @@ final class Edge
     private function singleLink(array $links): string
     {
         $link = $links[0];
+        $base = '    %s -> %s [label = "%s" URL="docs/%s.%s.html" target="_parent" fontsize=13';
 
-        return sprintf('    %s -> %s [label = "%s" URL="docs/%s.%s.html" target="_parent" fontsize=13];', $link->from, $link->to, $link->label, $link->transDescriptor->type, $link->transDescriptor->id) . PHP_EOL;
+        if (! isset($this->color, $this->taggedProfile)) {
+            return sprintf($base . '];' . PHP_EOL, $link->from, $link->to, $link->label, $link->transDescriptor->type, $link->transDescriptor->id);
+        }
+
+        if (in_array($link, $this->taggedProfile->links)) {
+            return sprintf($base . ' color="%s"];' . PHP_EOL, $link->from, $link->to, $link->label, $link->transDescriptor->type, $link->transDescriptor->id, $this->color);
+        }
+
+        return sprintf($base . '];' . PHP_EOL, $link->from, $link->to, $link->label, $link->transDescriptor->type, $link->transDescriptor->id);
     }
 
     /**
@@ -52,7 +70,19 @@ final class Edge
             $trs .= sprintf('<tr><td align="left" href="docs/%s.%s.html">%s (%s)</td></tr>', $link->transDescriptor->type, $link->transDescriptor->id, $link->transDescriptor->id, $link->transDescriptor->type);
         }
 
-        return sprintf('    %s -> %s [label=<<table  border="0">%s</table>> fontsize=13];', $links[0]->from, $links[0]->to, $trs) . PHP_EOL;
+        $base = '    %s -> %s [label=<<table  border="0">%s</table>> fontsize=13';
+
+        if (! isset($this->color, $this->taggedProfile)) {
+            return sprintf($base . '];' . PHP_EOL, $links[0]->from, $links[0]->to, $trs);
+        }
+
+        foreach ($links as $link) {
+            if (in_array($link, $this->taggedProfile->links)) {
+                return sprintf($base . ' color="%s"];' . PHP_EOL, $links[0]->from, $links[0]->to, $trs);
+            }
+        }
+
+        return sprintf($base . '];' . PHP_EOL, $links[0]->from, $links[0]->to, $trs);
     }
 
     /**
