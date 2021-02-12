@@ -66,7 +66,7 @@ You can extract partial graphs by specific tags, or color specific graphs. For e
 Specify the "or" or "and" condition. If you don't specify a color, that graph will be extracted, and if you do, it will be colored.
 
 ```
-bin/asd --and-tag={tag1, tag2} --or-tag={tag3} [--color=red] {$alpsFile}
+composer global exec asd -- --and-tag={tag1, tag2} --or-tag={tag3} [--color=red] {$alpsFile}
 ```
 
 ## Watch mode
