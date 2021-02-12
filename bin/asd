@@ -18,10 +18,10 @@ foreach ([__DIR__ . '/../../../autoload.php', __DIR__ . '/../vendor/autoload.php
     }
 }
 
-$options = getopt('', ['watch:', 'andTag:', 'orTag:', 'color:']);
+$options = getopt('', ['watch:', 'and-tag:', 'or-tag:', 'color:']);
 $watchMode = isset($options['watch']);
-$andTag = isset($options['andTag']) && is_string($options['andTag']) ? explode(',', $options['andTag']) : [];
-$orTag = isset($options['orTag']) && is_string($options['orTag']) ? explode(',', $options['orTag']) : [];
+$andTag = isset($options['and-tag']) && is_string($options['and-tag']) ? explode(',', $options['and-tag']) : [];
+$orTag = isset($options['or-tag']) && is_string($options['or-tag']) ? explode(',', $options['or-tag']) : [];
 $color = isset($options['color']) && is_string($options['color']) ? $options['color'] : null;
 $hasTag = $andTag !== [] || $orTag !== [];
 $alpsFile = $argv[$argc - 1];
