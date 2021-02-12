@@ -7,6 +7,7 @@ namespace Koriym\AppStateDiagram;
 use Koriym\AppStateDiagram\Exception\InvalidSemanticsException;
 use stdClass;
 
+use function explode;
 use function json_encode;
 use function sprintf;
 
@@ -33,6 +34,9 @@ abstract class AbstractDescriptor
     /** @var stdClass|SemanticDescriptor|null */
     public $parent;
 
+    /** @var list<string> */
+    public $tags;
+
     public function __construct(object $descriptor, ?stdClass $parentDescriptor = null)
     {
         if (! isset($descriptor->id)) {
@@ -44,6 +48,7 @@ abstract class AbstractDescriptor
         $this->doc = $descriptor->doc ?? null; // @phpstan-ignore-line
         $this->descriptor = $descriptor->descriptor ?? []; // @phpstan-ignore-line
         $this->parent = $parentDescriptor;
+        $this->tags = explode(' ', $descriptor->tag ?? ''); // @phpstan-ignore-line
     }
 
     public function normalize(string $schema): stdClass

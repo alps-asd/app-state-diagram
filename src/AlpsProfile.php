@@ -26,31 +26,16 @@ use function json_last_error_msg;
 use function sprintf;
 use function strpos;
 
-final class AlpsProfile
+final class AlpsProfile extends AbstractProfile
 {
     /** @var string */
     public $alpsFile;
-
-    /** @var AbstractDescriptor[] */
-    public $descriptors = [];
-
-    /** @var Link[] */
-    public $links = [];
 
     /** @var DescriptorScanner */
     private $scanner;
 
     /** @var string */
     private $dir = '';
-
-    /** @var string */
-    public $schema = '';
-
-    /** @var string */
-    public $title = '';
-
-    /** @var string */
-    public $doc = '';
 
     public function __construct(string $alpsFile)
     {

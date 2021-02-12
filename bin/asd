@@ -8,6 +8,7 @@ use Koriym\AppStateDiagram\AppStateDiagram;
 use Koriym\AppStateDiagram\DrawDiagram;
 use Koriym\AppStateDiagram\DumpDocs;
 use Koriym\AppStateDiagram\IndexPage;
+use Koriym\AppStateDiagram\TaggedAlpsProfile;
 
 foreach ([__DIR__ . '/../../../autoload.php', __DIR__ . '/../vendor/autoload.php'] as $file) {
     if (file_exists($file)) {
@@ -17,11 +18,16 @@ foreach ([__DIR__ . '/../../../autoload.php', __DIR__ . '/../vendor/autoload.php
     }
 }
 
-$watchMode = (in_array('watch', array_keys(getopt('', ['watch']))));
+$options = getopt('', ['watch:', 'and-tag:', 'or-tag:', 'color:']);
+$watchMode = isset($options['watch']);
+$andTag = isset($options['and-tag']) && is_string($options['and-tag']) ? explode(',', $options['and-tag']) : [];
+$orTag = isset($options['or-tag']) && is_string($options['or-tag']) ? explode(',', $options['or-tag']) : [];
+$color = isset($options['color']) && is_string($options['color']) ? $options['color'] : null;
+$hasTag = $andTag !== [] || $orTag !== [];
 $alpsFile = $argv[$argc - 1];
 $profile = realpath($alpsFile);
 if ($argc === 1) {
-    echo 'usage: asd <alps> [--watch]' . PHP_EOL;
+    echo 'usage: asd [--watch] [--andTag=tag1,tag2] [--orTag=tag3] [--color=red] <alps>' . PHP_EOL;
     exit(1);
 }
 if (! $profile) {
@@ -42,6 +48,11 @@ try {
     $dot = (new DrawDiagram)($alpsProfile);
     // dump docs/
     (new DumpDocs())($alpsProfile->descriptors, $profile, $alpsProfile->schema);
+
+    if ($hasTag) {
+        $filteredProfile = new TaggedAlpsProfile($alpsProfile, $orTag, $andTag);
+        $tagDot = isset($color) ? (new DrawDiagram())($alpsProfile, $filteredProfile, $color) : (new DrawDiagram())($filteredProfile);
+    }
 } catch (\Exception $e) {
     $path = explode('\\', get_class($e));
     $msg = sprintf("%s: %s\n", end($path), $e->getMessage());
@@ -61,3 +72,17 @@ if ($status !== 0) {
 $indexHtml = dirname($profile) . '/index.html';
 file_put_contents($indexHtml, (new IndexPage($alpsProfile))->index);
 echo "ASD generated. {$indexHtml}" . PHP_EOL;
+
+if (!isset($tagDot)) {
+  exit(0);
+}
+
+$tagFile = dirname($file) . '/tag_' . basename($file);
+file_put_contents($tagFile, $tagDot);
+$filteredSvg = dirname($svgFile) . '/tag_' . basename($svgFile);
+$cmd = "dot -Tsvg {$tagFile} -o {$filteredSvg}";
+passthru($cmd, $status);
+if ($status !== 0) {
+    echo 'Warning: Graphviz error. https://graphviz.org/download/' . PHP_EOL;
+}
+echo "Tagged ASD generated. {$filteredSvg}" . PHP_EOL;
