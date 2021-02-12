@@ -37,7 +37,7 @@
     ],
     "scripts": {
         "post-update-cmd": "cd asd-sync && npm install",
-        "docs" : "bin/asd docs/blog/profile.json && bin/asd docs/todomvc/profile.json",
+        "docs" : "bin/asd docs/blog/profile.json && bin/asd docs/todomvc/profile.json && bin/asd --or-tag=tag1 --color=red docs/filter/profile.json",
         "test": "phpunit",
         "tests": ["@cs", "@sa", "@test"],
         "coverage": "php -dzend_extension=xdebug.so ./vendor/bin/phpunit --coverage-text --coverage-html=build/coverage",

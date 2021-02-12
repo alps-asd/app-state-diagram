@@ -1,0 +1,59 @@
+{
+  "$schema": "https://alps-io.github.io/schemas/alps.json",
+  "alps": {
+    "title": "ALPS example",
+    "doc": {
+      "value": "This is ALPS example."
+    },
+    "descriptor": [
+      {
+        "id": "Index", "type": "semantic", "doc": {"value": "Index Page"},
+        "descriptor": [
+          {"href": "#start"}
+        ]
+      },
+      {
+        "id": "About", "type": "semantic",
+        "descriptor": [
+          {"href": "#backToBlog"}
+        ]
+      },
+      {
+        "id": "Blog", "type": "semantic", "def": "https://schema.org/Blog",
+        "descriptor": [
+          {"href": "#BlogPosting"}, {"href": "#blogPosting"},
+          {"href": "#post"},
+          {"href": "#about"}
+        ]
+      },
+      {
+        "id": "BlogPosting", "type": "semantic", "def": "https://schema.org/BlogPosting",
+        "descriptor": [
+          {"href": "#id"}, {"href": "#articleBody"}, {"href": "#dateCreated"},
+          {"href": "#blog"}
+        ]
+      },
+
+      {"id": "id", "type": "semantic", "def": "http://schema.org/identifier"},
+      {"id": "articleBody", "type": "semantic", "def": "https://schema.org/articleBody"},
+      {"id": "dateCreated", "type": "semantic", "def": "https://schema.org/dateCreated"},
+
+      {"id": "start", "type": "safe", "rt": "#Blog", "tag": "tag1"},
+      {"id": "backToBlog", "type": "safe", "rt": "#Blog"},
+      {
+        "id": "blogPosting", "type": "safe", "rt": "#BlogPosting", "rel": "item", "tag": "tag1",
+        "descriptor": [
+          {"href": "#id"}
+        ]
+      },
+      {
+        "id": "post", "type": "unsafe", "def": "http://activitystrea.ms/specs/json/1.0/#post-verb", "rt": "#Blog",
+        "descriptor": [
+          {"href": "#articleBody"}
+        ]
+      },
+      {"id": "about", "type": "safe", "rt": "#About"},
+      {"id": "blog", "type": "safe", "rt": "#Blog", "rel": "collection"}
+    ]
+  }
+}
