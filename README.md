@@ -1,4 +1,4 @@
-# app-state-diagram
+# ALPS ASD
 
 Produces a full application state diagram and hyperlinked documentation from [ALPS](http://alps.io/) file. 
 
