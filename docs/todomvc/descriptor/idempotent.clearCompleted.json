@@ -1,5 +1,5 @@
 {
-  "$schema": "schema/alps.json",
+  "$schema": "https://alps-io.github.io/schemas/alps.json",
   "alps": {
     "descriptor": [
       {
