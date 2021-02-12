@@ -60,6 +60,15 @@ composer global exec asd {$alpsFile}
 This will generate the semantic descriptor's document HTML and the application state diagram SVG.
 
 
+## Filter
+
+You can extract partial graphs by specific tags, or color specific graphs. For example, in the famous [RESTBucks example](https://www.infoq.com/articles/webber-rest-workflow/), you can extract the state machine graphs of Consumar and Barista, respectively.
+Specify the "or" or "and" condition. If you don't specify a color, that graph will be extracted, and if you do, it will be colored.
+
+```
+bin/asd --and-tag={tag1, tag2} --or-tag={tag3} [--color=red] {$alpsFile}
+```
+
 ## Watch mode
 
 You can start ASD development server with watch mode. 
