@@ -239,7 +239,7 @@ EOT;
             return '';
         }
 
-        return " * tag: {$this->getTagString($tags)}" . PHP_EOL;
+        return " * tag: {$this->getTagString($tags)}";
     }
 
     /**

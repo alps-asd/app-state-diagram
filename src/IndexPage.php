@@ -62,10 +62,10 @@ EOT;
         $lines = [];
         foreach ($semantics as $semantic) {
             $href = sprintf('docs/%s.%s.html', $semantic->type, $semantic->id);
-            $lines[] = sprintf('   * [%s](%s) (%s)', $semantic->id, $href, $semantic->type) . PHP_EOL;
+            $lines[] = sprintf('   * [%s](%s) (%s)', $semantic->id, $href, $semantic->type);
         }
 
-        return implode($lines);
+        return implode(PHP_EOL, $lines);
     }
 
     /**
@@ -80,9 +80,9 @@ EOT;
         $lines = [];
         foreach ($tags as $tag => $item) {
             $href = "docs/tag.{$tag}.html";
-            $lines[] = "   * [{$tag}]({$href})" . PHP_EOL;
+            $lines[] = "   * [{$tag}]({$href})";
         }
 
-        return ' * Tag' . PHP_EOL . implode($lines);
+        return ' * Tag' . PHP_EOL . implode(PHP_EOL, $lines);
     }
 }
