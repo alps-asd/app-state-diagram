@@ -132,7 +132,7 @@ EOT;
         $description .= $this->getDescriptorProp('src', $descriptor);
         $description .= $this->getDescriptorProp('rel', $descriptor);
         $description .= $this->getTag($descriptor->tags);
-        $titleHeader = $title ? sprintf('%s', $title) : '';
+        $titleHeader = $title ? sprintf('%s: Semantic Descriptor', $title) : 'Semantic Descriptor';
 
         return <<<EOT
 {$titleHeader}
@@ -266,7 +266,7 @@ EOT;
             $list .= " * {$descriptor->htmlLink()}" . PHP_EOL;
         }
 
-        $titleHeader = $title ? sprintf('%s', $title) : '';
+        $titleHeader = $title ? sprintf('%s: Tag', $title) : 'Tag';
 
         return <<<EOT
 {$titleHeader}

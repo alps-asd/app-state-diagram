@@ -83,6 +83,6 @@ EOT;
             $lines[] = "   * [{$tag}]({$href})";
         }
 
-        return ' * Tag' . PHP_EOL . implode(PHP_EOL, $lines);
+        return ' * Tags' . PHP_EOL . implode(PHP_EOL, $lines);
     }
 }
