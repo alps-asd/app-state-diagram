@@ -8,7 +8,7 @@ use stdClass;
 
 final class SemanticDescriptor extends AbstractDescriptor
 {
-    /** @var string */
+    /** @inheritdoc */
     public $doc;
 
     public function __construct(object $descriptor, ?stdClass $parentDescriptor = null)

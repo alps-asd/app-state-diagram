@@ -9,7 +9,6 @@ use function implode;
 use function nl2br;
 use function pathinfo;
 use function sprintf;
-use function str_replace;
 use function strtoupper;
 use function usort;
 
@@ -26,9 +25,9 @@ final class IndexPage
         $profilePath = pathinfo($profile->alpsFile, PATHINFO_BASENAME);
         $descriptors = $profile->descriptors;
         usort($descriptors, static function (AbstractDescriptor $a, AbstractDescriptor $b): int {
-            $comparaId = strtoupper($a->id) <=> strtoupper($b->id);
-            if ($comparaId !== 0) {
-                return $comparaId;
+            $compareId = strtoupper($a->id) <=> strtoupper($b->id);
+            if ($compareId !== 0) {
+                return $compareId;
             }
 
             $order = ['semantic' => 0, 'safe' => 1, 'unsafe' => 2, 'idempotent' => 3];
@@ -36,7 +35,7 @@ final class IndexPage
             return $order[$a->type] <=> $order[$b->type];
         });
         $semantics = $this->semantics($descriptors);
-        $svgFile = str_replace(['json', 'xml'], 'svg', $profilePath);
+        $tags = $this->tags($profile->tags);
         $htmlTitle = htmlspecialchars($profile->title);
         $htmlDoc = nl2br(htmlspecialchars($profile->doc));
         $md = <<<EOT
@@ -48,6 +47,7 @@ final class IndexPage
  * [Application State Diagram](docs/asd.html)
  * Semantic Descriptors
 {$semantics}
+{$tags}
 EOT;
         $this->index = (new MdToHtml())('ALPS', $md);
     }
@@ -60,9 +60,27 @@ EOT;
         $lines = [];
         foreach ($semantics as $semantic) {
             $href = sprintf('docs/%s.%s.html', $semantic->type, $semantic->id);
-            $lines[] = sprintf('   * [%s](%s) (%s)', $semantic->id, $href, $semantic->type) . PHP_EOL;
+            $lines[] = sprintf('   * [%s](%s) (%s)', $semantic->id, $href, $semantic->type);
         }
 
-        return implode($lines);
+        return implode(PHP_EOL, $lines);
+    }
+
+    /**
+     * @param array<string, list<string>> $tags
+     */
+    private function tags(array $tags): string
+    {
+        if ($tags === []) {
+            return '';
+        }
+
+        $lines = [];
+        foreach ($tags as $tag => $item) {
+            $href = "docs/tag.{$tag}.html";
+            $lines[] = "   * [{$tag}]({$href})";
+        }
+
+        return ' * Tags' . PHP_EOL . implode(PHP_EOL, $lines);
     }
 }

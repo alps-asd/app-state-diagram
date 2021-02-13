@@ -37,6 +37,9 @@ final class AlpsProfile extends AbstractProfile
     /** @var string */
     private $dir = '';
 
+    /** @var array<string, list<string>> */
+    public $tags = [];
+
     public function __construct(string $alpsFile)
     {
         if (! is_readable($alpsFile)) {
@@ -48,6 +51,7 @@ final class AlpsProfile extends AbstractProfile
         $this->dir = dirname($alpsFile);
         $this->scan($alpsFile);
         $this->validateRtNotMissing();
+        $this->scanTags();
     }
 
     private function scan(string $alpsFile): void
@@ -191,6 +195,15 @@ final class AlpsProfile extends AbstractProfile
                 if (isset($descriptor->rt) && ! in_array($descriptor->rt, $descriptorKeys)) {
                     throw new RtDescriptorMissingException($descriptor->rt);
                 }
+            }
+        }
+    }
+
+    private function scanTags(): void
+    {
+        foreach ($this->descriptors as $descriptor) {
+            foreach ($descriptor->tags as $tag) {
+                $this->tags[$tag][] = $descriptor->id;
             }
         }
     }

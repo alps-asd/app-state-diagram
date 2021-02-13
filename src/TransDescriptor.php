@@ -18,7 +18,7 @@ final class TransDescriptor extends AbstractDescriptor
     /** @var string */
     public $rt;
 
-    /** @var SemanticDescriptor */
+    /** @inheritdoc */
     public $parent;
 
     public function __construct(stdClass $descriptor, SemanticDescriptor $parent)
