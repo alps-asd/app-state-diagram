@@ -9,7 +9,6 @@ use function implode;
 use function nl2br;
 use function pathinfo;
 use function sprintf;
-use function str_replace;
 use function strtoupper;
 use function usort;
 
@@ -37,7 +36,6 @@ final class IndexPage
         });
         $semantics = $this->semantics($descriptors);
         $tags = $this->tags($profile->tags);
-        $svgFile = str_replace(['json', 'xml'], 'svg', $profilePath);
         $htmlTitle = htmlspecialchars($profile->title);
         $htmlDoc = nl2br(htmlspecialchars($profile->doc));
         $md = <<<EOT

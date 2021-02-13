@@ -17,7 +17,6 @@ use function is_dir;
 use function json_encode;
 use function ksort;
 use function mkdir;
-use function parse_url;
 use function preg_replace;
 use function property_exists;
 use function sprintf;
@@ -151,7 +150,6 @@ EOT;
             return '';
         }
 
-        $parsed = parse_url($descriptor->{$key});
         if ($this->isUrl($descriptor->{$key})) {
             return " * {$key}: [{$descriptor->$key}]({$descriptor->$key})" . PHP_EOL;
         }
