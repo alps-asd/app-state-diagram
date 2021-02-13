@@ -23,6 +23,7 @@ use function is_array;
 use function is_readable;
 use function json_last_error;
 use function json_last_error_msg;
+use function ksort;
 use function sprintf;
 use function strpos;
 
@@ -206,5 +207,7 @@ final class AlpsProfile extends AbstractProfile
                 $this->tags[$tag][] = $descriptor->id;
             }
         }
+
+        ksort($this->tags);
     }
 }
