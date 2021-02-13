@@ -92,8 +92,8 @@ EOT;
 
     private function dumpSemantic(AbstractDescriptor $descriptor, string $dir, string $schema): void
     {
-        $normarlizedDescriptor = $descriptor->normalize($schema);
-        $this->save($dir, $descriptor->type, $descriptor->id, $normarlizedDescriptor);
+        $normalizedDescriptor = $descriptor->normalize($schema);
+        $this->save($dir, $descriptor->type, $descriptor->id, $normalizedDescriptor);
     }
 
     private function save(string $dir, string $type, string $id, stdClass $class): void
@@ -190,7 +190,7 @@ EOT;
             return '';
         }
 
-        $descriptors = $this->getInlineDescritors($descriptor->descriptor);
+        $descriptors = $this->getInlineDescriptors($descriptor->descriptor);
         if ($descriptors === []) {
             return '';
         }
@@ -208,7 +208,7 @@ EOT;
      *
      * @return list<AbstractDescriptor>
      */
-    private function getInlineDescritors(array $inlineDescriptors): array
+    private function getInlineDescriptors(array $inlineDescriptors): array
     {
         $descriptors = [];
         foreach ($inlineDescriptors as $descriptor) {

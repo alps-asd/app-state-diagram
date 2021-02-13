@@ -26,9 +26,9 @@ final class IndexPage
         $profilePath = pathinfo($profile->alpsFile, PATHINFO_BASENAME);
         $descriptors = $profile->descriptors;
         usort($descriptors, static function (AbstractDescriptor $a, AbstractDescriptor $b): int {
-            $comparaId = strtoupper($a->id) <=> strtoupper($b->id);
-            if ($comparaId !== 0) {
-                return $comparaId;
+            $compareId = strtoupper($a->id) <=> strtoupper($b->id);
+            if ($compareId !== 0) {
+                return $compareId;
             }
 
             $order = ['semantic' => 0, 'safe' => 1, 'unsafe' => 2, 'idempotent' => 3];
