@@ -12,6 +12,7 @@ use function dirname;
 use function file_get_contents;
 use function file_put_contents;
 use function filter_var;
+use function implode;
 use function is_dir;
 use function json_encode;
 use function ksort;
@@ -37,8 +38,9 @@ final class DumpDocs
 
     /**
      * @param array<string, AbstractDescriptor> $descriptors
+     * @param array<string, list<string>>       $tags
      */
-    public function __invoke(array $descriptors, string $alpsFile, string $schema): void
+    public function __invoke(array $descriptors, string $alpsFile, string $schema, array $tags): void
     {
         $alpsRoot = (new JsonDecode())((string) file_get_contents($alpsFile));
         assert(isset($alpsRoot->alps));
@@ -52,7 +54,14 @@ final class DumpDocs
             $asdFile = sprintf('../%s', basename(str_replace(['xml', 'json'], 'svg', $alpsFile)));
             $markDown = $this->getSemanticDoc($descriptor, $asdFile, $title);
             $path = sprintf('%s/%s.%s.html', $docsDir, $descriptor->type, $descriptor->id);
-            $html = $this->convertHtml($descriptor, $markDown);
+            $html = $this->convertHtml("{$descriptor->id} ({$descriptor->type})", $markDown);
+            file_put_contents($path, $html);
+        }
+
+        foreach ($tags as $tag => $descriptorIds) {
+            $markDown = $this->getTagDoc($tag, $descriptorIds, $title);
+            $path = sprintf('%s/tag.%s.html', $docsDir, $tag);
+            $html = $this->convertHtml($tag, $markDown);
             file_put_contents($path, $html);
         }
 
@@ -76,10 +85,8 @@ EOT;
         file_put_contents($docsDir . '/asd.html', $html);
     }
 
-    private function convertHtml(AbstractDescriptor $descriptor, string $markdown): string
+    private function convertHtml(string $title, string $markdown): string
     {
-        $title = "{$descriptor->id} ($descriptor->type)";
-
         return (new MdToHtml())($title, $markdown);
     }
 
@@ -124,6 +131,7 @@ EOT;
         $description .= $this->getDescriptorProp('ref', $descriptor);
         $description .= $this->getDescriptorProp('src', $descriptor);
         $description .= $this->getDescriptorProp('rel', $descriptor);
+        $description .= $this->getTag($descriptor->tags);
         $titleHeader = $title ? sprintf('%s', $title) : '';
 
         return <<<EOT
@@ -220,5 +228,50 @@ EOT;
         });
 
         return $descriptors;
+    }
+
+    /**
+     * @param list<string> $tags
+     */
+    private function getTag(array $tags): string
+    {
+        if ($tags === []) {
+            return '';
+        }
+
+        return " * tag: {$this->getTagString($tags)}" . PHP_EOL;
+    }
+
+    /**
+     * @param list<string> $tags
+     */
+    private function getTagString(array $tags): string
+    {
+        $string = [];
+        foreach ($tags as $tag) {
+            $string[] = "[{$tag}](tag.{$tag}.html)";
+        }
+
+        return implode(', ', $string) . PHP_EOL;
+    }
+
+    /**
+     * @param list<string> $descriptorIds
+     */
+    private function getTagDoc(string $tag, array $descriptorIds, string $title): string
+    {
+        $list = '';
+        foreach ($descriptorIds as $descriptorId) {
+            $descriptor = $this->descriptors[$descriptorId];
+            $list .= " * {$descriptor->htmlLink()}" . PHP_EOL;
+        }
+
+        $titleHeader = $title ? sprintf('%s', $title) : '';
+
+        return <<<EOT
+{$titleHeader}
+# {$tag}
+{$list}
+EOT;
     }
 }

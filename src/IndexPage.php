@@ -36,6 +36,7 @@ final class IndexPage
             return $order[$a->type] <=> $order[$b->type];
         });
         $semantics = $this->semantics($descriptors);
+        $tags = $this->tags($profile->tags);
         $svgFile = str_replace(['json', 'xml'], 'svg', $profilePath);
         $htmlTitle = htmlspecialchars($profile->title);
         $htmlDoc = nl2br(htmlspecialchars($profile->doc));
@@ -48,6 +49,7 @@ final class IndexPage
  * [Application State Diagram](docs/asd.html)
  * Semantic Descriptors
 {$semantics}
+{$tags}
 EOT;
         $this->index = (new MdToHtml())('ALPS', $md);
     }
@@ -64,5 +66,23 @@ EOT;
         }
 
         return implode($lines);
+    }
+
+    /**
+     * @param array<string, list<string>> $tags
+     */
+    private function tags(array $tags): string
+    {
+        if ($tags === []) {
+            return '';
+        }
+
+        $lines = [];
+        foreach ($tags as $tag => $item) {
+            $href = "docs/tag.{$tag}.html";
+            $lines[] = "   * [{$tag}]({$href})" . PHP_EOL;
+        }
+
+        return ' * Tag' . PHP_EOL . implode($lines);
     }
 }

@@ -47,7 +47,7 @@ try {
     $alpsProfile = new AlpsProfile($profile);
     $dot = (new DrawDiagram)($alpsProfile);
     // dump docs/
-    (new DumpDocs())($alpsProfile->descriptors, $profile, $alpsProfile->schema);
+    (new DumpDocs())($alpsProfile->descriptors, $profile, $alpsProfile->schema, $alpsProfile->tags);
 
     if ($hasTag) {
         $filteredProfile = new TaggedAlpsProfile($alpsProfile, $orTag, $andTag);
