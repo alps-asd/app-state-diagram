@@ -8,6 +8,7 @@ use Koriym\AppStateDiagram\Exception\InvalidSemanticsException;
 use stdClass;
 
 use function explode;
+use function is_string;
 use function json_encode;
 use function sprintf;
 
@@ -48,7 +49,8 @@ abstract class AbstractDescriptor
         $this->doc = $descriptor->doc ?? null; // @phpstan-ignore-line
         $this->descriptor = $descriptor->descriptor ?? []; // @phpstan-ignore-line
         $this->parent = $parentDescriptor;
-        $this->tags = explode(' ', $descriptor->tag ?? ''); // @phpstan-ignore-line
+        $tag = $descriptor->tag ?? [];  // @phpstan-ignore-line
+        $this->tags = is_string($tag) ? explode(' ', $tag) : $tag; //@phpstan-ignore-line
     }
 
     public function normalize(string $schema): stdClass
