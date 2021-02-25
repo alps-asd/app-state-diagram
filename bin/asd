@@ -62,7 +62,7 @@ try {
 $file = str_replace('.json', '.dot', $profile);
 file_put_contents($file, $dot);
 
-$svgFile = str_replace(['xml', 'json'], 'svg', $profile);
+$svgFile = str_replace(['.xml', '.json'], '.svg', $profile);
 $cmd = "dot -Tsvg {$file} -o {$svgFile}";
 passthru($cmd, $status);
 if ($status !== 0) {
