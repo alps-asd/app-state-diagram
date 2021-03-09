@@ -4,7 +4,6 @@
 declare(strict_types=1);
 
 use Koriym\AppStateDiagram\AlpsProfile;
-use Koriym\AppStateDiagram\AppStateDiagram;
 use Koriym\AppStateDiagram\DrawDiagram;
 use Koriym\AppStateDiagram\DrawDiagramOptions;
 use Koriym\AppStateDiagram\DumpDocs;
