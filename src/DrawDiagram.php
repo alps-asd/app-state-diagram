@@ -26,21 +26,22 @@ final class DrawDiagram
     /** @var ?string */
     private $color;
 
-    public function __invoke(AbstractProfile $profile, ?TaggedAlpsProfile $taggedProfile = null, ?string $color = null): string
+    public function __invoke(AbstractProfile $profile, DrawDiagramOptions $options): string
     {
         $transNodes = $this->getTransNodes($profile);
-        $appSate = new AppState($profile->links, $profile->descriptors, $taggedProfile, $color);
+        $appSate = new AppState($profile->links, $profile->descriptors, $options->taggedProfile, $options->color);
         $this->descriptors = $profile->descriptors;
-        $this->taggedProfile = $taggedProfile;
-        $this->color = $color;
+        $this->taggedProfile = $options->taggedProfile;
+        $this->color = $options->color;
         $nodes = $this->getNodes($appSate, $transNodes);
-        $edge = new Edge($profile, $taggedProfile, $color);
+        $edge = new Edge($profile, $options->taggedProfile, $options->color);
         $graph = (string) $edge;
         $appSateWithNoLink = (string) $appSate;
+        $titleLocation = $options->titleIsTop ? 't' : 'b';
         $template = <<<'EOT'
 digraph application_state_diagram {
   graph [
-    labelloc="b";
+    labelloc="%s";
     fontname="Helvetica"
     label="%s";
     URL="index.html" target="_parent"
@@ -53,7 +54,7 @@ digraph application_state_diagram {
 }
 EOT;
 
-        return sprintf($template, $profile->title, $nodes, $graph, $appSateWithNoLink);
+        return sprintf($template, $titleLocation, $profile->title, $nodes, $graph, $appSateWithNoLink);
     }
 
     /**
