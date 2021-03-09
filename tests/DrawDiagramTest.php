@@ -81,7 +81,7 @@ class DrawDiagramTest extends TestCase
             [],
             ['a', 'b']
         );
-        $dot = ($this->drawDiagram)($profile, new DrawDiagramOptions(false, $taggedProfile, 'red'));
+        $dot = ($this->drawDiagram)($profile, new DrawDiagramOptions($taggedProfile, 'red'));
 
         $this->assertStringContainsString('s2 [URL="docs/semantic.s2.html" target="_parent" color="red"]', $dot);
         $this->assertStringContainsString('s3 [URL="docs/semantic.s3.html" target="_parent" color="red"]', $dot);
@@ -130,7 +130,6 @@ class DrawDiagramTest extends TestCase
     public function testTitleLocation(): void
     {
         $alps = new AlpsProfile(__DIR__ . '/Fake/alps.json');
-        $this->assertStringContainsString('labelloc="b"', ($this->drawDiagram)($alps, new DrawDiagramOptions(false)));
-        $this->assertStringContainsString('labelloc="t"', ($this->drawDiagram)($alps, new DrawDiagramOptions(true)));
+        $this->assertStringContainsString('labelloc="t"', ($this->drawDiagram)($alps, new DrawDiagramOptions()));
     }
 }

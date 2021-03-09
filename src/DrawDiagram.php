@@ -37,11 +37,10 @@ final class DrawDiagram
         $edge = new Edge($profile, $options->taggedProfile, $options->color);
         $graph = (string) $edge;
         $appSateWithNoLink = (string) $appSate;
-        $titleLocation = $options->titleIsTop ? 't' : 'b';
         $template = <<<'EOT'
 digraph application_state_diagram {
   graph [
-    labelloc="%s";
+    labelloc="t";
     fontname="Helvetica"
     label="%s";
     URL="index.html" target="_parent"
@@ -54,7 +53,7 @@ digraph application_state_diagram {
 }
 EOT;
 
-        return sprintf($template, $titleLocation, $profile->title, $nodes, $graph, $appSateWithNoLink);
+        return sprintf($template, $profile->title, $nodes, $graph, $appSateWithNoLink);
     }
 
     /**
