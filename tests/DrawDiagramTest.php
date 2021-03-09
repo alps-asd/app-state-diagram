@@ -21,7 +21,7 @@ class DrawDiagramTest extends TestCase
     public function testInvoke(): string
     {
         $alps = new AlpsProfile(__DIR__ . '/Fake/alps.json');
-        $dot = ($this->drawDiagram)($alps);
+        $dot = ($this->drawDiagram)($alps, new DrawDiagramOptions());
         $this->assertStringContainsString('Index -> Blog [label = "blog (safe)"', $dot);
         $this->assertStringContainsString('Blog -> BlogPosting [label = "blogPosting, item (safe)"', $dot);
         $this->assertStringContainsString('Blog -> Blog [label = "post (unsafe)"', $dot);
@@ -43,7 +43,7 @@ class DrawDiagramTest extends TestCase
     public function testMultipleLink(): void
     {
         $alpsFile = __DIR__ . '/Fake/multiple_link/multiple_link.json';
-        $dot = ($this->drawDiagram)(new AlpsProfile($alpsFile));
+        $dot = ($this->drawDiagram)(new AlpsProfile($alpsFile), new DrawDiagramOptions());
         $numberOfArrow = substr_count($dot, 'Index -> Foo');
         $this->assertSame(1, $numberOfArrow);
     }
@@ -51,7 +51,7 @@ class DrawDiagramTest extends TestCase
     public function testNoState(): void
     {
         $alpsFile = __DIR__ . '/Fake/no_state.json';
-        $dot = ($this->drawDiagram)(new AlpsProfile($alpsFile));
+        $dot = ($this->drawDiagram)(new AlpsProfile($alpsFile), new DrawDiagramOptions());
         $this->assertStringNotContainsString('name [', $dot);
     }
 
@@ -63,7 +63,7 @@ class DrawDiagramTest extends TestCase
             [],
             ['a', 'b']
         );
-        $dot = ($this->drawDiagram)($taggedProfile);
+        $dot = ($this->drawDiagram)($taggedProfile, new DrawDiagramOptions());
         $this->assertStringContainsString('s1 -> s2 [label = "t1 (safe)"', $dot);
         $this->assertStringContainsString('s1 -> s5 [label = "t5 (safe)"', $dot);
         $this->assertStringContainsString('s2 -> s3 [label = "t2 (safe)"', $dot);
@@ -81,7 +81,7 @@ class DrawDiagramTest extends TestCase
             [],
             ['a', 'b']
         );
-        $dot = ($this->drawDiagram)($profile, $taggedProfile, 'red');
+        $dot = ($this->drawDiagram)($profile, new DrawDiagramOptions(false, $taggedProfile, 'red'));
 
         $this->assertStringContainsString('s2 [URL="docs/semantic.s2.html" target="_parent" color="red"]', $dot);
         $this->assertStringContainsString('s3 [URL="docs/semantic.s3.html" target="_parent" color="red"]', $dot);
@@ -125,5 +125,12 @@ class DrawDiagramTest extends TestCase
         $this->assertStringNotContainsString('t1 [URL="docs/safe.t1.html"', $dot);
         $this->assertStringNotContainsString('t2 [URL="docs/safe.t2.html"', $dot);
         $this->assertStringNotContainsString('t5 [URL="docs/safe.t5.html"', $dot);
+    }
+
+    public function testTitleLocation(): void
+    {
+        $alps = new AlpsProfile(__DIR__ . '/Fake/alps.json');
+        $this->assertStringContainsString('labelloc="b"', ($this->drawDiagram)($alps, new DrawDiagramOptions(false)));
+        $this->assertStringContainsString('labelloc="t"', ($this->drawDiagram)($alps, new DrawDiagramOptions(true)));
     }
 }
