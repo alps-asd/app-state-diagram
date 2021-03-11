@@ -7,12 +7,6 @@ namespace Koriym\AppStateDiagram;
 final class DrawDiagramOptions
 {
     /**
-     * @var bool
-     * @psalm-readonly
-     */
-    public $titleIsTop;
-
-    /**
      * @var ?TaggedAlpsProfile
      * @psalm-readonly
      */
@@ -24,9 +18,8 @@ final class DrawDiagramOptions
      */
     public $color;
 
-    public function __construct(bool $titleIsTop = false, ?TaggedAlpsProfile $taggedProfile = null, ?string $color = null)
+    public function __construct(?TaggedAlpsProfile $taggedProfile = null, ?string $color = null)
     {
-        $this->titleIsTop = $titleIsTop;
         $this->taggedProfile = $taggedProfile;
         $this->color = $color;
     }
