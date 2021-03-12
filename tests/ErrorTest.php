@@ -35,24 +35,24 @@ class ErrorTest extends TestCase
     public function testMissingRt(): void
     {
         $this->expectException(RtMissingException::class);
-        (new DrawDiagram())(new AlpsProfile(__DIR__ . '/Fake/invalid_missing_rt.json'), new DrawDiagramOptions());
+        (new DrawDiagram())(new AlpsProfile(__DIR__ . '/Fake/invalid_missing_rt.json'));
     }
 
     public function testMissingSharpInRt(): void
     {
         $this->expectException(RtMissingException::class);
-        (new DrawDiagram())(new AlpsProfile(__DIR__ . '/Fake/invalid_missing_missing_sharp_in_rt.json'), new DrawDiagramOptions());
+        (new DrawDiagram())(new AlpsProfile(__DIR__ . '/Fake/invalid_missing_missing_sharp_in_rt.json'));
     }
 
     public function testRtDescriptorMissingException(): void
     {
         $this->expectException(RtDescriptorMissingException::class);
-        (new DrawDiagram())(new AlpsProfile(__DIR__ . '/Fake/invalid_missing_rt_descriptor.json'), new DrawDiagramOptions());
+        (new DrawDiagram())(new AlpsProfile(__DIR__ . '/Fake/invalid_missing_rt_descriptor.json'));
     }
 
     public function testNullJsonException(): void
     {
         $this->expectException(InvalidDescriptorException::class);
-        (new DrawDiagram())(new AlpsProfile(__DIR__ . '/Fake/invalid_null.json'), new DrawDiagramOptions());
+        (new DrawDiagram())(new AlpsProfile(__DIR__ . '/Fake/invalid_null.json'));
     }
 }
