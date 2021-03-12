@@ -124,6 +124,7 @@ EOT;
         $rt = $this->getRt($descriptor);
         $description = '';
         $description .= $this->getDescriptorProp('type', $descriptor);
+        $description .= $this->getDescriptorProp('title', $descriptor);
         $description .= $this->getDescriptorKeyValue('doc', $descriptor->doc->value ?? '');
         $description .= $this->getDescriptorProp('ref', $descriptor);
         $description .= $this->getDescriptorProp('def', $descriptor);

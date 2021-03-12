@@ -1,6 +1,6 @@
 digraph application_state_diagram {
   graph [
-    labelloc="b";
+    labelloc="t";
     fontname="Helvetica"
     label="MVC ToDo List";
     URL="index.html" target="_parent"
