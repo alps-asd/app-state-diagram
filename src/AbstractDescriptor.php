@@ -38,6 +38,9 @@ abstract class AbstractDescriptor
     /** @var list<string> */
     public $tags;
 
+    /** @var string */
+    public $title;
+
     public function __construct(object $descriptor, ?stdClass $parentDescriptor = null)
     {
         if (! isset($descriptor->id)) {
@@ -51,6 +54,7 @@ abstract class AbstractDescriptor
         $this->parent = $parentDescriptor;
         $tag = $descriptor->tag ?? [];  // @phpstan-ignore-line
         $this->tags = is_string($tag) ? explode(' ', $tag) : $tag; //@phpstan-ignore-line
+        $this->title = $descriptor->title ?? ''; //@phpstan-ignore-line
     }
 
     public function normalize(string $schema): stdClass
