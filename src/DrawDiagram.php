@@ -40,7 +40,7 @@ final class DrawDiagram
         $template = <<<'EOT'
 digraph application_state_diagram {
   graph [
-    labelloc="b";
+    labelloc="t";
     fontname="Helvetica"
     label="%s";
     URL="index.html" target="_parent"
