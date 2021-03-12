@@ -18,8 +18,9 @@ foreach ([__DIR__ . '/../../../autoload.php', __DIR__ . '/../vendor/autoload.php
     }
 }
 
-$options = getopt('', ['watch:', 'and-tag:', 'or-tag:', 'color:']);
+$options = getopt('', ['watch:', 'top-title:', 'and-tag:', 'or-tag:', 'color:']);
 $watchMode = isset($options['watch']);
+$titleIsTop = isset($options['top-title']);
 $andTag = isset($options['and-tag']) && is_string($options['and-tag']) ? explode(',', $options['and-tag']) : [];
 $orTag = isset($options['or-tag']) && is_string($options['or-tag']) ? explode(',', $options['or-tag']) : [];
 $color = isset($options['color']) && is_string($options['color']) ? $options['color'] : null;
@@ -27,7 +28,7 @@ $hasTag = $andTag !== [] || $orTag !== [];
 $alpsFile = $argv[$argc - 1];
 $profile = realpath($alpsFile);
 if ($argc === 1) {
-    echo 'usage: asd [--watch] [--andTag=tag1,tag2] [--orTag=tag3] [--color=red] <alps>' . PHP_EOL;
+    echo 'usage: asd [--watch] [--top-title] [--andTag=tag1,tag2] [--orTag=tag3] [--color=red] <alps>' . PHP_EOL;
     exit(1);
 }
 if (! $profile) {
@@ -45,13 +46,13 @@ if ($watchMode) {
 }
 try {
     $alpsProfile = new AlpsProfile($profile);
-    $dot = (new DrawDiagram)($alpsProfile, new DrawDiagramOptions());
+    $dot = (new DrawDiagram)($alpsProfile, new DrawDiagramOptions($titleIsTop));
     // dump docs/
     (new DumpDocs())($alpsProfile->descriptors, $profile, $alpsProfile->schema, $alpsProfile->tags);
 
     if ($hasTag) {
         $filteredProfile = new TaggedAlpsProfile($alpsProfile, $orTag, $andTag);
-        $tagDot = isset($color) ? (new DrawDiagram())($alpsProfile, new DrawDiagramOptions($filteredProfile, $color)) : (new DrawDiagram())($filteredProfile, new DrawDiagramOptions());
+        $tagDot = isset($color) ? (new DrawDiagram())($alpsProfile, new DrawDiagramOptions($titleIsTop, $filteredProfile, $color)) : (new DrawDiagram())($filteredProfile, new DrawDiagramOptions($titleIsTop));
     }
 } catch (\Exception $e) {
     $path = explode('\\', get_class($e));
