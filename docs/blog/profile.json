@@ -7,7 +7,7 @@
     },
     "descriptor": [
       {
-        "id": "Index", "type": "semantic", "doc": {"value": "Index Page"},
+        "id": "Index", "type": "semantic", "title": "Index Page", "doc": {"value": "Index Page"},
         "descriptor": [
           {"href": "#start"}
         ]
