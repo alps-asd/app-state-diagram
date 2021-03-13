@@ -8,6 +8,10 @@ use Koriym\AppStateDiagram\Exception\AlpsFileNotReadableException;
 use Koriym\AppStateDiagram\Exception\DescriptorNotFoundException;
 use PHPUnit\Framework\TestCase;
 
+use function stream_wrapper_register;
+use function stream_wrapper_restore;
+use function stream_wrapper_unregister;
+
 class AlpsProfileTest extends TestCase
 {
     public function testProfile(): void
@@ -26,6 +30,15 @@ class AlpsProfileTest extends TestCase
     {
         $profile = new AlpsProfile('https://raw.githubusercontent.com/koriym/app-state-diagram/master/docs/blog/profile.json');
         $this->assertSame('start (safe)', (string) $profile->links['Index->Blog:start']);
+    }
+
+    public function testReadPhpInput(): void
+    {
+        stream_wrapper_unregister('php');
+        stream_wrapper_register('php', FakeAlpsJsonInputStreamWrapper::class);
+        $profile = new AlpsProfile('php://input');
+        $this->assertSame('start (safe)', (string) $profile->links['Index->Blog:start']);
+        stream_wrapper_restore('php');
     }
 
     public function testFileNotReadable(): void
