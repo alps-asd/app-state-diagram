@@ -10,17 +10,22 @@ use PHPUnit\Framework\TestCase;
 
 class AlpsProfileTest extends TestCase
 {
-    /** @var AlpsProfile */
-    protected $profile;
-
-    protected function setUp(): void
-    {
-        $this->profile = new AlpsProfile(__DIR__ . '/Fake/alps.json');
-    }
-
     public function testProfile(): void
     {
-        $this->assertSame('bar (safe)', (string) $this->profile->links['Foo->Bar:bar']);
+        $profile = new AlpsProfile(__DIR__ . '/Fake/alps.json');
+        $this->assertSame('bar (safe)', (string) $profile->links['Foo->Bar:bar']);
+    }
+
+    public function testIncludeExternalRemoteProfile(): void
+    {
+        $profile = new AlpsProfile(__DIR__ . '/Fake/alps.include_remote_profile.json');
+        $this->assertSame('start (safe)', (string) $profile->links['Index->Blog:start']);
+    }
+
+    public function testReadRemoteProfile(): void
+    {
+        $profile = new AlpsProfile('https://raw.githubusercontent.com/koriym/app-state-diagram/master/docs/blog/profile.json');
+        $this->assertSame('start (safe)', (string) $profile->links['Index->Blog:start']);
     }
 
     public function testFileNotReadable(): void

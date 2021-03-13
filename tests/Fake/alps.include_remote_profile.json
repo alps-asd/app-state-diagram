@@ -1,0 +1,14 @@
+{
+  "$schema": "https://raw.githubusercontent.com/alps-io/schemas/draft06/alps.json",
+  "alps": {
+    "descriptor": [
+      {
+        "id": "Index",
+        "descriptor": [
+          {"href": "https://raw.githubusercontent.com/koriym/app-state-diagram/master/docs/blog/profile.json#start"}
+        ],
+        "title": "Index"
+      }
+    ]
+  }
+}
