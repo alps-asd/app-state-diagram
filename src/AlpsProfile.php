@@ -11,21 +11,23 @@ use Koriym\AppStateDiagram\Exception\InvalidJsonException;
 use Koriym\AppStateDiagram\Exception\RtDescriptorMissingException;
 use Koriym\AppStateDiagram\Exception\SharpMissingInHrefException;
 use stdClass;
+use Throwable;
 
 use function array_keys;
 use function array_merge;
 use function dirname;
 use function explode;
-use function file_exists;
 use function file_get_contents;
 use function in_array;
 use function is_array;
-use function is_readable;
 use function json_last_error;
 use function json_last_error_msg;
 use function ksort;
+use function parse_url;
 use function sprintf;
 use function strpos;
+
+use const PHP_URL_SCHEME;
 
 final class AlpsProfile extends AbstractProfile
 {
@@ -43,10 +45,6 @@ final class AlpsProfile extends AbstractProfile
 
     public function __construct(string $alpsFile)
     {
-        if (! is_readable($alpsFile)) {
-            throw new AlpsFileNotReadableException($alpsFile);
-        }
-
         $this->alpsFile = $alpsFile;
         $this->scanner = new DescriptorScanner();
         $this->dir = dirname($alpsFile);
@@ -131,7 +129,11 @@ final class AlpsProfile extends AbstractProfile
         }
 
         [$file, $descriptorId] = explode('#', $href);
-        $file = "{$this->dir}/{$file}";
+        $scheme = parse_url($file, PHP_URL_SCHEME);
+        if ($scheme === null) {
+            $file = "{$this->dir}/{$file}";
+        }
+
         $this->scan($file);
         $descriptors = $this->scanAlpsFile($file);
 
@@ -163,11 +165,13 @@ final class AlpsProfile extends AbstractProfile
      */
     private function scanAlpsFile(string $alpsFile): array
     {
-        if (! file_exists($alpsFile)) {
+        try {
+            $file = file_get_contents($alpsFile);
+        } catch (Throwable $e) {
             throw new AlpsFileNotReadableException($alpsFile);
         }
 
-        $profile = (new JsonDecode())((string) file_get_contents($alpsFile));
+        $profile = (new JsonDecode())((string) $file);
         if (json_last_error()) {
             throw new InvalidJsonException(json_last_error_msg());
         }
