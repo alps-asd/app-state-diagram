@@ -41,6 +41,12 @@ class AlpsProfileTest extends TestCase
         stream_wrapper_restore('php');
     }
 
+    public function testExternalRt(): void
+    {
+        $profile = new AlpsProfile(__DIR__ . '/Fake/alps.rt_external.json');
+        $this->assertSame('foo (safe)', (string) $profile->links['Index->Foo:foo']);
+    }
+
     public function testFileNotReadable(): void
     {
         $this->expectException(AlpsFileNotReadableException::class);
