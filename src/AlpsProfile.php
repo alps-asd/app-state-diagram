@@ -73,7 +73,7 @@ final class AlpsProfile extends AbstractProfile
             $this->href($descriptor);
         }
 
-        if (isset($descriptor->rt) && strpos($descriptor->rt, '#')){
+        if (isset($descriptor->rt) && strpos($descriptor->rt, '#')) {
             $this->scanDescriptor($this->getExternalDescriptor($descriptor->rt));
         }
     }
