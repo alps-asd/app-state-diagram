@@ -137,9 +137,15 @@ final class AlpsProfile extends AbstractProfile
         if ($scheme === null) {
             $file = "{$this->dir}/{$file}";
         }
+        $alpsProfile = new self($file);
+        $descriptor = $alpsProfile->descriptors[$descriptorId];
+        $this->descriptors[$descriptorId] = $descriptor;
+        $stdClass = new stdClass();
+        foreach($descriptor as $prop => $value) {
+            $stdClass->$prop = $value;
+        }
 
-        $this->scan($file);
-        $descriptors = $this->scanAlpsFile($file);
+        return $stdClass;
 
         return $this->getDescriptor($descriptors, $descriptorId, $href);
     }

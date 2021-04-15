@@ -217,7 +217,9 @@ EOT;
             }
 
             $id = substr($descriptor->href, (int) strpos($descriptor->href, '#') + 1);
-            $descriptors[] = $this->descriptors[$id];
+            if (isset($this->descriptors[$id])) {
+                $descriptors[] = $this->descriptors[$id];
+            }
         }
 
         usort($descriptors, static function (AbstractDescriptor $a, AbstractDescriptor $b): int {
