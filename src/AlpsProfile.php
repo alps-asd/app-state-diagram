@@ -17,6 +17,7 @@ use function array_keys;
 use function array_merge;
 use function dirname;
 use function explode;
+use function file_exists;
 use function file_get_contents;
 use function in_array;
 use function is_array;
@@ -26,6 +27,8 @@ use function ksort;
 use function parse_url;
 use function sprintf;
 use function strpos;
+use function strrpos;
+use function substr;
 
 use const PHP_URL_SCHEME;
 
@@ -43,38 +46,56 @@ final class AlpsProfile extends AbstractProfile
     /** @var array<string, list<string>> */
     public $tags = [];
 
+    /** @var Href */
+    private $href;
+
     public function __construct(string $alpsFile)
     {
         $this->alpsFile = $alpsFile;
         $this->scanner = new DescriptorScanner();
-        $this->dir = dirname($alpsFile);
+        $this->dir = $this->getDirname($alpsFile);
+        $this->href = new Href();
         $this->scan($alpsFile);
         $this->validateRtNotMissing();
         $this->scanTags();
     }
 
+    public function getDirname(string $alpsFile): string
+    {
+        if (file_exists($alpsFile)) {
+            return dirname($alpsFile);
+        }
+
+        $pos = strrpos($alpsFile, '/');
+        if ($pos === false) {
+            throw new AlpsFileNotReadableException($alpsFile);
+        }
+
+        return substr($alpsFile, 0, (int) strrpos($alpsFile, '/') + 1);
+    }
+
     private function scan(string $alpsFile): void
     {
-        $descriptors = $this->scanAlpsFile($alpsFile);
-        foreach ($descriptors as $descriptor) {
-            $this->scanDescriptor($descriptor);
+        $rawDescriptors = $this->scanAlpsFile($alpsFile);
+        foreach ($rawDescriptors as $rawDescriptor) {
+            $this->scanRawDescriptor($rawDescriptor);
         }
     }
 
-    private function scanDescriptor(stdClass $descriptor): void
+    private function scanRawDescriptor(stdClass $raw): void
     {
-        if (isset($descriptor->descriptor)) {
-            $this->scanTransition(new SemanticDescriptor($descriptor), $descriptor->descriptor);
+        if (isset($raw->descriptor)) {
+            $this->scanTransition(new SemanticDescriptor($raw), $raw->descriptor);
 
             return;
         }
 
-        if (isset($descriptor->href)) {
-            $this->href($descriptor);
+        if (isset($raw->href)) {
+            $this->href($raw);
         }
 
-        if (isset($descriptor->rt) && strpos($descriptor->rt, '#')) {
-            $this->scanDescriptor($this->getExternalDescriptor($descriptor->rt));
+        if (isset($raw->rt) && strpos($raw->rt, '#')) {
+            $this->scanRawDescriptor($this->getExternalDescriptor($raw->rt));
         }
     }
 
@@ -85,7 +106,7 @@ final class AlpsProfile extends AbstractProfile
             return;
         }
 
-        $this->scanDescriptor($this->getExternalDescriptor($descriptor->href));
+        $this->scanRawDescriptor($this->getExternalDescriptor($descriptor->href));
     }
 
     /**
@@ -128,6 +149,15 @@ final class AlpsProfile extends AbstractProfile
 
     private function getExternalDescriptor(string $href): stdClass
     {
+//        $fullPathHref = (new Fullpath())($this->alpsFile, $href);
+//        [$descriptor, $dependencies] = ($this->href)($fullPathHref);
+//        $this->scanDescriptor($descriptor->source);
+//        foreach ($dependencies as $dependency) {
+//            $this->scanDescriptor($dependency->source);
+//        }
+
+//        return $descriptor->source;
+
         if (strpos($href, '#') === false) {
             throw new SharpMissingInHrefException($href);
         }
@@ -180,18 +210,12 @@ final class AlpsProfile extends AbstractProfile
             throw new InvalidJsonException(json_last_error_msg());
         }
 
-        if (isset($profile->{'$schema'})) {
-            $this->schema = $profile->{'$schema'};
-        }
-
-        $this->title = $profile->alps->title ?? ''; // @phpstan-ignore-line
-        $this->doc = $profile->alps->doc->value ?? ''; // @phpstan-ignore-line
-
         if (! isset($profile->alps->descriptor) || ! is_array($profile->alps->descriptor)) { // @phpstan-ignore-line
             throw new InvalidAlpsException($alpsFile);
         }
 
-        $this->descriptors = array_merge($this->descriptors, ($this->scanner)($profile->alps->descriptor));
+        $this->setMetadata($profile);
+        $this->setDescriptors($profile->alps->descriptor);
 
         return $profile->alps->descriptor;
     }
@@ -217,5 +241,23 @@ final class AlpsProfile extends AbstractProfile
         }
 
         ksort($this->tags);
+    }
+
+    private function setMetadata(object $profile): void
+    {
+        if (isset($profile->{'$schema'})) {
+            $this->schema = $profile->{'$schema'};
+        }
+
+        $this->title = $profile->alps->title ?? ''; // @phpstan-ignore-line
+        $this->doc = $profile->alps->doc->value ?? ''; // @phpstan-ignore-line
+    }
+
+    /**
+     * @param list<stdClass> $descriptor
+     */
+    private function setDescriptors(array $descriptor): void
+    {
+        $this->descriptors = array_merge($this->descriptors, ($this->scanner)($descriptor));
     }
 }
