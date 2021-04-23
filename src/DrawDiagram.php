@@ -100,7 +100,7 @@ EOT;
         }
 
         $props = [];
-        $props = $this->getNodeProps($descriptor, $props); // @phpstan-ignore-line
+        $props = $this->getNodeProps($descriptor, $props);
         if ($props === []) {
             return '';
         }
