@@ -46,15 +46,11 @@ final class AlpsProfile extends AbstractProfile
     /** @var array<string, list<string>> */
     public $tags = [];
 
-    /** @var Href */
-    private $href;
-
     public function __construct(string $alpsFile)
     {
         $this->alpsFile = $alpsFile;
         $this->scanner = new DescriptorScanner();
         $this->dir = $this->getDirname($alpsFile);
-        $this->href = new Href();
         $this->scan($alpsFile);
         $this->validateRtNotMissing();
         $this->scanTags();
