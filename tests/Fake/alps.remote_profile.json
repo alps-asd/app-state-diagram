@@ -1,6 +1,7 @@
 {
-  "$schema": "https://raw.githubusercontent.com/alps-io/schemas/draft06/alps.json",
+  "$schema": "https://alps-io.github.io/schemas/alps.json",
   "alps": {
+    "title": "Remote profile reference",
     "descriptor": [
       {
         "id": "Index",

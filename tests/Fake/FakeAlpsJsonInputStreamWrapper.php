@@ -14,7 +14,7 @@ final class FakeAlpsJsonInputStreamWrapper
 
     public function __construct()
     {
-        $this->alpsFile = (string) file_get_contents(__DIR__ . '/alps.include_remote_profile.json');
+        $this->alpsFile = (string) file_get_contents(__DIR__ . '/alps.remote_profile.json');
         $this->position = 0;
     }
 

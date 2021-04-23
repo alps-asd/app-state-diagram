@@ -22,7 +22,7 @@ class AlpsProfileTest extends TestCase
 
     public function testIncludeExternalRemoteProfile(): void
     {
-        $profile = new AlpsProfile(__DIR__ . '/Fake/alps.include_remote_profile.json');
+        $profile = new AlpsProfile(__DIR__ . '/Fake/alps.remote_profile.json');
         $this->assertSame('start (safe)', (string) $profile->links['Index->Blog:start']);
     }
 
