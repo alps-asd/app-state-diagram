@@ -4,9 +4,9 @@
     "title": "Remote profile reference",
     "descriptor": [
       {
-        "id": "Index",
+        "id": "Root",
         "descriptor": [
-          {"href": "https://raw.githubusercontent.com/koriym/app-state-diagram/master/docs/blog/profile.json#start"}
+          {"href": "https://koriym.github.io/app-state-diagram/blog/profile.json#BlogPosting"}
         ],
         "title": "Index"
       }

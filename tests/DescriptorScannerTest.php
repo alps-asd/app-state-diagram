@@ -11,12 +11,12 @@ use function json_decode;
 
 class DescriptorScannerTest extends TestCase
 {
-    /** @var DescriptorScanner */
+    /** @var CreateDescriptor */
     private $scanner;
 
     protected function setUp(): void
     {
-        $this->scanner = new DescriptorScanner();
+        $this->scanner = new CreateDescriptor();
     }
 
     public function testInvoke(): void

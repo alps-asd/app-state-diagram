@@ -14,21 +14,35 @@ use function stream_wrapper_unregister;
 
 class AlpsProfileTest extends TestCase
 {
+    public function testMinProfile(): void
+    {
+        $profile = new Profile(__DIR__ . '/Fake/min.json');
+        $this->assertArrayHasKey('min', $profile->descriptors);
+    }
+
+    public function testFakeProfile()
+    {
+        $profile = new Profile(__DIR__ . '/Fake/fake.json');
+        $this->assertCount(14, $profile->descriptors);
+        $this->assertCount(3, $profile->links);
+    }
+
     public function testProfile(): void
     {
-        $profile = new AlpsProfile(__DIR__ . '/Fake/alps.json');
-        $this->assertSame('bar (safe)', (string) $profile->links['Foo->Bar:bar']);
+        $profile = new Profile(__DIR__ . '/Fake/alps.json');
+        $this->assertSame('goBar (safe)', (string) $profile->links['Foo->Bar:goBar']);
     }
 
     public function testIncludeExternalRemoteProfile(): void
     {
-        $profile = new AlpsProfile(__DIR__ . '/Fake/alps.remote_profile.json');
-        $this->assertSame('start (safe)', (string) $profile->links['Index->Blog:start']);
+        $profile = new Profile(__DIR__ . '/Fake/remote_link.json');
+        $this->assertCount(13, $profile->descriptors);
+        $this->assertCount(5, $profile->links);
     }
 
-    public function testReadRemoteProfile(): void
+    public function testHttpProfile(): void
     {
-        $profile = new AlpsProfile('https://raw.githubusercontent.com/koriym/app-state-diagram/master/docs/blog/profile.json');
+        $profile = new Profile('https://raw.githubusercontent.com/koriym/app-state-diagram/master/docs/blog/profile.json');
         $this->assertSame('start (safe)', (string) $profile->links['Index->Blog:start']);
     }
 
@@ -36,32 +50,32 @@ class AlpsProfileTest extends TestCase
     {
         stream_wrapper_unregister('php');
         stream_wrapper_register('php', FakeAlpsJsonInputStreamWrapper::class);
-        $profile = new AlpsProfile('php://input');
-        $this->assertSame('start (safe)', (string) $profile->links['Index->Blog:start']);
+        $profile = new Profile('php://input');
+        $this->assertSame('about (safe)', (string) $profile->links['Blog->About:about']);
         stream_wrapper_restore('php');
     }
 
     public function testExternalRt(): void
     {
-        $profile = new AlpsProfile(__DIR__ . '/Fake/alps.rt_external.json');
+        $profile = new Profile(__DIR__ . '/Fake/alps.rt_external.json');
         $this->assertSame('foo (safe)', (string) $profile->links['Index->Foo:foo']);
     }
 
     public function testFileNotReadable(): void
     {
         $this->expectException(AlpsFileNotReadableException::class);
-        new AlpsProfile('__INVALID__');
+        new Profile('__INVALID__');
     }
 
     public function testInvalidExternalFile(): void
     {
         $this->expectException(AlpsFileNotReadableException::class);
-        new AlpsProfile(__DIR__ . '/Fake/alps.invalid_href_file.json');
+        new Profile(__DIR__ . '/Fake/alps.invalid_href_file.json');
     }
 
     public function testInvalidExternalDescriptor(): void
     {
         $this->expectException(DescriptorNotFoundException::class);
-        new AlpsProfile(__DIR__ . '/Fake/alps.invalid_href_desc.json');
+        new Profile(__DIR__ . '/Fake/alps.invalid_href_desc.json');
     }
 }

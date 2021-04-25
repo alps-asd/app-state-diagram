@@ -20,7 +20,7 @@ final class IndexPage
     /** @var string */
     public $index;
 
-    public function __construct(AlpsProfile $profile)
+    public function __construct(Profile $profile)
     {
         $profilePath = pathinfo($profile->alpsFile, PATHINFO_BASENAME);
         $descriptors = $profile->descriptors;

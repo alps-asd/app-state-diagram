@@ -8,12 +8,12 @@ use PHPUnit\Framework\TestCase;
 
 class FullpathTest extends TestCase
 {
-    /** @var Fullpath */
+    /** @var FullPath */
     private $fullPath;
 
     public function setUp(): void
     {
-        $this->fullPath = new Fullpath();
+        $this->fullPath = new FullPath();
     }
 
     public function testSharpBegin(): void
@@ -29,21 +29,9 @@ class FullpathTest extends TestCase
         $this->assertSame($href, $path);
     }
 
-    public function testFileRelativePath(): void
-    {
-        $path = ($this->fullPath)('/path/to/alpsFile', 'bar.json#bar');
-        $this->assertSame('/path/to/bar.json#bar', $path);
-    }
-
     public function testHttp(): void
     {
         $path = ($this->fullPath)('', 'http://example.com#foo');
         $this->assertSame('http://example.com#foo', $path);
-    }
-
-    public function testHttpRelativePath(): void
-    {
-        $path = ($this->fullPath)('http://example.com/foo.json', 'bar.json#bar');
-        $this->assertSame('http://example.com/bar.json#bar', $path);
     }
 }

@@ -20,30 +20,26 @@ class DrawDiagramTest extends TestCase
 
     public function testInvoke(): string
     {
-        $alps = new AlpsProfile(__DIR__ . '/Fake/alps.json');
-        $dot = ($this->drawDiagram)($alps);
-        $this->assertStringContainsString('Index -> Blog [label = "blog (safe)"', $dot);
-        $this->assertStringContainsString('Blog -> BlogPosting [label = "blogPosting, item (safe)"', $dot);
-        $this->assertStringContainsString('Blog -> Blog [label = "post (unsafe)"', $dot);
-        $this->assertStringContainsString('Blog -> About [label = "about (safe)"', $dot);
-        $this->assertStringContainsString('BlogPosting -> Blog [label = "blog, colletion (safe)"', $dot);
-        $this->assertStringContainsString('Blog -> About', $dot);
+        $profile = new Profile(__DIR__ . '/Fake/fake.json');
+        $dot = ($this->drawDiagram)($profile);
+        $this->assertStringContainsString('Foo -> Bar [label = "goBar (safe)', $dot);
+        $this->assertStringContainsString('State1 -> State2 [label = "goState2 (safe)"', $dot);
+        $this->assertStringContainsString('State2 -> State3 [label = "goState3 (safe)"', $dot);
 
         return $dot;
     }
 
-    /**
-     * @depends testInvoke
-     */
-    public function testExternalHref(string $dot): void
+    public function testExternalHref(): void
     {
-        $this->assertStringContainsString('Blog -> Baz', $dot);
+        $alpsFile = __DIR__ . '/Fake/extern_href.json';
+        $dot = ($this->drawDiagram)(new Profile($alpsFile));
+        $this->assertStringContainsString('(min)', $dot);
     }
 
     public function testMultipleLink(): void
     {
         $alpsFile = __DIR__ . '/Fake/multiple_link/multiple_link.json';
-        $dot = ($this->drawDiagram)(new AlpsProfile($alpsFile));
+        $dot = ($this->drawDiagram)(new Profile($alpsFile));
         $numberOfArrow = substr_count($dot, 'Index -> Foo');
         $this->assertSame(1, $numberOfArrow);
     }
@@ -51,15 +47,15 @@ class DrawDiagramTest extends TestCase
     public function testNoState(): void
     {
         $alpsFile = __DIR__ . '/Fake/no_state.json';
-        $dot = ($this->drawDiagram)(new AlpsProfile($alpsFile));
+        $dot = ($this->drawDiagram)(new Profile($alpsFile));
         $this->assertStringNotContainsString('name [', $dot);
     }
 
     public function testTaggedProfile(): void
     {
         $alpsFile = __DIR__ . '/Fake/alps_tag.json';
-        $taggedProfile = new TaggedAlpsProfile(
-            new AlpsProfile($alpsFile),
+        $taggedProfile = new TaggedProfile(
+            new Profile($alpsFile),
             [],
             ['a', 'b']
         );
@@ -75,9 +71,9 @@ class DrawDiagramTest extends TestCase
     public function testNoSemanticStateHasColor(): string
     {
         $alpsFile = __DIR__ . '/Fake/alps_tag.json';
-        $profile = new AlpsProfile($alpsFile);
-        $taggedProfile = new TaggedAlpsProfile(
-            new AlpsProfile($alpsFile),
+        $profile = new Profile($alpsFile);
+        $taggedProfile = new TaggedProfile(
+            new Profile($alpsFile),
             [],
             ['a', 'b']
         );

@@ -8,7 +8,10 @@ use Koriym\AppStateDiagram\Exception\InvalidHrefException;
 use Koriym\AppStateDiagram\Exception\SharpMissingInHrefException;
 use stdClass;
 
+use function assert;
 use function in_array;
+use function is_string;
+use function property_exists;
 use function sprintf;
 use function strpos;
 use function substr;
@@ -20,13 +23,13 @@ final class DrawDiagram
     /** @var AbstractDescriptor[] */
     private $descriptors = [];
 
-    /** @var ?TaggedAlpsProfile */
+    /** @var ?TaggedProfile */
     private $taggedProfile;
 
     /** @var ?string */
     private $color;
 
-    public function __invoke(AbstractProfile $profile, ?TaggedAlpsProfile $taggedProfile = null, ?string $color = null): string
+    public function __invoke(AbstractProfile $profile, ?TaggedProfile $taggedProfile = null, ?string $color = null): string
     {
         $transNodes = $this->getTransNodes($profile);
         $appSate = new AppState($profile->links, $profile->descriptors, $taggedProfile, $color);
@@ -116,7 +119,7 @@ EOT;
     }
 
     /**
-     * @param list<stdClass> $props
+     * @param list<string> $props
      *
      * @return list<string>
      */
@@ -124,12 +127,13 @@ EOT;
     {
         foreach ($descriptor->descriptor as $item) {
             if ($this->isSemanticHref($item)) {
-                $props[] = substr($item->href, (int) strpos($item->href, '#') + 1);
+                assert(is_string($item->href));
+                $props[] = (string) substr($item->href, (int) strpos($item->href, '#') + 1);
             }
 
             $isSemantic = isset($item->type) && $item->type === 'semantic';
             if ($isSemantic) {
-                $props[] = $item->id;
+                $props[] = (string) $item->id;
             }
         }
 
@@ -138,9 +142,11 @@ EOT;
 
     private function isSemanticHref(stdClass $item): bool
     {
-        if (! isset($item->href)) {
+        if (! property_exists($item, 'href')) {
             return false;
         }
+
+        assert(is_string($item->href));
 
         $pos = strpos($item->href, '#');
         if ($pos === false) {

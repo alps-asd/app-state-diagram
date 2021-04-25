@@ -24,7 +24,7 @@ final class AppState
      * @param Link[]                    $links
      * @param array<AbstractDescriptor> $descriptors
      */
-    public function __construct(array $links, array $descriptors, ?TaggedAlpsProfile $profile = null, ?string $color = null)
+    public function __construct(array $links, array $descriptors, ?TaggedProfile $profile = null, ?string $color = null)
     {
         $taggedStates = new Descriptors();
         if (isset($profile)) {
@@ -43,6 +43,11 @@ final class AppState
             }
 
             if (! array_key_exists($link->to, $this->taggedStates)) {
+                if (! isset($descriptors[$link->to])) {
+                    continue;
+                    // throw new LogicException($link->to);
+                }
+
                 $states->add($descriptors[$link->to]);
             }
         }

@@ -8,12 +8,14 @@ use Koriym\AppStateDiagram\Exception\InvalidDescriptorMissingIdOrHrefException;
 use stdClass;
 
 use function array_key_exists;
+use function assert;
 use function explode;
 use function in_array;
+use function is_string;
 use function json_encode;
 use function substr;
 
-final class TaggedAlpsProfile extends AbstractProfile
+final class TaggedProfile extends AbstractProfile
 {
     /** @var array<string, AbstractDescriptor> */
     private $tranceDescriptor;
@@ -113,15 +115,16 @@ final class TaggedAlpsProfile extends AbstractProfile
 
     private function getDescriptorId(stdClass $child): string
     {
-        if (isset($child->id)) {
+        if (isset($child->id) && is_string($child->id)) {
             return $child->id;
         }
 
         $href = $child->href;
-
         if (! isset($href)) {
             throw new InvalidDescriptorMissingIdOrHrefException((string) json_encode($child));
         }
+
+        assert(is_string($href));
 
         $isInternal = $href[0] === '#';
 
@@ -133,7 +136,7 @@ final class TaggedAlpsProfile extends AbstractProfile
     }
 
     /**
-     * @param array<string, AbstractDescriptor> $allDescriptors
+     * @param array<AbstractDescriptor> $allDescriptors
      */
     private function filteredDescriptor(AbstractDescriptor $edge, array $allDescriptors): Descriptors
     {

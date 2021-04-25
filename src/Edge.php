@@ -19,10 +19,10 @@ final class Edge
     /** @var ?string */
     private $color;
 
-    /** @var ?TaggedAlpsProfile */
+    /** @var ?TaggedProfile */
     private $taggedProfile;
 
-    public function __construct(AbstractProfile $profile, ?TaggedAlpsProfile $taggedProfile = null, ?string $color = null)
+    public function __construct(AbstractProfile $profile, ?TaggedProfile $taggedProfile = null, ?string $color = null)
     {
         $this->profile = $profile;
         $this->color = $color;
@@ -32,6 +32,7 @@ final class Edge
     public function __toString(): string
     {
         $graph = '';
+        /** @psalm-suppress MixedArgumentTypeCoercion */
         $groupedLinks = $this->groupEdges($this->profile->links);
         foreach ($groupedLinks as $fromTo => $link) {
             $graph .= count($link) === 1 ? $this->singleLink($link) : $this->multipleLink($fromTo, $link);

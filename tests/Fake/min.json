@@ -3,7 +3,7 @@
   "alps": {
     "descriptor": [
       {"id": "min"},
-      {"href": "Foo.json#foo"}
+      {"href": "Foo.json#Foo"}
     ]
   }
 }

@@ -13,8 +13,9 @@ use function in_array;
 use function is_array;
 use function is_string;
 use function json_encode;
+use function ksort;
 
-final class DescriptorScanner
+final class CreateDescriptor
 {
     /**
      * @param list<stdClass> $descriptorsArray
@@ -25,8 +26,11 @@ final class DescriptorScanner
     {
         $descriptors = [];
         foreach ($descriptorsArray as $descriptor) {
+            /** @var array<string, AbstractDescriptor> $descriptors */
             $descriptors = $this->scan($descriptor, $descriptors, $parentDescriptor);
         }
+
+        ksort($descriptors);
 
         return $descriptors;
     }
@@ -41,7 +45,7 @@ final class DescriptorScanner
         $this->defaultSemantic($descriptor);
         $this->validateDescriptor($descriptor);
 
-        if (isset($descriptor->id) && $descriptor->type === 'semantic') {
+        if (isset($descriptor->id) && is_string($descriptor->id) && $descriptor->type === 'semantic') {
             $descriptors[$descriptor->id] = new SemanticDescriptor($descriptor, $parentDescriptor);
         }
 
@@ -70,7 +74,7 @@ final class DescriptorScanner
     /**
      * @param array<AbstractDescriptor> $descriptors
      *
-     * @return array<string, AbstractDescriptor>
+     * @return array<array-key, AbstractDescriptor>
      */
     private function scanInlineDescriptor(stdClass $descriptor, array $descriptors): array
     {
@@ -80,7 +84,9 @@ final class DescriptorScanner
             throw new DescriptorIsNotArrayException((string) $msg);
         }
 
-        $inLineSemantics = $this->__invoke($descriptor->descriptor, $descriptor);
+        /** @psalm-suppress MixedArgumentTypeCoercion */
+        $inLineSemantics = ($this)($descriptor->descriptor, $descriptor);
+        /** @psalm-suppress MixedArgumentTypeCoercion */
         if ($inLineSemantics !== []) {
             $descriptors = $this->addInlineSemantics($descriptors, $inLineSemantics);
         }

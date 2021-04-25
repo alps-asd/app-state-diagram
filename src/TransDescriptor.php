@@ -7,6 +7,8 @@ namespace Koriym\AppStateDiagram;
 use Koriym\AppStateDiagram\Exception\RtMissingException;
 use stdClass;
 
+use function assert;
+use function is_string;
 use function strpos;
 use function substr;
 
@@ -24,13 +26,18 @@ final class TransDescriptor extends AbstractDescriptor
     public function __construct(stdClass $descriptor, SemanticDescriptor $parent)
     {
         parent::__construct($descriptor);
+        assert(is_string($descriptor->type));
         $this->type = $descriptor->type;
-        if (! isset($descriptor->rt)) {
+        if (! isset($descriptor->rt) || ! is_string($descriptor->rt)) {
+            assert(is_string($descriptor->id));
+
             throw new RtMissingException($descriptor->id);
         }
 
+        assert(is_string($descriptor->id));
+
         if (isset($descriptor->rel)) {
-            $this->rel = $descriptor->rel;
+            $this->rel = (string) $descriptor->rel;
         }
 
         $pos = strpos($descriptor->rt, '#');
