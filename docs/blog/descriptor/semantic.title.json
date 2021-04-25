@@ -1,0 +1,15 @@
+{
+  "$schema": "https://alps-io.github.io/schemas/alps.json",
+  "alps": {
+    "doc": {
+      "value": "Human readable title associated with the link"
+    },
+    "descriptor": [
+      {
+        "id": "title",
+        "ref": "https://schema.org/title",
+        "type": "semantic"
+      }
+    ]
+  }
+}

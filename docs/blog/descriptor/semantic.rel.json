@@ -1,0 +1,15 @@
+{
+  "$schema": "https://alps-io.github.io/schemas/alps.json",
+  "alps": {
+    "doc": {
+      "value": "The link relation value of an available related action. This value SHOULD also include the link relation value of 'related'"
+    },
+    "descriptor": [
+      {
+        "id": "rel",
+        "ref": "https://schema.org/linkRelationship",
+        "type": "semantic"
+      }
+    ]
+  }
+}

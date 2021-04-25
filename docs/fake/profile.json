@@ -1,0 +1,40 @@
+{
+    "$schema": "https://alps-io.github.io/schemas/alps.json",
+    "alps": {
+        "title": "Fake profile for unit test",
+        "doc": {
+            "value": "A profile for testing purposes."
+        },
+        "descriptor": [
+            {"id": "id", "type": "semantic", "def": "http://schema.org/identifier"},
+            {"id": "About", "type": "semantic"},
+            {"id": "articleBody", "type": "semantic", "def": "https://schema.org/articleBody"},
+
+            {
+                "id": "Blog", "type": "semantic", "def": "https://schema.org/Blog",
+                "descriptor": [
+                    {"href": "#BlogPosting"},
+                    {"href": "#doPost"},
+                    {"href": "#goAbout"},
+                    {"id": "goBlogPosting", "type": "safe", "rt": "#BlogPosting"}
+                ]
+            },
+            {
+                "id": "BlogPosting", "type": "semantic", "def": "https://schema.org/BlogPosting",
+                "descriptor": [
+                    {"href": "#id"},
+                    {"href": "#articleBody"},
+                    {"id": "dateCreaded", "def": "https://schema.org/dateCreated"},
+                    {"href": "#goAbout"}
+                ]
+            },
+
+            {"id": "doPost", "type": "unsafe", "def": "http://activitystrea.ms/specs/json/1.0/#post-verb", "rt": "#Blog",
+                "descriptor": [
+                    {"href": "#articleBody"}
+                ]
+            },
+            {"id": "goAbout", "type": "safe", "rt": "#About"}
+        ]
+    }
+}

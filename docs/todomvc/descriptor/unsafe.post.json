@@ -1,0 +1,18 @@
+{
+  "$schema": "https://alps-io.github.io/schemas/alps.json",
+  "alps": {
+    "descriptor": [
+      {
+        "id": "post",
+        "ref": "http://activitystrea.ms/specs/json/1.0/#post-verb",
+        "type": "unsafe"
+      }
+    ]
+  },
+  "link": [
+    {
+      "rel": "parent",
+      "href": "semantic..json"
+    }
+  ]
+}
