@@ -31,9 +31,6 @@ final class Profile extends AbstractProfile
     /** @var string  */
     public $alpsFile;
 
-    /** @var HyperReference */
-    private $hyperReference;
-
     /**
      * Descriptor instances (not reference)
      *
@@ -65,7 +62,7 @@ final class Profile extends AbstractProfile
     /**
      * Return instances of raw descriptor
      *
-     * @return array<string, stdClass>
+     * @return array{0: array<string, stdClass>, 1: HyperReference}
      */
     public function export(string $id, string $alpsFile): array
     {
@@ -76,13 +73,13 @@ final class Profile extends AbstractProfile
         $instance = $this->instances[$id];
         $instances = new Instances();
         $hyperReference = new HyperReference($alpsFile);
+        assert(is_string($instance->id));
         if (property_exists($instance, 'rt')) {
             assert(is_string($instance->rt));
             $this->rt($instance->rt, $instances, $alpsFile, $hyperReference);
         }
 
         if (! property_exists($instance, 'descriptor')) {
-            assert(is_string($instance->id));
 
             return [[$instance->id => $instance], $hyperReference];
         }
@@ -90,8 +87,9 @@ final class Profile extends AbstractProfile
         /** @var list<stdClass> $stdClasses */
         $stdClasses = $instance->descriptor;
         $this->storeDescriptors($stdClasses, $instances, $hyperReference);
-
-        return [$instances->get() + [(string) $instance->id => $instance], $hyperReference];
+        /** @var array<string, stdClass> $crawledInstances */
+        $crawledInstances = [$instance->id => $instance];
+        return [$instances->get() + $crawledInstances, $hyperReference];
     }
 
     private function rt(string $rt, Instances $instances, string $alpsFile, HyperReference $hyperReference): void
@@ -104,7 +102,6 @@ final class Profile extends AbstractProfile
 
     private function finalize(HyperReference $hyperReference): void
     {
-        /** @var list<stdClass> $instances */
         $instances = $hyperReference->getInstances($this->instances);
         ksort($instances);
         $this->descriptors = (new CreateDescriptor())($instances);

@@ -58,7 +58,7 @@ class HyperReference
     /**
      * @param array<string, stdClass> $instances
      *
-     * @return array<stdClass>
+     * @return array<string, stdClass>
      */
     public function getInstances(array $instances): array
     {
@@ -75,6 +75,7 @@ class HyperReference
 
             $alps = new Profile($file, false);
             [$importInstances, $hyperReference] = $alps->export($id, $file);
+            /** @var array<string, stdClass> $importInstances */
             $this->merge($hyperReference);
             $instances += $importInstances;
         }
@@ -94,13 +95,13 @@ class HyperReference
         return [];
     }
 
-    public function merge(HyperReference $hyperReference)
+    public function merge(HyperReference $hyperReference): void
     {
         $this->hrefs += $hyperReference->hrefs;
     }
 
     /**
-     * @return list<string>
+     * @return array<string, string>
      */
     public function getHref(): array
     {

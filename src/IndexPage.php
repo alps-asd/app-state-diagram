@@ -53,7 +53,7 @@ EOT;
     }
 
     /**
-     * @param list<AbstractDescriptor> $semantics
+     * @param array<int, AbstractDescriptor> $semantics
      */
     private function semantics(array $semantics): string
     {

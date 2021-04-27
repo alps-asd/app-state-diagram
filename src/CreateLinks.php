@@ -22,14 +22,14 @@ final class CreateLinks
     private $descriptors = [];
 
     /** @var array<string, stdClass> */
-    private $rawDescriptors;
+    private $rawDescriptors = [];
 
     /** @var array<string, Link> */
     private $links = [];
 
     /**
      * @param array<string, AbstractDescriptor> $descriptors
-     * @param list<stdClass>                    $rawDescriptors
+     * @param array<string, stdClass>                    $rawDescriptors
      *
      * @return array<string, Link>
      */
@@ -50,10 +50,12 @@ final class CreateLinks
     {
         $hasSubDescriptor = property_exists($raw, 'descriptor');
         if ($hasSubDescriptor) {
-            $this->scanTransition(new SemanticDescriptor($raw), $raw->descriptor); // @phpstan-ignore-line
+            /** @var list<stdClass> $rawDescriptors */
+            $rawDescriptors = $raw->descriptor;
+            $this->scanTransition(new SemanticDescriptor($raw), $rawDescriptors);
         }
 
-        $isTransitionalDescriptor = isset($raw->rt) && is_int(strpos($raw->rt, '#'));
+        $isTransitionalDescriptor = isset($raw->rt) && is_string($raw->rt) && is_int(strpos($raw->rt, '#'));
         if ($isTransitionalDescriptor) {
             [, $id] = explode('#', $raw->rt);
             assert(isset($this->rawDescriptors[$id]));
@@ -86,8 +88,6 @@ final class CreateLinks
                 assert(property_exists($instance, 'id') && is_string($instance->id));
                 $this->setLink(new Link($semantic, new TransDescriptor($instance, $semantic)));
                 $this->descriptors[$instance->id] = new TransDescriptor($instance, $semantic);
-
-                continue;
             }
         }
     }

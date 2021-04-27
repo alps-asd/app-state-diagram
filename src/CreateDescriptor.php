@@ -19,7 +19,7 @@ use function property_exists;
 final class CreateDescriptor
 {
     /**
-     * @param list<stdClass> $descriptorsArray
+     * @param array<string, stdClass> $descriptorsArray
      *
      * @return array<string, AbstractDescriptor>
      */
