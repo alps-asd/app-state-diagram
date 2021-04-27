@@ -1,0 +1,17 @@
+{
+  "$schema": "https://alps-io.github.io/schemas/alps.json",
+  "alps": {
+    "descriptor": [
+      {
+        "id": "goBlogPosting",
+        "type": "semantic"
+      }
+    ]
+  },
+  "link": [
+    {
+      "rel": "parent",
+      "href": "semantic.todoList.json"
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "$schema": "https://alps-io.github.io/schemas/alps.json",
+  "alps": {
+    "doc": {
+      "value": "Represents one or more link elements containing the available related actions"
+    },
+    "descriptor": [
+      {
+        "id": "relatedlink",
+        "type": "semantic"
+      }
+    ]
+  }
+}

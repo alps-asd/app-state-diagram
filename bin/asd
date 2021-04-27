@@ -3,12 +3,12 @@
 
 declare(strict_types=1);
 
-use Koriym\AppStateDiagram\AlpsProfile;
+use Koriym\AppStateDiagram\Profile;
 use Koriym\AppStateDiagram\AppStateDiagram;
 use Koriym\AppStateDiagram\DrawDiagram;
 use Koriym\AppStateDiagram\DumpDocs;
 use Koriym\AppStateDiagram\IndexPage;
-use Koriym\AppStateDiagram\TaggedAlpsProfile;
+use Koriym\AppStateDiagram\TaggedProfile;
 
 foreach ([__DIR__ . '/../../../autoload.php', __DIR__ . '/../vendor/autoload.php'] as $file) {
     if (file_exists($file)) {
@@ -24,13 +24,12 @@ $andTag = isset($options['and-tag']) && is_string($options['and-tag']) ? explode
 $orTag = isset($options['or-tag']) && is_string($options['or-tag']) ? explode(',', $options['or-tag']) : [];
 $color = isset($options['color']) && is_string($options['color']) ? $options['color'] : null;
 $hasTag = $andTag !== [] || $orTag !== [];
-$alpsFile = $argv[$argc - 1];
-$profile = realpath($alpsFile);
+$alpsFile = realpath($argv[$argc - 1]);
 if ($argc === 1) {
     echo 'usage: asd [--watch] [--andTag=tag1,tag2] [--orTag=tag3] [--color=red] <alps>' . PHP_EOL;
     exit(1);
 }
-if (! $profile) {
+if (! $alpsFile) {
     echo 'Not readable: ' . $alpsFile . PHP_EOL;
     exit(1);
 }
@@ -40,38 +39,39 @@ if ($watchMode) {
     if ($isFirstRun) {
         passthru('npm install');
     }
-    passthru('npm start -- --profile ' . $profile);
+    passthru('npm start -- --profile ' . $alpsFile);
     exit(0);
 }
 try {
-    $alpsProfile = new AlpsProfile($profile);
-    $dot = (new DrawDiagram)($alpsProfile);
+    $profile = new Profile($alpsFile);
+    $dot = (new DrawDiagram)($profile);
     // dump docs/
-    (new DumpDocs())($alpsProfile->descriptors, $profile, $alpsProfile->schema, $alpsProfile->tags);
+    (new DumpDocs())($profile->descriptors, $alpsFile, $profile->schema, $profile->tags);
 
     if ($hasTag) {
-        $filteredProfile = new TaggedAlpsProfile($alpsProfile, $orTag, $andTag);
-        $tagDot = isset($color) ? (new DrawDiagram())($alpsProfile, $filteredProfile, $color) : (new DrawDiagram())($filteredProfile);
+        $filteredProfile = new TaggedProfile($profile, $orTag, $andTag);
+        $tagDot = isset($color) ? (new DrawDiagram())($profile, $filteredProfile, $color) : (new DrawDiagram())($filteredProfile);
     }
 } catch (\Exception $e) {
     $path = explode('\\', get_class($e));
-    $msg = sprintf("%s: %s\n", end($path), $e->getMessage());
+    $msg = sprintf("%s: %s \n in %s:%s\n", end($path), $e->getMessage(), $e->getFile(), $e->getLine());
     file_put_contents('php://stderr', $msg);
     exit(1);
 }
-$file = str_replace('.json', '.dot', $profile);
+$file = str_replace('.json', '.dot', $alpsFile);
 file_put_contents($file, $dot);
 
-$svgFile = str_replace(['.xml', '.json'], '.svg', $profile);
+$svgFile = str_replace(['.xml', '.json'], '.svg', $alpsFile);
 $cmd = "dot -Tsvg {$file} -o {$svgFile}";
 passthru($cmd, $status);
 if ($status !== 0) {
     echo 'Warning: Graphviz error. https://graphviz.org/download/' . PHP_EOL;
 }
 
-$indexHtml = dirname($profile) . '/index.html';
-file_put_contents($indexHtml, (new IndexPage($alpsProfile))->index);
+$indexHtml = dirname($alpsFile) . '/index.html';
+file_put_contents($indexHtml, (new IndexPage($profile))->index);
 echo "ASD generated. {$indexHtml}" . PHP_EOL;
+echo sprintf('Descriptors(%s), Links(%s)', count($profile->descriptors), count($profile->links)) . PHP_EOL;
 
 if (!isset($tagDot)) {
   exit(0);
@@ -85,4 +85,4 @@ passthru($cmd, $status);
 if ($status !== 0) {
     echo 'Warning: Graphviz error. https://graphviz.org/download/' . PHP_EOL;
 }
-echo "Tagged ASD generated. {$filteredSvg}" . PHP_EOL;
+echo sprintf('Tagged ASD generated. %s', $filteredSvg) . PHP_EOL;

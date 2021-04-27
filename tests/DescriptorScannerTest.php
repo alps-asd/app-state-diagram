@@ -9,14 +9,14 @@ use PHPUnit\Framework\TestCase;
 use function file_get_contents;
 use function json_decode;
 
-class SemanticScannerTest extends TestCase
+class DescriptorScannerTest extends TestCase
 {
-    /** @var DescriptorScanner */
+    /** @var CreateDescriptor */
     private $scanner;
 
     protected function setUp(): void
     {
-        $this->scanner = new DescriptorScanner();
+        $this->scanner = new CreateDescriptor();
     }
 
     public function testInvoke(): void
@@ -31,4 +31,11 @@ class SemanticScannerTest extends TestCase
         $this->assertArrayHasKey('articleBody', $semantics);
         $this->assertArrayHasKey('dateCreated', $semantics);
     }
+
+//    public function testExternalFile(): void
+//    {
+//        $alps = json_decode((string) file_get_contents(__DIR__ . '/Fake/min.json'));
+//        $semantics = ($this->scanner)($alps->alps->descriptor);
+//        $this->assertArrayHasKey('dateCreated', $semantics);
+//    }
 }

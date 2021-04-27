@@ -11,6 +11,7 @@ use UnexpectedValueException;
 
 use function assert;
 use function defined;
+use function is_object;
 use function json_decode;
 use function json_last_error;
 use function property_exists;
@@ -25,6 +26,8 @@ final class JsonDecode
         if (json_last_error()) {
             throw $this->getJsonErrorMsg($jsonString);
         }
+
+        assert(is_object($json));
 
         if (! property_exists($json, 'alps')) {
             throw new InvalidAlpsException('No apls attribute found');

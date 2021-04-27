@@ -8,17 +8,17 @@ use PHPUnit\Framework\TestCase;
 
 class TagTest extends TestCase
 {
-    /** @var AlpsProfile */
+    /** @var Profile */
     private $profile;
 
     protected function setUp(): void
     {
-        $this->profile = new AlpsProfile(__DIR__ . '/Fake/alps_tag.json');
+        $this->profile = new Profile(__DIR__ . '/Fake/alps_tag.json');
     }
 
-    public function testFilteredLinksByAndTag(): TaggedAlpsProfile
+    public function testFilteredLinksByAndTag(): TaggedProfile
     {
-        $profile = new TaggedAlpsProfile(
+        $profile = new TaggedProfile(
             $this->profile,
             [],
             ['a', 'b']
@@ -36,7 +36,7 @@ class TagTest extends TestCase
     /**
      * @depends testFilteredLinksByAndTag
      */
-    public function testFilteredDescriptorsByAndTag(TaggedAlpsProfile $profile): void
+    public function testFilteredDescriptorsByAndTag(TaggedProfile $profile): void
     {
         // State
         $this->assertArrayHasKey('s1', $profile->descriptors);
@@ -62,9 +62,9 @@ class TagTest extends TestCase
         $this->assertCount(1, $profile->descriptors['s2']->descriptor);
     }
 
-    public function testFilteredLinksByOrTag(): TaggedAlpsProfile
+    public function testFilteredLinksByOrTag(): TaggedProfile
     {
-        $profile = new TaggedAlpsProfile(
+        $profile = new TaggedProfile(
             $this->profile,
             ['a'],
             []
@@ -82,7 +82,7 @@ class TagTest extends TestCase
     /**
      * @depends testFilteredLinksByOrTag
      */
-    public function testFilteredDescriptorsByOrTag(TaggedAlpsProfile $profile): void
+    public function testFilteredDescriptorsByOrTag(TaggedProfile $profile): void
     {
         // State
         $this->assertArrayHasKey('s1', $profile->descriptors);
@@ -110,7 +110,7 @@ class TagTest extends TestCase
 
     public function testTagIsEmpty(): void
     {
-        $profile = new TaggedAlpsProfile($this->profile, [], []);
+        $profile = new TaggedProfile($this->profile, [], []);
 
         $this->assertCount(0, $profile->links);
         $this->assertCount(0, $profile->descriptors);

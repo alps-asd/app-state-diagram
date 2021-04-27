@@ -6,7 +6,7 @@ namespace Koriym\AppStateDiagram;
 
 abstract class AbstractProfile
 {
-    /** @var AbstractDescriptor[] */
+    /** @var array<AbstractDescriptor> */
     public $descriptors = [];
 
     /** @var Link[] */

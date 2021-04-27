@@ -17,7 +17,7 @@ abstract class AbstractDescriptor
     /** @var string */
     public $id;
 
-    /** @var string|null */
+    /** @var ?string */
     public $def;
 
     /** @var stdClass|null */
@@ -41,19 +41,29 @@ abstract class AbstractDescriptor
     /** @var string */
     public $title;
 
+    /** @var object */
+    public $source;
+
     public function __construct(object $descriptor, ?stdClass $parentDescriptor = null)
     {
         if (! isset($descriptor->id)) {
             throw new InvalidSemanticsException((string) json_encode($descriptor));
         }
 
-        $this->id = $descriptor->id;
+        $this->source = $descriptor;
+        $this->id = (string) $descriptor->id;
+        /** @psalm-suppress MixedAssignment */
         $this->def = $descriptor->def ?? $descriptor->ref ?? $descriptor->src ?? null; // @phpstan-ignore-line
+        /** @psalm-suppress MixedAssignment */
         $this->doc = $descriptor->doc ?? null; // @phpstan-ignore-line
+        /** @psalm-suppress MixedAssignment */
         $this->descriptor = $descriptor->descriptor ?? []; // @phpstan-ignore-line
         $this->parent = $parentDescriptor;
+        /** @psalm-suppress MixedAssignment */
         $tag = $descriptor->tag ?? [];  // @phpstan-ignore-line
+        /** @psalm-suppress MixedAssignment */
         $this->tags = is_string($tag) ? explode(' ', $tag) : $tag; //@phpstan-ignore-line
+        /** @psalm-suppress MixedAssignment */
         $this->title = $descriptor->title ?? ''; //@phpstan-ignore-line
     }
 
@@ -76,7 +86,8 @@ abstract class AbstractDescriptor
         $alpsDoc->{'$schema'} = $schema;
         $alpsDoc->alps = $alps;
         if ($this->parent instanceof stdClass || ($this->parent instanceof SemanticDescriptor)) {
-            $jsonPath = sprintf('%s.%s.json', $this->parent->type, $this->parent->id);
+            $jsonPath = sprintf('%s.%s.json', (string) $this->parent->type, (string) $this->parent->id);
+            /** @psalm-suppress MixedArrayAssignment */
             $alpsDoc->link[] = ['rel' => 'parent', 'href' => $jsonPath];
         }
 

@@ -1,7 +1,8 @@
 {
-  "$schema": "https://raw.githubusercontent.com/alps-io/schemas/draft06/alps.json",
+  "$schema": "https://alps-io.github.io/schemas/alps.json",
   "alps": {
     "descriptor": [
+      {"id": "id"},
       {"id": "s1", "descriptor": [
         {"id": "t1", "type": "safe", "rt": "#s2", "tag": "a b"},
         {"href": "#id"},
@@ -15,7 +16,6 @@
         {"id": "t3", "type": "safe", "rt": "#s4", "tag": "a"}
       ]},
       {"id": "s4"},
-      {"id": "id"},
       {"id": "t4", "type": "safe", "rt": "#s4"}
     ]
   }

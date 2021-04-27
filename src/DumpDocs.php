@@ -14,6 +14,7 @@ use function file_put_contents;
 use function filter_var;
 use function implode;
 use function is_dir;
+use function is_string;
 use function json_encode;
 use function ksort;
 use function mkdir;
@@ -42,8 +43,10 @@ final class DumpDocs
     public function __invoke(array $descriptors, string $alpsFile, string $schema, array $tags): void
     {
         $alpsRoot = (new JsonDecode())((string) file_get_contents($alpsFile));
-        assert(isset($alpsRoot->alps));
+        assert(property_exists($alpsRoot, 'alps'));
+        /** @psalm-suppress all */
         $title = $alpsRoot->alps->title ?? '';
+        assert(is_string($title));
         ksort($descriptors);
         $this->descriptors = $descriptors;
         $descriptorDir = $this->mkDir(dirname($alpsFile), 'descriptor');
@@ -125,6 +128,7 @@ EOT;
         $description = '';
         $description .= $this->getDescriptorProp('type', $descriptor);
         $description .= $this->getDescriptorProp('title', $descriptor);
+        /** @psalm-suppress all */
         $description .= $this->getDescriptorKeyValue('doc', $descriptor->doc->value ?? '');
         $description .= $this->getDescriptorProp('ref', $descriptor);
         $description .= $this->getDescriptorProp('def', $descriptor);
@@ -151,7 +155,7 @@ EOT;
             return '';
         }
 
-        if ($this->isUrl($descriptor->{$key})) {
+        if ($this->isUrl((string) $descriptor->{$key})) {
             return " * {$key}: [{$descriptor->$key}]({$descriptor->$key})" . PHP_EOL;
         }
 
@@ -212,11 +216,15 @@ EOT;
         $descriptors = [];
         foreach ($inlineDescriptors as $descriptor) {
             if (isset($descriptor->id)) {
+                assert(is_string($descriptor->id));
                 $descriptors[] = $this->descriptors[$descriptor->id];
                 continue;
             }
 
+            assert(is_string($descriptor->href));
             $id = substr($descriptor->href, (int) strpos($descriptor->href, '#') + 1);
+            assert(isset($this->descriptors[$id]));
+
             $descriptors[] = $this->descriptors[$id];
         }
 

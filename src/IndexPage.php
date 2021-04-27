@@ -20,7 +20,7 @@ final class IndexPage
     /** @var string */
     public $index;
 
-    public function __construct(AlpsProfile $profile)
+    public function __construct(Profile $profile)
     {
         $profilePath = pathinfo($profile->alpsFile, PATHINFO_BASENAME);
         $descriptors = $profile->descriptors;
@@ -53,7 +53,7 @@ EOT;
     }
 
     /**
-     * @param list<AbstractDescriptor> $semantics
+     * @param array<int, AbstractDescriptor> $semantics
      */
     private function semantics(array $semantics): string
     {

@@ -1,0 +1,28 @@
+{
+  "$schema": "https://alps-io.github.io/schemas/alps.json",
+  "alps": {
+    "descriptor": [
+      {"id":  "identifier"},
+      {"id":  "element1"},
+      {"id":  "element2"},
+
+      {"id": "State1", "descriptor": [
+        {"href": "#identifier"},
+        {"href": "#element1"},
+        {"id": "element3"},
+        {"href": "#goState2"},
+        {"href":  "min.json#min"}
+      ]},
+      {"id": "State2", "descriptor": [
+        {"href": "#identifier"},
+        {"href": "#element2"},
+        {"id": "goState3", "type": "safe", "rt": "#State3"}
+      ]},
+      {"id": "State3", "descriptor": [
+        {"href": "#identifier"}
+      ]},
+
+      {"id": "goState2", "type": "safe", "rt": "#State2"}
+    ]
+  }
+}

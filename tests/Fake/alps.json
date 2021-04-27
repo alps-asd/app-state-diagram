@@ -2,17 +2,9 @@
   "$schema": "https://raw.githubusercontent.com/koriym/spec/master/schemas/alps.json",
   "alps": {
     "descriptor": [
-      {
-        "id": "Index",
-        "doc": {
-          "value": "Index Page"
-        },
+      {"id": "Index",
         "descriptor": [
-          {
-            "id": "blog",
-            "type": "safe",
-            "rt": "#Blog"
-          }
+          {"id": "blog", "type": "safe", "rt": "#Blog"}
         ],
         "title": "Index"
       },

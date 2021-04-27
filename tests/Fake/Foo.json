@@ -2,35 +2,13 @@
   "$schema": "https://raw.githubusercontent.com/koriym/spec/master/schemas/alps.json",
   "alps": {
     "descriptor": [
-      {
-        "id": "Foo",
-        "type": "semantic",
-        "descriptor": [
-          {
-            "id": "bar",
-            "type": "safe",
-            "rt": "#Bar"
-          },
-          {
-            "id": "index",
-            "type": "safe",
-            "rt": "alps.json#Index"
-          }
-        ]
+      {"id": "Foo", "descriptor": [
+          {"id": "bar"},
+          {"id": "baz"},
+          {"id": "goBar", "type": "safe", "rt": "#Bar"}
+      ]
       },
-      {
-        "id": "Bar",
-        "type": "semantic"
-      },
-      {
-        "id": "baz",
-        "type": "safe",
-        "rt": "#Baz"
-      },
-      {
-        "id": "Baz",
-        "type": "semantic"
-      }
+      {"id": "Bar"}
     ]
   }
 }

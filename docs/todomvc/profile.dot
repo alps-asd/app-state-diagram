@@ -7,22 +7,30 @@ digraph application_state_diagram {
   ];
   node [shape = box, style = "bold,filled" fillcolor="lightgray"];
 
-    todoList [margin=0.02, label=<<table cellspacing="0" cellpadding="5" border="0"><tr><td>todoList<br />(id)<br />(title)<br />(completed)<br /></td></tr></table>>,shape=box URL="docs/semantic.todoList.html" target="_parent"]
+    Blog [margin=0.02, label=<<table cellspacing="0" cellpadding="5" border="0"><tr><td>Blog<br />(BlogPosting)<br /></td></tr></table>>,shape=box URL="docs/semantic.Blog.html" target="_parent"]
+    BlogPosting [margin=0.02, label=<<table cellspacing="0" cellpadding="5" border="0"><tr><td>BlogPosting<br />(id)<br />(articleBody)<br />(dateCreated)<br /></td></tr></table>>,shape=box URL="docs/semantic.BlogPosting.html" target="_parent"]
     todoItem [margin=0.02, label=<<table cellspacing="0" cellpadding="5" border="0"><tr><td>todoItem<br />(id)<br />(title)<br />(completed)<br /></td></tr></table>>,shape=box URL="docs/semantic.todoItem.html" target="_parent"]
+    todoList [margin=0.02, label=<<table cellspacing="0" cellpadding="5" border="0"><tr><td>todoList<br />(id)<br />(title)<br />(completed)<br /></td></tr></table>>,shape=box URL="docs/semantic.todoList.html" target="_parent"]
 
-    home -> todoList [label = "listAll (safe)" URL="docs/safe.listAll.html" target="_parent" fontsize=13];
+    About -> Blog [label = "backToBlog (safe)" URL="docs/safe.backToBlog.html" target="_parent" fontsize=13];
+    Blog -> About [label = "about (safe)" URL="docs/safe.about.html" target="_parent" fontsize=13];
+    Blog -> Blog [label = "post (unsafe)" URL="docs/unsafe.post.html" target="_parent" fontsize=13];
+    Blog -> BlogPosting [label = "blogPosting, item (safe)" URL="docs/safe.blogPosting.html" target="_parent" fontsize=13];
+    BlogPosting -> Blog [label = "blog, collection (safe)" URL="docs/safe.blog.html" target="_parent" fontsize=13];
     home -> related [label = "goRelated (safe)" URL="docs/safe.goRelated.html" target="_parent" fontsize=13];
+    home -> todoList [label = "listAll (safe)" URL="docs/safe.listAll.html" target="_parent" fontsize=13];
     related -> home [label = "goHome (safe)" URL="docs/safe.goHome.html" target="_parent" fontsize=13];
-    related -> todoList [label=<<table  border="0"><tr><td align="left" href="docs/safe.listAll.html">listAll (safe)</td></tr><tr><td align="left" href="docs/safe.listActive.html">listActive (safe)</td></tr><tr><td align="left" href="docs/safe.listCompleted.html">listCompleted (safe)</td></tr><tr><td align="left" href="docs/idempotent.remove.html">remove (idempotent)</td></tr></table>> fontsize=13];
-    related -> todoItem [label=<<table  border="0"><tr><td align="left" href="docs/safe.read.html">read (safe)</td></tr><tr><td align="left" href="docs/unsafe.add.html">add (unsafe)</td></tr><tr><td align="left" href="docs/idempotent.edit.html">edit (idempotent)</td></tr></table>> fontsize=13];
-    todoList -> todoItem [label=<<table  border="0"><tr><td align="left" href="docs/safe.read.html">read (safe)</td></tr><tr><td align="left" href="docs/unsafe.add.html">add (unsafe)</td></tr></table>> fontsize=13];
-    todoList -> todoList [label=<<table  border="0"><tr><td align="left" href="docs/safe.listAll.html">listAll (safe)</td></tr><tr><td align="left" href="docs/safe.listActive.html">listActive (safe)</td></tr><tr><td align="left" href="docs/safe.listCompleted.html">listCompleted (safe)</td></tr><tr><td align="left" href="docs/safe.goFirst.html">goFirst (safe)</td></tr><tr><td align="left" href="docs/safe.goNext.html">goNext (safe)</td></tr><tr><td align="left" href="docs/safe.goPrevious.html">goPrevious (safe)</td></tr><tr><td align="left" href="docs/safe.goLast.html">goLast (safe)</td></tr></table>> fontsize=13];
+    related -> todoItem [label=<<table  border="0"><tr><td align="left" href="docs/unsafe.add.html">add (unsafe)</td></tr><tr><td align="left" href="docs/idempotent.edit.html">edit (idempotent)</td></tr><tr><td align="left" href="docs/safe.read.html">read (safe)</td></tr></table>> fontsize=13];
+    related -> todoList [label=<<table  border="0"><tr><td align="left" href="docs/safe.listActive.html">listActive (safe)</td></tr><tr><td align="left" href="docs/safe.listAll.html">listAll (safe)</td></tr><tr><td align="left" href="docs/safe.listCompleted.html">listCompleted (safe)</td></tr><tr><td align="left" href="docs/idempotent.remove.html">remove (idempotent)</td></tr></table>> fontsize=13];
+    todoItem -> related [label = "goRelated (safe)" URL="docs/safe.goRelated.html" target="_parent" fontsize=13];
+    todoItem -> todoItem [label=<<table  border="0"><tr><td align="left" href="docs/idempotent.clearCompleted.html">clearCompleted (idempotent)</td></tr><tr><td align="left" href="docs/idempotent.edit.html">edit (idempotent)</td></tr><tr><td align="left" href="docs/idempotent.markCompleted.html">markCompleted (idempotent)</td></tr></table>> fontsize=13];
+    todoItem -> todoList [label=<<table  border="0"><tr><td align="left" href="docs/safe.listAll.html">listAll (safe)</td></tr><tr><td align="left" href="docs/idempotent.remove.html">remove (idempotent)</td></tr></table>> fontsize=13];
     todoList -> home [label = "goHome (safe)" URL="docs/safe.goHome.html" target="_parent" fontsize=13];
     todoList -> related [label = "goRelated (safe)" URL="docs/safe.goRelated.html" target="_parent" fontsize=13];
-    todoItem -> todoList [label=<<table  border="0"><tr><td align="left" href="docs/safe.listAll.html">listAll (safe)</td></tr><tr><td align="left" href="docs/idempotent.remove.html">remove (idempotent)</td></tr></table>> fontsize=13];
-    todoItem -> todoItem [label=<<table  border="0"><tr><td align="left" href="docs/idempotent.edit.html">edit (idempotent)</td></tr><tr><td align="left" href="docs/idempotent.markCompleted.html">markCompleted (idempotent)</td></tr><tr><td align="left" href="docs/idempotent.clearCompleted.html">clearCompleted (idempotent)</td></tr></table>> fontsize=13];
-    todoItem -> related [label = "goRelated (safe)" URL="docs/safe.goRelated.html" target="_parent" fontsize=13];
+    todoList -> todoItem [label=<<table  border="0"><tr><td align="left" href="docs/unsafe.add.html">add (unsafe)</td></tr><tr><td align="left" href="docs/safe.read.html">read (safe)</td></tr></table>> fontsize=13];
+    todoList -> todoList [label=<<table  border="0"><tr><td align="left" href="docs/safe.goFirst.html">goFirst (safe)</td></tr><tr><td align="left" href="docs/safe.goLast.html">goLast (safe)</td></tr><tr><td align="left" href="docs/safe.goNext.html">goNext (safe)</td></tr><tr><td align="left" href="docs/safe.goPrevious.html">goPrevious (safe)</td></tr><tr><td align="left" href="docs/safe.listActive.html">listActive (safe)</td></tr><tr><td align="left" href="docs/safe.listAll.html">listAll (safe)</td></tr><tr><td align="left" href="docs/safe.listCompleted.html">listCompleted (safe)</td></tr></table>> fontsize=13];
 
+    About [URL="docs/semantic.About.html" target="_parent"]
     home [URL="docs/semantic.home.html" target="_parent"]
     related [URL="docs/semantic.related.html" target="_parent"]
 

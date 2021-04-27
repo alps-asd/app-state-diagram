@@ -1,0 +1,15 @@
+{
+  "$schema": "https://alps-io.github.io/schemas/alps.json",
+  "alps": {
+    "title": "Remote profile reference",
+    "descriptor": [
+      {
+        "id": "Root",
+        "descriptor": [
+          {"href": "https://koriym.github.io/app-state-diagram/blog/profile.json#BlogPosting"}
+        ],
+        "title": "Index"
+      }
+    ]
+  }
+}
