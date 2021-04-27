@@ -6,7 +6,7 @@
     "doc" : { "value" : "A suggested ALPS profile for the popular MVCTodo project"},
     "link" : {"rel" : "help", "href" : "https://github.com/tastejs/todomvc/blob/master/app-spec.md"},
     "descriptor" : [
-
+      {"href": "https://koriym.github.io/app-state-diagram/blog/profile.json#post"},
       {"id" : "id", "type" : "semantic", "def": "http://schema.org/identifier"},
       {"id" : "title", "type" : "semantic", "def": "http://schema.org/title"},
       {"id" : "completed", "type" : "semantic", "def": "http://mamund.site44.com/alps/def/completed.txt"},
