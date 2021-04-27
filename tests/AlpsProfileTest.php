@@ -23,7 +23,7 @@ class AlpsProfileTest extends TestCase
     public function testFakeProfile()
     {
         $profile = new Profile(__DIR__ . '/Fake/fake.json');
-        $this->assertCount(14, $profile->descriptors);
+        $this->assertCount(15, $profile->descriptors);
         $this->assertCount(3, $profile->links);
     }
 
@@ -36,8 +36,12 @@ class AlpsProfileTest extends TestCase
     public function testIncludeExternalRemoteProfile(): void
     {
         $profile = new Profile(__DIR__ . '/Fake/remote_link.json');
-        $this->assertCount(13, $profile->descriptors);
-        $this->assertCount(5, $profile->links);
+        $this->assertArrayHasKey('About->Blog:backToBlog', $profile->links);
+        $this->assertArrayHasKey('Blog->About:about', $profile->links);
+        $this->assertArrayHasKey('Blog->Blog:post', $profile->links);
+        $this->assertArrayHasKey('Blog->About:about', $profile->links);
+        $this->assertArrayHasKey('Blog->BlogPosting:blogPosting', $profile->links);
+        $this->assertArrayHasKey('BlogPosting->Blog:blog', $profile->links);
     }
 
     public function testHttpProfile(): void

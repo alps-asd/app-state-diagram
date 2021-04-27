@@ -47,18 +47,18 @@ final class Profile extends AbstractProfile
     /**
 £     * @throws \Seld\JsonLint\ParsingException
      */
-    public function __construct(string $alpsFile, ?HyperReference $hyperReference = null, bool $doFinalize = true)
+    public function __construct(string $alpsFile, bool $doFinalize = true)
     {
-        $this->hyperReference = $hyperReference ?: new HyperReference($alpsFile);
+        $hyperReference = new HyperReference($alpsFile);
         $this->alpsFile = $alpsFile;
         [$profile, $descriptors] = (new SplitProfile())($alpsFile);
         /** @psalm-suppress all */
         [$this->schema, $this->title, $this->doc] = [$profile->{'$schema'} ?? '', $profile->alps->title ?? '', $profile->alps->doc->value ??  '']; // @phpstan-ignore-line
         $instances = new Instances();
-        $this->storeDescriptors($descriptors, $instances);
+        $this->storeDescriptors($descriptors, $instances, $hyperReference);
         $this->instances = $instances->get();
         if ($doFinalize) {
-            $this->finalize();
+            $this->finalize($hyperReference);
         }
     }
 
@@ -75,36 +75,37 @@ final class Profile extends AbstractProfile
 
         $instance = $this->instances[$id];
         $instances = new Instances();
+        $hyperReference = new HyperReference($alpsFile);
         if (property_exists($instance, 'rt')) {
             assert(is_string($instance->rt));
-            $this->rt($instance->rt, $instances, $alpsFile);
+            $this->rt($instance->rt, $instances, $alpsFile, $hyperReference);
         }
 
         if (! property_exists($instance, 'descriptor')) {
             assert(is_string($instance->id));
 
-            return [$instance->id => $instance];
+            return [[$instance->id => $instance], $hyperReference];
         }
 
         /** @var list<stdClass> $stdClasses */
         $stdClasses = $instance->descriptor;
-        $this->storeDescriptors($stdClasses, $instances);
+        $this->storeDescriptors($stdClasses, $instances, $hyperReference);
 
-        return $instances->get() + [(string) $instance->id => $instance];
+        return [$instances->get() + [(string) $instance->id => $instance], $hyperReference];
     }
 
-    private function rt(string $rt, Instances $instances, string $alpsFile): void
+    private function rt(string $rt, Instances $instances, string $alpsFile, HyperReference $hyperReference): void
     {
         $rtKey = substr($rt, 1);
         if (isset($this->instances[$rtKey])) {
-            $this->hyperReference->add($alpsFile, $rt);
+            $hyperReference->add($alpsFile, $rt);
         }
     }
 
-    private function finalize(): void
+    private function finalize(HyperReference $hyperReference): void
     {
         /** @var list<stdClass> $instances */
-        $instances = $this->hyperReference->getInstances($this->instances);
+        $instances = $hyperReference->getInstances($this->instances);
         ksort($instances);
         $this->descriptors = (new CreateDescriptor())($instances);
         $this->links = (new CreateLinks())($this->descriptors, $instances);
@@ -116,21 +117,20 @@ final class Profile extends AbstractProfile
      *
      * @param list<stdClass> $rawDescriptors
      */
-    private function storeDescriptors(array $rawDescriptors, Instances $instances): void
+    private function storeDescriptors(array $rawDescriptors, Instances $instances, HyperReference $hyperReference): void
     {
         foreach ($rawDescriptors as $rawDescriptor) {
-            if (property_exists($rawDescriptor, 'id')) {
-                $this->storeRawDescriptor($rawDescriptor, $instances);
-                continue;
+            if (property_exists($rawDescriptor, 'rt') && is_string($rawDescriptor->rt)) {
+                $hyperReference->add($this->alpsFile, $rawDescriptor->rt);
             }
 
-            if (property_exists($rawDescriptor, 'rt') && is_string($rawDescriptor->rt)) {
-                $this->hyperReference->add($this->alpsFile, $rawDescriptor->rt);
+            if (property_exists($rawDescriptor, 'id')) {
+                $this->storeRawDescriptor($rawDescriptor, $instances, $hyperReference);
                 continue;
             }
 
             if (property_exists($rawDescriptor, 'href') && is_string($rawDescriptor->href)) {
-                $this->hyperReference->add($this->alpsFile, $rawDescriptor->href);
+                $hyperReference->add($this->alpsFile, $rawDescriptor->href);
                 continue;
             }
 
@@ -138,7 +138,7 @@ final class Profile extends AbstractProfile
         }
     }
 
-    private function storeRawDescriptor(stdClass $rawDescriptor, Instances $instances): void
+    private function storeRawDescriptor(stdClass $rawDescriptor, Instances $instances, HyperReference $hyperReference): void
     {
         assert(is_string($rawDescriptor->id));
         $instances->add($rawDescriptor);
@@ -150,7 +150,7 @@ final class Profile extends AbstractProfile
 
             /** @var list<stdClass> $descriptors */
 
-            $this->storeDescriptors($descriptors, $instances);
+            $this->storeDescriptors($descriptors, $instances, $hyperReference);
         }
     }
 

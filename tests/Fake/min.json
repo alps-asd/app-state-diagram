@@ -2,8 +2,9 @@
   "$schema": "https://raw.githubusercontent.com/koriym/spec/master/schemas/alps.json",
   "alps": {
     "descriptor": [
-      {"id": "min"},
-      {"href": "Foo.json#Foo"}
+      {"id": "min", "descriptor": [
+        {"href": "Foo.json#Foo"}
+      ]}
     ]
   }
 }

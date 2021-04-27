@@ -5,12 +5,15 @@ declare(strict_types=1);
 namespace Koriym\AppStateDiagram;
 
 use Generator;
+use Koriym\AppStateDiagram\Exception\SharpMissingInHrefException;
 use stdClass;
 
 use function array_shift;
 use function dirname;
 use function explode;
 use function in_array;
+use function is_int;
+use function strpos;
 
 class HyperReference
 {
@@ -39,9 +42,13 @@ class HyperReference
     public function add(string $alpsFile, string $href): void
     {
         $fullPath = ($this->fullPath)($alpsFile, $href);
+        if (! is_int(strpos($fullPath, '#'))) {
+            throw new SharpMissingInHrefException($fullPath);
+        }
+
         [, $id] = explode('#', $fullPath);
         if (in_array($id, $this->done)) {
-//            return;
+            return;
         }
 
         $this->hrefs[$id] = $fullPath;
@@ -55,7 +62,7 @@ class HyperReference
      */
     public function getInstances(array $instances): array
     {
-        $hrefs = $this->getHrefs();
+        $hrefs = $this->hrefGenerator();
         foreach ($hrefs as $href) {
             [$file, $id] = explode('#', $href);
             if (! $file) {
@@ -66,8 +73,9 @@ class HyperReference
                 continue;
             }
 
-            $alps = new Profile($file, $this, false);
-            $importInstances = $alps->export($id, $file);
+            $alps = new Profile($file, false);
+            [$importInstances, $hyperReference] = $alps->export($id, $file);
+            $this->merge($hyperReference);
             $instances += $importInstances;
         }
 
@@ -77,10 +85,25 @@ class HyperReference
     /**
      * @return Generator<string>
      */
-    public function getHrefs(): Generator
+    public function hrefGenerator(): Generator
     {
         while ($this->hrefs) {
             yield array_shift($this->hrefs);
         }
+
+        return [];
+    }
+
+    public function merge(HyperReference $hyperReference)
+    {
+        $this->hrefs += $hyperReference->hrefs;
+    }
+
+    /**
+     * @return list<string>
+     */
+    public function getHref(): array
+    {
+        return $this->hrefs;
     }
 }

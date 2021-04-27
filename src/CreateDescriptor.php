@@ -14,6 +14,7 @@ use function is_array;
 use function is_string;
 use function json_encode;
 use function ksort;
+use function property_exists;
 
 final class CreateDescriptor
 {
@@ -57,7 +58,7 @@ final class CreateDescriptor
             $descriptors[$descriptor->id] = new TransDescriptor($descriptor, new SemanticDescriptor($parent));
         }
 
-        if (isset($descriptor->descriptor)) {
+        if (property_exists($descriptor, 'descriptor')) {
             $descriptors = $this->scanInlineDescriptor($descriptor, $descriptors);
         }
 

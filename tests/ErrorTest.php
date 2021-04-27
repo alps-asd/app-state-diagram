@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Koriym\AppStateDiagram;
 
 use Koriym\AppStateDiagram\Exception\DescriptorIsNotArrayException;
+use Koriym\AppStateDiagram\Exception\DescriptorNotFoundException;
 use Koriym\AppStateDiagram\Exception\InvalidDescriptorException;
 use Koriym\AppStateDiagram\Exception\RtMissingException;
 use PHPUnit\Framework\TestCase;
@@ -37,9 +38,9 @@ class ErrorTest extends TestCase
         (new DrawDiagram())(new Profile(__DIR__ . '/Fake/invalid_missing_rt.json'));
     }
 
-    public function testMissingSharpInRt(): void
+    public function testMissingRtDescriptor(): void
     {
-        $this->expectException(RtMissingException::class);
+        $this->expectException(DescriptorNotFoundException::class);
         (new DrawDiagram())(new Profile(__DIR__ . '/Fake/invalid_missing_missing_sharp_in_rt.json'));
     }
 

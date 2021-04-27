@@ -5,13 +5,13 @@
       {"id":  "identifier"},
       {"id":  "element1"},
       {"id":  "element2"},
-      {"href":  "min.json#min"},
 
       {"id": "State1", "descriptor": [
         {"href": "#identifier"},
         {"href": "#element1"},
         {"id": "element3"},
-        {"href": "#goState2"}
+        {"href": "#goState2"},
+        {"href":  "min.json#min"}
       ]},
       {"id": "State2", "descriptor": [
         {"href": "#identifier"},

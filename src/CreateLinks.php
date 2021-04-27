@@ -9,15 +9,20 @@ use stdClass;
 use function assert;
 use function explode;
 use function in_array;
+use function is_int;
 use function is_string;
 use function ksort;
 use function property_exists;
 use function sprintf;
+use function strpos;
 
 final class CreateLinks
 {
     /** @var array<string, AbstractDescriptor> */
     private $descriptors = [];
+
+    /** @var array<string, stdClass> */
+    private $rawDescriptors;
 
     /** @var array<string, Link> */
     private $links = [];
@@ -30,6 +35,7 @@ final class CreateLinks
      */
     public function __invoke(array $descriptors, array $rawDescriptors): array
     {
+        $this->rawDescriptors = $rawDescriptors;
         $this->descriptors = $descriptors;
         foreach ($rawDescriptors as $rawDescriptor) {
             $this->scanRawDescriptor($rawDescriptor);
@@ -44,8 +50,16 @@ final class CreateLinks
     {
         $hasSubDescriptor = property_exists($raw, 'descriptor');
         if ($hasSubDescriptor) {
-            /** @var list<stdClass> $raw->descriptor */
             $this->scanTransition(new SemanticDescriptor($raw), $raw->descriptor); // @phpstan-ignore-line
+        }
+
+        $isTransitionalDescriptor = isset($raw->rt) && is_int(strpos($raw->rt, '#'));
+        if ($isTransitionalDescriptor) {
+            [, $id] = explode('#', $raw->rt);
+            assert(isset($this->rawDescriptors[$id]));
+
+            $rawDescriptor = $this->rawDescriptors[$id];
+            $this->scanRawDescriptor($rawDescriptor);
         }
     }
 
@@ -55,9 +69,14 @@ final class CreateLinks
     private function scanTransition(SemanticDescriptor $semantic, array $instances): void
     {
         foreach ($instances as $instance) {
-            $isInternal = property_exists($instance, 'href') && is_string($instance->href) && $instance->href[0] === '#';
-            if ($isInternal) {
-                $this->addInternalLink($semantic, $instance->href);
+            $isHref = property_exists($instance, 'href') && is_string($instance->href);
+            if ($isHref) {
+                [, $descriptorId] = explode('#', $instance->href);
+                $isTransDescriptor = isset($this->descriptors[$descriptorId]) && $this->descriptors[$descriptorId] instanceof TransDescriptor;
+                if ($isTransDescriptor) {
+                    $transSemantic = $this->descriptors[$descriptorId];
+                    $this->setLink(new Link($semantic, $transSemantic));  // @phpstan-ignore-line
+                }
 
                 continue;
             }
@@ -70,16 +89,6 @@ final class CreateLinks
 
                 continue;
             }
-        }
-    }
-
-    private function addInternalLink(SemanticDescriptor $semantic, string $href): void
-    {
-        [, $descriptorId] = explode('#', $href);
-        $isTransDescriptor = isset($this->descriptors[$descriptorId]) && $this->descriptors[$descriptorId] instanceof TransDescriptor;
-        if ($isTransDescriptor) {
-            $transSemantic = $this->descriptors[$descriptorId];
-            $this->setLink(new Link($semantic, $transSemantic));  // @phpstan-ignore-line
         }
     }
 

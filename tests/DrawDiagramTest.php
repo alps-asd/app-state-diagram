@@ -22,7 +22,6 @@ class DrawDiagramTest extends TestCase
     {
         $profile = new Profile(__DIR__ . '/Fake/fake.json');
         $dot = ($this->drawDiagram)($profile);
-        $this->assertStringContainsString('Foo -> Bar [label = "goBar (safe)', $dot);
         $this->assertStringContainsString('State1 -> State2 [label = "goState2 (safe)"', $dot);
         $this->assertStringContainsString('State2 -> State3 [label = "goState3 (safe)"', $dot);
 
@@ -49,6 +48,31 @@ class DrawDiagramTest extends TestCase
         $alpsFile = __DIR__ . '/Fake/no_state.json';
         $dot = ($this->drawDiagram)(new Profile($alpsFile));
         $this->assertStringNotContainsString('name [', $dot);
+    }
+
+    public function testShareSameLink(): void
+    {
+        $alpsFile = __DIR__ . '/Fake/share_link.json';
+        $profile = new Profile($alpsFile);
+        $dot = ($this->drawDiagram)($profile);
+        $this->assertStringContainsString('s1 -> s3 [label = "goS3 (safe)', $dot);
+        $this->assertStringContainsString('s2 -> s3 [label = "goS3 (safe)', $dot);
+        $this->assertStringContainsString('s1 [', $dot);
+        $this->assertStringContainsString('s2 [', $dot);
+        $this->assertStringContainsString('s3 [', $dot);
+    }
+
+    public function testTaggedProfileWithoutTag(): void
+    {
+        $alpsFile = __DIR__ . '/Fake/alps_tag.json';
+        $profile = new Profile($alpsFile);
+        $dot = ($this->drawDiagram)($profile);
+        $this->assertStringContainsString('s1 -> s2 [label = "t1 (safe)"', $dot);
+        $this->assertStringContainsString('s1 -> s5 [label = "t5 (safe)"', $dot);
+        $this->assertStringContainsString('s2 -> s3 [label = "t2 (safe)"', $dot);
+        $this->assertStringContainsString('s2 -> s4 [label = "t4 (safe)', $dot);
+        $this->assertStringContainsString('s3 -> s4 [label = "t3 (safe)"', $dot);
+        $this->assertStringContainsString('s5 -> s6 [label = "t6 (safe)"', $dot);
     }
 
     public function testTaggedProfile(): void

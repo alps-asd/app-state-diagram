@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Koriym\AppStateDiagram;
 
-use LogicException;
 use stdClass;
 
 use function assert;
@@ -224,9 +223,7 @@ EOT;
 
             assert(is_string($descriptor->href));
             $id = substr($descriptor->href, (int) strpos($descriptor->href, '#') + 1);
-            if (! isset($this->descriptors[$id])) {
-                throw new LogicException($id);
-            }
+            assert(isset($this->descriptors[$id]));
 
             $descriptors[] = $this->descriptors[$id];
         }
