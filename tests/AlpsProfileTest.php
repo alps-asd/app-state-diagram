@@ -20,7 +20,7 @@ class AlpsProfileTest extends TestCase
         $this->assertArrayHasKey('min', $profile->descriptors);
     }
 
-    public function testFakeProfile()
+    public function testFakeProfile(): void
     {
         $profile = new Profile(__DIR__ . '/Fake/fake.json');
         $this->assertCount(15, $profile->descriptors);

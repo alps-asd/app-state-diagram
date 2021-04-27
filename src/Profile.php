@@ -80,7 +80,6 @@ final class Profile extends AbstractProfile
         }
 
         if (! property_exists($instance, 'descriptor')) {
-
             return [[$instance->id => $instance], $hyperReference];
         }
 
@@ -89,6 +88,7 @@ final class Profile extends AbstractProfile
         $this->storeDescriptors($stdClasses, $instances, $hyperReference);
         /** @var array<string, stdClass> $crawledInstances */
         $crawledInstances = [$instance->id => $instance];
+
         return [$instances->get() + $crawledInstances, $hyperReference];
     }
 
@@ -140,6 +140,7 @@ final class Profile extends AbstractProfile
         assert(is_string($rawDescriptor->id));
         $instances->add($rawDescriptor);
         if (property_exists($rawDescriptor, 'descriptor')) {
+            /** @psalm-suppress MixedAssignments */
             $descriptors = $rawDescriptor->descriptor;
             if (! is_array($descriptors)) {
                 throw new DescriptorIsNotArrayException($rawDescriptor->id);

@@ -29,7 +29,7 @@ final class CreateLinks
 
     /**
      * @param array<string, AbstractDescriptor> $descriptors
-     * @param array<string, stdClass>                    $rawDescriptors
+     * @param array<string, stdClass>           $rawDescriptors
      *
      * @return array<string, Link>
      */
