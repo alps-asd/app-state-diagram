@@ -36,18 +36,18 @@ class AlpsProfileTest extends TestCase
     public function testIncludeExternalRemoteProfile(): void
     {
         $profile = new Profile(__DIR__ . '/Fake/remote_link.json');
-        $this->assertArrayHasKey('About->Blog:backToBlog', $profile->links);
-        $this->assertArrayHasKey('Blog->About:about', $profile->links);
-        $this->assertArrayHasKey('Blog->Blog:post', $profile->links);
-        $this->assertArrayHasKey('Blog->About:about', $profile->links);
-        $this->assertArrayHasKey('Blog->BlogPosting:blogPosting', $profile->links);
-        $this->assertArrayHasKey('BlogPosting->Blog:blog', $profile->links);
+        $this->assertArrayHasKey('About->Blog:goBlog', $profile->links);
+        $this->assertArrayHasKey('Blog->About:goAbout', $profile->links);
+        $this->assertArrayHasKey('Blog->Blog:doPost', $profile->links);
+        $this->assertArrayHasKey('Blog->About:goAbout', $profile->links);
+        $this->assertArrayHasKey('Blog->BlogPosting:goBlogPosting', $profile->links);
+        $this->assertArrayHasKey('BlogPosting->Blog:goBlog', $profile->links);
     }
 
     public function testHttpProfile(): void
     {
         $profile = new Profile('https://raw.githubusercontent.com/koriym/app-state-diagram/master/docs/blog/profile.json');
-        $this->assertSame('start (safe)', (string) $profile->links['Index->Blog:start']);
+        $this->assertSame('goBlog, collection (safe)', (string) $profile->links['Index->Blog:goBlog']);
     }
 
     public function testReadPhpInput(): void
@@ -55,7 +55,7 @@ class AlpsProfileTest extends TestCase
         stream_wrapper_unregister('php');
         stream_wrapper_register('php', FakeAlpsJsonInputStreamWrapper::class);
         $profile = new Profile('php://input');
-        $this->assertSame('about (safe)', (string) $profile->links['Blog->About:about']);
+        $this->assertSame('goAbout, about (safe)', (string) $profile->links['Blog->About:goAbout']);
         stream_wrapper_restore('php');
     }
 
