@@ -12,11 +12,11 @@ digraph application_state_diagram {
     todoItem [margin=0.02, label=<<table cellspacing="0" cellpadding="5" border="0"><tr><td>todoItem<br />(id)<br />(title)<br />(completed)<br /></td></tr></table>>,shape=box URL="docs/semantic.todoItem.html" target="_parent"]
     todoList [margin=0.02, label=<<table cellspacing="0" cellpadding="5" border="0"><tr><td>todoList<br />(id)<br />(title)<br />(completed)<br /></td></tr></table>>,shape=box URL="docs/semantic.todoList.html" target="_parent"]
 
-    About -> Blog [label = "backToBlog (safe)" URL="docs/safe.backToBlog.html" target="_parent" fontsize=13];
-    Blog -> About [label = "about (safe)" URL="docs/safe.about.html" target="_parent" fontsize=13];
-    Blog -> Blog [label = "post (unsafe)" URL="docs/unsafe.post.html" target="_parent" fontsize=13];
-    Blog -> BlogPosting [label = "blogPosting, item (safe)" URL="docs/safe.blogPosting.html" target="_parent" fontsize=13];
-    BlogPosting -> Blog [label = "blog, collection (safe)" URL="docs/safe.blog.html" target="_parent" fontsize=13];
+    About -> Blog [label = "goBlog, collection (safe)" URL="docs/safe.goBlog.html" target="_parent" fontsize=13];
+    Blog -> About [label = "goAbout, about (safe)" URL="docs/safe.goAbout.html" target="_parent" fontsize=13];
+    Blog -> Blog [label = "doPost (unsafe)" URL="docs/unsafe.doPost.html" target="_parent" fontsize=13];
+    Blog -> BlogPosting [label = "goBlogPosting, item (safe)" URL="docs/safe.goBlogPosting.html" target="_parent" fontsize=13];
+    BlogPosting -> Blog [label = "goBlog, collection (safe)" URL="docs/safe.goBlog.html" target="_parent" fontsize=13];
     home -> related [label = "goRelated (safe)" URL="docs/safe.goRelated.html" target="_parent" fontsize=13];
     home -> todoList [label = "listAll (safe)" URL="docs/safe.listAll.html" target="_parent" fontsize=13];
     related -> home [label = "goHome (safe)" URL="docs/safe.goHome.html" target="_parent" fontsize=13];
