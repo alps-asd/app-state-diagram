@@ -4,7 +4,7 @@
     "descriptor": [
       {
         "id": "id",
-        "ref": "http://schema.org/identifier",
+        "ref": "https://schema.org/identifier",
         "type": "semantic"
       }
     ]

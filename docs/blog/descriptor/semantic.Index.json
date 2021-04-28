@@ -1,9 +1,6 @@
 {
   "$schema": "https://alps-io.github.io/schemas/alps.json",
   "alps": {
-    "doc": {
-      "value": "Index Page"
-    },
     "descriptor": [
       {
         "id": "Index",
