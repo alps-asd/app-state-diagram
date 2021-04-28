@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<alps>
+<alps schemaLocation="https://alps-io.github.io/schemas/alps.xsd">
     <title>ALPS Blog</title>
     <doc><value>An ALPS profile example for ASD</value></doc>
     <link href="https://github.com/koriym/app-state-diagram/issues" rel="issue"/>
