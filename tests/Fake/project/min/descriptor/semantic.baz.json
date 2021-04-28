@@ -1,0 +1,11 @@
+{
+  "$schema": "https://alps-io.github.io/schemas/alps.json",
+  "alps": {
+    "descriptor": [
+      {
+        "id": "baz",
+        "type": "semantic"
+      }
+    ]
+  }
+}

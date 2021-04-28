@@ -6,15 +6,39 @@ namespace Koriym\AppStateDiagram;
 
 use PHPUnit\Framework\TestCase;
 
+use function file_get_contents;
+
 class DumpDocsTest extends TestCase
 {
     public function testInvoke(): void
     {
-        $alpsFile = __DIR__ . '/Fake/alps.json';
+        $alpsFile = __DIR__ . '/Fake/project/min/profile.json';
         $profile = new Profile($alpsFile);
         (new DumpDocs())($profile->descriptors, $alpsFile, $profile->schema, $profile->tags);
-        $this->assertFileExists(__DIR__ . '/Fake/descriptor/semantic.Index.json');
-        $this->assertFileExists(__DIR__ . '/Fake/descriptor/safe.about.json');
+        $this->assertFileExists(__DIR__ . '/Fake/project/min/docs/semantic.bar.html');
+        $this->assertFileExists(__DIR__ . '/Fake/project/min/docs/semantic.foo.html');
+    }
+
+    /**
+     * @depends testInvoke
+     */
+    public function testSemanticPageContainTitle(): void
+    {
+        $html = (string) file_get_contents(__DIR__ . '/Fake/project/min/docs/semantic.foo.html');
+
+        $this->assertStringContainsString('type: semantic', $html);
+        $this->assertStringContainsString('title: foo-title', $html);
+    }
+
+    /**
+     * @depends testInvoke
+     */
+    public function testSemanticPageTableContainTitle(): void
+    {
+        $html = (string) file_get_contents(__DIR__ . '/Fake/project/min/docs/semantic.bar.html');
+
+        $this->assertStringContainsString(/** @lang HTML */'<th>title</th>', $html);
+        $this->assertStringContainsString(/** @lang HTML */'<td>baz-title</td>', $html);
     }
 
     public function testTagDoc(): void

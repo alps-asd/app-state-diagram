@@ -60,7 +60,8 @@ EOT;
         $lines = [];
         foreach ($semantics as $semantic) {
             $href = sprintf('docs/%s.%s.html', $semantic->type, $semantic->id);
-            $lines[] = sprintf('   * [%s](%s) (%s)', $semantic->id, $href, $semantic->type);
+            $title = $semantic->title ? sprintf(', %s', $semantic->title) : '';
+            $lines[] = sprintf('   * [%s](%s) (%s)%s', $semantic->id, $href, $semantic->type, $title);
         }
 
         return implode(PHP_EOL, $lines);
