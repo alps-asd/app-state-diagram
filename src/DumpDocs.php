@@ -145,7 +145,7 @@ EOT;
 {$descriptorSemantic}
 ---
 
-[home](../index.html) > [asd]($asd) > {$descriptor->jsonLink()}
+[home](../index.html) | [asd]($asd) | {$descriptor->jsonLink()}
 EOT;
     }
 
