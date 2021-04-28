@@ -101,6 +101,6 @@ abstract class AbstractDescriptor
 
     public function jsonLink(): string
     {
-        return sprintf('[%s](../descriptor/%s.%s.json)', $this->id, $this->type, $this->id);
+        return sprintf('[source](../descriptor/%s.%s.json)', $this->type, $this->id);
     }
 }

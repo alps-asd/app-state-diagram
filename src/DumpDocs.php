@@ -56,7 +56,7 @@ final class DumpDocs
             $asdFile = sprintf('../%s', basename(str_replace(['xml', 'json'], 'svg', $alpsFile)));
             $markDown = $this->getSemanticDoc($descriptor, $asdFile, $title);
             $path = sprintf('%s/%s.%s.html', $docsDir, $descriptor->type, $descriptor->id);
-            $html = $this->convertHtml("{$descriptor->id} ({$descriptor->type})", $markDown);
+            $html = $this->convertHtml("{$descriptor->id} ({$descriptor->type})", $markDown) . PHP_EOL;
             file_put_contents($path, $html);
         }
 
@@ -145,7 +145,7 @@ EOT;
 {$descriptorSemantic}
 ---
 
-[home](../index.html) > [asd]($asd) > {$descriptor->jsonLink()}
+[home](../index.html) | [asd]($asd) | {$descriptor->jsonLink()}
 EOT;
     }
 
