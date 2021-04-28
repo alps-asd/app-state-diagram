@@ -6,7 +6,6 @@ The diagram is hypermedia in SVG format with application states and state transi
 
 <a href="https://koriym.github.io/app-state-diagram/blog/profile.svg"><img src="https://koriym.github.io/app-state-diagram/blog/profile.svg"></a>
 
-This version only supports JSON format ALPS. Use [eiger](https://github.com/filip26/eiger) to convert the XML file.
 
 ## Demo
 
@@ -57,8 +56,8 @@ composer global update koriym/app-state-diagram
 composer global exec asd {$alpsFile}
 ```
 
-This will generate the semantic descriptor's document HTML and the application state diagram SVG.
-
+* This will generate the semantic descriptor's document HTML and the application state diagram SVG.
+* Supports XML and JSON formats.
 
 ## Filter
 
