@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<alps schemaLocation="https://alps-io.github.io/schemas/alps.xsd">
+<alps
+     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:noNamespaceSchemaLocation="https://alps-io.github.io/schemas/alps.xsd">
     <title>ALPS Blog</title>
-    <doc><value>An ALPS profile example for ASD</value></doc>
+    <doc>An ALPS profile example for ASD</doc>
     <link href="https://github.com/koriym/app-state-diagram/issues" rel="issue"/>
 
     <!-- Ontology -->
