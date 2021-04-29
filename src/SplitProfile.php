@@ -16,6 +16,7 @@ use function assert;
 use function file_get_contents;
 use function is_array;
 use function is_object;
+use function is_string;
 use function json_encode;
 use function property_exists;
 use function simplexml_load_string;
@@ -83,6 +84,11 @@ final class SplitProfile
             throw new InvalidXmlException($fileContent);
         }
 
-        return (string) json_encode(xmlToArray($simpleXml, ['attributePrefix' => '']), JSON_PRETTY_PRINT);
+        $array = xmlToArray($simpleXml, ['attributePrefix' => '', 'textContent' => 'value']);
+        if (isset($array['alps']['doc']) && is_string($array['alps']['doc'])) {
+            $array['alps']['doc'] = ['value' => $array['alps']['doc']];
+        }
+
+        return (string) json_encode($array, JSON_PRETTY_PRINT);
     }
 }
