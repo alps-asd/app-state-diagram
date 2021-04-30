@@ -77,13 +77,13 @@ abstract class AbstractDescriptor
         $descriptor = new stdClass();
         $descriptor->id = $this->id;
         if ($this->def) {
-            $descriptor->ref = $this->def;
+            $descriptor->def = $this->def;
         }
 
         $descriptor->type = $this->type;
-        $alps->descriptor = [$descriptor];
+        $descriptor->schema = $schema;
+        $alps->descriptor = [$this->descriptor];
         $alpsDoc = new stdClass();
-        $alpsDoc->{'$schema'} = $schema;
         $alpsDoc->alps = $alps;
         if ($this->parent instanceof stdClass || ($this->parent instanceof SemanticDescriptor)) {
             $jsonPath = sprintf('%s.%s.json', (string) $this->parent->type, (string) $this->parent->id);

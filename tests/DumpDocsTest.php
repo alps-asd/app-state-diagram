@@ -14,7 +14,7 @@ class DumpDocsTest extends TestCase
     {
         $alpsFile = __DIR__ . '/Fake/project/min/profile.json';
         $profile = new Profile($alpsFile);
-        (new DumpDocs())($profile->descriptors, $alpsFile, $profile->schema, $profile->tags);
+        (new DumpDocs())($profile, $alpsFile);
         $this->assertFileExists(__DIR__ . '/Fake/project/min/docs/semantic.bar.html');
         $this->assertFileExists(__DIR__ . '/Fake/project/min/docs/semantic.foo.html');
     }
@@ -45,7 +45,7 @@ class DumpDocsTest extends TestCase
     {
         $alpsFile = __DIR__ . '/Fake/alps_tag.json';
         $profile = new Profile($alpsFile);
-        (new DumpDocs())($profile->descriptors, $alpsFile, $profile->schema, $profile->tags);
+        (new DumpDocs())($profile, $alpsFile);
 
         $this->assertFileExists(__DIR__ . '/Fake/docs/tag.a.html');
         $this->assertFileExists(__DIR__ . '/Fake/docs/tag.b.html');

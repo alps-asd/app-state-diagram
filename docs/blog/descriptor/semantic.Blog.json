@@ -1,12 +1,20 @@
 {
-  "$schema": "https://alps-io.github.io/schemas/alps.json",
   "alps": {
     "descriptor": [
-      {
-        "id": "Blog",
-        "ref": "https://schema.org/Blog",
-        "type": "semantic"
-      }
+      [
+        {
+          "href": "#BlogPosting"
+        },
+        {
+          "href": "#goBlogPosting"
+        },
+        {
+          "href": "#goAbout"
+        },
+        {
+          "href": "#doPost"
+        }
+      ]
     ]
   }
 }

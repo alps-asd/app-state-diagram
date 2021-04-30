@@ -1,11 +1,7 @@
 {
-  "$schema": "https://alps-io.github.io/schemas/alps.json",
   "alps": {
     "descriptor": [
-      {
-        "id": "goBlog",
-        "type": "safe"
-      }
+      []
     ]
   },
   "link": [

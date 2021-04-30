@@ -9,14 +9,12 @@ use stdClass;
 use function assert;
 use function basename;
 use function dirname;
-use function file_get_contents;
 use function file_put_contents;
 use function filter_var;
 use function implode;
 use function is_dir;
 use function is_string;
 use function json_encode;
-use function ksort;
 use function mkdir;
 use function preg_replace;
 use function property_exists;
@@ -36,39 +34,29 @@ final class DumpDocs
     /** @var array<string, AbstractDescriptor> */
     private $descriptors = [];
 
-    /**
-     * @param array<string, AbstractDescriptor> $descriptors
-     * @param array<string, list<string>>       $tags
-     */
-    public function __invoke(array $descriptors, string $alpsFile, string $schema, array $tags): void
+    public function __invoke(Profile $profile, string $alpsFile): void
     {
-        $alpsRoot = (new JsonDecode())((string) file_get_contents($alpsFile));
-        assert(property_exists($alpsRoot, 'alps'));
-        /** @psalm-suppress all */
-        $title = $alpsRoot->alps->title ?? '';
-        assert(is_string($title));
-        ksort($descriptors);
-        $this->descriptors = $descriptors;
+        $descriptors = $this->descriptors = $profile->descriptors;
         $descriptorDir = $this->mkDir(dirname($alpsFile), 'descriptor');
         $docsDir = $this->mkDir(dirname($alpsFile), 'docs');
         foreach ($descriptors as $descriptor) {
-            $this->dumpSemantic($descriptor, $descriptorDir, $schema);
+            $this->dumpSemantic($descriptor, $descriptorDir, $profile->schema);
             $asdFile = sprintf('../%s', basename(str_replace(['xml', 'json'], 'svg', $alpsFile)));
-            $markDown = $this->getSemanticDoc($descriptor, $asdFile, $title);
+            $markDown = $this->getSemanticDoc($descriptor, $asdFile, $profile->title);
             $path = sprintf('%s/%s.%s.html', $docsDir, $descriptor->type, $descriptor->id);
             $html = $this->convertHtml("{$descriptor->id} ({$descriptor->type})", $markDown) . PHP_EOL;
             file_put_contents($path, $html);
         }
 
-        foreach ($tags as $tag => $descriptorIds) {
-            $markDown = $this->getTagDoc($tag, $descriptorIds, $title);
+        foreach ($profile->tags as $tag => $descriptorIds) {
+            $markDown = $this->getTagDoc($tag, $descriptorIds, $profile->title);
             $path = sprintf('%s/tag.%s.html', $docsDir, $tag);
             $html = $this->convertHtml($tag, $markDown);
             file_put_contents($path, $html);
         }
 
         $imgSrc = str_replace(['json', 'xml'], 'svg', basename($alpsFile));
-        $this->dumpImageHtml($title, $docsDir, $imgSrc);
+        $this->dumpImageHtml($profile->title, $docsDir, $imgSrc);
     }
 
     private function dumpImageHtml(string $title, string $docsDir, string $imgSrc): void

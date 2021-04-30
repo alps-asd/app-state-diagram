@@ -84,7 +84,7 @@ final class SplitProfile
             throw new InvalidXmlException($fileContent);
         }
 
-        $array = xmlToArray($simpleXml, ['attributePrefix' => '', 'textContent' => 'value']);
+        $array = xmlToArray($simpleXml, ['attributePrefix' => '', 'textContent' => 'value', 'autoText' => true, 'alwaysArray' => ['descriptor']]);
         if (isset($array['alps']['doc']) && is_string($array['alps']['doc'])) {
             $array['alps']['doc'] = ['value' => $array['alps']['doc']];
         }
