@@ -46,7 +46,7 @@ try {
     $profile = new Profile($alpsFile);
     $dot = (new DrawDiagram)($profile);
     // dump docs/
-    (new DumpDocs())($profile->descriptors, $alpsFile, $profile->schema, $profile->tags);
+    (new DumpDocs())($profile, $alpsFile);
 
     if ($hasTag) {
         $filteredProfile = new TaggedProfile($profile, $orTag, $andTag);
@@ -58,7 +58,7 @@ try {
     file_put_contents('php://stderr', $msg);
     exit(1);
 }
-$file = str_replace('.json', '.dot', $alpsFile);
+$file = str_replace(['.xml','.json'], '.dot', $alpsFile);
 file_put_contents($file, $dot);
 
 $svgFile = str_replace(['.xml', '.json'], '.svg', $alpsFile);
