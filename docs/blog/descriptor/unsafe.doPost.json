@@ -1,12 +1,11 @@
 {
-  "$schema": "https://alps-io.github.io/schemas/alps.json",
   "alps": {
     "descriptor": [
-      {
-        "id": "doPost",
-        "ref": "https://activitystrea.ms/specs/json/1.0/#post-verb",
-        "type": "unsafe"
-      }
+      [
+        {
+          "href": "#articleBody"
+        }
+      ]
     ]
   },
   "link": [
