@@ -67,40 +67,8 @@ abstract class AbstractDescriptor
         $this->title = $descriptor->title ?? ''; //@phpstan-ignore-line
     }
 
-    public function normalize(string $schema): stdClass
-    {
-        $alps = new stdClass();
-        if ($this->doc) {
-            $alps->doc = $this->doc;
-        }
-
-        $descriptor = new stdClass();
-        $descriptor->id = $this->id;
-        if ($this->def) {
-            $descriptor->def = $this->def;
-        }
-
-        $descriptor->type = $this->type;
-        $descriptor->schema = $schema;
-        $alps->descriptor = [$this->descriptor];
-        $alpsDoc = new stdClass();
-        $alpsDoc->alps = $alps;
-        if ($this->parent instanceof stdClass || ($this->parent instanceof SemanticDescriptor)) {
-            $jsonPath = sprintf('%s.%s.json', (string) $this->parent->type, (string) $this->parent->id);
-            /** @psalm-suppress MixedArrayAssignment */
-            $alpsDoc->link[] = ['rel' => 'parent', 'href' => $jsonPath];
-        }
-
-        return $alpsDoc;
-    }
-
     public function htmlLink(): string
     {
         return sprintf('[%s](%s.%s.html)', $this->id, $this->type, $this->id);
-    }
-
-    public function jsonLink(): string
-    {
-        return sprintf('[source](../descriptor/%s.%s.json)', $this->type, $this->id);
     }
 }

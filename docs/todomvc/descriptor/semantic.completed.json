@@ -1,12 +1,6 @@
 {
-  "$schema": "https://alps-io.github.io/schemas/alps.json",
-  "alps": {
-    "descriptor": [
-      {
-        "id": "completed",
-        "ref": "http://mamund.site44.com/alps/def/completed.txt",
-        "type": "semantic"
-      }
-    ]
-  }
+  "id": "completed",
+  "def": "http://mamund.site44.com/alps/def/completed.txt",
+  "type": "semantic",
+  "schema": "https://alps-io.github.io/schemas/alps.json"
 }

@@ -1,17 +1,5 @@
 {
-  "$schema": "https://alps-io.github.io/schemas/alps.json",
-  "alps": {
-    "descriptor": [
-      {
-        "id": "listAll",
-        "type": "safe"
-      }
-    ]
-  },
-  "link": [
-    {
-      "rel": "parent",
-      "href": "semantic..json"
-    }
-  ]
+  "id": "listAll",
+  "type": "safe",
+  "schema": "https://alps-io.github.io/schemas/alps.json"
 }

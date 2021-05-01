@@ -40,7 +40,6 @@ final class DumpDocs
         $descriptorDir = $this->mkDir(dirname($alpsFile), 'descriptor');
         $docsDir = $this->mkDir(dirname($alpsFile), 'docs');
         foreach ($descriptors as $descriptor) {
-            $this->dumpSemantic($descriptor, $descriptorDir, $profile->schema);
             $asdFile = sprintf('../%s', basename(str_replace(['xml', 'json'], 'svg', $alpsFile)));
             $markDown = $this->getSemanticDoc($descriptor, $asdFile, $profile->title);
             $path = sprintf('%s/%s.%s.html', $docsDir, $descriptor->type, $descriptor->id);
@@ -78,12 +77,6 @@ EOT;
     private function convertHtml(string $title, string $markdown): string
     {
         return (new MdToHtml())($title, $markdown);
-    }
-
-    private function dumpSemantic(AbstractDescriptor $descriptor, string $dir, string $schema): void
-    {
-        $normalizedDescriptor = $descriptor->normalize($schema);
-        $this->save($dir, $descriptor->type, $descriptor->id, $normalizedDescriptor);
     }
 
     private function save(string $dir, string $type, string $id, stdClass $class): void
@@ -133,7 +126,7 @@ EOT;
 {$descriptorSemantic}
 ---
 
-[home](../index.html) | [asd]($asd) | {$descriptor->jsonLink()}
+[home](../index.html) | [asd]($asd)
 EOT;
     }
 
