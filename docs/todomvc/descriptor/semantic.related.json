@@ -1,12 +1,6 @@
 {
-  "$schema": "https://alps-io.github.io/schemas/alps.json",
-  "alps": {
-    "descriptor": [
-      {
-        "id": "related",
-        "ref": "https://tools.ietf.org/html/rfc4287#section-7.1",
-        "type": "semantic"
-      }
-    ]
-  }
+  "id": "related",
+  "def": "https://tools.ietf.org/html/rfc4287#section-7.1",
+  "type": "semantic",
+  "schema": "https://alps-io.github.io/schemas/alps.json"
 }

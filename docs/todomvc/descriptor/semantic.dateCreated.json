@@ -1,12 +1,6 @@
 {
-  "$schema": "https://alps-io.github.io/schemas/alps.json",
-  "alps": {
-    "descriptor": [
-      {
-        "id": "dateCreated",
-        "ref": "https://schema.org/dateCreated",
-        "type": "semantic"
-      }
-    ]
-  }
+  "id": "dateCreated",
+  "def": "https://schema.org/dateCreated",
+  "type": "semantic",
+  "schema": "https://alps-io.github.io/schemas/alps.json"
 }

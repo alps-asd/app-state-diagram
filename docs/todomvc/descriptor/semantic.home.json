@@ -1,11 +1,5 @@
 {
-  "$schema": "https://alps-io.github.io/schemas/alps.json",
-  "alps": {
-    "descriptor": [
-      {
-        "id": "home",
-        "type": "semantic"
-      }
-    ]
-  }
+  "id": "home",
+  "type": "semantic",
+  "schema": "https://alps-io.github.io/schemas/alps.json"
 }
