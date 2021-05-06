@@ -39,8 +39,8 @@ final class DumpDocs
         $descriptors = $this->descriptors = $profile->descriptors;
         $descriptorDir = $this->mkDir(dirname($alpsFile), 'descriptor');
         $docsDir = $this->mkDir(dirname($alpsFile), 'docs');
+        $asdFile = sprintf('../%s', basename(str_replace(['xml', 'json'], 'svg', $alpsFile)));
         foreach ($descriptors as $descriptor) {
-            $asdFile = sprintf('../%s', basename(str_replace(['xml', 'json'], 'svg', $alpsFile)));
             $markDown = $this->getSemanticDoc($descriptor, $asdFile, $profile->title);
             $path = sprintf('%s/%s.%s.html', $docsDir, $descriptor->type, $descriptor->id);
             $html = $this->convertHtml("{$descriptor->id} ({$descriptor->type})", $markDown) . PHP_EOL;
@@ -48,7 +48,7 @@ final class DumpDocs
         }
 
         foreach ($profile->tags as $tag => $descriptorIds) {
-            $markDown = $this->getTagDoc($tag, $descriptorIds, $profile->title);
+            $markDown = $this->getTagDoc($tag, $descriptorIds, $profile->title, $asdFile);
             $path = sprintf('%s/tag.%s.html', $docsDir, $tag);
             $html = $this->convertHtml($tag, $markDown);
             file_put_contents($path, $html);
@@ -246,7 +246,7 @@ EOT;
     /**
      * @param list<string> $descriptorIds
      */
-    private function getTagDoc(string $tag, array $descriptorIds, string $title): string
+    private function getTagDoc(string $tag, array $descriptorIds, string $title, string $asd): string
     {
         $list = '';
         foreach ($descriptorIds as $descriptorId) {
@@ -260,6 +260,9 @@ EOT;
 {$titleHeader}
 # {$tag}
 {$list}
+---
+
+[home](../index.html) | [asd]({$asd}) | {$tag} 
 EOT;
     }
 }
