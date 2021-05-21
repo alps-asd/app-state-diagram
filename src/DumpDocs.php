@@ -122,8 +122,7 @@ EOT;
         return <<<EOT
 {$titleHeader}
 # {$descriptor->id}
-{$description}{$rt}
-{$descriptorSemantic}
+{$description}{$rt}{$descriptorSemantic}
 ---
 
 [home](../index.html) | [asd]($asd)
@@ -165,7 +164,7 @@ EOT;
 
         assert($descriptor instanceof TransDescriptor);
 
-        return sprintf(' * rt: [%s](semantic.%s.html)', $descriptor->rt, $descriptor->rt);
+        return sprintf(' * rt: [%s](semantic.%s.html)', $descriptor->rt, $descriptor->rt) . PHP_EOL;
     }
 
     private function getDescriptorInDescriptor(AbstractDescriptor $descriptor): string
