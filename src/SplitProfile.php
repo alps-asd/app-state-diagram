@@ -20,7 +20,6 @@ use function is_object;
 use function is_string;
 use function json_encode;
 use function property_exists;
-use function simplexml_load_string;
 use function sprintf;
 use function xmlToArray;
 
@@ -83,6 +82,7 @@ final class SplitProfile
         } catch (Throwable $e) {
             throw new AlpsFileNotReadableException(sprintf('%s: %s', $e->getMessage(), $alpsFile));
         }
+
         if (! $isXml) {
             return $fileContent;
         }
