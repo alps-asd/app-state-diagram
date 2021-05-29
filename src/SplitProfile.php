@@ -6,13 +6,14 @@ namespace Koriym\AppStateDiagram;
 
 use Koriym\AppStateDiagram\Exception\AlpsFileNotReadableException;
 use Koriym\AppStateDiagram\Exception\InvalidAlpsException;
-use Koriym\AppStateDiagram\Exception\InvalidXmlException;
+use Koriym\XmlLoader\XmlLoader;
 use Seld\JsonLint\ParsingException;
 use SplFileInfo;
 use stdClass;
 use Throwable;
 
 use function assert;
+use function dirname;
 use function file_get_contents;
 use function is_array;
 use function is_object;
@@ -30,6 +31,14 @@ final class SplitProfile
     /** @var array<string, array{0: object, 1: list<stdClass>}> */
     private static $instance;
 
+    /** @var XmlLoader */
+    private $xmlLoader;
+
+    public function __construct()
+    {
+        $this->xmlLoader = new XmlLoader();
+    }
+
     /**
      * @return array{0: object, 1: list<stdClass>}
      *
@@ -41,13 +50,7 @@ final class SplitProfile
             return self::$instance[$alpsFile];
         }
 
-        try {
-            $fileContent = (string) file_get_contents($alpsFile);
-        } catch (Throwable $e) {
-            throw new AlpsFileNotReadableException(sprintf('%s: %s', $e->getMessage(), $alpsFile));
-        }
-
-        $profile = $this->getJson($fileContent, $alpsFile);
+        $profile = $this->getJson($alpsFile);
         if (! property_exists($profile, 'alps') || ! is_object($profile->alps)) {
             throw new InvalidAlpsException($alpsFile);
         }
@@ -67,23 +70,24 @@ final class SplitProfile
         return self::$instance[$alpsFile];
     }
 
-    private function getJson(string $fileContent, string $alpsFile): object
+    private function getJson(string $alpsFile): object
     {
-        return (new JsonDecode())($this->getJsonString($fileContent, $alpsFile));
+        return (new JsonDecode())($this->getJsonString($alpsFile));
     }
 
-    private function getJsonString(string $fileContent, string $alpsFile): string
+    private function getJsonString(string $alpsFile): string
     {
         $isXml = (new SplFileInfo($alpsFile))->getExtension() === 'xml';
+        try {
+            $fileContent = (string) file_get_contents($alpsFile);
+        } catch (Throwable $e) {
+            throw new AlpsFileNotReadableException(sprintf('%s: %s', $e->getMessage(), $alpsFile));
+        }
         if (! $isXml) {
             return $fileContent;
         }
 
-        $simpleXml = simplexml_load_string($fileContent);
-        if (! $simpleXml) {
-            throw new InvalidXmlException($fileContent);
-        }
-
+        $simpleXml = ($this->xmlLoader)($alpsFile, dirname(__DIR__) . '/alps.xsd');
         $array = xmlToArray($simpleXml, ['attributePrefix' => '', 'textContent' => 'value', 'autoText' => true, 'alwaysArray' => ['descriptor']]);
         if (isset($array['alps']['doc']) && is_string($array['alps']['doc'])) {
             $array['alps']['doc'] = ['value' => $array['alps']['doc']];
