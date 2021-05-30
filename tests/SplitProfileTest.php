@@ -11,7 +11,7 @@ use function dirname;
 
 class SplitProfileTest extends TestCase
 {
-    public function testJson(): void
+    public function testXml(): void
     {
         [$xmlProfile, $xmlDescriptors] = (new SplitProfile())(dirname(__DIR__) . '/docs/blog/profile.xml');
         [$jsonProfile, $jsonDescriptors] = (new SplitProfile())(dirname(__DIR__) . '/docs/blog/profile.json');

@@ -13,6 +13,8 @@
         "ext-json": "*",
         "ext-filter": "*",
         "ext-simplexml": "*",
+        "ext-libxml": "*",
+        "ext-dom": "*",
         "michelf/php-markdown": "^1.9",
         "seld/jsonlint": "^1.8"
     },
@@ -23,7 +25,8 @@
     },
     "autoload": {
         "psr-4": {
-            "Koriym\\AppStateDiagram\\": "src/"
+            "Koriym\\AppStateDiagram\\": "src/",
+            "Koriym\\XmlLoader\\": "src-xml"
         },
         "files": ["vendor-xml2json/xml2json.php"]
     },
