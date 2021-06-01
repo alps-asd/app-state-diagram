@@ -67,6 +67,7 @@ class DrawDiagramTest extends TestCase
         $alpsFile = __DIR__ . '/Fake/alps_tag.json';
         $profile = new Profile($alpsFile);
         $dot = ($this->drawDiagram)($profile);
+        $this->assertStringContainsString('label="tag test"', $dot);
         $this->assertStringContainsString('s1 -> s2 [label = "t1 (safe)"', $dot);
         $this->assertStringContainsString('s1 -> s5 [label = "t5 (safe)"', $dot);
         $this->assertStringContainsString('s2 -> s3 [label = "t2 (safe)"', $dot);
@@ -84,6 +85,7 @@ class DrawDiagramTest extends TestCase
             ['a', 'b']
         );
         $dot = ($this->drawDiagram)($taggedProfile);
+        $this->assertStringContainsString('label="tag test"', $dot);
         $this->assertStringContainsString('s1 -> s2 [label = "t1 (safe)"', $dot);
         $this->assertStringContainsString('s1 -> s5 [label = "t5 (safe)"', $dot);
         $this->assertStringContainsString('s2 -> s3 [label = "t2 (safe)"', $dot);
@@ -103,6 +105,7 @@ class DrawDiagramTest extends TestCase
         );
         $dot = ($this->drawDiagram)($profile, $taggedProfile, 'red');
 
+        $this->assertStringContainsString('label="tag test"', $dot);
         $this->assertStringContainsString('s2 [URL="docs/semantic.s2.html" target="_parent" color="red"]', $dot);
         $this->assertStringContainsString('s3 [URL="docs/semantic.s3.html" target="_parent" color="red"]', $dot);
         $this->assertStringContainsString('s4 [URL="docs/semantic.s4.html" target="_parent"]', $dot);

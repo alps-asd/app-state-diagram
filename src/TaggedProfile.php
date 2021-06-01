@@ -26,6 +26,8 @@ final class TaggedProfile extends AbstractProfile
      */
     public function __construct(AbstractProfile $alpsFile, array $orTags, array $andTags)
     {
+        $this->title = $alpsFile->title;
+        $this->doc = $alpsFile->doc;
         $this->scanLinks($alpsFile, $andTags, $orTags);
         $this->scanDescriptors($alpsFile);
     }
