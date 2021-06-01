@@ -26,7 +26,7 @@ $color = isset($options['color']) && is_string($options['color']) ? $options['co
 $hasTag = $andTag !== [] || $orTag !== [];
 $alpsFile = realpath($argv[$argc - 1]);
 if ($argc === 1) {
-    echo 'usage: asd [--watch] [--andTag=tag1,tag2] [--orTag=tag3] [--color=red] <alps>' . PHP_EOL;
+    echo 'usage: asd [--watch] [--and-tag=tag1,tag2] [--or-tag=tag3] [--color=red] <alps>' . PHP_EOL;
     exit(1);
 }
 if (! $alpsFile) {
