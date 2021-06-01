@@ -23,6 +23,8 @@ class TagTest extends TestCase
             [],
             ['a', 'b']
         );
+        $this->assertSame($profile->title, 'tag test');
+        $this->assertSame($profile->doc, 'tag test');
         $this->assertArrayHasKey('s1->s2:t1', $profile->links);
         $this->assertArrayHasKey('s1->s5:t5', $profile->links);
         $this->assertArrayHasKey('s2->s3:t2', $profile->links);
@@ -69,6 +71,8 @@ class TagTest extends TestCase
             ['a'],
             []
         );
+        $this->assertSame($profile->title, 'tag test');
+        $this->assertSame($profile->doc, 'tag test');
         $this->assertArrayHasKey('s1->s2:t1', $profile->links);
         $this->assertArrayHasKey('s1->s5:t5', $profile->links);
         $this->assertArrayHasKey('s2->s3:t2', $profile->links);
@@ -112,6 +116,8 @@ class TagTest extends TestCase
     {
         $profile = new TaggedProfile($this->profile, [], []);
 
+        $this->assertSame($profile->title, 'tag test');
+        $this->assertSame($profile->doc, 'tag test');
         $this->assertCount(0, $profile->links);
         $this->assertCount(0, $profile->descriptors);
     }
