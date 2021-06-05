@@ -10,7 +10,7 @@ use function nl2br;
 use function pathinfo;
 use function sprintf;
 use function strtoupper;
-use function usort;
+use function uasort;
 
 use const PATHINFO_BASENAME;
 use const PHP_EOL;
@@ -24,7 +24,7 @@ final class IndexPage
     {
         $profilePath = pathinfo($profile->alpsFile, PATHINFO_BASENAME);
         $descriptors = $profile->descriptors;
-        usort($descriptors, static function (AbstractDescriptor $a, AbstractDescriptor $b): int {
+        uasort($descriptors, static function (AbstractDescriptor $a, AbstractDescriptor $b): int {
             $compareId = strtoupper($a->id) <=> strtoupper($b->id);
             if ($compareId !== 0) {
                 return $compareId;
@@ -53,7 +53,7 @@ EOT;
     }
 
     /**
-     * @param array<int, AbstractDescriptor> $semantics
+     * @param array<string, AbstractDescriptor> $semantics
      */
     private function semantics(array $semantics): string
     {
