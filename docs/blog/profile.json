@@ -15,7 +15,7 @@
       {"id": "About", "type": "semantic", "descriptor": [
         {"href": "#goBlog"}
       ]},
-      {"id": "Blog", "type": "semantic", "def": "https://schema.org/Blog", "title": "Blog post list", "descriptor": [
+      {"id": "Blog", "type": "semantic", "def": "https://schema.org/Blog", "title": "Blog post list", "rel": "collection", "descriptor": [
         {"href": "#BlogPosting"},
         {"href": "#goBlogPosting"},
         {"href": "#goAbout"},

@@ -18,7 +18,7 @@
     <descriptor id="About">
         <descriptor href="#goBlog"/>
     </descriptor>
-    <descriptor id="Blog" href="https://schema.org/Blog" title="Blog post list">
+    <descriptor id="Blog" href="https://schema.org/Blog" title="Blog post list" rel="collection">
         <descriptor href="#goAbout"/>
         <descriptor href="#doPost"/>
         <descriptor href="#goBlogPosting"/>
