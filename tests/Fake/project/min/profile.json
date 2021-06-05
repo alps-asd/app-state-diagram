@@ -4,7 +4,8 @@
     "descriptor": [
       {"id": "foo", "title": "foo-title"},
       {"id": "bar", "descriptor": [
-        {"id": "baz", "title": "baz-title"}
+        {"id": "baz", "title": "baz-title"},
+        {"href": "#foo", "title": "override foo-title"}
       ]}
     ]
   }
