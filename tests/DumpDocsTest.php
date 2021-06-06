@@ -39,6 +39,7 @@ class DumpDocsTest extends TestCase
 
         $this->assertStringContainsString(/** @lang HTML */'<th>title</th>', $html);
         $this->assertStringContainsString(/** @lang HTML */'<td>baz-title</td>', $html);
+        $this->assertStringContainsString(/** @lang HTML */'<td>override foo-title</td>', $html);
     }
 
     public function testTagDoc(): void

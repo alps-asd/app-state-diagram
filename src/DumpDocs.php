@@ -205,7 +205,12 @@ EOT;
             $id = substr($descriptor->href, (int) strpos($descriptor->href, '#') + 1);
             assert(isset($this->descriptors[$id]));
 
-            $descriptors[] = $this->descriptors[$id];
+            $original = clone $this->descriptors[$id];
+            if (isset($descriptor->title)) {
+                $original->title = (string) $descriptor->title;
+            }
+
+            $descriptors[] = $original;
         }
 
         usort($descriptors, static function (AbstractDescriptor $a, AbstractDescriptor $b): int {
