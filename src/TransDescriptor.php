@@ -36,10 +36,6 @@ final class TransDescriptor extends AbstractDescriptor
 
         assert(is_string($descriptor->id));
 
-        if (isset($descriptor->rel)) {
-            $this->rel = (string) $descriptor->rel;
-        }
-
         $pos = strpos($descriptor->rt, '#');
         if ($pos === false) {
             throw new RtMissingException($descriptor->id);

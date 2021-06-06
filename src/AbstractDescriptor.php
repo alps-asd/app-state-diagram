@@ -65,6 +65,9 @@ abstract class AbstractDescriptor
         $this->tags = is_string($tag) ? explode(' ', $tag) : $tag; //@phpstan-ignore-line
         /** @psalm-suppress MixedAssignment */
         $this->title = $descriptor->title ?? ''; //@phpstan-ignore-line
+        if (isset($descriptor->rel)) {
+            $this->rel = (string) $descriptor->rel;
+        }
     }
 
     public function htmlLink(): string

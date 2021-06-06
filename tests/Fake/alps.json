@@ -16,6 +16,7 @@
         "id": "Blog",
         "type": "semantic",
         "def": "https://schema.org/Blog",
+        "rel": "collection",
         "doc": {
           "value": "Blog entry list page"
         },
