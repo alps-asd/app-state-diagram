@@ -34,6 +34,7 @@ final class IndexPage
 
             return $order[$a->type] <=> $order[$b->type];
         });
+        $linkRelations = $this->linkRelations($profile->linkRelations);
         $semantics = $this->semantics($descriptors);
         $tags = $this->tags($profile->tags);
         $htmlTitle = htmlspecialchars($profile->title);
@@ -46,8 +47,7 @@ final class IndexPage
  * [ALPS]({$profilePath})
  * [Application State Diagram](docs/asd.html)
  * Semantic Descriptors
-{$semantics}
-{$tags}
+{$semantics}{$tags}{$linkRelations}
 EOT;
         $this->index = (new MdToHtml())('ALPS', $md);
     }
@@ -82,6 +82,19 @@ EOT;
             $lines[] = "   * [{$tag}]({$href})";
         }
 
-        return ' * Tags' . PHP_EOL . implode(PHP_EOL, $lines);
+        return PHP_EOL . ' * Tags' . PHP_EOL . implode(PHP_EOL, $lines);
+    }
+
+    private function linkRelations(?LinkRelations $linkRelations): string
+    {
+        if ($linkRelations === null) {
+            return '';
+        }
+
+        if ((string) $linkRelations === '') {
+            return '';
+        }
+
+        return PHP_EOL . ' * LinkRelations' . PHP_EOL . $linkRelations;
     }
 }
