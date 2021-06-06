@@ -41,6 +41,9 @@ final class Profile extends AbstractProfile
     /** @var array<string, list<string>> */
     public $tags = [];
 
+    /** @var LinkRelations */
+    public $linkRelations;
+
     /**
 £     * @throws \Seld\JsonLint\ParsingException
      */
@@ -51,6 +54,8 @@ final class Profile extends AbstractProfile
         [$profile, $descriptors] = (new SplitProfile())($alpsFile);
         /** @psalm-suppress all */
         [$this->schema, $this->title, $this->doc] = [$profile->{'$schema'} ?? '', $profile->alps->title ?? '', $profile->alps->doc->value ??  '']; // @phpstan-ignore-line
+        /** @psalm-suppress all */
+        $this->linkRelations = new LinkRelations($profile->alps->link ?? null); // @phpstan-ignore-line
         $instances = new Instances();
         $this->storeDescriptors($descriptors, $instances, $hyperReference);
         $this->instances = $instances->get();
