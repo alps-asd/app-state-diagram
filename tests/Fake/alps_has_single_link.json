@@ -1,0 +1,14 @@
+{
+  "$schema": "https://alps-io.github.io/schemas/alps.json",
+  "alps": {
+    "link": {
+      "href": "https://github.com/koriym/app-state-diagram/",
+      "rel": "about"
+    },
+    "descriptor": [
+      {
+        "id": "id"
+      }
+    ]
+  }
+}
