@@ -95,6 +95,6 @@ EOT;
             return '';
         }
 
-        return PHP_EOL . ' * LinkRelations' . PHP_EOL . $linkRelations;
+        return PHP_EOL . ' * Relations' . PHP_EOL . $linkRelations;
     }
 }
