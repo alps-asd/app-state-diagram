@@ -16,6 +16,7 @@ final class MdToHtml
 <html lang="en">
 <head>
     <title>{$title}</title>
+    <meta charset="UTF-8">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/3.0.1/github-markdown.min.css">
     <style>
         .markdown-body {

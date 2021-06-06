@@ -64,6 +64,7 @@ final class DumpDocs
 <html lang="en">
 <head>
     <title>{$title}</title>
+    <meta charset="UTF-8">
 </head>
 <body>
     <iframe src="../{$imgSrc}" style="border:0; width:100%; height:95%" allow="fullscreen"></iframe>
