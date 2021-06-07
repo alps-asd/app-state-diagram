@@ -44,6 +44,9 @@ abstract class AbstractDescriptor
     /** @var object */
     public $source;
 
+    /** @var LinkRelations */
+    public $linkRelations;
+
     public function __construct(object $descriptor, ?stdClass $parentDescriptor = null)
     {
         if (! isset($descriptor->id)) {
@@ -68,6 +71,9 @@ abstract class AbstractDescriptor
         if (isset($descriptor->rel)) {
             $this->rel = (string) $descriptor->rel;
         }
+
+        /** @psalm-suppress all */
+        $this->linkRelations = new LinkRelations($descriptor->link ?? null); // @phpstan-ignore-line
     }
 
     public function htmlLink(): string

@@ -118,12 +118,13 @@ EOT;
         $description .= $this->getDescriptorProp('src', $descriptor);
         $description .= $this->getDescriptorProp('rel', $descriptor);
         $description .= $this->getTag($descriptor->tags);
+        $linkRelations = $this->getLinkRelations($descriptor->linkRelations);
         $titleHeader = $title ? sprintf('%s: Semantic Descriptor', $title) : 'Semantic Descriptor';
 
         return <<<EOT
 {$titleHeader}
 # {$descriptor->id}
-{$description}{$rt}{$descriptorSemantic}
+{$description}{$rt}{$linkRelations}{$descriptorSemantic}
 ---
 
 [home](../index.html) | [asd]($asd)
@@ -269,5 +270,14 @@ EOT;
 
 [home](../index.html) | [asd]({$asd}) | {$tag} 
 EOT;
+    }
+
+    private function getLinkRelations(LinkRelations $linkRelations): string
+    {
+        if ((string) $linkRelations === '') {
+            return '';
+        }
+
+        return ' * relations' . PHP_EOL . $linkRelations;
     }
 }
