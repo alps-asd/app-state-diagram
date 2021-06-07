@@ -51,4 +51,16 @@ class DumpDocsTest extends TestCase
         $this->assertFileExists(__DIR__ . '/Fake/docs/tag.a.html');
         $this->assertFileExists(__DIR__ . '/Fake/docs/tag.b.html');
     }
+
+    public function testRelations(): void
+    {
+        $alpsFile = __DIR__ . '/Fake/alps_has_multiple_link.json';
+        $profile = new Profile($alpsFile);
+        (new DumpDocs())($profile, $alpsFile);
+        $html = (string) file_get_contents(__DIR__ . '/Fake/docs/semantic.Item.html');
+
+        $this->assertStringContainsString(/** @lang HTML */'<li>relations', $html);
+        $this->assertStringContainsString(/** @lang HTML */'<li>rel: help <a rel="help" href="https://github.com/koriym/app-state-diagram/">https://github.com/koriym/app-state-diagram/</a> API Help File</li>', $html);
+        $this->assertStringContainsString(/** @lang HTML */'<li>rel: about <a rel="about" href="https://github.com/koriym/app-state-diagram/">https://github.com/koriym/app-state-diagram/</a></li>', $html);
+    }
 }

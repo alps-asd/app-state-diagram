@@ -12,9 +12,26 @@
       }
     ],
     "descriptor": [
+      {"id": "id"},
       {
-        "id": "id",
-        "tag": "tag1"
+        "id": "Item",
+        "tag": "tag1",
+        "link": [
+          {
+            "rel": "help",
+            "href": "https://github.com/koriym/app-state-diagram/",
+            "title": "API Help File"
+          },
+          {
+            "rel": "about",
+            "href": "https://github.com/koriym/app-state-diagram/"
+          }
+        ],
+        "descriptor": [
+          {
+            "href": "#id"
+          }
+        ]
       }
     ]
   }
