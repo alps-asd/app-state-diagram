@@ -1,0 +1,21 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "BlogPosting.json",
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "articleBody": {
+      "type": "string"
+    },
+    "dateCreated": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "id",
+    "articleBody",
+    "dateCreated"
+  ]
+}
