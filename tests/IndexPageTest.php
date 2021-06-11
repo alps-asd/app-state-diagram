@@ -22,7 +22,7 @@ class IndexPageTest extends TestCase
      */
     public function testLinkRelationsIsMissing(string $html): void
     {
-        $this->assertStringNotContainsString('Relations', $html);
+        $this->assertStringNotContainsString('Links', $html);
     }
 
     public function testTagString(): void

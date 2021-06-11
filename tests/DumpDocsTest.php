@@ -59,7 +59,7 @@ class DumpDocsTest extends TestCase
         (new DumpDocs())($profile, $alpsFile);
         $html = (string) file_get_contents(__DIR__ . '/Fake/docs/semantic.Item.html');
 
-        $this->assertStringContainsString(/** @lang HTML */'<li>relations', $html);
+        $this->assertStringContainsString(/** @lang HTML */'<li>links', $html);
         $this->assertStringContainsString(/** @lang HTML */'<li>rel: help <a rel="help" href="https://github.com/koriym/app-state-diagram/">https://github.com/koriym/app-state-diagram/</a> API Help File</li>', $html);
         $this->assertStringContainsString(/** @lang HTML */'<li>rel: about <a rel="about" href="https://github.com/koriym/app-state-diagram/">https://github.com/koriym/app-state-diagram/</a></li>', $html);
     }

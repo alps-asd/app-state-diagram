@@ -278,6 +278,6 @@ EOT;
             return '';
         }
 
-        return ' * relations' . PHP_EOL . $linkRelations;
+        return ' * links' . PHP_EOL . $linkRelations;
     }
 }
