@@ -10,6 +10,8 @@ use stdClass;
 use function json_encode;
 use function sprintf;
 
+use const PHP_EOL;
+
 final class LinkRelation
 {
     /** @var string */
@@ -17,6 +19,9 @@ final class LinkRelation
 
     /** @var string */
     public $rel;
+
+    /** @var string */
+    public $title;
 
     public function __construct(stdClass $link)
     {
@@ -30,13 +35,24 @@ final class LinkRelation
 
         /** @psalm-suppress MixedAssignment */
         $this->href = $link->href;
-
         /** @psalm-suppress MixedAssignment */
         $this->rel = $link->rel;
+        /** @psalm-suppress MixedAssignment */
+        $this->title = $link->title ?? '';
     }
 
     public function __toString(): string
     {
-        return sprintf('   * [%s](%s)', $this->rel, $this->href);
+        return sprintf('   * %s', $this->toLink());
+    }
+
+    private function toLink(): string
+    {
+        $str = sprintf('rel: %s <a rel="%s" href="%s">%s</a>', $this->rel, $this->rel, $this->href, $this->href);
+        if ($this->title !== '') {
+            $str .= " {$this->title}" . PHP_EOL;
+        }
+
+        return $str;
     }
 }

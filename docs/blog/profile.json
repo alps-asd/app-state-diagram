@@ -21,7 +21,7 @@
         {"href": "#goAbout"},
         {"href": "#doPost"}
       ]},
-      {"id": "BlogPosting", "type": "semantic", "title": "Blog post item", "def": "https://schema.org/BlogPosting", "descriptor": [
+      {"id": "BlogPosting", "type": "semantic", "title": "Blog post item", "def": "https://schema.org/BlogPosting", "link": {"rel": "schema", "href": "schema/BlogPosting.json", "title": "JsonSchema file"} ,"descriptor": [
         {"href": "#id"},
         {"href": "#articleBody"},
         {"href": "#dateCreated"},

@@ -15,7 +15,6 @@
         </xs:annotation>
         <xs:sequence>
             <xs:choice minOccurs="0" maxOccurs="unbounded">
-                <xs:element ref="version" minOccurs="0"/>
                 <xs:element ref="doc" minOccurs="0"/>
                 <xs:element ref="link" minOccurs="0"/>
                 <xs:element ref="title" minOccurs="0"/>
@@ -23,6 +22,11 @@
                 <xs:element ref="descriptor"/>
             </xs:choice>
         </xs:sequence>
+        <xs:attribute name="version" type="xs:string">
+            <xs:annotation>
+                <xs:documentation> Indicates the version of the ALPS specification used in the document. </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
     </xs:complexType>
     <xs:element name="version" type="xs:string">
         <xs:annotation>
@@ -81,6 +85,7 @@
             <xs:choice minOccurs="0" maxOccurs="unbounded">
                 <xs:element name="descriptor" type="descriptorType" minOccurs="0"/>
                 <xs:element name="doc" type="docType" minOccurs="0"/>
+                <xs:element name="link" type="linkType" minOccurs="0"/>
             </xs:choice>
         </xs:sequence>
         <!-- documented attribute -->
@@ -123,6 +128,7 @@
         <xs:attribute name="rel" type="xs:string"/>
         <xs:attribute name="href" type="xs:anyURI"/>
         <xs:attribute name="tag" type="xs:string"/>
+        <xs:attribute name="title" type="xs:string"/>
         <xs:anyAttribute/>
     </xs:complexType>
     <xs:complexType name="docType">
