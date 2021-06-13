@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<asd xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:noNamespaceSchemaLocation="../../../docs/asd.xsd">
+    <alpsFile>profile.xml</alpsFile>
+    <watch>false</watch>
+    <filter>
+        <and>tag1</and>
+        <and>tag2</and>
+        <or>tag3</or>
+    </filter>
+</asd>
