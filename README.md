@@ -53,21 +53,24 @@ composer global update koriym/app-state-diagram
 ## Usage
 
 ```
-composer global exec asd {alpsFile}
-composer global exec asd -c {alps.xml}
+composer global exec asd [-c asd.xml] [alpsFile]
+
+    -c=asd.xml
+        Path to a asd.xml configuration file.
 ```
 
 * This will generate the semantic descriptor's document HTML and the application state diagram SVG.
 * Supports XML and JSON formats.
+* If you run it without the arguments,`asd.xml` config file in the same folder is used.
 
 ## Config
 
-The format of the Config file is as follows.
+The format of the config file is as follows.
 
 ```xml
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0"?>
 <asd xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-     xsi:noNamespaceSchemaLocation="/path/to/schema.xsd">
+     xsi:noNamespaceSchemaLocation="https://koriym.github.io/app-state-diagram/asd.xsd">
     <alpsFile>profile.xml</alpsFile>
     <watch>false</watch>
     <filter>
@@ -80,7 +83,7 @@ The format of the Config file is as follows.
 ```
 ### alpsFile
 
-Locate ALPS profile file
+ALPS profile file path.
 
 ### watch
 

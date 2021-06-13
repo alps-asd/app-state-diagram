@@ -10,6 +10,7 @@ use Koriym\AppStateDiagram\DrawDiagram;
 use Koriym\AppStateDiagram\DumpDocs;
 use Koriym\AppStateDiagram\IndexPage;
 use Koriym\AppStateDiagram\TaggedProfile;
+use Koriym\DataFile\Exception\DataFileNotFoundException;
 
 foreach ([__DIR__ . '/../../../autoload.php', __DIR__ . '/../vendor/autoload.php'] as $file) {
     if (file_exists($file)) {
@@ -21,13 +22,15 @@ foreach ([__DIR__ . '/../../../autoload.php', __DIR__ . '/../vendor/autoload.php
 
 $options = getopt('c:', ['config:']);
 if ($argc === 1) {
-    echo 'usage: asd [-c asd.xml] <alpsFile>' . PHP_EOL;
-    exit(1);
+    $options['c'] = getcwd();
 }
 try {
-    $config = isset($options['c']) ? ConfigFactory::fromFile($options['c']) : ConfigFactory::fromCommandLine($argc, $argv);
+    $config = isset($options['c']) ? ConfigFactory::fromFile($options['c'], $argc, $argv) : ConfigFactory::fromCommandLine($argc, $argv);
+} catch (DataFileNotFoundException $e) {
+    printf('Config gile not found: %s', $e->getMessage());
+    exit(1);
 } catch (AlpsFileNotReadableException $e) {
-    printf('Profile not readable: %s', $e->getMessage());
+    printf('Profile file not found: %s', $e->getMessage());
     exit(1);
 }
 if ($config->watch) {
