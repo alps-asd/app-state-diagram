@@ -3,12 +3,14 @@
 
 declare(strict_types=1);
 
-use Koriym\AppStateDiagram\Profile;
-use Koriym\AppStateDiagram\AppStateDiagram;
+use Koriym\AppStateDiagram\ConfigFactory;
 use Koriym\AppStateDiagram\DrawDiagram;
 use Koriym\AppStateDiagram\DumpDocs;
+use Koriym\AppStateDiagram\Exception\AlpsFileNotReadableException;
 use Koriym\AppStateDiagram\IndexPage;
+use Koriym\AppStateDiagram\Profile;
 use Koriym\AppStateDiagram\TaggedProfile;
+use Koriym\DataFile\Exception\DataFileNotFoundException;
 
 foreach ([__DIR__ . '/../../../autoload.php', __DIR__ . '/../vendor/autoload.php'] as $file) {
     if (file_exists($file)) {
@@ -18,57 +20,55 @@ foreach ([__DIR__ . '/../../../autoload.php', __DIR__ . '/../vendor/autoload.php
     }
 }
 
-$options = getopt('', ['watch:', 'and-tag:', 'or-tag:', 'color:']);
-$watchMode = isset($options['watch']);
-$andTag = isset($options['and-tag']) && is_string($options['and-tag']) ? explode(',', $options['and-tag']) : [];
-$orTag = isset($options['or-tag']) && is_string($options['or-tag']) ? explode(',', $options['or-tag']) : [];
-$color = isset($options['color']) && is_string($options['color']) ? $options['color'] : null;
-$hasTag = $andTag !== [] || $orTag !== [];
-$alpsFile = realpath($argv[$argc - 1]);
+$options = getopt('c:', ['config:']);
 if ($argc === 1) {
-    echo 'usage: asd [--watch] [--and-tag=tag1,tag2] [--or-tag=tag3] [--color=red] <alps>' . PHP_EOL;
+    $options['c'] = getcwd();
+}
+try {
+    $config = isset($options['c']) ? ConfigFactory::fromFile($options['c'], $argc, $argv) : ConfigFactory::fromCommandLine($argc, $argv);
+} catch (DataFileNotFoundException $e) {
+    printf('Config gile not found: %s', $e->getMessage());
+    exit(1);
+} catch (AlpsFileNotReadableException $e) {
+    printf('Profile file not found: %s', $e->getMessage());
     exit(1);
 }
-if (! $alpsFile) {
-    echo 'Not readable: ' . $alpsFile . PHP_EOL;
-    exit(1);
-}
-if ($watchMode) {
+if ($config->watch) {
     chdir(dirname(__DIR__) . '/asd-sync');
     $isFirstRun = ! is_dir(dirname(__DIR__) . '/asd-sync/node_modules');
     if ($isFirstRun) {
         passthru('npm install');
     }
-    passthru('npm start -- --profile ' . $alpsFile);
+    passthru('npm start -- --profile ' . $config->profile);
     exit(0);
 }
 try {
-    $profile = new Profile($alpsFile);
+    $profile = new Profile($config->profile);
     $dot = (new DrawDiagram)($profile);
     // dump docs/
-    (new DumpDocs())($profile, $alpsFile);
+    (new DumpDocs())($profile, $config->profile);
 
-    if ($hasTag) {
-        $filteredProfile = new TaggedProfile($profile, $orTag, $andTag);
-        $tagDot = isset($color) ? (new DrawDiagram())($profile, $filteredProfile, $color) : (new DrawDiagram())($filteredProfile);
+    if ($config->hasTag) {
+        $filteredProfile = new TaggedProfile($profile, $config->filter->or, $config->filter->and);
+        $tagDot = $config->filter->color ? (new DrawDiagram())($profile, $filteredProfile, $config->filter->color) : (new DrawDiagram())($filteredProfile);
     }
-} catch (\Exception $e) {
+} catch (Exception $e) {
     $path = explode('\\', get_class($e));
     $msg = sprintf("%s: %s \n in %s:%s\n", end($path), $e->getMessage(), $e->getFile(), $e->getLine());
     file_put_contents('php://stderr', $msg);
     exit(1);
 }
-$file = str_replace(['.xml','.json'], '.dot', $alpsFile);
+$file = str_replace(['.xml','.json'], '.dot', $config->profile);
 file_put_contents($file, $dot);
 
-$svgFile = str_replace(['.xml', '.json'], '.svg', $alpsFile);
+$svgFile = str_replace(['.xml', '.json'], '.svg', $config->profile);
 $cmd = "dot -Tsvg {$file} -o {$svgFile}";
 passthru($cmd, $status);
 if ($status !== 0) {
     echo 'Warning: Graphviz error. https://graphviz.org/download/' . PHP_EOL;
 }
 
-$indexHtml = dirname($alpsFile) . '/index.html';
+$indexHtml = dirname($config->profile) . '/index.html';
 file_put_contents($indexHtml, (new IndexPage($profile))->index);
 echo "ASD generated. {$indexHtml}" . PHP_EOL;
 echo sprintf('Descriptors(%s), Links(%s)', count($profile->descriptors), count($profile->links)) . PHP_EOL;

@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<asd xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:noNamespaceSchemaLocation="https://koriym.github.io/app-state-diagram/asd.xsd">
+    <alpsFile>profile.xml</alpsFile>
+    <watch>false</watch>
+</asd>

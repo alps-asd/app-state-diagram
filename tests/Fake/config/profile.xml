@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<alps
+     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:noNamespaceSchemaLocation="https://alps-io.github.io/schemas/alps.xsd">
+    <title>ALPS Blog</title>
+    <doc>An ALPS profile example for ASD</doc>
+    <link href="https://github.com/koriym/app-state-diagram/issues" rel="issue"/>
+
+    <!-- Ontology -->
+    <descriptor id="id" def="https://schema.org/identifier"/>
+    <descriptor id="articleBody" def="https://schema.org/articleBody"/>
+    <descriptor id="dateCreated" def="https://schema.org/dateCreated"/>
+
+    <!-- Taxonomy -->
+    <descriptor id="Index" title="Index Page">
+        <descriptor href="#goBlog"/>
+    </descriptor>
+    <descriptor id="About">
+        <descriptor href="#goBlog"/>
+    </descriptor>
+    <descriptor id="Blog" href="https://schema.org/Blog" title="Blog post list" rel="collection">
+        <descriptor href="#goAbout"/>
+        <descriptor href="#doPost"/>
+        <descriptor href="#goBlogPosting"/>
+        <descriptor href="#BlogPosting"/>
+    </descriptor>
+    <descriptor id="BlogPosting" href="https://schema.org/BlogPosting" title="Blog post item">
+        <descriptor href="#id"/>
+        <descriptor href="#dateCreated"/>
+        <descriptor href="#articleBody"/>
+        <descriptor href="#goBlog"/>
+    </descriptor>
+
+    <!-- Choreography -->
+    <descriptor id="goStart" type="safe" rt="#Blog"/>
+    <descriptor id="goAbout" type="safe" rt="#About"/>
+    <descriptor id="goBlog" type="safe" rt="#Blog"/>
+    <descriptor id="goBlogPosting" type="safe" rt="#BlogPosting">
+        <descriptor href="#id"/>
+    </descriptor>
+    <descriptor id="doPost" def="https://activitystrea.ms/specs/json/1.0/#post-verb" type="unsafe" rt="#Blog">
+        <descriptor href="#articleBody"/>
+    </descriptor>
+</alps>
