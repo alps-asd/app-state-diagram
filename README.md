@@ -53,31 +53,46 @@ composer global update koriym/app-state-diagram
 ## Usage
 
 ```
-composer global exec asd {$alpsFile}
+composer global exec asd {alpsFile}
+composer global exec asd -c {alps.xml}
 ```
 
 * This will generate the semantic descriptor's document HTML and the application state diagram SVG.
 * Supports XML and JSON formats.
 
-## Filter
+## Config
+
+The format of the Config file is as follows.
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<asd xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:noNamespaceSchemaLocation="/path/to/schema.xsd">
+    <alpsFile>profile.xml</alpsFile>
+    <watch>false</watch>
+    <filter>
+        <and>tag1</and>
+        <and>tag2</and>
+        <or>tag3</or>
+        <color>red</color>
+    </filter>
+</asd>
+```
+### alpsFile
+
+Locate ALPS profile file
+
+### watch
+
+You can start ASD development server with watch mode.
+Each time the profile file changes, the page is reloaded.
+
+### filter
 
 You can extract partial graphs by specific tags, or color specific graphs. For example, in the famous [RESTBucks example](https://www.infoq.com/articles/webber-rest-workflow/), you can extract the state machine graphs of Consumar and Barista, respectively.
 Specify the "or" or "and" condition. If you don't specify a color, that graph will be extracted, and if you do, it will be colored.
 
-```
-composer global exec asd -- --and-tag={tag1, tag2} --or-tag={tag3} [--color=red] {$alpsFile}
-```
-
-## Watch mode
-
-You can start ASD development server with watch mode. 
-Each time the profile file changes, the page is reloaded.
-
-```
-composer global exec asd -- --watch {$alpsFile}
-```
-
-### Run demo
+## Run demo
 
 Download [profile.example.json](https://koriym.github.io/app-state-diagram/blog/profile.json)
 ```
