@@ -17,7 +17,7 @@
         "ext-dom": "*",
         "michelf/php-markdown": "^1.9",
         "seld/jsonlint": "^1.8",
-        "koriym/data-file": "dev-master"
+        "koriym/data-file": "^1.0"
     },
     "require-dev": {
         "bamarni/composer-bin-plugin": "^1.4",
