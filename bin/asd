@@ -4,11 +4,11 @@
 declare(strict_types=1);
 
 use Koriym\AppStateDiagram\ConfigFactory;
-use Koriym\AppStateDiagram\Exception\AlpsFileNotReadableException;
-use Koriym\AppStateDiagram\Profile;
 use Koriym\AppStateDiagram\DrawDiagram;
 use Koriym\AppStateDiagram\DumpDocs;
+use Koriym\AppStateDiagram\Exception\AlpsFileNotReadableException;
 use Koriym\AppStateDiagram\IndexPage;
+use Koriym\AppStateDiagram\Profile;
 use Koriym\AppStateDiagram\TaggedProfile;
 use Koriym\DataFile\Exception\DataFileNotFoundException;
 
@@ -50,7 +50,7 @@ try {
 
     if ($config->hasTag) {
         $filteredProfile = new TaggedProfile($profile, $config->filter->or, $config->filter->and);
-        $tagDot = isset($config->filter->color) ? (new DrawDiagram())($profile, $filteredProfile, $config->filter->color) : (new DrawDiagram())($filteredProfile);
+        $tagDot = $config->filter->color ? (new DrawDiagram())($profile, $filteredProfile, $config->filter->color) : (new DrawDiagram())($filteredProfile);
     }
 } catch (Exception $e) {
     $path = explode('\\', get_class($e));
