@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:annotation>
+        <xs:documentation>ALPS ASD config</xs:documentation>
+        <xs:appinfo source="https://github.com/koriym/app-state-diagram"/>
+    </xs:annotation>
+    <xs:element name="asd">
+        <xs:complexType>
+            <xs:choice maxOccurs="unbounded">
+                <xs:element ref="alpsFile"/>
+                <xs:element ref="watch"/>
+                <xs:element ref="filter"/>
+            </xs:choice>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="alpsFile" type="xs:string">
+        <xs:annotation>
+            <xs:documentation>ALPS profile file path</xs:documentation>
+        </xs:annotation>
+    </xs:element>
+    <xs:element name="watch" type="xs:boolean">
+        <xs:annotation>
+            <xs:documentation>Rendering in watch mode</xs:documentation>
+        </xs:annotation>
+    </xs:element>
+    <xs:element name="filter" type="filterType" >
+        <xs:annotation>
+            <xs:documentation>Filter list</xs:documentation>
+        </xs:annotation>
+    </xs:element>
+    <xs:complexType name="filterType">
+        <xs:sequence>
+            <xs:element name="and" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="or" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="color" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+</xs:schema>
