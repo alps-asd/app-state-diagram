@@ -10,7 +10,7 @@ use function file_exists;
 
 class ConfigLoadTest extends TestCase
 {
-    public function testConfigLoad()
+    public function testConfigLoad(): void
     {
         $config = ConfigFactory::fromFile(__DIR__ . '/Fake/config');
         $this->assertInstanceOf(Config::class, $config);
