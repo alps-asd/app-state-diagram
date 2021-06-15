@@ -27,7 +27,7 @@ if ($argc === 1) {
 try {
     $config = isset($options['c']) ? ConfigFactory::fromFile($options['c'], $argc, $argv) : ConfigFactory::fromCommandLine($argc, $argv);
 } catch (DataFileNotFoundException $e) {
-    printf('Config gile not found: %s', $e->getMessage());
+    printf('Config file not found: %s', $e->getMessage());
     exit(1);
 } catch (AlpsFileNotReadableException $e) {
     printf('Profile file not found: %s', $e->getMessage());
