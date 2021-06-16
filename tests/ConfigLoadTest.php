@@ -6,7 +6,6 @@ namespace Koriym\AppStateDiagram;
 
 use PHPUnit\Framework\TestCase;
 
-use function count;
 use function file_exists;
 
 class ConfigLoadTest extends TestCase
@@ -22,20 +21,18 @@ class ConfigLoadTest extends TestCase
     }
 
     /**
-     * @return list<string>
+     * @return array<string, mixed>
      */
     public function testOverwriteConfig(): array
     {
-        $argv = [
-            '--watch',
-            '--and-tag=a,b',
-            '--or-tag=c,d',
-            '--color=red',
-            '-c',
-            __DIR__ . '/Fake/config',
-            __DIR__ . '/Fake/alps.json',
+        $options = [
+            'watch' => true,
+            'and-tag' => 'a,b',
+            'or-tag' => 'c,d',
+            'color' => 'red',
+            '-c' => __DIR__ . '/Fake/config',
         ];
-        $config = ConfigFactory::fromFile(__DIR__ . '/Fake/config', count($argv), $argv);
+        $config = ConfigFactory::fromFile(__DIR__ . '/Fake/config', 1, [__DIR__ . '/Fake/alps.json'], $options);
         $this->assertSame(__DIR__ . '/Fake/alps.json', $config->profile);
         $this->assertTrue($config->watch);
         $this->assertTrue($config->hasTag);
@@ -43,17 +40,17 @@ class ConfigLoadTest extends TestCase
         $this->assertSame(['c', 'd'], $config->filter->or);
         $this->assertSame('red', $config->filter->color);
 
-        return $argv;
+        return $options;
     }
 
     /**
-     * @param list<string> $argv
+     * @param array<string, mixed> $options
      *
      * @depends testOverwriteConfig
      */
-    public function testFromCommandLine(array $argv): void
+    public function testFromCommandLine(array $options): void
     {
-        $config = ConfigFactory::fromCommandLine(count($argv), $argv);
+        $config = ConfigFactory::fromCommandLine(1, [__DIR__ . '/Fake/alps.json'], $options);
         $this->assertSame(__DIR__ . '/Fake/alps.json', $config->profile);
         $this->assertTrue($config->watch);
         $this->assertTrue($config->hasTag);

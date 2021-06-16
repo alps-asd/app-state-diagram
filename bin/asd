@@ -20,12 +20,12 @@ foreach ([__DIR__ . '/../../../autoload.php', __DIR__ . '/../vendor/autoload.php
     }
 }
 
-$options = getopt('c:', ['config:']);
+$options = getopt('c:w::', ['config:', 'watch::', 'color::', 'and-tag::', 'or-tag::']);
 if ($argc === 1) {
     $options['c'] = getcwd();
 }
 try {
-    $config = isset($options['c']) ? ConfigFactory::fromFile($options['c'], $argc, $argv) : ConfigFactory::fromCommandLine($argc, $argv);
+    $config = isset($options['c']) ? ConfigFactory::fromFile($options['c'], $argc, $argv, $options) : ConfigFactory::fromCommandLine($argc, $argv, $options);
 } catch (DataFileNotFoundException $e) {
     printf('Config file not found: %s', $e->getMessage());
     exit(1);
