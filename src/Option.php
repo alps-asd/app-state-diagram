@@ -13,24 +13,16 @@ use function property_exists;
 /** @psalm-immutable */
 final class Option
 {
-    /**
-     * @var bool
-     */
+    /** @var bool */
     public $watch;
 
-    /**
-     * @var array<string>
-     */
+    /** @var array<string> */
     public $and;
 
-    /**
-     * @var array<string>
-     */
+    /** @var array<string> */
     public $or;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     public $color;
 
     /**
