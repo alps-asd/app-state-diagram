@@ -10,6 +10,7 @@
                 <xs:element ref="alpsFile"/>
                 <xs:element ref="watch"/>
                 <xs:element ref="filter"/>
+                <xs:element ref="label"/>
             </xs:choice>
         </xs:complexType>
     </xs:element>
@@ -36,4 +37,16 @@
             <xs:element name="color" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
         </xs:sequence>
     </xs:complexType>
+    <xs:element name="label" type="labelType" >
+        <xs:annotation>
+            <xs:documentation>Display text label</xs:documentation>
+        </xs:annotation>
+    </xs:element>
+    <xs:simpleType name="labelType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="id"/>
+            <xs:enumeration value="title"/>
+            <xs:enumeration value="both"/>
+        </xs:restriction>
+    </xs:simpleType>
 </xs:schema>

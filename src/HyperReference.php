@@ -32,11 +32,15 @@ class HyperReference
     /** @var list<string> */
     private $done = [];
 
-    public function __construct(string $alpsFile)
+    /** @var LabelNameInterface */
+    private $labelName;
+
+    public function __construct(string $alpsFile, LabelNameInterface $labelName)
     {
         $this->alpsFile = $alpsFile;
         $this->dir = dirname($alpsFile);
         $this->fullPath = new FullPath();
+        $this->labelName = $labelName;
     }
 
     public function add(string $alpsFile, string $href): void
@@ -73,7 +77,7 @@ class HyperReference
                 continue;
             }
 
-            $alps = new Profile($file, false);
+            $alps = new Profile($file, $this->labelName, false);
             [$importInstances, $hyperReference] = $alps->export($id, $file);
             /** @var array<string, stdClass> $importInstances */
             $this->merge($hyperReference);

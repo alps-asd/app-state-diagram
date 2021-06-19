@@ -10,6 +10,7 @@ use stdClass;
 
 use function assert;
 use function in_array;
+use function is_int;
 use function is_string;
 use function property_exists;
 use function sprintf;
@@ -20,6 +21,14 @@ use const PHP_EOL;
 
 final class DrawDiagram
 {
+    /** @var  LabelNameInterface */
+    private $labelName;
+
+    public function __construct(LabelNameInterface $labelName)
+    {
+        $this->labelName = $labelName;
+    }
+
     /** @var AbstractDescriptor[] */
     private $descriptors = [];
 
@@ -32,7 +41,7 @@ final class DrawDiagram
     public function __invoke(AbstractProfile $profile, ?TaggedProfile $taggedProfile = null, ?string $color = null): string
     {
         $transNodes = $this->getTransNodes($profile);
-        $appSate = new AppState($profile->links, $profile->descriptors, $taggedProfile, $color);
+        $appSate = new AppState($profile->links, $profile->descriptors, $this->labelName, $taggedProfile, $color);
         $this->descriptors = $profile->descriptors;
         $this->taggedProfile = $taggedProfile;
         $this->color = $color;
@@ -128,7 +137,9 @@ EOT;
         foreach ($descriptor->descriptor as $item) {
             if ($this->isSemanticHref($item)) {
                 assert(is_string($item->href));
-                $props[] = (string) substr($item->href, (int) strpos($item->href, '#') + 1);
+                $descriptor =  $this->getHref($item->href);
+                assert($descriptor instanceof SemanticDescriptor);
+                $props[] = $this->labelName->getNodeLabel($descriptor);
             }
 
             $isSemantic = isset($item->type) && $item->type === 'semantic';
@@ -138,6 +149,15 @@ EOT;
         }
 
         return $props;
+    }
+
+    private function getHref(string $href): AbstractDescriptor
+    {
+        $pos = strpos($href, '#');
+        assert(is_int($pos));
+        $index = substr($href, $pos + 1);
+
+        return $this->descriptors[$index];
     }
 
     private function isSemanticHref(stdClass $item): bool
@@ -170,11 +190,12 @@ EOT;
 EOT;
 
         $url = sprintf('docs/%s.%s.html', $descriptor->type, $descriptor->id);
+        assert($descriptor instanceof SemanticDescriptor);
 
         if (isset($this->color, $this->taggedProfile) && in_array($descriptor, $this->taggedProfile->descriptors)) {
-            return sprintf($base . ' color="%s"]' . PHP_EOL, $descriptor->id, $descriptor->id, $props, $url, $this->color);
+            return sprintf($base . ' color="%s"]' . PHP_EOL, $descriptor->id, $this->labelName->getNodeLabel($descriptor), $props, $url, $this->color);
         }
 
-        return sprintf($base . ']' . PHP_EOL, $descriptor->id, $descriptor->id, $props, $url);
+        return sprintf($base . ']' . PHP_EOL, $descriptor->id, $this->labelName->getNodeLabel($descriptor), $props, $url);
     }
 }

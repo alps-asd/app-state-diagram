@@ -24,13 +24,12 @@ final class ConfigFactory
     public static function fromFile(string $configFile, int $argc = 1, array $argv = [''], array $options = []): Config
     {
         $xml = (new XmlConfigLoad('asd.xml'))($configFile, dirname(__DIR__) . '/docs/asd.xsd');
-        assert(property_exists($xml, 'alpsFile'));
         assert(property_exists($xml, 'watch'));
-
+        $label = property_exists($xml, 'label')  ? (string) $xml->label : 'id';
         $dir = is_dir($configFile) ? $configFile : dirname($configFile);
 
         $maybePath = (string) realpath($argv[$argc - 1]);
-        $profile = is_file($maybePath) ? $maybePath : sprintf('%s/%s', $dir, (string) $xml->alpsFile);
+        $profile = is_file($maybePath) && $configFile !== $maybePath ? $maybePath : sprintf('%s/%s', $dir, (string) $xml->alpsFile);
         /** @var ?SimpleXMLElement $filter */
         $filter = property_exists($xml, 'filter') ? $xml->filter : null;
         $option = new Option($options, $filter);
@@ -38,6 +37,7 @@ final class ConfigFactory
         return new Config(
             $profile,
             $option->watch,
+            $label,
             new ConfigFilter($option->and, $option->or, $option->color)
         );
     }
@@ -53,6 +53,7 @@ final class ConfigFactory
         return new Config(
             (string) realpath($argv[$argc - 1]),
             $option->watch,
+            'id', // @todo Change option
             new ConfigFilter($option->and, $option->or, $option->color)
         );
     }

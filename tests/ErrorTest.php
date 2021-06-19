@@ -17,36 +17,36 @@ class ErrorTest extends TestCase
     {
         $this->expectException(ParsingException::class);
         $this->expectErrorMessage('" does not contain valid JSON');
-        new Profile(__DIR__ . '/Fake/invalid.json');
+        new Profile(__DIR__ . '/Fake/invalid.json', new LabelName());
     }
 
     public function testInvalidDescriptorException(): void
     {
         $this->expectException(InvalidDescriptorException::class);
-        new Profile(__DIR__ . '/Fake/invalid_missing_id.json');
+        new Profile(__DIR__ . '/Fake/invalid_missing_id.json', new LabelName());
     }
 
     public function testInvalidDescriptorInDescriptor(): void
     {
         $this->expectException(DescriptorIsNotArrayException::class);
-        new Profile(__DIR__ . '/Fake/invalid_descriptor_array.json');
+        new Profile(__DIR__ . '/Fake/invalid_descriptor_array.json', new LabelName());
     }
 
     public function testMissingRt(): void
     {
         $this->expectException(RtMissingException::class);
-        (new DrawDiagram())(new Profile(__DIR__ . '/Fake/invalid_missing_rt.json'));
+        (new DrawDiagram(new LabelName()))(new Profile(__DIR__ . '/Fake/invalid_missing_rt.json', new LabelName()));
     }
 
     public function testMissingRtDescriptor(): void
     {
         $this->expectException(DescriptorNotFoundException::class);
-        (new DrawDiagram())(new Profile(__DIR__ . '/Fake/invalid_missing_missing_sharp_in_rt.json'));
+        (new DrawDiagram(new LabelName()))(new Profile(__DIR__ . '/Fake/invalid_missing_missing_sharp_in_rt.json', new LabelName()));
     }
 
     public function testNullJsonException(): void
     {
         $this->expectException(InvalidDescriptorException::class);
-        (new DrawDiagram())(new Profile(__DIR__ . '/Fake/invalid_null.json'));
+        (new DrawDiagram(new LabelName()))(new Profile(__DIR__ . '/Fake/invalid_null.json', new LabelName()));
     }
 }

@@ -13,7 +13,7 @@ class TagTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->profile = new Profile(__DIR__ . '/Fake/alps_tag.json');
+        $this->profile = new Profile(__DIR__ . '/Fake/alps_tag.json', new LabelName());
     }
 
     public function testFilteredLinksByAndTag(): TaggedProfile
