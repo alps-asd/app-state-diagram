@@ -190,6 +190,7 @@ EOT;
 EOT;
 
         $url = sprintf('docs/%s.%s.html', $descriptor->type, $descriptor->id);
+        assert($descriptor instanceof SemanticDescriptor);
 
         if (isset($this->color, $this->taggedProfile) && in_array($descriptor, $this->taggedProfile->descriptors)) {
             return sprintf($base . ' color="%s"]' . PHP_EOL, $descriptor->id, $this->labelName->getNodeLabel($descriptor), $props, $url, $this->color);
