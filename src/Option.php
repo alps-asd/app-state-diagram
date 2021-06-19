@@ -15,25 +15,21 @@ final class Option
 {
     /**
      * @var bool
-     * @readonly
      */
     public $watch;
 
     /**
      * @var array<string>
-     * @readonly
      */
     public $and;
 
     /**
      * @var array<string>
-     * @readonly
      */
     public $or;
 
     /**
      * @var string
-     * @readonly
      */
     public $color;
 
