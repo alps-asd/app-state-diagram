@@ -46,7 +46,7 @@
         <xs:restriction base="xs:string">
             <xs:enumeration value="id"/>
             <xs:enumeration value="title"/>
-            <xs:enumeration value="id_title"/>
+            <xs:enumeration value="both"/>
         </xs:restriction>
     </xs:simpleType>
 </xs:schema>

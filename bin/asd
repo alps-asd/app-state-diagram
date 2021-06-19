@@ -9,6 +9,7 @@ use Koriym\AppStateDiagram\DumpDocs;
 use Koriym\AppStateDiagram\Exception\AlpsFileNotReadableException;
 use Koriym\AppStateDiagram\IndexPage;
 use Koriym\AppStateDiagram\LabelName;
+use Koriym\AppStateDiagram\LabelNameFactory;
 use Koriym\AppStateDiagram\LabelNameTitle;
 use Koriym\AppStateDiagram\Profile;
 use Koriym\AppStateDiagram\TaggedProfile;
@@ -45,7 +46,7 @@ if ($config->watch) {
     exit(0);
 }
 try {
-    $labelName = $config->label === 'id' ? new LabelName() : new LabelNameTitle();
+    $labelName = LabelNameFactory::getInstance($config->label);
     $profile = new Profile($config->profile, $labelName);
     $dot = (new DrawDiagram($labelName))($profile);
     // dump docs/
