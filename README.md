@@ -1,6 +1,6 @@
 # ALPS ASD
 
-Produces a full application state diagram and hyperlinked documentation from [ALPS](http://alps.io/) file. 
+Produces a full application state diagram and hyperlinked documentation from [ALPS](http://alps.io/) file.
 
 The diagram is hypermedia in SVG format with application states and state transitions linked to the respective semantic descriptor document HTML. The semantic descriptor document HTML is also linked to each other to represent the structure of the REST application.
 
@@ -11,31 +11,31 @@ The diagram is hypermedia in SVG format with application states and state transi
 
 See online demo.
 
- * [blog](https://koriym.github.io/app-state-diagram/blog/)
- * [todomvc](https://koriym.github.io/app-state-diagram/todomvc/)
+* [blog](https://koriym.github.io/app-state-diagram/blog/)
+* [todomvc](https://koriym.github.io/app-state-diagram/todomvc/)
 
 ## Requirement
 
- * php 7.2+
- * [composer](https://getcomposer.org/)
- * [graphviz](https://graphviz.org/download/)
- * [npm](https://nodejs.org/en/download/)
+* [php](https://www.php.net/manual/en/install.php)
+* [composer](https://getcomposer.org/)
+* [graphviz](https://graphviz.org/download/)
+* [npm](https://nodejs.org/en/download/)
 
 
 You can check with the following command.
 
 ```
 % php -v
-PHP 7.4.10 (cli) (built: Sep  3 2020 18:21:42) ( NTS )
+PHP 8.0.6 (cli) (built: May  8 2021 01:58:51) ( NTS )
 
 % composer -V
-Composer version 2.0.7 2020-11-13 17:31:06
+Composer version 2.0.13 2021-04-27 13:11:08
 
 % dot -V    
-dot - graphviz version 2.44.1 (20200629.0846)
+dot - graphviz version 2.47.1 (20210417.1919)
 
 % npm -v
-6.14.9
+7.17.0
 ```
 
 ## Installation
@@ -44,56 +44,84 @@ dot - graphviz version 2.44.1 (20200629.0846)
 composer global require koriym/app-state-diagram
 ```
 
-## Update
-
-```
-composer global update koriym/app-state-diagram
-```
-
 ## Usage
 
 ```
-composer global exec asd [-c asd.xml] [alpsFile]
+composer global exec asd -- [options] [alpsFile]
 
-    -c=asd.xml
-        Path to a asd.xml configuration file.
+    -c, --config=asd.xml
+        Path to a asd.xml configuration file
+
+    -w, --watch
+        Watch mode
+
+    --and-tag={tag1, tag2} --or-tag={tag3} [--color=red]
+        Filter graph
+
+    -l, --label={id|title|both}
+        Displayed words
 ```
 
-* This will generate the semantic descriptor's document HTML and the application state diagram SVG.
 * Supports XML and JSON formats.
 * If you run it without the arguments,`asd.xml` config file in the same folder is used.
 
-## Config
+## Configuration
 
-The format of the config file is as follows.
+ASD uses an XML config file (by default, asd.xml). A barebones example looks like this:
 
 ```xml
 <?xml version="1.0"?>
 <asd xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
      xsi:noNamespaceSchemaLocation="https://koriym.github.io/app-state-diagram/asd.xsd">
     <alpsFile>profile.xml</alpsFile>
-    <watch>false</watch>
-    <filter>
-        <and>tag1</and>
-        <and>tag2</and>
-        <or>tag3</or>
-        <color>red</color>
-    </filter>
 </asd>
 ```
-### alpsFile
 
-ALPS profile file path.
+## Optional <asd /> attributes
 
 ### watch
+
+```xml
+<asd
+  <watch>[bool]</watch>
+</asd>
+```
 
 You can start ASD development server with watch mode.
 Each time the profile file changes, the page is reloaded.
 
 ### filter
 
-You can extract partial graphs by specific tags, or color specific graphs. For example, in the famous [RESTBucks example](https://www.infoq.com/articles/webber-rest-workflow/), you can extract the state machine graphs of Consumar and Barista, respectively.
-Specify the "or" or "and" condition. If you don't specify a color, that graph will be extracted, and if you do, it will be colored.
+```xml
+<asd
+  <filter>
+    <and>[string]</and>
+    <and>[string]</and>
+    <or>[string]</or>
+    <color>[string]</color>
+  </filter>
+</asd>
+```
+
+You can extract partial graphs by specific tags, or color specific graphs.
+
+Specify a tag name in the "or" or "and" field to specify the condition. If you specify "color", the graph for that condition will be colored, but if you don't, only the graph for that condition will be extracted and drawn.
+
+### label
+
+```xml
+<asd
+  <label>[string]</label>
+</asd>
+```
+
+Choose the word to display in the diagram from id, title, both.
+
+## Update
+
+```
+composer global update koriym/app-state-diagram
+```
 
 ## Run demo
 
