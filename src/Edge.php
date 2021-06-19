@@ -47,7 +47,7 @@ final class Edge
     private function singleLink(array $links): string
     {
         $link = $links[0];
-        $base = '    %s -> %s [label = "%s" URL="docs/%s.%s.html" target="_parent" fontsize=13';
+        $base = '    %s -> %s [label = <%s> URL="docs/%s.%s.html" target="_parent" fontsize=13';
 
         if (! isset($this->color, $this->taggedProfile)) {
             return sprintf($base . '];' . PHP_EOL, $link->from, $link->to, $link->label, $link->transDescriptor->type, $link->transDescriptor->id);

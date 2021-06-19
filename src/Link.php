@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Koriym\AppStateDiagram;
 
-use function sprintf;
-
 final class Link
 {
     /** @var string */
@@ -23,14 +21,17 @@ final class Link
     /** @var list<string> */
     private $labels = [];
 
-    public function __construct(SemanticDescriptor $semantic, TransDescriptor $trans)
+    /** @var LabelNameInterface */
+    private $labelName;
+
+    public function __construct(SemanticDescriptor $semantic, TransDescriptor $trans, LabelNameInterface $labelName)
     {
         $this->from = $semantic->id;
         $this->to = $trans->rt;
-        $title = $trans->rel ? sprintf('%s, %s', $trans->id, $trans->rel) : $trans->id;
-        $this->label = sprintf('%s (%s)', $title, $trans->type);
+        $this->label = $labelName->getLinkLabel($trans);
         $this->labels[] = $this->label;
         $this->transDescriptor = $trans;
+        $this->labelName = $labelName;
     }
 
     public function __toString(): string

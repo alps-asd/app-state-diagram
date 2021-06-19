@@ -44,12 +44,15 @@ final class Profile extends AbstractProfile
     /** @var LinkRelations */
     public $linkRelations;
 
+    /** @var LabelNameInterface */
+    private $labelName;
+
     /**
 £     * @throws \Seld\JsonLint\ParsingException
      */
-    public function __construct(string $alpsFile, bool $doFinalize = true)
+    public function __construct(string $alpsFile, LabelNameInterface $labelName, bool $doFinalize = true)
     {
-        $hyperReference = new HyperReference($alpsFile);
+        $hyperReference = new HyperReference($alpsFile, $labelName);
         $this->alpsFile = $alpsFile;
         [$profile, $descriptors] = (new SplitProfile())($alpsFile);
         /** @psalm-suppress all */
@@ -59,6 +62,7 @@ final class Profile extends AbstractProfile
         $instances = new Instances();
         $this->storeDescriptors($descriptors, $instances, $hyperReference);
         $this->instances = $instances->get();
+        $this->labelName = $labelName;
         if ($doFinalize) {
             $this->finalize($hyperReference);
         }
@@ -77,7 +81,7 @@ final class Profile extends AbstractProfile
 
         $instance = $this->instances[$id];
         $instances = new Instances();
-        $hyperReference = new HyperReference($alpsFile);
+        $hyperReference = new HyperReference($alpsFile, $this->labelName);
         assert(is_string($instance->id));
         if (property_exists($instance, 'rt')) {
             assert(is_string($instance->rt));
@@ -110,7 +114,7 @@ final class Profile extends AbstractProfile
         $instances = $hyperReference->getInstances($this->instances);
         ksort($instances);
         $this->descriptors = (new CreateDescriptor())($instances);
-        $this->links = (new CreateLinks())($this->descriptors, $instances);
+        $this->links = (new CreateLinks($this->labelName))($this->descriptors, $instances);
         $this->scanTags();
     }
 
@@ -145,7 +149,7 @@ final class Profile extends AbstractProfile
         assert(is_string($rawDescriptor->id));
         $instances->add($rawDescriptor);
         if (property_exists($rawDescriptor, 'descriptor')) {
-            /** @psalm-suppress MixedAssignments */
+            /** @psalm-suppress MixedAssignment */
             $descriptors = $rawDescriptor->descriptor;
             if (! is_array($descriptors)) {
                 throw new DescriptorIsNotArrayException($rawDescriptor->id);

@@ -13,7 +13,7 @@ class DumpDocsTest extends TestCase
     public function testInvoke(): void
     {
         $alpsFile = __DIR__ . '/Fake/project/min/profile.json';
-        $profile = new Profile($alpsFile);
+        $profile = new Profile($alpsFile, new LabelName());
         (new DumpDocs())($profile, $alpsFile);
         $this->assertFileExists(__DIR__ . '/Fake/project/min/docs/semantic.bar.html');
         $this->assertFileExists(__DIR__ . '/Fake/project/min/docs/semantic.foo.html');
@@ -45,7 +45,7 @@ class DumpDocsTest extends TestCase
     public function testTagDoc(): void
     {
         $alpsFile = __DIR__ . '/Fake/alps_tag.json';
-        $profile = new Profile($alpsFile);
+        $profile = new Profile($alpsFile, new LabelName());
         (new DumpDocs())($profile, $alpsFile);
 
         $this->assertFileExists(__DIR__ . '/Fake/docs/tag.a.html');
@@ -55,7 +55,7 @@ class DumpDocsTest extends TestCase
     public function testRelations(): void
     {
         $alpsFile = __DIR__ . '/Fake/alps_has_multiple_link.json';
-        $profile = new Profile($alpsFile);
+        $profile = new Profile($alpsFile, new LabelName());
         (new DumpDocs())($profile, $alpsFile);
         $html = (string) file_get_contents(__DIR__ . '/Fake/docs/semantic.Item.html');
 

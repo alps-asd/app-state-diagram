@@ -8,6 +8,8 @@ use Koriym\AppStateDiagram\DrawDiagram;
 use Koriym\AppStateDiagram\DumpDocs;
 use Koriym\AppStateDiagram\Exception\AlpsFileNotReadableException;
 use Koriym\AppStateDiagram\IndexPage;
+use Koriym\AppStateDiagram\LabelName;
+use Koriym\AppStateDiagram\LabelNameTitle;
 use Koriym\AppStateDiagram\Profile;
 use Koriym\AppStateDiagram\TaggedProfile;
 use Koriym\DataFile\Exception\DataFileNotFoundException;
@@ -43,14 +45,15 @@ if ($config->watch) {
     exit(0);
 }
 try {
-    $profile = new Profile($config->profile);
-    $dot = (new DrawDiagram)($profile);
+    $labelName = new LabelName();
+    $profile = new Profile($config->profile, $labelName);
+    $dot = (new DrawDiagram($labelName))($profile);
     // dump docs/
     (new DumpDocs())($profile, $config->profile);
 
     if ($config->hasTag) {
         $filteredProfile = new TaggedProfile($profile, $config->filter->or, $config->filter->and);
-        $tagDot = $config->filter->color ? (new DrawDiagram())($profile, $filteredProfile, $config->filter->color) : (new DrawDiagram())($filteredProfile);
+        $tagDot = $config->filter->color ? (new DrawDiagram($labelName))($profile, $filteredProfile, $config->filter->color) : (new DrawDiagram($labelName))($filteredProfile);
     }
 } catch (Exception $e) {
     $path = explode('\\', get_class($e));

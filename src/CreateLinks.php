@@ -27,6 +27,14 @@ final class CreateLinks
     /** @var array<string, Link> */
     private $links = [];
 
+    /** @var LabelNameInterface */
+    private $label;
+
+    public function __construct(LabelNameInterface $label)
+    {
+        $this->label = $label;
+    }
+
     /**
      * @param array<string, AbstractDescriptor> $descriptors
      * @param array<string, stdClass>           $rawDescriptors
@@ -77,7 +85,9 @@ final class CreateLinks
                 $isTransDescriptor = isset($this->descriptors[$descriptorId]) && $this->descriptors[$descriptorId] instanceof TransDescriptor;
                 if ($isTransDescriptor) {
                     $transSemantic = $this->descriptors[$descriptorId];
-                    $this->setLink(new Link($semantic, $transSemantic));  // @phpstan-ignore-line
+                    /** @psalm-suppress RedundantCondition */
+                    assert($transSemantic instanceof TransDescriptor);
+                    $this->setLink(new Link($semantic, $transSemantic, $this->label));
                 }
 
                 continue;
@@ -86,7 +96,7 @@ final class CreateLinks
             $isTransDescriptor = isset($instance->type) && in_array($instance->type, ['safe', 'unsafe', 'idempotent'], true);
             if ($isTransDescriptor) {
                 assert(property_exists($instance, 'id') && is_string($instance->id));
-                $this->setLink(new Link($semantic, new TransDescriptor($instance, $semantic)));
+                $this->setLink(new Link($semantic, new TransDescriptor($instance, $semantic), $this->label));
                 $this->descriptors[$instance->id] = new TransDescriptor($instance, $semantic);
             }
         }
