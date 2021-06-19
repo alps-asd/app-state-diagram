@@ -7,24 +7,24 @@
     <link href="https://github.com/koriym/app-state-diagram/issues" rel="issue"/>
 
     <!-- Ontology -->
-    <descriptor id="id" def="https://schema.org/identifier"/>
-    <descriptor id="articleBody" def="https://schema.org/articleBody"/>
-    <descriptor id="dateCreated" def="https://schema.org/dateCreated"/>
+    <descriptor id="id" def="https://schema.org/identifier" title="identifier"/>
+    <descriptor id="articleBody" def="https://schema.org/articleBody" title="article body"/>
+    <descriptor id="dateCreated" def="https://schema.org/dateCreated" title="create date"/>
 
     <!-- Taxonomy -->
-    <descriptor id="Index" title="Index Page">
+    <descriptor id="Index" title="Home">
         <descriptor href="#goBlog"/>
     </descriptor>
-    <descriptor id="About">
+    <descriptor id="About" title="About Us">
         <descriptor href="#goBlog"/>
     </descriptor>
-    <descriptor id="Blog" href="https://schema.org/Blog" title="Blog post list" rel="collection">
+    <descriptor id="Blog" href="https://schema.org/Blog" title="Blog Post List" rel="collection">
         <descriptor href="#goAbout"/>
         <descriptor href="#doPost"/>
         <descriptor href="#goBlogPosting"/>
         <descriptor href="#BlogPosting"/>
     </descriptor>
-    <descriptor id="BlogPosting" href="https://schema.org/BlogPosting" title="Blog post item">
+    <descriptor id="BlogPosting" href="https://schema.org/BlogPosting" title="Blog Post">
         <descriptor href="#id"/>
         <descriptor href="#dateCreated"/>
         <descriptor href="#articleBody"/>
@@ -32,13 +32,13 @@
     </descriptor>
 
     <!-- Choreography -->
-    <descriptor id="goStart" type="safe" rt="#Blog"/>
-    <descriptor id="goAbout" type="safe" rt="#About"/>
-    <descriptor id="goBlog" type="safe" rt="#Blog"/>
-    <descriptor id="goBlogPosting" type="safe" rt="#BlogPosting">
+    <descriptor id="goStart" type="safe" rt="#Blog" rel="collection" title="Go to Home"/>
+    <descriptor id="goAbout" type="safe" rt="#About" title="Go to About"/>
+    <descriptor id="goBlog" type="safe" rt="#Blog" rel="collection" title="See the blog post list"/>
+    <descriptor id="goBlogPosting" type="safe" rel="item" rt="#BlogPosting" title="See the blog post">
         <descriptor href="#id"/>
     </descriptor>
-    <descriptor id="doPost" def="https://activitystrea.ms/specs/json/1.0/#post-verb" type="unsafe" rt="#Blog">
+    <descriptor id="doPost" def="https://activitystrea.ms/specs/json/1.0/#post-verb" type="unsafe" rel="collection" rt="#Blog" title="Post the article">
         <descriptor href="#articleBody"/>
     </descriptor>
 </alps>

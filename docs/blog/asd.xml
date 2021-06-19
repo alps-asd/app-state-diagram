@@ -3,4 +3,5 @@
      xsi:noNamespaceSchemaLocation="../asd.xsd">
     <alpsFile>profile.xml</alpsFile>
     <watch>false</watch>
+    <label>id</label>
 </asd>

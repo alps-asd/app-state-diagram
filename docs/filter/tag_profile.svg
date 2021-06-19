@@ -32,7 +32,7 @@
 </a>
 </g>
 <g id="a_edge3&#45;label"><a xlink:href="docs/unsafe.post.html" xlink:title="post (unsafe)" target="_parent">
-<text text-anchor="middle" x="322.13" y="-139.6" font-family="Times,serif" font-size="13.00">post (unsafe)</text>
+<text text-anchor="start" x="287.13" y="-139.6" font-family="Times,serif" font-size="13.00">post (unsafe)</text>
 </a>
 </g>
 </g>
@@ -57,7 +57,7 @@
 </a>
 </g>
 <g id="a_edge4&#45;label"><a xlink:href="docs/safe.blogPosting.html" xlink:title="blogPosting, item (safe)" target="_parent">
-<text text-anchor="middle" x="69.13" y="-93.6" font-family="Times,serif" font-size="13.00">blogPosting, item (safe)</text>
+<text text-anchor="start" x="5.13" y="-93.6" font-family="Times,serif" font-size="13.00">blogPosting, item (safe)</text>
 </a>
 </g>
 </g>
@@ -79,7 +79,7 @@
 </a>
 </g>
 <g id="a_edge2&#45;label"><a xlink:href="docs/safe.about.html" xlink:title="about (safe)" target="_parent">
-<text text-anchor="middle" x="320.13" y="-93.6" font-family="Times,serif" font-size="13.00">about (safe)</text>
+<text text-anchor="start" x="288.13" y="-93.6" font-family="Times,serif" font-size="13.00">about (safe)</text>
 </a>
 </g>
 </g>
@@ -92,7 +92,7 @@
 </a>
 </g>
 <g id="a_edge5&#45;label"><a xlink:href="docs/safe.blog.html" xlink:title="blog, collection (safe)" target="_parent">
-<text text-anchor="middle" x="211.13" y="-93.6" font-family="Times,serif" font-size="13.00">blog, collection (safe)</text>
+<text text-anchor="start" x="152.13" y="-93.6" font-family="Times,serif" font-size="13.00">blog, collection (safe)</text>
 </a>
 </g>
 </g>
@@ -105,7 +105,7 @@
 </a>
 </g>
 <g id="a_edge1&#45;label"><a xlink:href="docs/safe.backToBlog.html" xlink:title="backToBlog (safe)" target="_parent">
-<text text-anchor="middle" x="415.13" y="-93.6" font-family="Times,serif" font-size="13.00">backToBlog (safe)</text>
+<text text-anchor="start" x="365.13" y="-93.6" font-family="Times,serif" font-size="13.00">backToBlog (safe)</text>
 </a>
 </g>
 </g>
@@ -127,7 +127,7 @@
 </a>
 </g>
 <g id="a_edge6&#45;label"><a xlink:href="docs/safe.start.html" xlink:title="start (safe)" target="_parent">
-<text text-anchor="middle" x="254.13" y="-185.6" font-family="Times,serif" font-size="13.00">start (safe)</text>
+<text text-anchor="start" x="225.13" y="-185.6" font-family="Times,serif" font-size="13.00">start (safe)</text>
 </a>
 </g>
 </g>

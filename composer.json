@@ -45,7 +45,7 @@
     "scripts": {
         "post-install-cmd": "@composer bin all install --ansi",
         "post-update-cmd": ["cd asd-sync && npm install", "@composer bin all update --ansi"],
-        "docs" : "bin/asd -c docs/blog/asd.xml && bin/asd docs/todomvc/profile.json && bin/asd --or-tag=tag1 --color=red docs/filter/profile.json",
+        "docs" : "bin/asd -c docs/blog/asd.xml docs/blog/profile.xml && bin/asd docs/todomvc/profile.json && bin/asd --or-tag=tag1 --color=red docs/filter/profile.json",
         "test": ["./vendor/bin/phpunit"],
         "tests": ["@cs", "@test", "@sa"],
         "coverage": ["php -dzend_extension=xdebug.so ./vendor/bin/phpunit --coverage-text --coverage-html=build/coverage"],
