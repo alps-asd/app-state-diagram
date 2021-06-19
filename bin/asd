@@ -45,7 +45,7 @@ if ($config->watch) {
     exit(0);
 }
 try {
-    $labelName = new LabelName();
+    $labelName = $config->label === 'id' ? new LabelName() : new LabelNameTitle();
     $profile = new Profile($config->profile, $labelName);
     $dot = (new DrawDiagram($labelName))($profile);
     // dump docs/

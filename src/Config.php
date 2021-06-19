@@ -22,7 +22,10 @@ final class Config
     /** @var bool */
     public $hasTag;
 
-    public function __construct(string $profile, bool $watch, ConfigFilter $filter)
+    /** @var string */
+    public $label;
+
+    public function __construct(string $profile, bool $watch, string $label, ConfigFilter $filter)
     {
         if (! is_file($profile)) {
             throw new AlpsFileNotReadableException($profile);
@@ -32,5 +35,6 @@ final class Config
         $this->watch = $watch;
         $this->filter = $filter;
         $this->hasTag = $filter->and || $filter->or;
+        $this->label = $label;
     }
 }
