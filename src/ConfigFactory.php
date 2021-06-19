@@ -18,8 +18,8 @@ use function sprintf;
 final class ConfigFactory
 {
     /**
-     * @param array<string>        $argv
-     * @param array<string, mixed> $options
+     * @param array<string>              $argv
+     * @param array<string, string|bool> $options
      */
     public static function fromFile(string $configFile, int $argc = 1, array $argv = [''], array $options = []): Config
     {
@@ -43,8 +43,8 @@ final class ConfigFactory
     }
 
     /**
-     * @param array<string>        $argv
-     * @param array<string, mixed> $options
+     * @param array<string>              $argv
+     * @param array<string, string|bool> $options
      */
     public static function fromCommandLine(int $argc, array $argv, array $options): Config
     {

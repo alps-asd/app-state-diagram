@@ -10,6 +10,7 @@ use function explode;
 use function is_string;
 use function property_exists;
 
+/** @psalm-immutable */
 final class Option
 {
     /**
@@ -37,7 +38,7 @@ final class Option
     public $color;
 
     /**
-     * @param array<string, mixed> $options
+     * @param array<string, string|bool> $options
      */
     public function __construct(array $options, ?SimpleXMLElement $filter)
     {
@@ -48,7 +49,7 @@ final class Option
     }
 
     /**
-     * @param array<string, mixed> $options
+     * @param array<string, string|bool> $options
      *
      * @return array<string>
      */
@@ -62,7 +63,7 @@ final class Option
     }
 
     /**
-     * @param array<string, mixed> $options
+     * @param array<string, string|bool> $options
      *
      * @return array<string>
      */
@@ -76,7 +77,7 @@ final class Option
     }
 
     /**
-     * @param array<string, mixed> $options
+     * @param array<string, string|bool> $options
      */
     private function parseColor(array $options, ?SimpleXMLElement $filter): string
     {
