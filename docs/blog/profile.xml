@@ -18,13 +18,13 @@
     <descriptor id="About" title="About Us">
         <descriptor href="#goBlog"/>
     </descriptor>
-    <descriptor id="Blog" href="https://schema.org/Blog" title="Blog Post List" rel="collection">
+    <descriptor id="Blog" def="https://schema.org/Blog" title="Blog Post List" tag="collection">
         <descriptor href="#goAbout"/>
         <descriptor href="#doPost"/>
         <descriptor href="#goBlogPosting"/>
         <descriptor href="#BlogPosting"/>
     </descriptor>
-    <descriptor id="BlogPosting" href="https://schema.org/BlogPosting" title="Blog Post">
+    <descriptor id="BlogPosting" def="https://schema.org/BlogPosting" title="Blog Post" tag="item">
         <descriptor href="#id"/>
         <descriptor href="#dateCreated"/>
         <descriptor href="#articleBody"/>

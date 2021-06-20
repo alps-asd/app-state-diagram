@@ -1,63 +1,86 @@
 {
-  "$schema": "https://alps-io.github.io/schemas/alps.json",
+  "$schema":"https://alps-io.github.io/schemas/alps.json",
   "alps" : {
-    "version" : "1.0",
-    "title" : "MVC ToDo List",
-    "doc" : { "value" : "A suggested ALPS profile for the popular MVCTodo project"},
-    "link" : {"rel" : "help", "href" : "https://github.com/tastejs/todomvc/blob/master/app-spec.md"},
-    "descriptor" : [
-      {"href": "https://koriym.github.io/app-state-diagram/blog/profile.json#doPost"},
-      {"id" : "id", "type" : "semantic", "def": "http://schema.org/identifier"},
-      {"id" : "title", "type" : "semantic", "def": "http://schema.org/title"},
-      {"id" : "completed", "type" : "semantic", "def": "http://mamund.site44.com/alps/def/completed.txt"},
+    "version":"1.0",
+    "title":"MVC ToDo List",
+    "doc" : { "value":"A suggested ALPS profile for the popular MVCTodo project"},
+    "link" : {"rel":"help", "href":"https://github.com/tastejs/todomvc/blob/master/app-spec.md"},
+    "descriptor":[
+      {"id":"id", "type":"semantic", "def":"http://schema.org/identifier"},
+      {"id":"title", "type":"semantic", "def":"http://schema.org/title"},
+      {"id":"completed", "type":"semantic", "def":"http://mamund.site44.com/alps/def/completed.txt"},
 
-      {"id" : "home", "type": "semantic", "descriptor":
-      [
-        {"href": "#listAll"},{"href": "#goRelated"}
+      {"id":"Home", "type":"semantic", "descriptor": [
+        {"href":"#listAll"},
+        {"href":"#goRelated"}
+      ]},
+      {"id":"Related", "type":"semantic", "def":"https://tools.ietf.org/html/rfc4287#section-7.1", "descriptor":[
+        {"href":"#goHome"},
+        {"href":"#listAll"},
+        {"href":"#listActive"},
+        {"href":"#listCompleted"},
+        {"href":"#read"},
+        {"href":"#add"},
+        {"href":"#edit"},
+        {"href":"#remove"}
+      ]},
+      {"id":"TodoList", "type":"semantic", "descriptor":[
+        {"href":"#id"},
+        {"href":"#title"},
+        {"href":"#completed"},
+        {"href":"#read"},
+        {"href":"#add"},
+        {"href":"#listAll"},
+        {"href":"#listActive"}, 
+        {"href":"#listCompleted"},
+        {"href":"#goFirst"},
+        {"href":"#goNext"}, 
+        {"href":"#goPrevious"},
+        {"href":"#goLast"},
+        {"href":"#goHome"}, 
+        {"href":"#goRelated"}
       ]
       },
-      {"id": "related", "type": "semantic", "def": "https://tools.ietf.org/html/rfc4287#section-7.1", "descriptor":
-      [
-        {"href": "#goHome"},{"href": "#listAll"},{"href":"#listActive"},
-        {"href": "#listCompleted"},{"href": "#read"},{"href": "#add"},
-        {"href": "#edit"},{"href": "#remove"}
-      ]
-      },
-      {"id" : "todoList", "type" : "semantic", "descriptor" :
-      [
-        {"href":"#id"},{"href":"#title"},{"href":"#completed"},
-        {"href": "#read"}, {"href":"#add"},
-        {"href": "#listAll"}, {"href": "#listActive"}, {"href": "#listCompleted"},
-        {"href": "#goFirst"}, {"href": "#goNext"}, {"href": "#goPrevious"}, {"href": "#goLast"},
-        {"href": "#goHome"}, {"href": "#goRelated"}
-      ]
-      },
-      {"id" : "todoItem", "type" : "semantic", "descriptor" :
-      [
-        {"href":"#id"},{"href":"#title"},{"href":"#completed"},
-        {"href":"#listAll"},{"href":"#edit"},{"href":"#remove"},{"href":"#markCompleted"},{"href":"#clearCompleted"}, {"href": "#goRelated"}
-      ]
-      },
+      {"id":"TodoItem", "type":"semantic", "descriptor":[
+        {"href":"#id"},
+        {"href":"#title"},
+        {"href":"#completed"},
+        {"href":"#listAll"},
+        {"href":"#edit"},
+        {"href":"#remove"},
+        {"href":"#markCompleted"},
+        {"href":"#clearCompleted"}, 
+        {"href":"#goRelated"}
+      ]},
 
-      {"id": "goHome", "type": "safe", "rt": "#home"},
-      {"id": "goRelated", "type": "safe", "rt": "#related"},
-      {"id": "goFirst", "type": "safe", "rt": "#todoList"},
-      {"id": "goPrevious", "type": "safe", "rt": "#todoList"},
-      {"id": "goNext", "type": "safe", "rt": "#todoList"},
-      {"id": "goLast", "type": "safe", "rt": "#todoList"},
-      {"id" : "listAll", "type" : "safe", "rt": "#todoList"},
-      {"id" : "listActive", "type" : "safe", "rt": "#todoList"},
-      {"id" : "listCompleted", "type" : "safe", "rt": "#todoList"},
-      {"id" : "read", "type" : "safe", "rt": "#todoItem", "descriptor": [{"href": "#id"}]},
-      {"id" : "add", "type" : "unsafe", "rt": "#todoItem", "descriptor":
-      [{"href": "#title"}, {"href": "#completed"}]
-      },
-      {"id" : "edit", "type" : "idempotent", "rt": "#todoItem", "descriptor":
-      [{"href": "#id"}, {"href": "#title"}, {"href": "#completed"}]
-      },
-      {"id" : "remove", "type" : "idempotent", "rt": "#todoList", "descriptor": [{"href": "#id"}]},
-      {"id" : "markCompleted", "type" : "idempotent", "rt": "#todoItem", "descriptor": [{"href": "#id"}]},
-      {"id" : "clearCompleted", "type" : "idempotent", "rt": "#todoItem", "descriptor": [{"href": "#id"}]}
+      {"id":"goHome", "type":"safe", "rt":"#Home"},
+      {"id":"goRelated", "type":"safe", "rt":"#Related"},
+      {"id":"goFirst", "type":"safe", "rt":"#TodoList"},
+      {"id":"goPrevious", "type":"safe", "rt":"#TodoList"},
+      {"id":"goNext", "type":"safe", "rt":"#TodoList"},
+      {"id":"goLast", "type":"safe", "rt":"#TodoList"},
+      {"id":"listAll", "type":"safe", "rt":"#TodoList"},
+      {"id":"listActive", "type":"safe", "rt":"#TodoList"},
+      {"id":"listCompleted", "type":"safe", "rt":"#TodoList"},
+      {"id":"read", "type":"safe", "rt":"#TodoItem", "descriptor": [{"href":"#id"}]},
+      {"id":"add", "type":"unsafe", "rt":"#TodoItem", "descriptor": [
+        {"href":"#title"}, 
+        {"href":"#completed"}
+      ]},
+      {"id":"edit", "type":"idempotent", "rt":"#TodoItem", "descriptor": [
+        {"href":"#id"},
+        {"href":"#title"}, 
+        {"href":"#completed"}
+      ]},
+      {"id":"remove", "type":"idempotent", "rt":"#TodoList", "descriptor": [
+        {"href":"#id"}
+      ]},
+      {"id":"markCompleted", "type":"idempotent", "rt":"#TodoItem", "descriptor": [
+        {"href":"#id"}
+      ]},
+      {"id":"clearCompleted", "type":"idempotent", "rt":"#TodoItem", "descriptor": [
+        {"href":"#id"}
+      ]}
     ]
   }
 }
