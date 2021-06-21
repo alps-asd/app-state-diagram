@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Koriym\AppStateDiagram;
 
+use Koriym\AppStateDiagram\Exception\InvalidLabelOptionException;
 use SimpleXMLElement;
 
 use function explode;
@@ -101,7 +102,7 @@ final class Option
         $label = (string) ($options['label'] ?? $options['l']);
 
         if (! in_array($label, self::SUPPORTED_LABELS, true)) {
-            return 'id';
+            throw new InvalidLabelOptionException("{$label} is not supported. Supported values: [id|title|both].");
         }
 
         return $label;

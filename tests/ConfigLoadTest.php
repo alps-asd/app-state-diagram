@@ -62,14 +62,6 @@ class ConfigLoadTest extends TestCase
         $this->assertSame('title', $config->label);
     }
 
-    public function testInvalidLabelOptions(): void
-    {
-        $config = ConfigFactory::fromCommandLine(1, [__DIR__ . '/Fake/alps.json'], ['label' => 'test']);
-        $this->assertSame('id', $config->label);
-        $config = ConfigFactory::fromCommandLine(1, [__DIR__ . '/Fake/alps.json'], ['l' => 'test']);
-        $this->assertSame('id', $config->label);
-    }
-
     public function testMultipleLabelOptions(): void
     {
         $config = ConfigFactory::fromCommandLine(1, [__DIR__ . '/Fake/alps.json'], ['label' => 'both', 'l' => 'title']);
