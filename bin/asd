@@ -8,9 +8,7 @@ use Koriym\AppStateDiagram\DrawDiagram;
 use Koriym\AppStateDiagram\DumpDocs;
 use Koriym\AppStateDiagram\Exception\AlpsFileNotReadableException;
 use Koriym\AppStateDiagram\IndexPage;
-use Koriym\AppStateDiagram\LabelName;
 use Koriym\AppStateDiagram\LabelNameFactory;
-use Koriym\AppStateDiagram\LabelNameTitle;
 use Koriym\AppStateDiagram\Profile;
 use Koriym\AppStateDiagram\TaggedProfile;
 use Koriym\DataFile\Exception\DataFileNotFoundException;
@@ -23,7 +21,7 @@ foreach ([__DIR__ . '/../../../autoload.php', __DIR__ . '/../vendor/autoload.php
     }
 }
 
-$options = getopt('c:w::', ['config:', 'watch::', 'color::', 'and-tag::', 'or-tag::']);
+$options = getopt('c:w::l::', ['config:', 'watch::', 'color::', 'and-tag::', 'or-tag::', 'label::']);
 if ($argc === 1) {
     $options['c'] = getcwd();
 }

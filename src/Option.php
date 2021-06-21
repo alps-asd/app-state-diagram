@@ -7,12 +7,19 @@ namespace Koriym\AppStateDiagram;
 use SimpleXMLElement;
 
 use function explode;
+use function in_array;
 use function is_string;
 use function property_exists;
 
 /** @psalm-immutable */
 final class Option
 {
+    private const SUPPORTED_LABELS = [
+        'id',
+        'title',
+        'both',
+    ];
+
     /** @var bool */
     public $watch;
 
@@ -25,15 +32,19 @@ final class Option
     /** @var string */
     public $color;
 
+    /** @var string */
+    public $label;
+
     /**
      * @param array<string, string|bool> $options
      */
-    public function __construct(array $options, ?SimpleXMLElement $filter)
+    public function __construct(array $options, ?SimpleXMLElement $filter, ?string $label)
     {
         $this->watch = isset($options['w']) || isset($options['watch']);
         $this->and = $this->parseAndTag($options, $filter);
         $this->or = $this->parseOrTag($options, $filter);
         $this->color = $this->parseColor($options, $filter);
+        $this->label = $this->parseLabel($options, $label);
     }
 
     /**
@@ -78,5 +89,21 @@ final class Option
         }
 
         return $filter instanceof SimpleXMLElement && property_exists($filter, 'color') ? (string) $filter->color : '';
+    }
+
+    /** @param array<string, string|bool> $options */
+    private function parseLabel(array $options, ?string $label): string
+    {
+        if (! isset($options['label']) && ! isset($options['l'])) {
+            return $label ?? 'id';
+        }
+
+        $label = (string) ($options['label'] ?? $options['l']);
+
+        if (! in_array($label, self::SUPPORTED_LABELS, true)) {
+            return 'id';
+        }
+
+        return $label;
     }
 }
