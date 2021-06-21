@@ -25,19 +25,18 @@ final class ConfigFactory
     {
         $xml = (new XmlConfigLoad('asd.xml'))($configFile, dirname(__DIR__) . '/docs/asd.xsd');
         assert(property_exists($xml, 'watch'));
-        $label = property_exists($xml, 'label')  ? (string) $xml->label : 'id';
         $dir = is_dir($configFile) ? $configFile : dirname($configFile);
 
         $maybePath = (string) realpath($argv[$argc - 1]);
         $profile = is_file($maybePath) && $configFile !== $maybePath ? $maybePath : sprintf('%s/%s', $dir, (string) $xml->alpsFile);
         /** @var ?SimpleXMLElement $filter */
         $filter = property_exists($xml, 'filter') ? $xml->filter : null;
-        $option = new Option($options, $filter);
+        $option = new Option($options, $filter, property_exists($xml, 'label') ? (string) $xml->label : null);
 
         return new Config(
             $profile,
             $option->watch,
-            $label,
+            $option->label,
             new ConfigFilter($option->and, $option->or, $option->color)
         );
     }
@@ -48,12 +47,12 @@ final class ConfigFactory
      */
     public static function fromCommandLine(int $argc, array $argv, array $options): Config
     {
-        $option = new Option($options, null);
+        $option = new Option($options, null, null);
 
         return new Config(
             (string) realpath($argv[$argc - 1]),
             $option->watch,
-            'id', // @todo Change option
+            $option->label,
             new ConfigFilter($option->and, $option->or, $option->color)
         );
     }

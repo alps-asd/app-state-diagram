@@ -30,6 +30,7 @@ class ConfigLoadTest extends TestCase
             'and-tag' => 'a,b',
             'or-tag' => 'c,d',
             'color' => 'red',
+            'label' => 'title',
             '-c' => __DIR__ . '/Fake/config',
         ];
         $config = ConfigFactory::fromFile(__DIR__ . '/Fake/config', 1, [__DIR__ . '/Fake/alps.json'], $options);
@@ -39,6 +40,7 @@ class ConfigLoadTest extends TestCase
         $this->assertSame(['a', 'b'], $config->filter->and);
         $this->assertSame(['c', 'd'], $config->filter->or);
         $this->assertSame('red', $config->filter->color);
+        $this->assertSame('title', $config->label);
 
         return $options;
     }
@@ -57,5 +59,12 @@ class ConfigLoadTest extends TestCase
         $this->assertSame(['a', 'b'], $config->filter->and);
         $this->assertSame(['c', 'd'], $config->filter->or);
         $this->assertSame('red', $config->filter->color);
+        $this->assertSame('title', $config->label);
+    }
+
+    public function testMultipleLabelOptions(): void
+    {
+        $config = ConfigFactory::fromCommandLine(1, [__DIR__ . '/Fake/alps.json'], ['label' => 'both', 'l' => 'title']);
+        $this->assertSame('both', $config->label);
     }
 }
