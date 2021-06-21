@@ -47,6 +47,8 @@ final class Option
             return explode(',', $options['and-tag']);
         }
 
+        /** @var array<string> */ // phpcs:ignore SlevomatCodingStandard.Commenting.InlineDocCommentDeclaration.InvalidFormat
+
         return $filter instanceof SimpleXMLElement && property_exists($filter, 'and') ? (array) $filter->and : [];
     }
 
@@ -60,6 +62,8 @@ final class Option
         if (isset($options['or-tag']) && is_string($options['or-tag'])) {
             return explode(',', $options['or-tag']);
         }
+
+        /** @var array<string> */ // phpcs:ignore SlevomatCodingStandard.Commenting.InlineDocCommentDeclaration.InvalidFormat
 
         return $filter instanceof SimpleXMLElement && property_exists($filter, 'or') ? (array) $filter->or : [];
     }
