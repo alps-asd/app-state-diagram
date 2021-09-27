@@ -56,8 +56,8 @@ final class XmlLoader
             goto config_not_found;
         }
 
-        if (! is_dir($dirPath)) { // @phpstan-ignore-line
-            $dirPath = dirname($dirPath); // @phpstan-ignore-line
+        if (! is_dir($dirPath)) {
+            $dirPath = dirname($dirPath);
             // @codeCoverageIgnoreEnd
         }
 
@@ -67,7 +67,7 @@ final class XmlLoader
                 return $maybePath;
             }
 
-            $dirPath = dirname($dirPath); // @phpstan-ignore-line
+            $dirPath = dirname($dirPath);
         } while (dirname($dirPath) !== $dirPath);
 
         config_not_found:

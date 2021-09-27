@@ -56,9 +56,9 @@ final class Profile extends AbstractProfile
         $this->alpsFile = $alpsFile;
         [$profile, $descriptors] = (new SplitProfile())($alpsFile);
         /** @psalm-suppress all */
-        [$this->schema, $this->title, $this->doc] = [$profile->{'$schema'} ?? '', $profile->alps->title ?? '', $profile->alps->doc->value ??  '']; // @phpstan-ignore-line
+        [$this->schema, $this->title, $this->doc] = [$profile->{'$schema'} ?? '', $profile->alps->title ?? '', $profile->alps->doc->value ??  ''];
         /** @psalm-suppress all */
-        $this->linkRelations = new LinkRelations($profile->alps->link ?? null); // @phpstan-ignore-line
+        $this->linkRelations = new LinkRelations($profile->alps->link ?? null);
         $instances = new Instances();
         $this->storeDescriptors($descriptors, $instances, $hyperReference);
         $this->instances = $instances->get();
