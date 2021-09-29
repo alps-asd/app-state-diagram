@@ -9,3 +9,5 @@ RUN apt-get update \
  && apt-get -y --no-install-recommends install nodejs npm
 
 RUN COMPOSER_ALLOW_SUPERUSER=1 composer global require koriym/app-state-diagram
+
+WORKDIR /asd
