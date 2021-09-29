@@ -82,7 +82,7 @@ ASD uses an XML config file (by default, asd.xml). A barebones example looks lik
 ### watch
 
 ```xml
-<asd
+<asd>
   <watch>[bool]</watch>
 </asd>
 ```
@@ -93,7 +93,7 @@ Each time the profile file changes, the page is reloaded.
 ### filter
 
 ```xml
-<asd
+<asd>
   <filter>
     <and>[string]</and>
     <and>[string]</and>
@@ -110,7 +110,7 @@ Specify a tag name in the "or" or "and" field to specify the condition. If you s
 ### label
 
 ```xml
-<asd
+<asd>
   <label>[string]</label>
 </asd>
 ```
