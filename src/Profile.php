@@ -7,6 +7,7 @@ namespace Koriym\AppStateDiagram;
 use Koriym\AppStateDiagram\Exception\DescriptorIsNotArrayException;
 use Koriym\AppStateDiagram\Exception\DescriptorNotFoundException;
 use Koriym\AppStateDiagram\Exception\InvalidDescriptorException;
+use Seld\JsonLint\ParsingException;
 use stdClass;
 
 use function assert;
@@ -48,7 +49,7 @@ final class Profile extends AbstractProfile
     private $labelName;
 
     /**
-£     * @throws \Seld\JsonLint\ParsingException
+     * @throws ParsingException
      */
     public function __construct(string $alpsFile, LabelNameInterface $labelName, bool $doFinalize = true)
     {
@@ -56,7 +57,7 @@ final class Profile extends AbstractProfile
         $this->alpsFile = $alpsFile;
         [$profile, $descriptors] = (new SplitProfile())($alpsFile);
         /** @psalm-suppress all */
-        [$this->schema, $this->title, $this->doc] = [$profile->{'$schema'} ?? '', $profile->alps->title ?? '', $profile->alps->doc->value ??  ''];
+        [$this->schema, $this->title, $this->doc] = [$profile->{'$schema'} ?? '', $profile->alps->title ?? '', $profile->alps->doc->value ??  '']; // @phpstan-ignore-line
         /** @psalm-suppress all */
         $this->linkRelations = new LinkRelations($profile->alps->link ?? null);
         $instances = new Instances();
