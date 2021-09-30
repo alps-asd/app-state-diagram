@@ -12,6 +12,11 @@
     "child_process": "^1.0.2",
     "gulp": "^4.0.2",
     "minimist": "^1.2.5",
-    "path": "^0.12.7"
+    "path": "^0.12.7",
+    "ws": ">=7.5.0",
+    "xmlhttprequest-ssl": "^2.0.0"
+  },
+  "dependencies": {
+    "npm-check-updates": "^11.7.1"
   }
 }
