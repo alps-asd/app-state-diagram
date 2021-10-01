@@ -151,10 +151,7 @@ execute ASD
 ```bash
 mkdir asd_work
 curl -s https://koriym.github.io/app-state-diagram/blog/profile.json -o "asd_work/profile.json"
-docker run -v "$(pwd)/asd_work:/asd" -dit --init --name asd ghcr.io/koriym/app-state-diagram:latest
-docker exec asd composer --quiet global exec asd /asd/profile.json
-docker stop asd
-docker rm asd
+docker run -v "$(pwd)/asd_work:/asd" -dit --init --rm --name asd ghcr.io/koriym/app-state-diagram:latest composer --quiet global exec asd /asd/profile.json
 ```
 
 Open `asd_work/index.html` with browser.
