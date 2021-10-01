@@ -16,7 +16,7 @@ See online demo.
 
 ## Run
 
-There are two ways to run ASD: [Run with docker](#docker) (Recommended), or [Run locally](#run-locally).
+There are two ways to run ASD: [Run locally](#run-locally) or [Run with docker](#docker).
 
 ## <a name="docker">Run with Docker</a>
 
@@ -27,6 +27,7 @@ docker pull ghcr.io/koriym/app-state-diagram:latest
 ```
 
 For example, to create an ASD from `work/profile.xml`, run the following command.
+Watch mode not supported with docker.
 
 ```bash
 docker run -v "$(pwd)/work:/asd" -dit --init --rm --name asd ghcr.io/koriym/app-state-diagram:latest composer --quiet global exec asd /asd/profile.json
