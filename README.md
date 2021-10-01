@@ -7,14 +7,40 @@ The diagram is hypermedia in SVG format with application states and state transi
 <a href="https://koriym.github.io/app-state-diagram/blog/profile.svg"><img src="https://koriym.github.io/app-state-diagram/blog/profile.svg"></a>
 
 
-## Demo
+## Output Demo
 
 See online demo.
 
 * [blog](https://koriym.github.io/app-state-diagram/blog/)
 * [todomvc](https://koriym.github.io/app-state-diagram/todomvc/)
 
-## Requirement
+## Run
+
+There are two ways to run ASD: [Run with docker](#docker) (Recommended), or [Run locally](#run-locally).
+
+## <a name="docker">Run with Docker</a>
+
+Pull the [docker image](https://github.com/users/koriym/packages/container/package/app-state-diagram) for preparation.
+
+```bash
+docker pull ghcr.io/koriym/app-state-diagram:latest
+```
+
+For example, to create an ASD from `work/profile.xml`, run the following command.
+
+```bash
+docker run -v "$(pwd)/work:/asd" -dit --init --rm --name asd ghcr.io/koriym/app-state-diagram:latest composer --quiet global exec asd /asd/profile.json
+```
+
+Open `work/index.html` to browse the ASD document.
+
+```
+open ./asd_work/index.html
+```
+
+## [Run locally](#run-locally)
+
+### Requirement
 
 * [php](https://www.php.net/manual/en/install.php)
 * [composer](https://getcomposer.org/)
@@ -38,13 +64,13 @@ dot - graphviz version 2.47.1 (20210417.1919)
 7.17.0
 ```
 
-## Installation
+### Installation
 
 ```
 composer global require koriym/app-state-diagram
 ```
 
-## Usage
+### Usage
 
 ```
 composer global exec asd -- [options] [alpsFile]
@@ -65,7 +91,7 @@ composer global exec asd -- [options] [alpsFile]
 * Supports XML and JSON formats.
 * If you run it without the arguments,`asd.xml` config file in the same folder is used.
 
-## Configuration
+### Configuration
 
 ASD uses an XML config file (by default, asd.xml). A barebones example looks like this:
 
@@ -77,7 +103,7 @@ ASD uses an XML config file (by default, asd.xml). A barebones example looks lik
 </asd>
 ```
 
-## Optional <asd /> attributes
+### Optional <asd /> attributes
 
 ### watch
 
@@ -117,13 +143,13 @@ Specify a tag name in the "or" or "and" field to specify the condition. If you s
 
 Choose the word to display in the diagram from id, title, both.
 
-## Update
+### Update
 
 ```
 composer global update koriym/app-state-diagram
 ```
 
-## Run demo
+### Run demo
 
 Download [profile.example.json](https://koriym.github.io/app-state-diagram/blog/profile.json)
 ```
@@ -136,26 +162,4 @@ Open `index.html` with browser.
 
 ```
 open ./index.html
-```
-
-## ASD for Docker
-
-pull docker [image](https://github.com/users/koriym/packages/container/package/app-state-diagram)
-
-```bash
-docker pull ghcr.io/koriym/app-state-diagram:latest
-```
-
-execute ASD
-
-```bash
-mkdir asd_work
-curl -s https://koriym.github.io/app-state-diagram/blog/profile.json -o "asd_work/profile.json"
-docker run -v "$(pwd)/asd_work:/asd" -dit --init --rm --name asd ghcr.io/koriym/app-state-diagram:latest composer --quiet global exec asd /asd/profile.json
-```
-
-Open `asd_work/index.html` with browser.
-
-```
-open ./asd_work/index.html
 ```
