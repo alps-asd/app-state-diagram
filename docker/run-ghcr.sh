@@ -8,4 +8,5 @@ curl -s https://koriym.github.io/app-state-diagram/blog/profile.json -o "${workd
 
 docker run -v "$(pwd)/${workdir}:/asd" -dit --init --name asd ghcr.io/koriym/app-state-diagram:latest
 docker exec asd composer --quiet global exec asd /asd/profile.json
-docker rm -f asd
+docker stop asd
+docker rm asd
