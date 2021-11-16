@@ -6,7 +6,6 @@ The diagram is hypermedia in SVG format with application states and state transi
 
 <a href="https://koriym.github.io/app-state-diagram/blog/profile.svg"><img src="https://koriym.github.io/app-state-diagram/blog/profile.svg"></a>
 
-
 ## Output Demo
 
 See online demo.
@@ -16,7 +15,17 @@ See online demo.
 
 ## Run
 
-There are two ways to run ASD: [Run locally](#run-locally) or [Run with docker](#docker).
+There are three ways to run it: [Run locally](#run-locally),  [Run with docker](#docker), and [Git Hub Action](https://github.com/koriym/asd-action). Git Hub Action publishes a document in CI every time you push it to Git Hub.
+
+## Run with GitHub action
+
+Try ASD in one minute without installing it.
+
+1. Click **Use this template** in [alps-skeleton](https://github.com/koriym/alps-skeleton) site to create ALPS skeleton. Please make the repository public for GitHub Pages. 
+2. [Configuring a publishing source for your GitHub Pages site](https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site). Choose `gh-pages` and `/(root)` for the source.
+3. Each time you commit, ASD diagram and hyper lined document will be generated in `https://{user}.github.io/{repository}/`.
+
+
 
 ## <a name="docker">Run with Docker</a>
 
