@@ -6,8 +6,11 @@ namespace Koriym\AppStateDiagram;
 
 use PHPUnit\Framework\TestCase;
 
+use function assert;
 use function file_get_contents;
+use function is_object;
 use function json_decode;
+use function property_exists;
 
 class DescriptorScannerTest extends TestCase
 {
@@ -22,6 +25,8 @@ class DescriptorScannerTest extends TestCase
     public function testInvoke(): void
     {
         $alps = json_decode((string) file_get_contents(__DIR__ . '/Fake/alps.json'));
+        assert(is_object($alps));
+        assert(property_exists($alps, 'alps'));
         $semantics = ($this->scanner)($alps->alps->descriptor);
         $this->assertArrayHasKey('Index', $semantics);
         $this->assertArrayHasKey('About', $semantics);

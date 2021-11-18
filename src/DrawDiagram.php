@@ -106,7 +106,7 @@ EOT;
 
     private function getNode(AbstractDescriptor $descriptor, AppState $appSate): string
     {
-        $hasDescriptor = $descriptor instanceof SemanticDescriptor && isset($descriptor->descriptor);
+        $hasDescriptor = $descriptor instanceof SemanticDescriptor && isset($descriptor->descriptor); // @phpstan-ignore-line
         if (! $hasDescriptor) {
             return '';
         }

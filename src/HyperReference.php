@@ -9,7 +9,6 @@ use Koriym\AppStateDiagram\Exception\SharpMissingInHrefException;
 use stdClass;
 
 use function array_shift;
-use function dirname;
 use function explode;
 use function in_array;
 use function is_int;
@@ -17,17 +16,11 @@ use function strpos;
 
 class HyperReference
 {
-    /** @var string */
-    private $dir;
-
     /** @var array<string, string> */
     private $hrefs = [];
 
     /** @var FullPath  */
     private $fullPath;
-
-    /** @var string */
-    private $alpsFile;
 
     /** @var list<string> */
     private $done = [];
@@ -35,10 +28,8 @@ class HyperReference
     /** @var LabelNameInterface */
     private $labelName;
 
-    public function __construct(string $alpsFile, LabelNameInterface $labelName)
+    public function __construct(LabelNameInterface $labelName)
     {
-        $this->alpsFile = $alpsFile;
-        $this->dir = dirname($alpsFile);
         $this->fullPath = new FullPath();
         $this->labelName = $labelName;
     }

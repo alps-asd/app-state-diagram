@@ -46,7 +46,7 @@ class ConfigLoadTest extends TestCase
     }
 
     /**
-     * @param array<string, mixed> $options
+     * @param  array<string, bool|string> $options
      *
      * @depends testOverwriteConfig
      */

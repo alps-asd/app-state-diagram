@@ -53,7 +53,7 @@ final class Profile extends AbstractProfile
      */
     public function __construct(string $alpsFile, LabelNameInterface $labelName, bool $doFinalize = true)
     {
-        $hyperReference = new HyperReference($alpsFile, $labelName);
+        $hyperReference = new HyperReference($labelName);
         $this->alpsFile = $alpsFile;
         [$profile, $descriptors] = (new SplitProfile())($alpsFile);
         /** @psalm-suppress all */
@@ -82,7 +82,7 @@ final class Profile extends AbstractProfile
 
         $instance = $this->instances[$id];
         $instances = new Instances();
-        $hyperReference = new HyperReference($alpsFile, $this->labelName);
+        $hyperReference = new HyperReference($this->labelName);
         assert(is_string($instance->id));
         if (property_exists($instance, 'rt')) {
             assert(is_string($instance->rt));
