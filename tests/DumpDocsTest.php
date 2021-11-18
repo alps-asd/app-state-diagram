@@ -63,4 +63,13 @@ class DumpDocsTest extends TestCase
         $this->assertStringContainsString(/** @lang HTML */'<li>rel: help <a rel="help" href="https://github.com/koriym/app-state-diagram/">https://github.com/koriym/app-state-diagram/</a> API Help File</li>', $html);
         $this->assertStringContainsString(/** @lang HTML */'<li>rel: about <a rel="about" href="https://github.com/koriym/app-state-diagram/">https://github.com/koriym/app-state-diagram/</a></li>', $html);
     }
+
+    public function testMarkdown(): void
+    {
+        $alpsFile = __DIR__ . '/Fake/project/min/profile.json';
+        $profile = new Profile($alpsFile, new LabelName());
+        (new DumpDocs())($profile, $alpsFile, DumpDocs::MODE_MARKDOWN);
+        $this->assertFileExists(__DIR__ . '/Fake/project/min/docs/semantic.bar.md');
+        $this->assertFileExists(__DIR__ . '/Fake/project/min/docs/semantic.foo.md');
+    }
 }
