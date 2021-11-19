@@ -67,11 +67,6 @@ final class DumpDocs
 
             return;
         }
-
-        $md = <<<EOT
-    <iframe src="../{$imgSrc}" style="border:0; width:100%; height:95%" allow="fullscreen"></iframe>
-EOT;
-        file_put_contents($docsDir . '/asd.md', $md);
     }
 
     private function dumpImageHtml(string $title, string $docsDir, string $imgSrc): void

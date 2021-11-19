@@ -39,13 +39,14 @@ final class IndexPage
         $tags = $this->tags($profile->tags);
         $htmlTitle = htmlspecialchars($profile->title);
         $htmlDoc = nl2br(htmlspecialchars($profile->doc));
+        $profileImage = $mode === DumpDocs::MODE_HTML ? 'docs/asd.html' : 'profile.svg';
         $md = <<<EOT
 # {$htmlTitle}
 
 {$htmlDoc}
 
  * [ALPS]({$profilePath})
- * [Application State Diagram](docs/asd.html)
+ * [Application State Diagram]($profileImage)
  * Semantic Descriptors
 {$semantics}{$tags}{$linkRelations}
 EOT;

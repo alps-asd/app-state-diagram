@@ -3,7 +3,7 @@
 An ALPS profile example for ASD
 
  * [ALPS](profile.xml)
- * [Application State Diagram](docs/asd.md)
+ * [Application State Diagram](profile.svg)
  * Semantic Descriptors
    * [About](docs/semantic.About.md) (semantic), About Us
    * [articleBody](docs/semantic.articleBody.md) (semantic), article body
