@@ -151,6 +151,20 @@ Specify a tag name in the "or" or "and" field to specify the condition. If you s
 </asd>
 ```
 
+### markdown format
+
+If your repository is private and your account is not a GHE or GHE Cloud account, you cannot make GitHub Pqges private. In such a case, you can output the document as Markdown and make the document private.
+
+Unfortunately there is no way to host linked SVGs (diagrams) in Markdown, the dialog will lose the link when in Markdown.
+
+This is an option if public HTML is not possible.
+
+```xml
+<asd>
+  <mode>markdown</mode>
+</asd>
+```
+
 Choose the word to display in the diagram from id, title, both.
 
 ### Update
