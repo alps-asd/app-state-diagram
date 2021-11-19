@@ -208,7 +208,7 @@ EOT;
             return '';
         }
 
-        $table = ' * descriptor' . PHP_EOL . '| id | type | title |' . PHP_EOL . '|---|---|---|' . PHP_EOL;
+        $table = sprintf(' * descriptor%s%s| id | type | title |%s|---|---|---|%s', PHP_EOL, PHP_EOL, PHP_EOL, PHP_EOL);
         foreach ($descriptors as $descriptor) {
             $table .= sprintf('| %s | %s | %s |', $descriptor->htmlLink(), $descriptor->type, $descriptor->title) . PHP_EOL;
         }
