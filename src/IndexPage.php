@@ -20,7 +20,7 @@ final class IndexPage
     /** @var string */
     public $index;
 
-    public function __construct(Profile $profile)
+    public function __construct(Profile $profile, string $mode = DumpDocs::MODE_HTML)
     {
         $profilePath = pathinfo($profile->alpsFile, PATHINFO_BASENAME);
         $descriptors = $profile->descriptors;
@@ -49,7 +49,7 @@ final class IndexPage
  * Semantic Descriptors
 {$semantics}{$tags}{$linkRelations}
 EOT;
-        $this->index = (new MdToHtml())('ALPS', $md);
+        $this->index = $mode === DumpDocs::MODE_MARKDOWN ? $md : (new MdToHtml())('ALPS', $md);
     }
 
     /**

@@ -8,7 +8,6 @@
 /vendor-bin/tools/vendor
 .phpunit.result.cache
 .phpcs-cache
-tests/Fake/docs/
 tests/Fake/descriptor/
 lsp/
 tests/Fake/multiple_link/multiple_link.dot

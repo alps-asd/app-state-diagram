@@ -93,13 +93,14 @@ EOT;
 
     private function convertHtml(string $title, string $markdown): string
     {
-        return (new MdToHtml())($title, $markdown);
+        return (new MdToHtml())($title, $markdown) . PHP_EOL;
     }
 
     public function fileOutput(string $title, string $markDown, string $basePath, string $format): void
     {
         if ($format === self::MODE_MARKDOWN) {
-            file_put_contents(sprintf('%s.md', $basePath), $markDown);
+            $contents = str_replace('.html', '.md', $markDown);
+            file_put_contents(sprintf('%s.md', $basePath), $contents);
 
             return;
         }
