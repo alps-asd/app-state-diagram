@@ -27,5 +27,6 @@ jobs:
           push: true
           tags: ghcr.io/${{ github.repository_owner }}/${{ env.PACKAGE_NAME }}:${{ env.VERSION_NAME }}
           file: docker/app-state-diagram/Dockerfile
+          context: docker/app-state-diagram
         env:
           DOCKER_BUILDKIT: 1
