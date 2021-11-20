@@ -92,10 +92,12 @@ final class SplitProfile
         $array = xmlToArray($simpleXml, ['attributePrefix' => '', 'textContent' => 'value', 'autoText' => true, 'alwaysArray' => ['descriptor']]);
 
         if (! isset($array['alps']['descriptor'])) {
+            assert(is_array($array['alps']));
             $array['alps']['descriptor'] = [];
         }
 
         $descriptor = $array['alps']['descriptor'];
+        assert(is_array($descriptor));
 
         if (count($descriptor) === 1 && isset($descriptor[0]) && $descriptor[0] === []) {
             $array['alps']['descriptor'] = [];
