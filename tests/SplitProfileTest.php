@@ -25,4 +25,18 @@ class SplitProfileTest extends TestCase
         $this->assertSame($xmlProfile->alps->link->rel, $jsonProfile->alps->link->rel);
         $this->assertSame($xmlProfile->alps->link->href, $jsonProfile->alps->link->href);
     }
+
+    public function testNoDescriptorXml(): void
+    {
+        [$xmlProfile, $xmlDescriptors] = (new SplitProfile())(dirname(__DIR__) . '/tests/Fake/no_descriptor_profile.xml');
+        [$jsonProfile, $jsonDescriptors] = (new SplitProfile())(dirname(__DIR__) . '/tests/Fake/empty_descriptor_profile.json');
+        $this->assertSame(count($xmlDescriptors), count($jsonDescriptors));
+    }
+
+    public function testEmptyDescriptorXml(): void
+    {
+        [$xmlProfile, $xmlDescriptors] = (new SplitProfile())(dirname(__DIR__) . '/tests/Fake/empty_descriptor_profile.xml');
+        [$jsonProfile, $jsonDescriptors] = (new SplitProfile())(dirname(__DIR__) . '/tests/Fake/empty_descriptor_profile.json');
+        $this->assertSame(count($xmlDescriptors), count($jsonDescriptors));
+    }
 }
