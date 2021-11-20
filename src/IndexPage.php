@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace Koriym\AppStateDiagram;
 
+use function dirname;
 use function htmlspecialchars;
 use function implode;
 use function nl2br;
 use function pathinfo;
 use function sprintf;
+use function str_replace;
 use function strtoupper;
 use function uasort;
 
@@ -18,7 +20,10 @@ use const PHP_EOL;
 final class IndexPage
 {
     /** @var string */
-    public $index;
+    public $content;
+
+    /** @var string */
+    public $file;
 
     public function __construct(Profile $profile, string $mode = DumpDocs::MODE_HTML)
     {
@@ -50,7 +55,16 @@ final class IndexPage
  * Semantic Descriptors
 {$semantics}{$tags}{$linkRelations}
 EOT;
-        $this->index = $mode === DumpDocs::MODE_MARKDOWN ? $md : (new MdToHtml())('ALPS', $md);
+        $fileBase  = sprintf('%s/index.', dirname($profile->alpsFile));
+        if ($mode === DumpDocs::MODE_MARKDOWN) {
+            $this->content = str_replace('.html', '.md', $md);
+            $this->file = $fileBase . 'md';
+
+            return;
+        }
+
+        $this->content = (new MdToHtml())('ALPS', $md);
+        $this->file = $fileBase . 'html';
     }
 
     /**
