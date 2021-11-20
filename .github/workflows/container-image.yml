@@ -1,6 +1,8 @@
 name: container-image
 on:
   workflow_dispatch:
+  release:
+    types: [published]
 jobs:
   publish:
     name: Push Docker image to GitHub Container Registry
