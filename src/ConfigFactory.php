@@ -55,7 +55,8 @@ final class ConfigFactory
             (string) realpath($argv[$argc - 1]),
             $option->watch,
             $option->label,
-            new ConfigFilter($option->and, $option->or, $option->color)
+            new ConfigFilter($option->and, $option->or, $option->color),
+            $option->mode
         );
     }
 }

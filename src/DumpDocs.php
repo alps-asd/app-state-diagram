@@ -91,7 +91,7 @@ EOT;
         return (new MdToHtml())($title, $markdown) . PHP_EOL;
     }
 
-    public function fileOutput(string $title, string $markDown, string $basePath, string $format): void
+    private function fileOutput(string $title, string $markDown, string $basePath, string $format): void
     {
         if ($format === self::MODE_MARKDOWN) {
             $contents = str_replace('.html', '.md', $markDown);

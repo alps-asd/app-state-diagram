@@ -36,6 +36,9 @@ final class Option
     /** @var string */
     public $label;
 
+    /** @var string */
+    public $mode;
+
     /**
      * @param array<string, string|bool> $options
      */
@@ -46,6 +49,7 @@ final class Option
         $this->or = $this->parseOrTag($options, $filter);
         $this->color = $this->parseColor($options, $filter);
         $this->label = $this->parseLabel($options, $label);
+        $this->mode = $this->getMode($options);
     }
 
     /**
@@ -106,5 +110,13 @@ final class Option
         }
 
         return $label;
+    }
+
+    /** @param array<string, string|bool> $options */
+    private function getMode(array $options): string
+    {
+        $isMarkdown = isset($options['mode']) && $options['mode'] === DumpDocs::MODE_MARKDOWN;
+
+        return $isMarkdown ? DumpDocs::MODE_MARKDOWN : DumpDocs::MODE_HTML;
     }
 }
