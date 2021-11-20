@@ -13,6 +13,7 @@ use stdClass;
 use Throwable;
 
 use function assert;
+use function count;
 use function dirname;
 use function file_get_contents;
 use function is_array;
@@ -89,6 +90,17 @@ final class SplitProfile
 
         $simpleXml = ($this->xmlLoader)($alpsFile, dirname(__DIR__) . '/alps.xsd');
         $array = xmlToArray($simpleXml, ['attributePrefix' => '', 'textContent' => 'value', 'autoText' => true, 'alwaysArray' => ['descriptor']]);
+
+        if (! isset($array['alps']['descriptor'])) {
+            $array['alps']['descriptor'] = [];
+        }
+
+        $descriptor = $array['alps']['descriptor'];
+
+        if (count($descriptor) === 1 && isset($descriptor[0]) && $descriptor[0] === []) {
+            $array['alps']['descriptor'] = [];
+        }
+
         if (isset($array['alps']['doc']) && is_string($array['alps']['doc'])) {
             $array['alps']['doc'] = ['value' => $array['alps']['doc']];
         }
