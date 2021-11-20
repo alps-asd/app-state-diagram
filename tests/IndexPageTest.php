@@ -17,6 +17,13 @@ class IndexPageTest extends TestCase
         return $html;
     }
 
+    public function testInvokeMarkdownMode(): void
+    {
+        $alpsFile = __DIR__ . '/Fake/alps.json';
+        $content = (new IndexPage(new Profile($alpsFile, new LabelName()), DumpDocs::MODE_MARKDOWN))->content;
+        $this->assertStringContainsString('[About](docs/semantic.About.md) (semantic)', $content);
+    }
+
     /**
      * @depends testInvoke
      */
@@ -31,6 +38,14 @@ class IndexPageTest extends TestCase
         $html = (new IndexPage(new Profile($alpsFile, new LabelName())))->content;
         $this->assertStringContainsString('<li><a href="docs/tag.a.html">a</a>', $html);
         $this->assertStringContainsString('<li><a href="docs/tag.b.html">b</a>', $html);
+    }
+
+    public function testTagStringMarkdownMode(): void
+    {
+        $alpsFile = __DIR__ . '/Fake/alps_tag.json';
+        $content = (new IndexPage(new Profile($alpsFile, new LabelName()), DumpDocs::MODE_MARKDOWN))->content;
+        $this->assertStringContainsString('[a](docs/tag.a.md)', $content);
+        $this->assertStringContainsString('[b](docs/tag.b.md)', $content);
     }
 
     public function testText(): void
