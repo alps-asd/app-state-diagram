@@ -39,10 +39,14 @@ docker pull ghcr.io/koriym/app-state-diagram:latest
 ```
 
 For example, to create an ASD from `work/profile.xml`, run the following command.
-Watch mode not supported with docker.
 
 ```bash
 docker run -v "$(pwd)/work:/asd" -dit --init --rm --name asd ghcr.io/koriym/app-state-diagram:latest composer --quiet global exec asd /asd/profile.json
+```
+
+Watch mode
+```bash
+docker run -v "$(pwd)/work:/asd" -it --init --rm --name asd ghcr.io/koriym/app-state-diagram:latest composer global exec asd -- --watch /asd/profile.json
 ```
 
 Open `work/index.html` to browse the ASD document.
