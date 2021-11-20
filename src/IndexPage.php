@@ -20,7 +20,7 @@ final class IndexPage
     /** @var string */
     public $index;
 
-    public function __construct(Profile $profile)
+    public function __construct(Profile $profile, string $mode = DumpDocs::MODE_HTML)
     {
         $profilePath = pathinfo($profile->alpsFile, PATHINFO_BASENAME);
         $descriptors = $profile->descriptors;
@@ -39,17 +39,18 @@ final class IndexPage
         $tags = $this->tags($profile->tags);
         $htmlTitle = htmlspecialchars($profile->title);
         $htmlDoc = nl2br(htmlspecialchars($profile->doc));
+        $profileImage = $mode === DumpDocs::MODE_HTML ? 'docs/asd.html' : 'profile.svg';
         $md = <<<EOT
 # {$htmlTitle}
 
 {$htmlDoc}
 
  * [ALPS]({$profilePath})
- * [Application State Diagram](docs/asd.html)
+ * [Application State Diagram]($profileImage)
  * Semantic Descriptors
 {$semantics}{$tags}{$linkRelations}
 EOT;
-        $this->index = (new MdToHtml())('ALPS', $md);
+        $this->index = $mode === DumpDocs::MODE_MARKDOWN ? $md : (new MdToHtml())('ALPS', $md);
     }
 
     /**

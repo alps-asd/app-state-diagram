@@ -11,6 +11,7 @@
                 <xs:element ref="watch"/>
                 <xs:element ref="filter"/>
                 <xs:element ref="label"/>
+                <xs:element ref="mode"/>
             </xs:choice>
         </xs:complexType>
     </xs:element>
@@ -30,6 +31,11 @@
             <xs:documentation>Filter list</xs:documentation>
         </xs:annotation>
     </xs:element>
+    <xs:element name="mode" type="modeType">
+        <xs:annotation>
+            <xs:documentation>Output formart</xs:documentation>
+        </xs:annotation>
+    </xs:element>
     <xs:complexType name="filterType">
         <xs:sequence>
             <xs:element name="and" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
@@ -47,6 +53,12 @@
             <xs:enumeration value="id"/>
             <xs:enumeration value="title"/>
             <xs:enumeration value="both"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="modeType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="html"/>
+            <xs:enumeration value="markdown"/>
         </xs:restriction>
     </xs:simpleType>
 </xs:schema>

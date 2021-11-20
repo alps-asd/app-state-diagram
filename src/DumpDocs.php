@@ -31,10 +31,13 @@ use const PHP_EOL;
 
 final class DumpDocs
 {
+    public const MODE_HTML = 'html';
+    public const MODE_MARKDOWN = 'markdown';
+
     /** @var array<string, AbstractDescriptor> */
     private $descriptors = [];
 
-    public function __invoke(Profile $profile, string $alpsFile): void
+    public function __invoke(Profile $profile, string $alpsFile, string $format = self::MODE_HTML): void
     {
         $descriptors = $this->descriptors = $profile->descriptors;
         $descriptorDir = $this->mkDir(dirname($alpsFile), 'descriptor');
@@ -42,20 +45,28 @@ final class DumpDocs
         $asdFile = sprintf('../%s', basename(str_replace(['xml', 'json'], 'svg', $alpsFile)));
         foreach ($descriptors as $descriptor) {
             $markDown = $this->getSemanticDoc($descriptor, $asdFile, $profile->title);
-            $path = sprintf('%s/%s.%s.html', $docsDir, $descriptor->type, $descriptor->id);
-            $html = $this->convertHtml("{$descriptor->id} ({$descriptor->type})", $markDown) . PHP_EOL;
-            file_put_contents($path, $html);
+            $basePath = sprintf('%s/%s.%s', $docsDir, $descriptor->type, $descriptor->id);
+            $title = "{$descriptor->id} ({$descriptor->type})";
+            $this->fileOutput($title, $markDown, $basePath, $format);
         }
 
         foreach ($profile->tags as $tag => $descriptorIds) {
             $markDown = $this->getTagDoc($tag, $descriptorIds, $profile->title, $asdFile);
-            $path = sprintf('%s/tag.%s.html', $docsDir, $tag);
-            $html = $this->convertHtml($tag, $markDown);
-            file_put_contents($path, $html);
+            $basePath = sprintf('%s/tag.%s', $docsDir, $tag);
+            $this->fileOutput($tag, $markDown, $basePath, $format);
         }
 
         $imgSrc = str_replace(['json', 'xml'], 'svg', basename($alpsFile));
-        $this->dumpImageHtml($profile->title, $docsDir, $imgSrc);
+        $this->dumpImage($profile->title, $docsDir, $imgSrc, $format);
+    }
+
+    private function dumpImage(string $title, string $docsDir, string $imgSrc, string $format): void
+    {
+        if ($format === self::MODE_HTML) {
+            $this->dumpImageHtml($title, $docsDir, $imgSrc);
+
+            return;
+        }
     }
 
     private function dumpImageHtml(string $title, string $docsDir, string $imgSrc): void
@@ -77,7 +88,19 @@ EOT;
 
     private function convertHtml(string $title, string $markdown): string
     {
-        return (new MdToHtml())($title, $markdown);
+        return (new MdToHtml())($title, $markdown) . PHP_EOL;
+    }
+
+    private function fileOutput(string $title, string $markDown, string $basePath, string $format): void
+    {
+        if ($format === self::MODE_MARKDOWN) {
+            $contents = str_replace('.html', '.md', $markDown);
+            file_put_contents(sprintf('%s.md', $basePath), $contents);
+
+            return;
+        }
+
+        file_put_contents(sprintf('%s.html', $basePath), $this->convertHtml($title, $markDown));
     }
 
     private function save(string $dir, string $type, string $id, stdClass $class): void
@@ -180,7 +203,7 @@ EOT;
             return '';
         }
 
-        $table = ' * descriptor' . PHP_EOL . '| id | type | title |' . PHP_EOL . '|---|---|---|' . PHP_EOL;
+        $table = sprintf(' * descriptor%s%s| id | type | title |%s|---|---|---|%s', PHP_EOL, PHP_EOL, PHP_EOL, PHP_EOL);
         foreach ($descriptors as $descriptor) {
             $table .= sprintf('| %s | %s | %s |', $descriptor->htmlLink(), $descriptor->type, $descriptor->title) . PHP_EOL;
         }
@@ -265,6 +288,7 @@ EOT;
         return <<<EOT
 {$titleHeader}
 # {$tag}
+
 {$list}
 ---
 

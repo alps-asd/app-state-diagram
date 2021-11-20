@@ -18,20 +18,12 @@ final class Link
     /** @var TransDescriptor */
     public $transDescriptor;
 
-    /** @var list<string> */
-    private $labels = [];
-
-    /** @var LabelNameInterface */
-    private $labelName;
-
     public function __construct(SemanticDescriptor $semantic, TransDescriptor $trans, LabelNameInterface $labelName)
     {
         $this->from = $semantic->id;
         $this->to = $trans->rt;
         $this->label = $labelName->getLinkLabel($trans);
-        $this->labels[] = $this->label;
         $this->transDescriptor = $trans;
-        $this->labelName = $labelName;
     }
 
     public function __toString(): string

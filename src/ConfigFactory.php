@@ -31,13 +31,15 @@ final class ConfigFactory
         $profile = is_file($maybePath) && $configFile !== $maybePath ? $maybePath : sprintf('%s/%s', $dir, (string) $xml->alpsFile);
         /** @var ?SimpleXMLElement $filter */
         $filter = property_exists($xml, 'filter') ? $xml->filter : null;
+        $mode = property_exists($xml, 'mode') ? (string) $xml->mode : DumpDocs::MODE_HTML;
         $option = new Option($options, $filter, property_exists($xml, 'label') ? (string) $xml->label : null);
 
         return new Config(
             $profile,
             $option->watch,
             $option->label,
-            new ConfigFilter($option->and, $option->or, $option->color)
+            new ConfigFilter($option->and, $option->or, $option->color),
+            $mode
         );
     }
 
@@ -53,7 +55,8 @@ final class ConfigFactory
             (string) realpath($argv[$argc - 1]),
             $option->watch,
             $option->label,
-            new ConfigFilter($option->and, $option->or, $option->color)
+            new ConfigFilter($option->and, $option->or, $option->color),
+            $option->mode
         );
     }
 }

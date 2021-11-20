@@ -18,6 +18,7 @@ class ConfigLoadTest extends TestCase
         $this->assertFalse($config->watch);
         $this->assertSame(['tag1', 'tag2'], $config->filter->and);
         $this->assertSame(['tag3'], $config->filter->or);
+        $this->assertSame(DumpDocs::MODE_MARKDOWN, $config->outputMode);
     }
 
     /**
@@ -46,7 +47,7 @@ class ConfigLoadTest extends TestCase
     }
 
     /**
-     * @param array<string, mixed> $options
+     * @param  array<string, bool|string> $options
      *
      * @depends testOverwriteConfig
      */

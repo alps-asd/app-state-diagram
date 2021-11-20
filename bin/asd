@@ -21,7 +21,7 @@ foreach ([__DIR__ . '/../../../autoload.php', __DIR__ . '/../vendor/autoload.php
     }
 }
 
-$options = getopt('c:w::l::', ['config:', 'watch::', 'color::', 'and-tag::', 'or-tag::', 'label::']);
+$options = getopt('c:w::l::m::', ['config:', 'watch::', 'color::', 'and-tag::', 'or-tag::', 'label::', 'mode::']);
 if ($argc === 1) {
     $options['c'] = getcwd();
 }
@@ -48,7 +48,7 @@ try {
     $profile = new Profile($config->profile, $labelName);
     $dot = (new DrawDiagram($labelName))($profile);
     // dump docs/
-    (new DumpDocs())($profile, $config->profile);
+    (new DumpDocs())($profile, $config->profile, $config->outputMode);
 
     if ($config->hasTag) {
         $filteredProfile = new TaggedProfile($profile, $config->filter->or, $config->filter->and);
@@ -70,9 +70,11 @@ if ($status !== 0) {
     echo 'Warning: Graphviz error. https://graphviz.org/download/' . PHP_EOL;
 }
 
-$indexHtml = dirname($config->profile) . '/index.html';
-file_put_contents($indexHtml, (new IndexPage($profile))->index);
-echo "ASD generated. {$indexHtml}" . PHP_EOL;
+$ext = $config->outputMode === DumpDocs::MODE_HTML ? 'html' : 'md';
+$fileName = sprintf('%s/index.%s', dirname($config->profile), $ext);
+$content = str_replace('.html', '.md', (new IndexPage($profile, $config->outputMode))->index);
+file_put_contents($fileName, $content);
+echo "ASD generated. {$fileName}" . PHP_EOL;
 echo sprintf('Descriptors(%s), Links(%s)', count($profile->descriptors), count($profile->links)) . PHP_EOL;
 
 if (!isset($tagDot)) {
