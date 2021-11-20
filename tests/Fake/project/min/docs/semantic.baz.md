@@ -5,4 +5,4 @@ Semantic Descriptor
 
 ---
 
-[home](../index.html) | [asd](../profile.svg)
+[home](../index.md) | [asd](../profile.svg)
