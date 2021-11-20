@@ -6,6 +6,11 @@ The diagram is hypermedia in SVG format with application states and state transi
 
 <a href="https://koriym.github.io/app-state-diagram/blog/profile.svg"><img src="https://koriym.github.io/app-state-diagram/blog/profile.svg"></a>
 
+## About ALPS
+
+* [ALPS Quick Start (English)](https://hackmd.io/@koriym/quick-start-en)
+* [ALPS Quick Start (Japanese)](https://hackmd.io/@koriym/quick-start)
+
 ## Output Demo
 
 See online demo.
@@ -15,17 +20,15 @@ See online demo.
 
 ## Run
 
-There are three ways to run it: [Run locally](#run-locally),  [Run with docker](#docker), and [Git Hub Action](https://github.com/koriym/asd-action). Git Hub Action publishes a document in CI every time you push it to Git Hub.
+There are three ways to run it: [Run locally](#run-locally),  [Run with docker](#docker), and [Git Hub Action](https://github.com/koriym/asd-action).
 
 ## Run with GitHub action
 
-Try ASD in one minute without installing it.
+You can try ASD in a minute without installing any tools.
 
 1. Click **Use this template** in [alps-skeleton](https://github.com/koriym/alps-skeleton) site to create ALPS skeleton. Please make the repository public for GitHub Pages. 
 2. [Configuring a publishing source for your GitHub Pages site](https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site). Choose `gh-pages` and `/(root)` for the source.
-3. Each time you commit, ASD diagram and hyper lined document will be generated in `https://{user}.github.io/{repository}/`.
-
-
+3. Each time you commit, ASD diagram and hyper linked document will be generated in `https://{user}.github.io/{repository}/`.
 
 ## <a name="docker">Run with Docker</a>
 
