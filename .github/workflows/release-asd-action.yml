@@ -1,4 +1,4 @@
-name: Release (app-state-diagram)
+name: Release (asd-action)
 on:
   workflow_dispatch:
   release:
@@ -8,7 +8,7 @@ jobs:
     name: Push Docker image to GitHub Container Registry
     runs-on: ubuntu-latest
     env:
-      PACKAGE_NAME: app-state-diagram
+      PACKAGE_NAME: asd-action
       VERSION_NAME: latest
     steps:
       - name: Check out the repo
@@ -26,6 +26,6 @@ jobs:
         with:
           push: true
           tags: ghcr.io/${{ github.repository_owner }}/${{ env.PACKAGE_NAME }}:${{ env.VERSION_NAME }}
-          file: docker/app-state-diagram/Dockerfile
+          file: docker/asd-action/Dockerfile
         env:
           DOCKER_BUILDKIT: 1
