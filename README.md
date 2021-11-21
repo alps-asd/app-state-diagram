@@ -179,19 +179,3 @@ This is an option if public HTML is not possible.
   <mode>markdown</mode>
 </asd>
 ```
-
-### Run demo
-
-Download [profile.example.json](https://koriym.github.io/app-state-diagram/blog/profile.json)
-
-```
-% composer global exec asd ./profile.example.json 
-Changed current directory to /Users/akihito/.composer
-ASD generated. ./index.html
-```
-
-Open `index.html` with browser.
-
-```
-open ./index.html
-```
