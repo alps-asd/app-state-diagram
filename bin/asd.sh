@@ -7,8 +7,8 @@ if [ $# == 0 ]; then
 fi
 
 argc=$#
-options=${@:1:$((argc-1))}
-target=${@:argc:1}
+options=${*:1:$((argc-1))}
+target=${*:argc:1}
 
 profile=$(cd "$(dirname "$target")" || exit; pwd)/$(basename "$target") # path/to/profile.xml (absolute path)
 dir=$(dirname "$profile") # path/to
