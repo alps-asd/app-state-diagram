@@ -41,7 +41,7 @@ docker pull ghcr.io/koriym/app-state-diagram:latest
 ```
 
 ```bash
-curl -L https://raw.githubusercontent.com/koriym/app-state-diagram/32d45ca8c9a4d5bda0260596f947cb3cbba274a6/bin/asd.sh > /usr/local/bin/asd
+curl -L https://koriym.github.io/app-state-diagram/asd.sh > /usr/local/bin/asd
 chmod +x /usr/local/bin/asd
 ```
 ### Run demo
