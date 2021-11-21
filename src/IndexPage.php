@@ -10,7 +10,6 @@ use function implode;
 use function nl2br;
 use function pathinfo;
 use function sprintf;
-use function str_replace;
 use function strtoupper;
 use function uasort;
 
@@ -40,8 +39,9 @@ final class IndexPage
             return $order[$a->type] <=> $order[$b->type];
         });
         $linkRelations = $this->linkRelations($profile->linkRelations);
-        $semantics = $this->semantics($descriptors);
-        $tags = $this->tags($profile->tags);
+        $ext = $mode === DumpDocs::MODE_MARKDOWN ? 'md' : DumpDocs::MODE_HTML;
+        $semantics = $this->semantics($descriptors, $ext);
+        $tags = $this->tags($profile->tags, $ext);
         $htmlTitle = htmlspecialchars($profile->title);
         $htmlDoc = nl2br(htmlspecialchars($profile->doc));
         $profileImage = $mode === DumpDocs::MODE_HTML ? 'docs/asd.html' : 'profile.svg';
@@ -55,26 +55,18 @@ final class IndexPage
  * Semantic Descriptors
 {$semantics}{$tags}{$linkRelations}
 EOT;
-        $fileBase  = sprintf('%s/index.', dirname($profile->alpsFile));
-        if ($mode === DumpDocs::MODE_MARKDOWN) {
-            $this->content = str_replace('.html', '.md', $md);
-            $this->file = $fileBase . 'md';
-
-            return;
-        }
-
-        $this->content = (new MdToHtml())('ALPS', $md);
-        $this->file = $fileBase . 'html';
+        $this->file = sprintf('%s/index.%s', dirname($profile->alpsFile), $ext);
+        $this->content = $mode === DumpDocs::MODE_MARKDOWN ? $md : (new MdToHtml())('ALPS', $md);
     }
 
     /**
      * @param array<string, AbstractDescriptor> $semantics
      */
-    private function semantics(array $semantics): string
+    private function semantics(array $semantics, string $ext): string
     {
         $lines = [];
         foreach ($semantics as $semantic) {
-            $href = sprintf('docs/%s.%s.html', $semantic->type, $semantic->id);
+            $href = sprintf('docs/%s.%s.%s', $semantic->type, $semantic->id, $ext);
             $title = $semantic->title ? sprintf(', %s', $semantic->title) : '';
             $lines[] = sprintf('   * [%s](%s) (%s)%s', $semantic->id, $href, $semantic->type, $title);
         }
@@ -85,7 +77,7 @@ EOT;
     /**
      * @param array<string, list<string>> $tags
      */
-    private function tags(array $tags): string
+    private function tags(array $tags, string $ext): string
     {
         if ($tags === []) {
             return '';
@@ -93,7 +85,7 @@ EOT;
 
         $lines = [];
         foreach ($tags as $tag => $item) {
-            $href = "docs/tag.{$tag}.html";
+            $href = "docs/tag.{$tag}.{$ext}";
             $lines[] = "   * [{$tag}]({$href})";
         }
 
