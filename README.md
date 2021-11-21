@@ -33,18 +33,28 @@ You can try ASD in a minute without installing any tools.
 ## <a name="docker">Run with Docker</a>
 
 This is the most standard way.
-Pull the docker image.
+
+Pull the docker image and install ASD utility.
 
 ```bash
 docker pull ghcr.io/koriym/app-state-diagram:latest
 ```
 
-Install ASD utility.
-
 ```bash
 curl -L https://raw.githubusercontent.com/koriym/app-state-diagram/32d45ca8c9a4d5bda0260596f947cb3cbba274a6/bin/asd.sh > /usr/local/bin/asd
-chmod +x/usr/local/bin/asd
+chmod +x /usr/local/bin/asd
 ```
+### Run demo
+
+Perform the following steps.
+
+```
+mkdir work
+curl -L curl https://koriym.github.io/app-state-diagram/blog/profile.json > work/profile.json
+asd --watch ./work/profile.json
+```
+
+Has the ASD document been opened? Congratulations! Press the star in this repository to celebrate. 🌟
 
 ### Usage
 
@@ -70,7 +80,11 @@ asd [options] [alpsFile]
 * Supports XML and JSON formats.
 * If you run it without the arguments,`asd.xml` config file in the same folder is used.
 
+
 ## [Run locally](#run-locally)
+
+This method is currently mainly for developers.
+It is tedious and time consuming.
 
 ### Requirement
 
