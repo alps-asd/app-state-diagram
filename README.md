@@ -46,7 +46,7 @@ docker run -v "$(pwd)/work:/asd" -dit --init --rm --name asd ghcr.io/koriym/app-
 
 Watch mode
 ```bash
-docker run -v "$(pwd)/work:/asd" -it --init --rm --name asd ghcr.io/koriym/app-state-diagram:latest composer global exec asd -- --watch /asd/profile.json
+docker run -v "$(pwd)/work:/asd" -it --init --rm --name -p 3000:3000 asd ghcr.io/koriym/app-state-diagram:latest composer global exec asd -- --watch /asd/profile.json
 ```
 
 Open `work/index.html` to browse the ASD document.
