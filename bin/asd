@@ -26,7 +26,8 @@ if ($argc === 1) {
     $options['c'] = getcwd();
 }
 try {
-    $config = isset($options['c']) ? ConfigFactory::fromFile($options['c'], $argc, $argv, $options) : ConfigFactory::fromCommandLine($argc, $argv, $options);
+    $configOption = $options['c'] ?? $options['config'] ?? null;
+    $config = $configOption !== null ? ConfigFactory::fromFile($configOption, $argc, $argv, $options) : ConfigFactory::fromCommandLine($argc, $argv, $options);
 } catch (DataFileNotFoundException $e) {
     printf('Config file not found: %s', $e->getMessage());
     exit(1);
