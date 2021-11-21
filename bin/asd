@@ -71,7 +71,6 @@ if ($status !== 0) {
     echo 'Warning: Graphviz error. https://graphviz.org/download/' . PHP_EOL;
 }
 
-$ext = 'html';
 $index = new IndexPage($profile, $config->outputMode);
 file_put_contents($index->file, $index->content);
 echo "ASD generated. {$index->file}" . PHP_EOL;

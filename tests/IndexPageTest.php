@@ -60,7 +60,14 @@ class IndexPageTest extends TestCase
     {
         $alpsFile = __DIR__ . '/Fake/alps_has_single_link.json';
         $html = (new IndexPage(new Profile($alpsFile, new LabelName())))->content;
-        $this->assertStringContainsString('<li>rel: about <a rel="about" href="https://github.com/koriym/app-state-diagram/">https://github.com/koriym/app-state-diagram/</a></li>', $html);
+        $this->assertStringContainsString('<li>rel: about <a rel="about" href="https://github.com/koriym/app-state-diagram/index.html">https://github.com/koriym/app-state-diagram/index.html</a></li>', $html);
+    }
+
+    public function testLinkRelationsStringMarkdownMode(): void
+    {
+        $alpsFile = __DIR__ . '/Fake/alps_has_single_link.json';
+        $md = (new IndexPage(new Profile($alpsFile, new LabelName()), DumpDocs::MODE_MARKDOWN))->content;
+        $this->assertStringContainsString('* rel: about <a rel="about" href="https://github.com/koriym/app-state-diagram/index.html">https://github.com/koriym/app-state-diagram/index.html</a>', $md);
     }
 
     public function testMultipleLinkRelationsString(): void
