@@ -32,28 +32,43 @@ You can try ASD in a minute without installing any tools.
 
 ## <a name="docker">Run with Docker</a>
 
-Pull the [docker image](https://github.com/users/koriym/packages/container/package/app-state-diagram) for preparation.
+This is the most standard way.
+Pull the docker image.
 
 ```bash
 docker pull ghcr.io/koriym/app-state-diagram:latest
 ```
 
-For example, to create an ASD from `work/profile.xml`, run the following command.
+Install ASD utility.
 
 ```bash
-docker run -v "$(pwd)/work:/asd" -dit --init --rm --name asd ghcr.io/koriym/app-state-diagram:latest composer --quiet global exec asd /asd/profile.json
+curl -L https://raw.githubusercontent.com/koriym/app-state-diagram/32d45ca8c9a4d5bda0260596f947cb3cbba274a6/bin/asd.sh > /usr/local/bin/asd
+chmod +x/usr/local/bin/asd
 ```
 
-Watch mode
-```bash
-docker run -v "$(pwd)/work:/asd" -it --init --rm --name asd ghcr.io/koriym/app-state-diagram:latest composer global exec asd -- --watch /asd/profile.json
-```
-
-Open `work/index.html` to browse the ASD document.
+### Usage
 
 ```
-open ./asd_work/index.html
+asd [options] [alpsFile]
+
+    -c, --config=asd.xml
+        Path to a asd.xml configuration file
+
+    -w, --watch
+        Watch mode
+
+    --and-tag={tag1, tag2} --or-tag={tag3} [--color=red]
+        Filter graph
+
+    -l, --label={id|title|both}
+        Displayed words
+
+    -m, --mode={markdown|html}
+        Output format
 ```
+
+* Supports XML and JSON formats.
+* If you run it without the arguments,`asd.xml` config file in the same folder is used.
 
 ## [Run locally](#run-locally)
 
@@ -87,28 +102,21 @@ dot - graphviz version 2.47.1 (20210417.1919)
 composer global require koriym/app-state-diagram
 ```
 
+### Update
+
+```
+composer global update koriym/app-state-diagram
+```
+
 ### Usage
 
 ```
 composer global exec asd -- [options] [alpsFile]
-
-    -c, --config=asd.xml
-        Path to a asd.xml configuration file
-
-    -w, --watch
-        Watch mode
-
-    --and-tag={tag1, tag2} --or-tag={tag3} [--color=red]
-        Filter graph
-
-    -l, --label={id|title|both}
-        Displayed words
 ```
 
-* Supports XML and JSON formats.
-* If you run it without the arguments,`asd.xml` config file in the same folder is used.
+The options are the same as for the Docker version.
 
-### Configuration
+## Configuration
 
 ASD uses an XML config file (by default, asd.xml). A barebones example looks like this:
 
@@ -172,17 +180,10 @@ This is an option if public HTML is not possible.
 </asd>
 ```
 
-Choose the word to display in the diagram from id, title, both.
-
-### Update
-
-```
-composer global update koriym/app-state-diagram
-```
-
 ### Run demo
 
 Download [profile.example.json](https://koriym.github.io/app-state-diagram/blog/profile.json)
+
 ```
 % composer global exec asd ./profile.example.json 
 Changed current directory to /Users/akihito/.composer
