@@ -42,6 +42,14 @@ class DumpDocsTest extends TestCase
         $this->assertStringContainsString(/** @lang HTML */'<td>override foo-title</td>', $html);
     }
 
+    /** @depends testInvoke */
+    public function testSemanticPageContainsHref(): void
+    {
+        $html = (string) file_get_contents(__DIR__ . '/Fake/project/min/docs/semantic.override-foo.html');
+
+        $this->assertStringContainsString('<li>href: <a href="semantic.foo.html">foo</a></li>', $html);
+    }
+
     public function testTagDoc(): void
     {
         $alpsFile = __DIR__ . '/Fake/alps_tag.json';

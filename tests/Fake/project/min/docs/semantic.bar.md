@@ -6,7 +6,7 @@ Semantic Descriptor
 | id | type | title |
 |---|---|---|
 | [baz](semantic.baz.md) | semantic | baz-title |
-| [foo](semantic.foo.md) | semantic | override foo-title |
+| [override-foo](semantic.override-foo.md) | semantic | override foo-title |
 
 ---
 
