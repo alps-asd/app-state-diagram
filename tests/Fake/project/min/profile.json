@@ -3,10 +3,12 @@
   "alps": {
     "descriptor": [
       {"id": "foo", "title": "foo-title"},
-      {"id": "bar", "descriptor": [
-        {"id": "baz", "title": "baz-title"},
-        {"href": "#foo", "title": "override foo-title"}
-      ]}
+      {"id": "bar", "link": [{"href": "https://github.com/koriym/app-state-diagram/index.html", "rel": "about"}],
+        "descriptor": [
+          {"id": "baz", "title": "baz-title"},
+          {"id": "override-foo", "href": "#foo", "title": "override foo-title", "tag": "foo"}
+        ]
+      }
     ]
   }
 }

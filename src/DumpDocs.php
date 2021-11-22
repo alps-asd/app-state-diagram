@@ -9,14 +9,13 @@ use stdClass;
 use function assert;
 use function basename;
 use function dirname;
+use function explode;
 use function file_put_contents;
 use function filter_var;
 use function implode;
 use function is_dir;
 use function is_string;
-use function json_encode;
 use function mkdir;
-use function preg_replace;
 use function property_exists;
 use function sprintf;
 use function str_replace;
@@ -25,10 +24,9 @@ use function substr;
 use function usort;
 
 use const FILTER_VALIDATE_URL;
-use const JSON_PRETTY_PRINT;
-use const JSON_UNESCAPED_SLASHES;
 use const PHP_EOL;
 
+/** @psalm-suppress MissingConstructor */
 final class DumpDocs
 {
     public const MODE_HTML = 'html';
@@ -37,10 +35,13 @@ final class DumpDocs
     /** @var array<string, AbstractDescriptor> */
     private $descriptors = [];
 
+    /** @var "html"|"md" */
+    private $ext;
+
     public function __invoke(Profile $profile, string $alpsFile, string $format = self::MODE_HTML): void
     {
         $descriptors = $this->descriptors = $profile->descriptors;
-        $descriptorDir = $this->mkDir(dirname($alpsFile), 'descriptor');
+        $this->ext = $format === self::MODE_MARKDOWN ? 'md' : self::MODE_HTML;
         $docsDir = $this->mkDir(dirname($alpsFile), 'docs');
         $asdFile = sprintf('../%s', basename(str_replace(['xml', 'json'], 'svg', $alpsFile)));
         foreach ($descriptors as $descriptor) {
@@ -64,8 +65,6 @@ final class DumpDocs
     {
         if ($format === self::MODE_HTML) {
             $this->dumpImageHtml($title, $docsDir, $imgSrc);
-
-            return;
         }
     }
 
@@ -93,22 +92,14 @@ EOT;
 
     private function fileOutput(string $title, string $markDown, string $basePath, string $format): void
     {
+        $file = sprintf('%s.%s', $basePath, $this->ext);
         if ($format === self::MODE_MARKDOWN) {
-            $contents = str_replace('.html', '.md', $markDown);
-            file_put_contents(sprintf('%s.md', $basePath), $contents);
+            file_put_contents($file, $markDown);
 
             return;
         }
 
-        file_put_contents(sprintf('%s.html', $basePath), $this->convertHtml($title, $markDown));
-    }
-
-    private function save(string $dir, string $type, string $id, stdClass $class): void
-    {
-        $file = sprintf('%s/%s.%s.json', $dir, $type, $id);
-        $jsonTabSpace4 = (string) json_encode($class, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
-        $json =  $this->convertTabSpaceTwo($jsonTabSpace4) . PHP_EOL;
-        file_put_contents($file, $json);
+        file_put_contents($file, $this->convertHtml($title, $markDown));
     }
 
     private function mkDir(string $baseDir, string $dirName): string
@@ -121,11 +112,6 @@ EOT;
         return $dir;
     }
 
-    private function convertTabSpaceTwo(string $json): string
-    {
-        return (string) preg_replace('/^(  +?)\\1(?=[^ ])/m', '$1', $json);
-    }
-
     private function getSemanticDoc(AbstractDescriptor $descriptor, string $asd, string $title): string
     {
         $descriptorSemantic = $this->getDescriptorInDescriptor($descriptor);
@@ -133,12 +119,9 @@ EOT;
         $description = '';
         $description .= $this->getDescriptorProp('type', $descriptor);
         $description .= $this->getDescriptorProp('title', $descriptor);
-        /** @psalm-suppress all */
-        $description .= $this->getDescriptorKeyValue('doc', $descriptor->doc->value ?? '');
-        $description .= $this->getDescriptorProp('ref', $descriptor);
+        $description .= $this->getDescriptorProp('href', $descriptor);
+        $description .= $this->getDescriptorKeyValue('doc', (string) ($descriptor->doc->value ?? ''));
         $description .= $this->getDescriptorProp('def', $descriptor);
-        $description .= $this->getDescriptorProp('ref', $descriptor);
-        $description .= $this->getDescriptorProp('src', $descriptor);
         $description .= $this->getDescriptorProp('rel', $descriptor);
         $description .= $this->getTag($descriptor->tags);
         $linkRelations = $this->getLinkRelations($descriptor->linkRelations);
@@ -150,7 +133,7 @@ EOT;
 {$description}{$rt}{$linkRelations}{$descriptorSemantic}
 ---
 
-[home](../index.html) | [asd]($asd)
+[home](../index.{$this->ext}) | [asd]($asd)
 EOT;
     }
 
@@ -160,16 +143,28 @@ EOT;
             return '';
         }
 
-        if ($this->isUrl((string) $descriptor->{$key})) {
-            return " * {$key}: [{$descriptor->$key}]({$descriptor->$key})" . PHP_EOL;
+        $value = (string) $descriptor->{$key};
+        if ($this->isUrl($value)) {
+            return " * {$key}: [{$value}]({$value})" . PHP_EOL;
         }
 
-        return " * {$key}: {$descriptor->$key}" . PHP_EOL;
+        if ($this->isFragment($value)) {
+            [, $id] = explode('#', $value);
+
+            return " * {$key}: [{$id}](semantic.{$id}.{$this->ext})" . PHP_EOL;
+        }
+
+        return " * {$key}: {$value}" . PHP_EOL;
     }
 
     private function isUrl(string $text): bool
     {
         return filter_var($text, FILTER_VALIDATE_URL) !== false;
+    }
+
+    private function isFragment(string $text): bool
+    {
+        return substr($text, 0, 1) === '#';
     }
 
     private function getDescriptorKeyValue(string $key, string $value): string
@@ -189,7 +184,7 @@ EOT;
 
         assert($descriptor instanceof TransDescriptor);
 
-        return sprintf(' * rt: [%s](semantic.%s.html)', $descriptor->rt, $descriptor->rt) . PHP_EOL;
+        return sprintf(' * rt: [%s](semantic.%s.%s)', $descriptor->rt, $descriptor->rt, $this->ext) . PHP_EOL;
     }
 
     private function getDescriptorInDescriptor(AbstractDescriptor $descriptor): string
@@ -205,7 +200,7 @@ EOT;
 
         $table = sprintf(' * descriptor%s%s| id | type | title |%s|---|---|---|%s', PHP_EOL, PHP_EOL, PHP_EOL, PHP_EOL);
         foreach ($descriptors as $descriptor) {
-            $table .= sprintf('| %s | %s | %s |', $descriptor->htmlLink(), $descriptor->type, $descriptor->title) . PHP_EOL;
+            $table .= sprintf('| %s | %s | %s |', $descriptor->htmlLink($this->ext), $descriptor->type, $descriptor->title) . PHP_EOL;
         }
 
         return $table;
@@ -266,7 +261,7 @@ EOT;
     {
         $string = [];
         foreach ($tags as $tag) {
-            $string[] = "[{$tag}](tag.{$tag}.html)";
+            $string[] = "[{$tag}](tag.{$tag}.{$this->ext})";
         }
 
         return implode(', ', $string) . PHP_EOL;
@@ -280,7 +275,7 @@ EOT;
         $list = '';
         foreach ($descriptorIds as $descriptorId) {
             $descriptor = $this->descriptors[$descriptorId];
-            $list .= " * {$descriptor->htmlLink()}" . PHP_EOL;
+            $list .= " * {$descriptor->htmlLink($this->ext)}" . PHP_EOL;
         }
 
         $titleHeader = $title ? sprintf('%s: Tag', $title) : 'Tag';
@@ -292,7 +287,7 @@ EOT;
 {$list}
 ---
 
-[home](../index.html) | [asd]({$asd}) | {$tag} 
+[home](../index.{$this->ext}) | [asd]({$asd}) | {$tag} 
 EOT;
     }
 
@@ -302,6 +297,6 @@ EOT;
             return '';
         }
 
-        return ' * links' . PHP_EOL . $linkRelations;
+        return ' * links' . PHP_EOL . $linkRelations . PHP_EOL;
     }
 }

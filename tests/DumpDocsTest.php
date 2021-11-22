@@ -42,6 +42,14 @@ class DumpDocsTest extends TestCase
         $this->assertStringContainsString(/** @lang HTML */'<td>override foo-title</td>', $html);
     }
 
+    /** @depends testInvoke */
+    public function testSemanticPageContainsHref(): void
+    {
+        $html = (string) file_get_contents(__DIR__ . '/Fake/project/min/docs/semantic.override-foo.html');
+
+        $this->assertStringContainsString('<li>href: <a href="semantic.foo.html">foo</a></li>', $html);
+    }
+
     public function testTagDoc(): void
     {
         $alpsFile = __DIR__ . '/Fake/alps_tag.json';
@@ -71,5 +79,38 @@ class DumpDocsTest extends TestCase
         (new DumpDocs())($profile, $alpsFile, DumpDocs::MODE_MARKDOWN);
         $this->assertFileExists(__DIR__ . '/Fake/project/min/docs/semantic.bar.md');
         $this->assertFileExists(__DIR__ . '/Fake/project/min/docs/semantic.foo.md');
+    }
+
+    /** @depends testMarkdown */
+    public function testSemanticPageFooterLinkMarkdownMode(): void
+    {
+        $md = (string) file_get_contents(__DIR__ . '/Fake/project/min/docs/semantic.bar.md');
+
+        $this->assertStringContainsString(
+            '[home](../index.md) | [asd](../profile.svg)',
+            $md
+        );
+    }
+
+    /** @depends testMarkdown */
+    public function testTagPageFooterLinkMarkdownMode(): void
+    {
+        $md = (string) file_get_contents(__DIR__ . '/Fake/project/min/docs/tag.foo.md');
+
+        $this->assertStringContainsString(
+            '[home](../index.md) | [asd](../profile.svg) | foo',
+            $md
+        );
+    }
+
+    /** @depends testMarkdown */
+    public function testLinkRelationsStringMarkdownMode(): void
+    {
+        $md = (string) file_get_contents(__DIR__ . '/Fake/project/min/docs/semantic.bar.md');
+
+        $this->assertStringContainsString(
+            '* rel: about <a rel="about" href="https://github.com/koriym/app-state-diagram/index.html">https://github.com/koriym/app-state-diagram/index.html</a>',
+            $md
+        );
     }
 }
