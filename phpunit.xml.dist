@@ -8,7 +8,7 @@
     </include>
   </coverage>
   <testsuites>
-    <testsuite name="all">
+    <testsuite name="app-state-diagram test suite">
       <directory>tests</directory>
     </testsuite>
   </testsuites>
