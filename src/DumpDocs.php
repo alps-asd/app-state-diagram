@@ -59,8 +59,6 @@ final class DumpDocs
     {
         if ($format === self::MODE_HTML) {
             $this->dumpImageHtml($title, $docsDir, $imgSrc);
-
-            return;
         }
     }
 
