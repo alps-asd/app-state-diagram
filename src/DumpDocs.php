@@ -14,9 +14,7 @@ use function filter_var;
 use function implode;
 use function is_dir;
 use function is_string;
-use function json_encode;
 use function mkdir;
-use function preg_replace;
 use function property_exists;
 use function sprintf;
 use function str_replace;
@@ -25,8 +23,6 @@ use function substr;
 use function usort;
 
 use const FILTER_VALIDATE_URL;
-use const JSON_PRETTY_PRINT;
-use const JSON_UNESCAPED_SLASHES;
 use const PHP_EOL;
 
 final class DumpDocs
@@ -40,7 +36,6 @@ final class DumpDocs
     public function __invoke(Profile $profile, string $alpsFile, string $format = self::MODE_HTML): void
     {
         $descriptors = $this->descriptors = $profile->descriptors;
-        $descriptorDir = $this->mkDir(dirname($alpsFile), 'descriptor');
         $docsDir = $this->mkDir(dirname($alpsFile), 'docs');
         $asdFile = sprintf('../%s', basename(str_replace(['xml', 'json'], 'svg', $alpsFile)));
         foreach ($descriptors as $descriptor) {
@@ -103,14 +98,6 @@ EOT;
         file_put_contents(sprintf('%s.html', $basePath), $this->convertHtml($title, $markDown));
     }
 
-    private function save(string $dir, string $type, string $id, stdClass $class): void
-    {
-        $file = sprintf('%s/%s.%s.json', $dir, $type, $id);
-        $jsonTabSpace4 = (string) json_encode($class, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
-        $json =  $this->convertTabSpaceTwo($jsonTabSpace4) . PHP_EOL;
-        file_put_contents($file, $json);
-    }
-
     private function mkDir(string $baseDir, string $dirName): string
     {
         $dir = sprintf('%s/%s', $baseDir, $dirName);
@@ -119,11 +106,6 @@ EOT;
         }
 
         return $dir;
-    }
-
-    private function convertTabSpaceTwo(string $json): string
-    {
-        return (string) preg_replace('/^(  +?)\\1(?=[^ ])/m', '$1', $json);
     }
 
     private function getSemanticDoc(AbstractDescriptor $descriptor, string $asd, string $title): string
