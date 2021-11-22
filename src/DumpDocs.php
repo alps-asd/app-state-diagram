@@ -113,8 +113,7 @@ EOT;
         $description = '';
         $description .= $this->getDescriptorProp('type', $descriptor);
         $description .= $this->getDescriptorProp('title', $descriptor);
-        /** @psalm-suppress all */
-        $description .= $this->getDescriptorKeyValue('doc', $descriptor->doc->value ?? '');
+        $description .= $this->getDescriptorKeyValue('doc', (string) ($descriptor->doc->value ?? ''));
         $description .= $this->getDescriptorProp('ref', $descriptor);
         $description .= $this->getDescriptorProp('def', $descriptor);
         $description .= $this->getDescriptorProp('ref', $descriptor);
