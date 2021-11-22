@@ -41,12 +41,13 @@ docker pull ghcr.io/koriym/app-state-diagram:latest
 ```
 
 ```bash
-curl -L https://koriym.github.io/app-state-diagram/asd.sh > /usr/local/bin/asd
-chmod +x /usr/local/bin/asd
+curl -L https://koriym.github.io/app-state-diagram/asd.sh > ./asd && chmod +x ./asd && sudo mv ./asd /usr/local/bin
 ```
+
 ### Run demo
 
-Perform the following steps.
+Perform the following steps and open [http://localhost:3000](http://localhost:3000)
+
 
 ```
 mkdir work
@@ -54,7 +55,7 @@ curl -L curl https://koriym.github.io/app-state-diagram/blog/profile.json > work
 asd --watch ./work/profile.json
 ```
 
-Has the ASD document been opened? Congratulations! Press the star in this repository to celebrate. 🌟
+ASD documen appeared? Congratulations! Press the star in this repository to celebrate. 🌟
 
 ### Usage
 
