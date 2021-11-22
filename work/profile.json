@@ -1,0 +1,42 @@
+{
+  "$schema": "https://alps-io.github.io/schemas/alps.json",
+  "alps": {
+    "title": "ALPS Blog",
+    "doc" : { "value" : "An ALPS profile example for ASD"},
+    "link" : {"rel" : "issue", "href" : "https://github.com/koriym/app-state-diagram/issues"},
+    "descriptor": [
+      {"id": "id", "type": "semantic", "def": "https://schema.org/identifier"},
+      {"id": "articleBody", "type": "semantic", "def": "https://schema.org/articleBody"},
+      {"id": "dateCreated", "type": "semantic", "def": "https://schema.org/dateCreated"},
+
+      {"id": "Index", "type": "semantic", "title": "Index Page", "descriptor": [
+        {"href": "#goBlog"}
+      ]},
+      {"id": "About", "type": "semantic", "descriptor": [
+        {"href": "#goBlog"}
+      ]},
+      {"id": "Blog", "type": "semantic", "def": "https://schema.org/Blog", "title": "Blog post list", "rel": "collection", "descriptor": [
+        {"href": "#BlogPosting"},
+        {"href": "#goBlogPosting"},
+        {"href": "#goAbout"},
+        {"href": "#doPost"}
+      ]},
+      {"id": "BlogPosting", "type": "semantic", "title": "Blog post item", "def": "https://schema.org/BlogPosting", "link": {"rel": "schema", "href": "schema/BlogPosting.json", "title": "JsonSchema file"} ,"descriptor": [
+        {"href": "#id"},
+        {"href": "#articleBody"},
+        {"href": "#dateCreated"},
+        {"href": "#goBlog"}
+      ]},
+
+      {"id": "goStart", "type": "safe", "rt": "#Blog"},
+      {"id": "goAbout", "type": "safe", "rt": "#About", "rel": "about"},
+      {"id": "goBlog", "type": "safe", "rt": "#Blog", "rel": "collection"},
+      {"id": "goBlogPosting", "type": "safe", "rt": "#BlogPosting", "rel": "item", "descriptor": [
+        {"href": "#id"}
+      ]},
+      {"id": "doPost", "type": "unsafe", "def": "https://activitystrea.ms/specs/json/1.0/#post-verb", "rt": "#Blog", "descriptor": [
+        {"href": "#articleBody"}
+      ]}
+    ]
+  }
+}
