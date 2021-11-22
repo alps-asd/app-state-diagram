@@ -9,6 +9,7 @@ use stdClass;
 use function assert;
 use function basename;
 use function dirname;
+use function explode;
 use function file_put_contents;
 use function filter_var;
 use function implode;
@@ -113,6 +114,7 @@ EOT;
         $description = '';
         $description .= $this->getDescriptorProp('type', $descriptor);
         $description .= $this->getDescriptorProp('title', $descriptor);
+        $description .= $this->getDescriptorProp('href', $descriptor);
         $description .= $this->getDescriptorKeyValue('doc', (string) ($descriptor->doc->value ?? ''));
         $description .= $this->getDescriptorProp('ref', $descriptor);
         $description .= $this->getDescriptorProp('def', $descriptor);
@@ -139,16 +141,28 @@ EOT;
             return '';
         }
 
-        if ($this->isUrl((string) $descriptor->{$key})) {
-            return " * {$key}: [{$descriptor->$key}]({$descriptor->$key})" . PHP_EOL;
+        $value = (string) $descriptor->{$key};
+        if ($this->isUrl($value)) {
+            return " * {$key}: [{$value}]({$value})" . PHP_EOL;
         }
 
-        return " * {$key}: {$descriptor->$key}" . PHP_EOL;
+        if ($this->isFragment($value)) {
+            [, $id] = explode('#', $value);
+
+            return " * {$key}: [{$id}](semantic.{$id}.html)" . PHP_EOL;
+        }
+
+        return " * {$key}: {$value}" . PHP_EOL;
     }
 
     private function isUrl(string $text): bool
     {
         return filter_var($text, FILTER_VALIDATE_URL) !== false;
+    }
+
+    private function isFragment(string $text): bool
+    {
+        return substr($text, 0, 1) === '#';
     }
 
     private function getDescriptorKeyValue(string $key, string $value): string

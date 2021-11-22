@@ -7,9 +7,11 @@ namespace Koriym\AppStateDiagram;
 use Koriym\AppStateDiagram\Exception\InvalidSemanticsException;
 use stdClass;
 
+use function assert;
 use function explode;
 use function is_string;
 use function json_encode;
+use function property_exists;
 use function sprintf;
 
 abstract class AbstractDescriptor
@@ -44,6 +46,9 @@ abstract class AbstractDescriptor
     /** @var object */
     public $source;
 
+    /** @var string|null */
+    public $href;
+
     /** @var LinkRelations */
     public $linkRelations;
 
@@ -70,6 +75,11 @@ abstract class AbstractDescriptor
         $this->title = $descriptor->title ?? ''; //@phpstan-ignore-line
         if (isset($descriptor->rel)) {
             $this->rel = (string) $descriptor->rel;
+        }
+
+        if (property_exists($descriptor, 'href')) {
+            assert(is_string($descriptor->href) || $descriptor->href === null);
+            $this->href = $descriptor->href;
         }
 
         /** @psalm-suppress all */
