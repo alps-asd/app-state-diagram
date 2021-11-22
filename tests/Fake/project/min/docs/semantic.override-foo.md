@@ -3,6 +3,7 @@ Semantic Descriptor
  * type: semantic
  * title: override foo-title
  * href: [foo](semantic.foo.md)
+ * tag: [foo](tag.foo.md)
 
 ---
 

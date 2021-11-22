@@ -80,4 +80,37 @@ class DumpDocsTest extends TestCase
         $this->assertFileExists(__DIR__ . '/Fake/project/min/docs/semantic.bar.md');
         $this->assertFileExists(__DIR__ . '/Fake/project/min/docs/semantic.foo.md');
     }
+
+    /** @depends testMarkdown */
+    public function testSemanticPageFooterLinkMarkdownMode(): void
+    {
+        $md = (string) file_get_contents(__DIR__ . '/Fake/project/min/docs/semantic.bar.md');
+
+        $this->assertStringContainsString(
+            '[home](../index.md) | [asd](../profile.svg)',
+            $md
+        );
+    }
+
+    /** @depends testMarkdown */
+    public function testTagPageFooterLinkMarkdownMode(): void
+    {
+        $md = (string) file_get_contents(__DIR__ . '/Fake/project/min/docs/tag.foo.md');
+
+        $this->assertStringContainsString(
+            '[home](../index.md) | [asd](../profile.svg) | foo',
+            $md
+        );
+    }
+
+    /** @depends testMarkdown */
+    public function testLinkRelationsStringMarkdownMode(): void
+    {
+        $md = (string) file_get_contents(__DIR__ . '/Fake/project/min/docs/semantic.bar.md');
+
+        $this->assertStringContainsString(
+            '* rel: about <a rel="about" href="https://github.com/koriym/app-state-diagram/index.html">https://github.com/koriym/app-state-diagram/index.html</a>',
+            $md
+        );
+    }
 }

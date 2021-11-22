@@ -10,8 +10,6 @@ use stdClass;
 use function json_encode;
 use function sprintf;
 
-use const PHP_EOL;
-
 final class LinkRelation
 {
     /** @var string */
@@ -50,7 +48,7 @@ final class LinkRelation
     {
         $str = sprintf('rel: %s <a rel="%s" href="%s">%s</a>', $this->rel, $this->rel, $this->href, $this->href);
         if ($this->title !== '') {
-            $str .= " {$this->title}" . PHP_EOL;
+            $str .= " {$this->title}";
         }
 
         return $str;

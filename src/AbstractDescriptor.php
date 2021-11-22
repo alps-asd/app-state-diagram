@@ -86,8 +86,8 @@ abstract class AbstractDescriptor
         $this->linkRelations = new LinkRelations($descriptor->link ?? null); //@phpstan-ignore-line
     }
 
-    public function htmlLink(): string
+    public function htmlLink(string $ext): string
     {
-        return sprintf('[%s](%s.%s.html)', $this->id, $this->type, $this->id);
+        return sprintf('[%s](%s.%s.%s)', $this->id, $this->type, $this->id, $ext);
     }
 }
