@@ -4,7 +4,7 @@ Produces a full application state diagram and hyperlinked documentation from [AL
 
 The diagram is hypermedia in SVG format with application states and state transitions linked to the respective semantic descriptor document HTML. The semantic descriptor document HTML is also linked to each other to represent the structure of the REST application.
 
-<a href="https://koriym.github.io/app-state-diagram/blog/profile.svg"><img src="https://koriym.github.io/app-state-diagram/blog/profile.svg"></a>
+<a href="https://alps-asd.github.io/app-state-diagram/blog/profile.svg"><img src="https://alps-asd.github.io/app-state-diagram/blog/profile.svg"></a>
 
 ## About ALPS
 
@@ -15,18 +15,18 @@ The diagram is hypermedia in SVG format with application states and state transi
 
 See online demo.
 
-* [blog](https://koriym.github.io/app-state-diagram/blog/)
-* [todomvc](https://koriym.github.io/app-state-diagram/todomvc/)
+* [blog](https://alps-asd.github.io/app-state-diagram/blog/)
+* [todomvc](https://alps-asd.github.io/app-state-diagram/todomvc/)
 
 ## Run
 
-There are three ways to run it: [Run locally](#run-locally),  [Run with docker](#docker), and [Git Hub Action](https://github.com/koriym/asd-action).
+There are three ways to run it: [Run locally](#run-locally),  [Run with docker](#docker), and [Git Hub Action](https://github.com/alps-asd/asd-action).
 
 ## Run with GitHub action
 
 You can try ASD in a minute without installing any tools.
 
-1. Click **Use this template** in [alps-skeleton](https://github.com/koriym/alps-skeleton) site to create ALPS skeleton. Please make the repository public for GitHub Pages. 
+1. Click **Use this template** in [alps-skeleton](https://github.com/alps-asd/alps-skeleton) site to create ALPS skeleton. Please make the repository public for GitHub Pages. 
 2. [Configuring a publishing source for your GitHub Pages site](https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site). Choose `gh-pages` and `/(root)` for the source.
 3. Each time you commit, ASD diagram and hyper linked document will be generated in `https://{user}.github.io/{repository}/`.
 
@@ -37,11 +37,11 @@ This is the most standard way.
 Pull the docker image and install ASD utility.
 
 ```bash
-docker pull ghcr.io/koriym/app-state-diagram:latest
+docker pull ghcr.io/alps-asd/app-state-diagram:latest
 ```
 
 ```bash
-curl -L https://koriym.github.io/app-state-diagram/asd.sh > ./asd && chmod +x ./asd && sudo mv ./asd /usr/local/bin
+curl -L https://alps-asd.github.io/app-state-diagram/asd.sh > ./asd && chmod +x ./asd && sudo mv ./asd /usr/local/bin
 ```
 
 ### Run demo
@@ -51,7 +51,7 @@ Perform the following steps and open [http://localhost:3000](http://localhost:30
 
 ```
 mkdir work
-curl -L curl https://koriym.github.io/app-state-diagram/blog/profile.json > work/profile.json
+curl -L curl https://alps-asd.github.io/app-state-diagram/blog/profile.json > work/profile.json
 asd --watch ./work/profile.json
 ```
 
@@ -138,7 +138,7 @@ ASD uses an XML config file (by default, asd.xml). A barebones example looks lik
 ```xml
 <?xml version="1.0"?>
 <asd xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-     xsi:noNamespaceSchemaLocation="https://koriym.github.io/app-state-diagram/asd.xsd">
+     xsi:noNamespaceSchemaLocation="https://alps-asd.github.io/app-state-diagram/asd.xsd">
     <alpsFile>profile.xml</alpsFile>
 </asd>
 ```

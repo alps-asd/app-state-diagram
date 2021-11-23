@@ -68,8 +68,8 @@ class DumpDocsTest extends TestCase
         $html = (string) file_get_contents(__DIR__ . '/Fake/docs/semantic.Item.html');
 
         $this->assertStringContainsString(/** @lang HTML */'<li>links', $html);
-        $this->assertStringContainsString(/** @lang HTML */'<li>rel: help <a rel="help" href="https://github.com/koriym/app-state-diagram/">https://github.com/koriym/app-state-diagram/</a> API Help File</li>', $html);
-        $this->assertStringContainsString(/** @lang HTML */'<li>rel: about <a rel="about" href="https://github.com/koriym/app-state-diagram/">https://github.com/koriym/app-state-diagram/</a></li>', $html);
+        $this->assertStringContainsString(/** @lang HTML */'<li>rel: help <a rel="help" href="https://github.com/alps-asd/app-state-diagram/">https://github.com/alps-asd/app-state-diagram/</a> API Help File</li>', $html);
+        $this->assertStringContainsString(/** @lang HTML */'<li>rel: about <a rel="about" href="https://github.com/alps-asd/app-state-diagram/">https://github.com/alps-asd/app-state-diagram/</a></li>', $html);
     }
 
     public function testMarkdown(): void
@@ -109,7 +109,7 @@ class DumpDocsTest extends TestCase
         $md = (string) file_get_contents(__DIR__ . '/Fake/project/min/docs/semantic.bar.md');
 
         $this->assertStringContainsString(
-            '* rel: about <a rel="about" href="https://github.com/koriym/app-state-diagram/index.html">https://github.com/koriym/app-state-diagram/index.html</a>',
+            '* rel: about <a rel="about" href="https://github.com/alps-asd/app-state-diagram/index.html">https://github.com/alps-asd/app-state-diagram/index.html</a>',
             $md
         );
     }
