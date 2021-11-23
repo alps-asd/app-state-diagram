@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
 if [ $# == 0 ]; then
-    echo usage: asd profile
-    echo @see https://github.com/koriym/app-state-diagram
+    echo usage: asd [options] alps_file
+    echo @see https://github.com/koriym/app-state-diagram#usage
     exit
 fi
 
