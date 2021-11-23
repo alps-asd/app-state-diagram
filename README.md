@@ -20,13 +20,13 @@ See online demo.
 
 ## Run
 
-There are three ways to run it: [Run locally](#run-locally),  [Run with docker](#docker), and [Git Hub Action](https://github.com/koriym/asd-action).
+There are three ways to run it: [Run locally](#run-locally),  [Run with docker](#docker), and [Git Hub Action](https://github.com/alps-asd/asd-action).
 
 ## Run with GitHub action
 
 You can try ASD in a minute without installing any tools.
 
-1. Click **Use this template** in [alps-skeleton](https://github.com/koriym/alps-skeleton) site to create ALPS skeleton. Please make the repository public for GitHub Pages. 
+1. Click **Use this template** in [alps-skeleton](https://github.com/alps-asd/alps-skeleton) site to create ALPS skeleton. Please make the repository public for GitHub Pages. 
 2. [Configuring a publishing source for your GitHub Pages site](https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site). Choose `gh-pages` and `/(root)` for the source.
 3. Each time you commit, ASD diagram and hyper linked document will be generated in `https://{user}.github.io/{repository}/`.
 
