@@ -4,7 +4,7 @@ Produces a full application state diagram and hyperlinked documentation from [AL
 
 The diagram is hypermedia in SVG format with application states and state transitions linked to the respective semantic descriptor document HTML. The semantic descriptor document HTML is also linked to each other to represent the structure of the REST application.
 
-<a href="https://koriym.github.io/app-state-diagram/blog/profile.svg"><img src="https://koriym.github.io/app-state-diagram/blog/profile.svg"></a>
+<a href="https://alps-asd.github.io/app-state-diagram/blog/profile.svg"><img src="https://alps-asd.github.io/app-state-diagram/blog/profile.svg"></a>
 
 ## About ALPS
 
@@ -15,8 +15,8 @@ The diagram is hypermedia in SVG format with application states and state transi
 
 See online demo.
 
-* [blog](https://koriym.github.io/app-state-diagram/blog/)
-* [todomvc](https://koriym.github.io/app-state-diagram/todomvc/)
+* [blog](https://alps-asd.github.io/app-state-diagram/blog/)
+* [todomvc](https://alps-asd.github.io/app-state-diagram/todomvc/)
 
 ## Run
 
@@ -41,7 +41,7 @@ docker pull ghcr.io/alps-asd/app-state-diagram:latest
 ```
 
 ```bash
-curl -L https://koriym.github.io/app-state-diagram/asd.sh > ./asd && chmod +x ./asd && sudo mv ./asd /usr/local/bin
+curl -L https://alps-asd.github.io/app-state-diagram/asd.sh > ./asd && chmod +x ./asd && sudo mv ./asd /usr/local/bin
 ```
 
 ### Run demo
@@ -51,7 +51,7 @@ Perform the following steps and open [http://localhost:3000](http://localhost:30
 
 ```
 mkdir work
-curl -L curl https://koriym.github.io/app-state-diagram/blog/profile.json > work/profile.json
+curl -L curl https://alps-asd.github.io/app-state-diagram/blog/profile.json > work/profile.json
 asd --watch ./work/profile.json
 ```
 
@@ -138,7 +138,7 @@ ASD uses an XML config file (by default, asd.xml). A barebones example looks lik
 ```xml
 <?xml version="1.0"?>
 <asd xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-     xsi:noNamespaceSchemaLocation="https://koriym.github.io/app-state-diagram/asd.xsd">
+     xsi:noNamespaceSchemaLocation="https://alps-asd.github.io/app-state-diagram/asd.xsd">
     <alpsFile>profile.xml</alpsFile>
 </asd>
 ```
