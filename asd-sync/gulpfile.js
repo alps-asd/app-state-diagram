@@ -31,7 +31,8 @@ function reload(cb) {
 }
 
 function asd(cb) {
-    cmd = 'asd ' + profile;
+    const asdPath = `${__dirname}/../bin/asd`;
+    const cmd = `${asdPath}  ${profile}`;
     try {
         console.log(execSync(cmd).toString());
     } catch (error) {
