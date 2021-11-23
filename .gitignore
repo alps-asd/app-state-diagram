@@ -14,3 +14,6 @@ lsp/
 tests/Fake/multiple_link/multiple_link.dot
 tests/Fake/multiple_link/multiple_link.svg
 tests/asd*
+/docker/asd-action/work/*
+!/docker/asd-action/work/profile.xml
+!/docker/asd-action/work/asd.xml
