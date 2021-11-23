@@ -20,7 +20,14 @@ foreach ([__DIR__ . '/../../../autoload.php', __DIR__ . '/../vendor/autoload.php
         break;
     }
 }
+if ($argc === 1) {
+    echo <<<EOT
+usage: asd [options] alps_file
+@see https://github.com/koriym/app-state-diagram#usage
 
+EOT;
+    exit(0);
+}
 $options = getopt('c:w::l::m::', ['config:', 'watch::', 'color::', 'and-tag::', 'or-tag::', 'label::', 'mode::']);
 if ($argc === 1) {
     $options['c'] = getcwd();
