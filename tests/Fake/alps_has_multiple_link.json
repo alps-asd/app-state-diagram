@@ -3,11 +3,11 @@
   "alps": {
     "link": [
       {
-        "href": "https://github.com/koriym/app-state-diagram/",
+        "href": "https://github.com/alps-asd/app-state-diagram/",
         "rel": "about"
       },
       {
-        "href": "https://github.com/koriym/app-state-diagram/",
+        "href": "https://github.com/alps-asd/app-state-diagram/",
         "rel": "repository"
       }
     ],
@@ -19,12 +19,12 @@
         "link": [
           {
             "rel": "help",
-            "href": "https://github.com/koriym/app-state-diagram/",
+            "href": "https://github.com/alps-asd/app-state-diagram/",
             "title": "API Help File"
           },
           {
             "rel": "about",
-            "href": "https://github.com/koriym/app-state-diagram/"
+            "href": "https://github.com/alps-asd/app-state-diagram/"
           }
         ],
         "descriptor": [

@@ -2,7 +2,7 @@
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
     <xs:annotation>
         <xs:documentation>ALPS ASD config</xs:documentation>
-        <xs:appinfo source="https://github.com/koriym/app-state-diagram"/>
+        <xs:appinfo source="https://github.com/alps-asd/app-state-diagram"/>
     </xs:annotation>
     <xs:element name="asd">
         <xs:complexType>

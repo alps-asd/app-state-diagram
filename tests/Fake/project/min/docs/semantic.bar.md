@@ -2,7 +2,7 @@ Semantic Descriptor
 # bar
  * type: semantic
  * links
-   * rel: about <a rel="about" href="https://github.com/koriym/app-state-diagram/index.html">https://github.com/koriym/app-state-diagram/index.html</a>
+   * rel: about <a rel="about" href="https://github.com/alps-asd/app-state-diagram/index.html">https://github.com/alps-asd/app-state-diagram/index.html</a>
  * descriptor
 
 | id | type | title |

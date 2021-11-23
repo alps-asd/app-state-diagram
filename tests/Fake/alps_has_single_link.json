@@ -2,7 +2,7 @@
   "$schema": "https://alps-io.github.io/schemas/alps.json",
   "alps": {
     "link": {
-      "href": "https://github.com/koriym/app-state-diagram/index.html",
+      "href": "https://github.com/alps-asd/app-state-diagram/index.html",
       "rel": "about"
     },
     "descriptor": [

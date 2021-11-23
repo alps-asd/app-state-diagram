@@ -23,7 +23,7 @@ foreach ([__DIR__ . '/../../../autoload.php', __DIR__ . '/../vendor/autoload.php
 if ($argc === 1) {
     echo <<<EOT
 usage: asd [options] alps_file
-@see https://github.com/koriym/app-state-diagram#usage
+@see https://github.com/alps-asd/app-state-diagram#usage
 
 EOT;
     exit(0);

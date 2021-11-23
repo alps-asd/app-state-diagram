@@ -37,7 +37,7 @@ This is the most standard way.
 Pull the docker image and install ASD utility.
 
 ```bash
-docker pull ghcr.io/koriym/app-state-diagram:latest
+docker pull ghcr.io/alps-asd/app-state-diagram:latest
 ```
 
 ```bash

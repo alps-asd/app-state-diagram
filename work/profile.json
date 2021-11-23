@@ -3,7 +3,7 @@
   "alps": {
     "title": "ALPS Blog",
     "doc" : { "value" : "An ALPS profile example for ASD"},
-    "link" : {"rel" : "issue", "href" : "https://github.com/koriym/app-state-diagram/issues"},
+    "link" : {"rel" : "issue", "href" : "https://github.com/alps-asd/app-state-diagram/issues"},
     "descriptor": [
       {"id": "id", "type": "semantic", "def": "https://schema.org/identifier"},
       {"id": "articleBody", "type": "semantic", "def": "https://schema.org/articleBody"},

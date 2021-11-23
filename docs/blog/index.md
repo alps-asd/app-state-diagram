@@ -21,4 +21,4 @@ An ALPS profile example for ASD
    * [collection](docs/tag.collection.md)
    * [item](docs/tag.item.md)
  * Links
-   * rel: issue <a rel="issue" href="https://github.com/koriym/app-state-diagram/issues">https://github.com/koriym/app-state-diagram/issues</a>
+   * rel: issue <a rel="issue" href="https://github.com/alps-asd/app-state-diagram/issues">https://github.com/alps-asd/app-state-diagram/issues</a>

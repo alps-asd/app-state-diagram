@@ -4,7 +4,7 @@
      xsi:noNamespaceSchemaLocation="https://alps-io.github.io/schemas/alps.xsd">
     <title>ALPS Blog</title>
     <doc>An ALPS profile example for ASD</doc>
-    <link href="https://github.com/koriym/app-state-diagram/issues" rel="issue"/>
+    <link href="https://github.com/alps-asd/app-state-diagram/issues" rel="issue"/>
 
     <!-- Ontology -->
     <descriptor id="id" def="https://schema.org/identifier" title="identifier"/>

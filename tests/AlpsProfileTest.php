@@ -46,7 +46,7 @@ class AlpsProfileTest extends TestCase
 
     public function testHttpProfile(): void
     {
-        $profile = new Profile('https://raw.githubusercontent.com/koriym/app-state-diagram/master/docs/blog/profile.json', new LabelName());
+        $profile = new Profile('https://raw.githubusercontent.com/alps-asd/app-state-diagram/master/docs/blog/profile.json', new LabelName());
         $this->assertSame('goBlog, collection (safe)', (string) $profile->links['Index->Blog:goBlog']);
     }
 

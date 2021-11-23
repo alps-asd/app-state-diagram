@@ -2,7 +2,7 @@
 
 if [ $# == 0 ]; then
     echo usage: asd [options] alps_file
-    echo @see https://github.com/koriym/app-state-diagram#usage
+    echo @see https://github.com/alps-asd/app-state-diagram#usage
     exit
 fi
 
@@ -14,4 +14,4 @@ profile=$(cd "$(dirname "$target")" || exit; pwd)/$(basename "$target") # path/t
 dir=$(dirname "$profile") # path/to
 basename=$(basename "$profile") # profile.xml
 
-docker run -v "$dir:/work" -it --init --rm --name asd -p 3000:3000 ghcr.io/koriym/app-state-diagram composer global exec asd -- "$options" /work/"$basename"
+docker run -v "$dir:/work" -it --init --rm --name asd -p 3000:3000 ghcr.io/alps-asd/app-state-diagram composer global exec asd -- "$options" /work/"$basename"
