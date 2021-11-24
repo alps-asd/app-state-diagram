@@ -50,6 +50,7 @@ final class Profile extends AbstractProfile
 
     /**
      * @throws ParsingException
+     * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
      */
     public function __construct(string $alpsFile, LabelNameInterface $labelName, bool $doFinalize = true)
     {
