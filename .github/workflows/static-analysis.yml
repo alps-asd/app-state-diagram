@@ -108,7 +108,9 @@ jobs:
         run: echo "::set-output name=dir::$(composer config cache-files-dir)"
 
       - name: Install dependencies
-        run: composer install --no-interaction --no-progress --prefer-dist
+        run:
+          composer install --no-interaction --no-progress --prefer-dist
+          composer require maglnet/composer-require-checker
 
       - name: Run PhpMetrics
         run: ./vendor/bin/phpmetrics --exclude=Exception src
@@ -136,5 +138,5 @@ jobs:
           composer require --dev maglnet/composer-require-checker ^3.0
 
       - name: Run composer-require-checker
-        run: ./vendor/bin/composer-require-checker --config-file=./composer-require-checker.json
+        run: ./vendor/bin/composer-require-checker
 
