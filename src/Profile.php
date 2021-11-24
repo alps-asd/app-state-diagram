@@ -86,7 +86,7 @@ final class Profile extends AbstractProfile
         assert(is_string($instance->id));
         if (property_exists($instance, 'rt')) {
             assert(is_string($instance->rt));
-            $this->rt($instance->rt, $instances, $alpsFile, $hyperReference);
+            $this->rt($instance->rt, $alpsFile, $hyperReference);
         }
 
         if (! property_exists($instance, 'descriptor')) {
@@ -102,7 +102,7 @@ final class Profile extends AbstractProfile
         return [$instances->get() + $crawledInstances, $hyperReference];
     }
 
-    private function rt(string $rt, Instances $instances, string $alpsFile, HyperReference $hyperReference): void
+    private function rt(string $rt, string $alpsFile, HyperReference $hyperReference): void
     {
         $rtKey = substr($rt, 1);
         if (isset($this->instances[$rtKey])) {

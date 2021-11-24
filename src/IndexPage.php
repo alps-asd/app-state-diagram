@@ -84,7 +84,10 @@ EOT;
         }
 
         $lines = [];
-        foreach ($tags as $tag => $item) {
+        $tagKeys = array_keys($tags);
+        foreach ($tagKeys as $tag) {
+
+
             $href = "docs/tag.{$tag}.{$ext}";
             $lines[] = "   * [{$tag}]({$href})";
         }
