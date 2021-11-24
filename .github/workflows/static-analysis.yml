@@ -90,31 +90,6 @@ jobs:
       - name: Run PHP Mess Detector
         run: ./vendor/bin/phpmd src text --exclude src/Annotation ./phpmd.xml
 
-  static-analysis-php-metrics:
-    name: Static Analysis with PhpMetrics
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: 8.0
-          coverage: none
-
-      - name: Get composer cache directory
-        id: composer-cache
-        run: echo "::set-output name=dir::$(composer config cache-files-dir)"
-
-      - name: Install dependencies
-        run:
-          composer install --no-interaction --no-progress --prefer-dist
-          composer require maglnet/composer-require-checker
-
-      - name: Run PhpMetrics
-        run: ./vendor/bin/phpmetrics --exclude=Exception src
-
   static-analysis-composer-require-checker:
     name: Static Analysis with ComposerRequireChecker
     runs-on: ubuntu-latest
