@@ -1,4 +1,13 @@
 # ALPS ASD
+[![codecov](https://codecov.io/gh/koriym/app-state-diagram/branch/master/graph/badge.svg?token=FIVDUG18AZ)](https://codecov.io/gh/koriym/app-state-diagram)
+[![Type Coverage](https://shepherd.dev/github/alps-asd/app-state-diagram/coverage.svg)](https://shepherd.dev/github/alps-asd/app-state-diagram)
+[![Continuous Integration](https://github.com/alps-asd/app-state-diagram/actions/workflows/continuous-integration.yml/badge.svg)](https://github.com/alps-asd/app-state-diagram/actions/workflows/continuous-integration.yml)
+[![Coding Standards](https://github.com/alps-asd/app-state-diagram/actions/workflows/coding-standards.yml/badge.svg)](https://github.com/alps-asd/app-state-diagram/actions/workflows/coding-standards.yml)
+[![Static Analysis](https://github.com/alps-asd/app-state-diagram/actions/workflows/static-analysis.yml/badge.svg)](https://github.com/alps-asd/app-state-diagram/actions/workflows/static-analysis.yml)
+
+[![Release (app-state-diagram)](https://github.com/alps-asd/app-state-diagram/actions/workflows/release-app-state-diagram.yml/badge.svg)](https://github.com/alps-asd/app-state-diagram/actions/workflows/release-app-state-diagram.yml)
+[![Release (asd-action)](https://github.com/alps-asd/app-state-diagram/actions/workflows/release-asd-action.yml/badge.svg)](https://github.com/alps-asd/app-state-diagram/actions/workflows/release-asd-action.yml) 
+
 
 Produces a full application state diagram and hyperlinked documentation from [ALPS](http://alps.io/) file.
 
