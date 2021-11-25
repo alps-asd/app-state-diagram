@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Koriym\AppStateDiagram;
 
+use function array_keys;
 use function dirname;
 use function htmlspecialchars;
 use function implode;
@@ -84,7 +85,8 @@ EOT;
         }
 
         $lines = [];
-        foreach ($tags as $tag => $item) {
+        $tagKeys = array_keys($tags);
+        foreach ($tagKeys as $tag) {
             $href = "docs/tag.{$tag}.{$ext}";
             $lines[] = "   * [{$tag}]({$href})";
         }
