@@ -63,9 +63,9 @@ try {
         $tagDot = $config->filter->color ? (new DrawDiagram($labelName))($profile, $filteredProfile, $config->filter->color) : (new DrawDiagram($labelName))($filteredProfile);
     }
 } catch (Exception $e) {
-    $path = explode('\\', get_class($e));
-    $msg = sprintf("%s: %s \n in %s:%s\n", end($path), $e->getMessage(), $e->getFile(), $e->getLine());
-    file_put_contents('php://stderr', $msg);
+    $shorName = (new \ReflectionClass($e))->getShortName();
+    $msg = sprintf("asd: %s(%s)",$shorName, $e->getMessage());
+    file_put_contents('php://stderr', $msg . PHP_EOL);
     exit(1);
 }
 $file = str_replace(['.xml','.json'], '.dot', $config->profile);
