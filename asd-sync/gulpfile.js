@@ -36,6 +36,8 @@ function asd(cb) {
     try {
         console.log(execSync(cmd).toString());
     } catch (error) {
+        browserSync.notify(error.message, 60000);
+        this.emit('end');
         console.error(error.message);
     }
     cb();
