@@ -63,8 +63,8 @@ try {
         $tagDot = $config->filter->color ? (new DrawDiagram($labelName))($profile, $filteredProfile, $config->filter->color) : (new DrawDiagram($labelName))($filteredProfile);
     }
 } catch (Exception $e) {
-    $shorName = (new \ReflectionClass($e))->getShortName();
-    $msg = sprintf("asd: %s(%s)",$shorName, $e->getMessage());
+    $shortName = (new \ReflectionClass($e))->getShortName();
+    $msg = sprintf("asd: %s(%s)",$shortName, $e->getMessage());
     file_put_contents('php://stderr', $msg . PHP_EOL);
     exit(1);
 }
