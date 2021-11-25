@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Koriym\AppStateDiagram;
 
+use Koriym\AppStateDiagram\Exception\DescriptorIsNotArrayException;
+use Koriym\AppStateDiagram\Exception\InvalidDescriptorException;
 use PHPUnit\Framework\TestCase;
 
 use function assert;
@@ -37,10 +39,21 @@ class DescriptorScannerTest extends TestCase
         $this->assertArrayHasKey('dateCreated', $semantics);
     }
 
-//    public function testExternalFile(): void
-//    {
-//        $alps = json_decode((string) file_get_contents(__DIR__ . '/Fake/min.json'));
-//        $semantics = ($this->scanner)($alps->alps->descriptor);
-//        $this->assertArrayHasKey('dateCreated', $semantics);
-//    }
+    public function testInvalidDescriptor(): void
+    {
+        $alps = json_decode((string) file_get_contents(__DIR__ . '/Fake/invalid_missing_id.json'));
+        assert(is_object($alps));
+        assert(property_exists($alps, 'alps'));
+        $this->expectException(InvalidDescriptorException::class);
+        ($this->scanner)($alps->alps->descriptor);
+    }
+
+    public function testInlineDescriptorIsNotArray(): void
+    {
+        $alps = json_decode((string) file_get_contents(__DIR__ . '/Fake/invalid_descriptor_array.json'));
+        assert(is_object($alps));
+        assert(property_exists($alps, 'alps'));
+        $this->expectException(DescriptorIsNotArrayException::class);
+        ($this->scanner)($alps->alps->descriptor);
+    }
 }
