@@ -35,8 +35,9 @@ function asd(cb) {
     const cmd = `${asdPath}  ${profile}`;
     try {
         console.log(execSync(cmd).toString());
-    } catch (error) {
-        browserSync.notify(error.message, 60000);
+   } catch (error) {
+        const errorMessage = "Error: " + error.message.substring( error.message.indexOf('asd: ') + 4);
+        browserSync.notify(errorMessage, 600000);
         this.emit('end');
         console.error(error.message);
     }
