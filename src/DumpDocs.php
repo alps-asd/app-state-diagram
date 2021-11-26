@@ -194,9 +194,6 @@ EOT;
         }
 
         $descriptors = $this->getInlineDescriptors($descriptor->descriptor);
-        if ($descriptors === []) {
-            return '';
-        }
 
         $table = sprintf(' * descriptor%s%s| id | type | title |%s|---|---|---|%s', PHP_EOL, PHP_EOL, PHP_EOL, PHP_EOL);
         foreach ($descriptors as $descriptor) {
@@ -207,9 +204,9 @@ EOT;
     }
 
     /**
-     * @param list<stdClass> $inlineDescriptors
+     * @param non-empty-list<stdClass> $inlineDescriptors
      *
-     * @return list<AbstractDescriptor>
+     * @return non-empty-list<AbstractDescriptor>
      */
     private function getInlineDescriptors(array $inlineDescriptors): array
     {
@@ -238,6 +235,8 @@ EOT;
 
             return $order[$a->type] <=> $order[$b->type];
         });
+
+        assert($descriptors !== []);
 
         return $descriptors;
     }
