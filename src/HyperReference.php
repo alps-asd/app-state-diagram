@@ -38,7 +38,7 @@ class HyperReference
     {
         $fullPath = ($this->fullPath)($alpsFile, $href);
         if (! is_int(strpos($fullPath, '#'))) {
-            throw new SharpMissingInHrefException($fullPath);
+            throw new SharpMissingInHrefException($href);
         }
 
         [, $id] = explode('#', $fullPath);
