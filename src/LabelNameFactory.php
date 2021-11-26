@@ -6,9 +6,14 @@ namespace Koriym\AppStateDiagram;
 
 final class LabelNameFactory
 {
+    // @codeCoverageIgnoreStart
+    // phpcs:ignore Squiz.Commenting.FunctionComment.WrongStyle
     private function __construct()
     {
     }
+
+    // @codeCoverageIgnoreEnd
+    // phpcs:ignore Squiz.Commenting.FunctionComment.WrongStyle
 
     public static function getInstance(string $label): LabelNameInterface
     {
