@@ -111,8 +111,7 @@ EOT;
             return [null, ''];
         }
 
-        $props = [];
-        $props = $this->getNodeProps($descriptor, $props, $labelName, $descriptors);
+        $props = $this->getNodeProps($descriptor, $labelName, $descriptors);
         if ($props === []) {
             return [null, ''];
         }
@@ -126,13 +125,13 @@ EOT;
     }
 
     /**
-     * @param list<string>                      $props
      * @param array<string, AbstractDescriptor> $descriptors
      *
      * @return list<string>
      */
-    private function getNodeProps(SemanticDescriptor $descriptor, array $props, LabelNameInterface $labelName, array $descriptors): array
+    private function getNodeProps(SemanticDescriptor $descriptor, LabelNameInterface $labelName, array $descriptors): array
     {
+        $props = [];
         foreach ($descriptor->descriptor as $item) {
             if ($this->isSemanticHref($item, $descriptors)) {
                 assert(is_string($item->href));
