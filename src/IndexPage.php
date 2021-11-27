@@ -94,12 +94,8 @@ EOT;
         return PHP_EOL . ' * Tags' . PHP_EOL . implode(PHP_EOL, $lines);
     }
 
-    private function linkRelations(?LinkRelations $linkRelations): string
+    private function linkRelations(LinkRelations $linkRelations): string
     {
-        if ($linkRelations === null) {
-            return '';
-        }
-
         if ((string) $linkRelations === '') {
             return '';
         }
