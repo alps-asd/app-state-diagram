@@ -1,0 +1,6 @@
+{
+  "$schema": "https://alps-io.github.io/schemas/alps.json",
+  "alps": {
+    "title": "title"
+  }
+}

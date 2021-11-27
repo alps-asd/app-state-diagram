@@ -61,7 +61,7 @@ class HyperReference
         foreach ($hrefs as $href) {
             [$file, $id] = explode('#', $href);
             if (! $file) {
-                continue;
+                continue; // @codeCoverageIgnore
             }
 
             if (isset($instances[$id])) {
@@ -93,13 +93,5 @@ class HyperReference
     public function merge(HyperReference $hyperReference): void
     {
         $this->hrefs += $hyperReference->hrefs;
-    }
-
-    /**
-     * @return array<string, string>
-     */
-    public function getHref(): array
-    {
-        return $this->hrefs;
     }
 }

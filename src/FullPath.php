@@ -34,7 +34,9 @@ final class FullPath
             return $href;
         }
 
-        return sprintf('%s/%s', $this->getDirname($alpsFile), $href);
+        $dirName = $this->getDirname($alpsFile);
+
+        return sprintf('%s/%s', $dirName, $href);
     }
 
     private function getDirname(string $alpsFile): string
@@ -48,6 +50,6 @@ final class FullPath
             throw new AlpsFileNotReadableException($alpsFile);
         }
 
-        return substr($alpsFile, 0, (int) strrpos($alpsFile, '/') + 1);
+        return substr($alpsFile, 0, (int) strrpos($alpsFile, '/'));
     }
 }

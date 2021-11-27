@@ -106,7 +106,7 @@ EOT;
      */
     private function getNode(AbstractDescriptor $descriptor, LabelNameInterface $labelName, array $descriptors, ?TaggedProfile $taggedProfile, ?string $color): array
     {
-        $hasDescriptor = $descriptor instanceof SemanticDescriptor && isset($descriptor->descriptor); // @phpstan-ignore-line
+        $hasDescriptor = $descriptor instanceof SemanticDescriptor && $descriptor->descriptor !== [];
         if (! $hasDescriptor) {
             return [null, ''];
         }
@@ -174,12 +174,12 @@ EOT;
 
         $pos = strpos($item->href, '#');
         if ($pos === false) {
-            throw new SharpMissingInHrefException($item->href);
+            throw new SharpMissingInHrefException($item->href); // @codeCoverageIgnore
         }
 
         $id = substr($item->href, $pos + 1);
         if (! isset($descriptors[$id])) {
-            throw new InvalidHrefException($item->href);
+            throw new InvalidHrefException($item->href); // @codeCoverageIgnore
         }
 
         $descriptor = $descriptors[$id];

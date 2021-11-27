@@ -9,7 +9,7 @@
       {"id": "id"},
       {"id": "s1", "descriptor": [
         {"id": "t1", "type": "safe", "rt": "#s2", "tag": "a b"},
-        {"href": "#id"},
+        {"href": "#id", "title": "id"},
         {"href": "alps_tag_external.json#t5"}
       ]},
       {"id": "s2", "descriptor": [
@@ -19,7 +19,7 @@
       {"id": "s3", "descriptor": [
         {"id": "t3", "type": "safe", "rt": "#s4", "tag": "a"}
       ]},
-      {"id": "s4"},
+      {"id": "s4", "descriptor": []},
       {"id": "t4", "type": "safe", "rt": "#s4"}
     ]
   }

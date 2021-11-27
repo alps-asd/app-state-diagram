@@ -58,8 +58,7 @@ final class AppState
 
             if (! array_key_exists($link->to, $this->taggedStates)) {
                 if (! isset($descriptors[$link->to])) {
-                    continue;
-                    // throw new LogicException($link->to);
+                    continue; // @codeCoverageIgnore
                 }
 
                 $states->add($descriptors[$link->to]);
@@ -86,6 +85,7 @@ final class AppState
         $base = '    %s [label = <%s> URL="docs/%s.%s.html" target="_parent"';
         $dot = '';
         foreach ($this->taggedStates as $descriptor) {
+            assert($descriptor instanceof SemanticDescriptor);
             $dot .= $this->format($descriptor, $base);
         }
 
@@ -97,16 +97,15 @@ final class AppState
         return $dot;
     }
 
-    private function format(AbstractDescriptor $descriptor, string $base): string
+    private function format(SemanticDescriptor $descriptor, string $base): string
     {
         if ($this->color === null) {
             $template = $base . ']' . PHP_EOL;
 
-            return sprintf($template, $descriptor->id, $descriptor->type, $descriptor->id);
+            return sprintf($template, $descriptor->id, $this->labelName->getNodeLabel($descriptor), $descriptor->type, $descriptor->id);
         }
 
         $template = $base . ' color="%s"]' . PHP_EOL;
-        assert($descriptor instanceof SemanticDescriptor);
 
         return sprintf($template, $descriptor->id, $this->labelName->getNodeLabel($descriptor), $descriptor->type, $descriptor->id, $this->color);
     }

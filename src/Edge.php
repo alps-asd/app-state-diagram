@@ -71,7 +71,7 @@ final class Edge
             $trs .= sprintf('<tr><td align="left" href="docs/%s.%s.html">%s (%s)</td></tr>', $link->transDescriptor->type, $link->transDescriptor->id, $link->transDescriptor->id, $link->transDescriptor->type);
         }
 
-        $base = '    %s -> %s [label=<<table  border="0">%s</table>> fontsize=13';
+        $base = '    %s -> %s [label=<<table border="0">%s</table>> fontsize=13';
 
         if (! isset($this->color, $this->taggedProfile)) {
             return sprintf($base . '];' . PHP_EOL, $links[0]->from, $links[0]->to, $trs);
@@ -79,7 +79,7 @@ final class Edge
 
         foreach ($links as $link) {
             if (in_array($link, $this->taggedProfile->links)) {
-                return sprintf($base . ' color="%s"];' . PHP_EOL, $links[0]->from, $links[0]->to, $trs);
+                return sprintf($base . ' color="%s"];' . PHP_EOL, $links[0]->from, $links[0]->to, $trs, $this->color);
             }
         }
 

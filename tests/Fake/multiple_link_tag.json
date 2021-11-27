@@ -1,0 +1,19 @@
+{
+  "$schema": "https://alps-io.github.io/schemas/alps.json",
+  "alps": {
+    "descriptor": [
+      {"id": "s1", "type": "semantic", "descriptor": [
+        {"href": "#t1"},
+        {"href": "#t2"},
+        {"href": "#t3"},
+        {"href": "#t4"}
+      ]},
+      {"id": "s2", "type": "semantic"},
+      {"id": "s3", "type": "semantic"},
+      {"id": "t1", "type": "safe", "rt": "#s2", "tag": "tag"},
+      {"id": "t2", "type": "safe", "rt": "#s2", "tag": "tag"},
+      {"id": "t3", "type": "safe", "rt": "#s3"},
+      {"id": "t4", "type": "safe", "rt": "#s3"}
+    ]
+  }
+}

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Koriym\AppStateDiagram;
 
+use Koriym\AppStateDiagram\Exception\AlpsFileNotReadableException;
 use PHPUnit\Framework\TestCase;
 
 use function file_exists;
@@ -67,5 +68,11 @@ class ConfigLoadTest extends TestCase
     {
         $config = ConfigFactory::fromCommandLine(1, [__DIR__ . '/Fake/alps.json'], ['label' => 'both', 'l' => 'title']);
         $this->assertSame('both', $config->label);
+    }
+
+    public function testInvalidProfile(): void
+    {
+        $this->expectException(AlpsFileNotReadableException::class);
+        ConfigFactory::fromCommandLine(1, ['invalidProfile'], []);
     }
 }

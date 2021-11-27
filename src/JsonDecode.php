@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Koriym\AppStateDiagram;
 
-use Koriym\AppStateDiagram\Exception\InvalidAlpsException;
 use Seld\JsonLint\JsonParser;
 use Seld\JsonLint\ParsingException;
 use UnexpectedValueException;
@@ -14,7 +13,6 @@ use function defined;
 use function is_object;
 use function json_decode;
 use function json_last_error;
-use function property_exists;
 
 use const JSON_ERROR_UTF8;
 
@@ -28,10 +26,6 @@ final class JsonDecode
         }
 
         assert(is_object($json));
-
-        if (! property_exists($json, 'alps')) {
-            throw new InvalidAlpsException('No apls attribute found');
-        }
 
         return $json;
     }

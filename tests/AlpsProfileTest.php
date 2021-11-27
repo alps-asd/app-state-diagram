@@ -6,6 +6,8 @@ namespace Koriym\AppStateDiagram;
 
 use Koriym\AppStateDiagram\Exception\AlpsFileNotReadableException;
 use Koriym\AppStateDiagram\Exception\DescriptorNotFoundException;
+use Koriym\AppStateDiagram\Exception\InvalidLinkRelationException;
+use Koriym\AppStateDiagram\Exception\SharpMissingInHrefException;
 use PHPUnit\Framework\TestCase;
 
 use function stream_wrapper_register;
@@ -81,5 +83,23 @@ class AlpsProfileTest extends TestCase
     {
         $this->expectException(DescriptorNotFoundException::class);
         new Profile(__DIR__ . '/Fake/alps.invalid_href_desc.json', new LabelName());
+    }
+
+    public function testNoHrefLink(): void
+    {
+        $this->expectException(InvalidLinkRelationException::class);
+        new Profile(__DIR__ . '/Fake/no_href_link.json', new LabelName());
+    }
+
+    public function testNoRelLink(): void
+    {
+        $this->expectException(InvalidLinkRelationException::class);
+        new Profile(__DIR__ . '/Fake/no_rel_link.json', new LabelName());
+    }
+
+    public function testNoRtTransDescriptor(): void
+    {
+        $this->expectException(SharpMissingInHrefException::class);
+        new Profile(__DIR__ . '/Fake/invalid_rt_descriptor.json', new LabelName());
     }
 }

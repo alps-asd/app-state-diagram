@@ -3,10 +3,7 @@
   "alps": {
     "descriptor": [
       {
-        "id": "foo",
-        "descriptor": {
-          "id": "bar"
-        }
+        "name": "invalid"
       }
     ]
   }
