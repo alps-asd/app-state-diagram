@@ -1,0 +1,7 @@
+{
+  "$schema": "https://alps-io.github.io/schemas/alps.json",
+  "alps": {
+    "link": {"rel": ""},
+    "descriptor": []
+  }
+}
