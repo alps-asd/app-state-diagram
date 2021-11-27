@@ -36,9 +36,6 @@
             "Koriym\\AppStateDiagram\\": [
                 "tests/",
                 "tests/Fake"
-            ],
-            "JetBrains\\PhpStorm\\": [
-                "stub/attributes"
             ]
         }
     },
@@ -57,7 +54,7 @@
         "cs": ["phpcs --standard=./phpcs.xml src tests"],
         "cs-fix": ["./vendor/bin/phpcbf src tests"],
         "clean": ["./vendor/bin/phpstan clear-result-cache", "./vendor/bin/psalm --clear-cache", "rm -rf tests/tmp/*.php"],
-        "sa": ["psalm --show-info=true", "./vendor/bin/phpstan analyse -c phpstan.neon"],
+        "sa": ["./vendor/bin/phpstan analyse -c phpstan.neon", "psalm --show-info=true"],
         "metrics": ["./vendor/bin/phpmetrics --report-html=build/metrics --exclude=Exception --log-junit=build/junit.xml --junit=build/junit.xml src"],
         "phpmd": ["./vendor/bin/phpmd src text ./phpmd.xml"],
         "build": ["@cs", "@sa", "@pcov", "@metrics"]
