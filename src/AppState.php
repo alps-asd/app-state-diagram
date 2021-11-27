@@ -4,12 +4,18 @@ declare(strict_types=1);
 
 namespace Koriym\AppStateDiagram;
 
+use JetBrains\PhpStorm\Immutable;
+
 use function array_key_exists;
 use function assert;
 use function sprintf;
 
 use const PHP_EOL;
 
+/**
+ * @psalm-immutable
+ */
+#[Immutable]
 final class AppState
 {
     /** @var array<string, AbstractDescriptor> */
@@ -27,8 +33,9 @@ final class AppState
     /**
      * @param Link[]                    $links
      * @param array<AbstractDescriptor> $descriptors
+     * @param list<string>              $filterIds
      */
-    public function __construct(array $links, array $descriptors, LabelNameInterface $labelName, ?TaggedProfile $profile = null, ?string $color = null)
+    public function __construct(array $links, array $descriptors, LabelNameInterface $labelName, ?TaggedProfile $profile = null, ?string $color = null, array $filterIds)
     {
         $this->labelName = $labelName;
         $taggedStates = new Descriptors();
@@ -59,11 +66,17 @@ final class AppState
 
         $this->states = $states->descriptors;
         $this->color = $color;
+        $this->remove($filterIds);
     }
 
-    public function remove(string $state): void
+    /**
+     * @param list<string> $filterIds
+     */
+    private function remove(array $filterIds): void
     {
-        unset($this->states[$state], $this->taggedStates[$state]);
+        foreach ($filterIds as $filterId) {
+            unset($this->states[$filterId], $this->taggedStates[$filterId]);
+        }
     }
 
     public function __toString(): string

@@ -15,13 +15,13 @@ class DrawDiagramTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->drawDiagram = new DrawDiagram(new LabelName());
+        $this->drawDiagram = new DrawDiagram();
     }
 
     public function testInvoke(): string
     {
         $profile = new Profile(__DIR__ . '/Fake/fake.json', new LabelName());
-        $dot = ($this->drawDiagram)($profile);
+        $dot = ($this->drawDiagram)($profile, new LabelName());
         $this->assertStringContainsString('State1 -> State2 [label = <goState2 (safe)>', $dot);
         $this->assertStringContainsString('State2 -> State3 [label = <goState3 (safe)>', $dot);
 
@@ -31,14 +31,14 @@ class DrawDiagramTest extends TestCase
     public function testExternalHref(): void
     {
         $alpsFile = __DIR__ . '/Fake/extern_href.json';
-        $dot = ($this->drawDiagram)(new Profile($alpsFile, new LabelName()));
+        $dot = ($this->drawDiagram)(new Profile($alpsFile, new LabelName()), new LabelName());
         $this->assertStringContainsString('(min)', $dot);
     }
 
     public function testMultipleLink(): void
     {
         $alpsFile = __DIR__ . '/Fake/multiple_link/multiple_link.json';
-        $dot = ($this->drawDiagram)(new Profile($alpsFile, new LabelName()));
+        $dot = ($this->drawDiagram)(new Profile($alpsFile, new LabelName()), new LabelName());
         $numberOfArrow = substr_count($dot, 'Index -> Foo');
         $this->assertSame(1, $numberOfArrow);
     }
@@ -46,7 +46,7 @@ class DrawDiagramTest extends TestCase
     public function testNoState(): void
     {
         $alpsFile = __DIR__ . '/Fake/no_state.json';
-        $dot = ($this->drawDiagram)(new Profile($alpsFile, new LabelName()));
+        $dot = ($this->drawDiagram)(new Profile($alpsFile, new LabelName()), new LabelName());
         $this->assertStringNotContainsString('name [', $dot);
     }
 
@@ -54,7 +54,7 @@ class DrawDiagramTest extends TestCase
     {
         $alpsFile = __DIR__ . '/Fake/share_link.json';
         $profile = new Profile($alpsFile, new LabelName());
-        $dot = ($this->drawDiagram)($profile);
+        $dot = ($this->drawDiagram)($profile, new LabelName());
         $this->assertStringContainsString('s1 -> s3 [label = <goS3 (safe)>', $dot);
         $this->assertStringContainsString('s2 -> s3 [label = <goS3 (safe)>', $dot);
         $this->assertStringContainsString('s1 [', $dot);
@@ -66,7 +66,7 @@ class DrawDiagramTest extends TestCase
     {
         $alpsFile = __DIR__ . '/Fake/alps_tag.json';
         $profile = new Profile($alpsFile, new LabelName());
-        $dot = ($this->drawDiagram)($profile);
+        $dot = ($this->drawDiagram)($profile, new LabelName());
         $this->assertStringContainsString('label="tag test"', $dot);
         $this->assertStringContainsString('s1 -> s2 [label = <t1 (safe)', $dot);
         $this->assertStringContainsString('s1 -> s5 [label = <t5 (safe)', $dot);
@@ -84,7 +84,7 @@ class DrawDiagramTest extends TestCase
             [],
             ['a', 'b']
         );
-        $dot = ($this->drawDiagram)($taggedProfile);
+        $dot = ($this->drawDiagram)($taggedProfile, new LabelName());
         $this->assertStringContainsString('label="tag test"', $dot);
         $this->assertStringContainsString('s1 -> s2 [label = <t1 (safe)>', $dot);
         $this->assertStringContainsString('s1 -> s5 [label = <t5 (safe)>', $dot);
@@ -103,7 +103,7 @@ class DrawDiagramTest extends TestCase
             [],
             ['a', 'b']
         );
-        $dot = ($this->drawDiagram)($profile, $taggedProfile, 'red');
+        $dot = ($this->drawDiagram)($profile, new LabelName(), $taggedProfile, 'red');
 
         $this->assertStringContainsString('label="tag test"', $dot);
         $this->assertStringContainsString('s2 [label = <s2> URL="docs/semantic.s2.html" target="_parent" color="red"]', $dot);
