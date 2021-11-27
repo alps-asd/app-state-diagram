@@ -1,0 +1,11 @@
+{
+  "$schema": "https://alps-io.github.io/schemas/alps.json",
+  "alps": {
+    "descriptor": [
+      {"id": "S1", "descriptor": [
+        {"href": "#t1"}
+      ]},
+      {"id": "t1", "type": "safe", "rt": "S1"}
+    ]
+  }
+}
