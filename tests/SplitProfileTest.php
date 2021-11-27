@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Koriym\AppStateDiagram;
 
+use Koriym\AppStateDiagram\Exception\InvalidAlpsException;
 use PHPUnit\Framework\TestCase;
+use UnexpectedValueException;
 
 use function assert;
 use function count;
@@ -38,5 +40,23 @@ class SplitProfileTest extends TestCase
         [$xmlProfile, $xmlDescriptors] = (new SplitProfile())(dirname(__DIR__) . '/tests/Fake/empty_descriptor_profile.xml');
         [$jsonProfile, $jsonDescriptors] = (new SplitProfile())(dirname(__DIR__) . '/tests/Fake/empty_descriptor_profile.json');
         $this->assertSame(count($xmlDescriptors), count($jsonDescriptors));
+    }
+
+    public function testNoAlpsJson(): void
+    {
+        $this->expectException(InvalidAlpsException::class);
+        (new SplitProfile())(__DIR__ . '/Fake/no_alps.json');
+    }
+
+    public function testNoDescriptorJson(): void
+    {
+        $this->expectException(InvalidAlpsException::class);
+        (new SplitProfile())(__DIR__ . '/Fake/no_descriptor.json');
+    }
+
+    public function testNoUTF8Json(): void
+    {
+        $this->expectException(UnexpectedValueException::class);
+        (new SplitProfile())(__DIR__ . '/Fake/no_utf8.json');
     }
 }
