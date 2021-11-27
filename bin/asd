@@ -54,13 +54,13 @@ if ($config->watch) {
 try {
     $labelName = LabelNameFactory::getInstance($config->label);
     $profile = new Profile($config->profile, $labelName);
-    $dot = (new DrawDiagram($labelName))($profile);
+    $dot = (new DrawDiagram())($profile, $labelName, null, null);
     // dump docs/
     (new DumpDocs())($profile, $config->profile, $config->outputMode);
 
     if ($config->hasTag) {
         $filteredProfile = new TaggedProfile($profile, $config->filter->or, $config->filter->and);
-        $tagDot = $config->filter->color ? (new DrawDiagram($labelName))($profile, $filteredProfile, $config->filter->color) : (new DrawDiagram($labelName))($filteredProfile);
+        $tagDot = $config->filter->color ? (new DrawDiagram())($profile, $labelName, $filteredProfile, $config->filter->color) : (new DrawDiagram())($profile, $labelName, $filteredProfile);
     }
 } catch (Exception $e) {
     $shortName = (new \ReflectionClass($e))->getShortName();

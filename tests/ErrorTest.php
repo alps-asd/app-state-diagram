@@ -36,19 +36,19 @@ class ErrorTest extends TestCase
     public function testMissingRt(): void
     {
         $this->expectException(RtMissingException::class);
-        (new DrawDiagram(new LabelName()))(new Profile(__DIR__ . '/Fake/invalid_missing_rt.json', new LabelName()));
+        (new DrawDiagram())(new Profile(__DIR__ . '/Fake/invalid_missing_rt.json', new LabelName()), new LabelName());
     }
 
     public function testMissingRtDescriptor(): void
     {
         $this->expectException(DescriptorNotFoundException::class);
-        (new DrawDiagram(new LabelName()))(new Profile(__DIR__ . '/Fake/invalid_missing_missing_sharp_in_rt.json', new LabelName()));
+        (new DrawDiagram())(new Profile(__DIR__ . '/Fake/invalid_missing_missing_sharp_in_rt.json', new LabelName()), new LabelName());
     }
 
     public function testNullJsonException(): void
     {
         $this->expectException(InvalidDescriptorException::class);
-        (new DrawDiagram(new LabelName()))(new Profile(__DIR__ . '/Fake/invalid_null.json', new LabelName()));
+        (new DrawDiagram())(new Profile(__DIR__ . '/Fake/invalid_null.json', new LabelName()), new LabelName());
     }
 
     public function testInvalidLabelOptionException(): void

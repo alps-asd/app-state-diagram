@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Koriym\AppStateDiagram;
 
+use JetBrains\PhpStorm\Immutable;
 use Koriym\AppStateDiagram\Exception\InvalidHrefException;
 use Koriym\AppStateDiagram\Exception\SharpMissingInHrefException;
 use stdClass;
@@ -19,36 +20,21 @@ use function substr;
 
 use const PHP_EOL;
 
+/**
+ * @psalm-immutable
+ */
+#[Immutable]
 final class DrawDiagram
 {
-    /** @var  LabelNameInterface */
-    private $labelName;
-
-    public function __construct(LabelNameInterface $labelName)
-    {
-        $this->labelName = $labelName;
-    }
-
-    /** @var AbstractDescriptor[] */
-    private $descriptors = [];
-
-    /** @var ?TaggedProfile */
-    private $taggedProfile;
-
-    /** @var ?string */
-    private $color;
-
-    public function __invoke(AbstractProfile $profile, ?TaggedProfile $taggedProfile = null, ?string $color = null): string
+    public function __invoke(AbstractProfile $profile, ?LabelNameInterface $labelName, ?TaggedProfile $taggedProfile = null, ?string $color = null): string
     {
         $transNodes = $this->getTransNodes($profile);
-        $appSate = new AppState($profile->links, $profile->descriptors, $this->labelName, $taggedProfile, $color);
-        $this->descriptors = $profile->descriptors;
-        $this->taggedProfile = $taggedProfile;
-        $this->color = $color;
-        $nodes = $this->getNodes($appSate, $transNodes);
+        $labelName = $labelName ?? new LabelName();
+        $descriptors = $profile->descriptors;
+        [$filterIds, $nodes] = $this->getNodes($transNodes, $labelName, $descriptors, $taggedProfile, $color);
         $edge = new Edge($profile, $taggedProfile, $color);
         $graph = (string) $edge;
-        $appSateWithNoLink = (string) $appSate;
+        $appSateWithNoLink = (string) (new AppState($profile->links, $profile->descriptors, $labelName, $taggedProfile, $color, $filterIds));
         $template = <<<'EOT'
 digraph application_state_diagram {
   graph [
@@ -69,20 +55,29 @@ EOT;
     }
 
     /**
-     * @param list<string> $transNodes
+     * @param list<string>                      $transNodes
+     * @param array<string, AbstractDescriptor> $descriptors
+     *
+     * @return array{0: list<string>, 1: string}
      */
-    public function getNodes(AppState $appSate, array $transNodes): string
+    public function getNodes(array $transNodes, LabelNameInterface $labelName, array $descriptors, ?TaggedProfile $taggedProfile, ?string $color): array
     {
+        /** @var list<string> $ids */
+        $ids = [];
         $dot = '';
-        foreach ($this->descriptors as $descriptor) {
+        foreach ($descriptors as $descriptor) {
             if (! in_array($descriptor->id, $transNodes)) {
                 continue;
             }
 
-            $dot .= $this->getNode($descriptor, $appSate);
+            [$id, $deltaDot] = $this->getNode($descriptor, $labelName, $descriptors, $taggedProfile, $color);
+            $dot .= $deltaDot;
+            if ($id) {
+                $ids[] = $id;
+            }
         }
 
-        return $dot;
+        return [$ids, $dot];
     }
 
     /**
@@ -104,17 +99,21 @@ EOT;
         return $transNodes;
     }
 
-    private function getNode(AbstractDescriptor $descriptor, AppState $appSate): string
+    /**
+     * @param array<string, AbstractDescriptor> $descriptors
+     *
+     * @return array{0: ?string, 1: string}
+     */
+    private function getNode(AbstractDescriptor $descriptor, LabelNameInterface $labelName, array $descriptors, ?TaggedProfile $taggedProfile, ?string $color): array
     {
         $hasDescriptor = $descriptor instanceof SemanticDescriptor && isset($descriptor->descriptor); // @phpstan-ignore-line
         if (! $hasDescriptor) {
-            return '';
+            return [null, ''];
         }
 
-        $props = [];
-        $props = $this->getNodeProps($descriptor, $props);
+        $props = $this->getNodeProps($descriptor, $labelName, $descriptors);
         if ($props === []) {
-            return '';
+            return [null, ''];
         }
 
         $inlineDescriptors = '';
@@ -122,24 +121,23 @@ EOT;
             $inlineDescriptors .= sprintf('(%s)<br />', $prop);
         }
 
-        $appSate->remove($descriptor->id);
-
-        return $this->template($descriptor, $inlineDescriptors);
+        return [$descriptor->id, $this->template($descriptor, $inlineDescriptors, $labelName, $taggedProfile, $color)];
     }
 
     /**
-     * @param list<string> $props
+     * @param array<string, AbstractDescriptor> $descriptors
      *
      * @return list<string>
      */
-    private function getNodeProps(SemanticDescriptor $descriptor, array $props): array
+    private function getNodeProps(SemanticDescriptor $descriptor, LabelNameInterface $labelName, array $descriptors): array
     {
+        $props = [];
         foreach ($descriptor->descriptor as $item) {
-            if ($this->isSemanticHref($item)) {
+            if ($this->isSemanticHref($item, $descriptors)) {
                 assert(is_string($item->href));
-                $descriptor =  $this->getHref($item->href);
+                $descriptor =  $this->getHref($item->href, $descriptors);
                 assert($descriptor instanceof SemanticDescriptor);
-                $props[] = $this->labelName->getNodeLabel($descriptor);
+                $props[] = $labelName->getNodeLabel($descriptor);
             }
 
             $isSemantic = isset($item->type) && $item->type === 'semantic';
@@ -151,16 +149,22 @@ EOT;
         return $props;
     }
 
-    private function getHref(string $href): AbstractDescriptor
+    /**
+     * @param array<string, AbstractDescriptor> $descriptors
+     */
+    private function getHref(string $href, array $descriptors): AbstractDescriptor
     {
         $pos = strpos($href, '#');
         assert(is_int($pos));
         $index = substr($href, $pos + 1);
 
-        return $this->descriptors[$index];
+        return $descriptors[$index];
     }
 
-    private function isSemanticHref(stdClass $item): bool
+    /**
+     * @param array<string, AbstractDescriptor> $descriptors
+     */
+    private function isSemanticHref(stdClass $item, array $descriptors): bool
     {
         if (! property_exists($item, 'href')) {
             return false;
@@ -174,16 +178,16 @@ EOT;
         }
 
         $id = substr($item->href, $pos + 1);
-        if (! isset($this->descriptors[$id])) {
+        if (! isset($descriptors[$id])) {
             throw new InvalidHrefException($item->href);
         }
 
-        $descriptor = $this->descriptors[$id];
+        $descriptor = $descriptors[$id];
 
         return $descriptor instanceof SemanticDescriptor;
     }
 
-    private function template(AbstractDescriptor $descriptor, string $props): string
+    private function template(AbstractDescriptor $descriptor, string $props, LabelNameInterface $labelName, ?TaggedProfile $taggedProfile, ?string $color): string
     {
         $base = <<<'EOT'
     %s [margin=0.02, label=<<table cellspacing="0" cellpadding="5" border="0"><tr><td>%s<br />%s</td></tr></table>>,shape=box URL="%s" target="_parent"
@@ -192,10 +196,10 @@ EOT;
         $url = sprintf('docs/%s.%s.html', $descriptor->type, $descriptor->id);
         assert($descriptor instanceof SemanticDescriptor);
 
-        if (isset($this->color, $this->taggedProfile) && in_array($descriptor, $this->taggedProfile->descriptors)) {
-            return sprintf($base . ' color="%s"]' . PHP_EOL, $descriptor->id, $this->labelName->getNodeLabel($descriptor), $props, $url, $this->color);
+        if (isset($color, $taggedProfile) && in_array($descriptor, $taggedProfile->descriptors)) {
+            return sprintf($base . ' color="%s"]' . PHP_EOL, $descriptor->id, $labelName->getNodeLabel($descriptor), $props, $url, $color);
         }
 
-        return sprintf($base . ']' . PHP_EOL, $descriptor->id, $this->labelName->getNodeLabel($descriptor), $props, $url);
+        return sprintf($base . ']' . PHP_EOL, $descriptor->id, $labelName->getNodeLabel($descriptor), $props, $url);
     }
 }

@@ -6,6 +6,7 @@ namespace Koriym\AppStateDiagram;
 
 use function sprintf;
 
+/** @psalm-immutable */
 final class LabelNameBoth implements LabelNameInterface
 {
     public function getNodeLabel(SemanticDescriptor $descriptor): string
