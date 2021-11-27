@@ -34,6 +34,8 @@ final class AppState
      * @param Link[]                    $links
      * @param array<AbstractDescriptor> $descriptors
      * @param list<string>              $filterIds
+     *
+     * @psalm-suppress ImpureMethodCall
      */
     public function __construct(array $links, array $descriptors, LabelNameInterface $labelName, ?TaggedProfile $profile = null, ?string $color = null, array $filterIds = [])
     {
