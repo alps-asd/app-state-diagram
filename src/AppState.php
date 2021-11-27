@@ -35,7 +35,7 @@ final class AppState
      * @param array<AbstractDescriptor> $descriptors
      * @param list<string>              $filterIds
      */
-    public function __construct(array $links, array $descriptors, LabelNameInterface $labelName, ?TaggedProfile $profile = null, ?string $color = null, array $filterIds)
+    public function __construct(array $links, array $descriptors, LabelNameInterface $labelName, ?TaggedProfile $profile = null, ?string $color = null, array $filterIds = [])
     {
         $this->labelName = $labelName;
         $taggedStates = new Descriptors();
