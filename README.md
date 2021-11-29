@@ -19,7 +19,7 @@ The diagram is hypermedia in SVG format with application states and state transi
 ## About ALPS
 
 * [ALPS Quick Start (English)](https://hackmd.io/@koriym/quick-start-en)
-* [ALPS Quick Start (Japanese)](https://hackmd.io/@koriym/quick-start)
+* [https://alps-asd.github.io/ (Japanese)](https://alps-asd.github.io/manuals/1.0/ja/index.html)
 
 ## Output Demo
 
