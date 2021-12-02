@@ -57,7 +57,7 @@ jobs:
       - name: Upload coverage report
         uses: codecov/codecov-action@v2
         with:
-          file: ./coverage.xml
+          files: ./coverage.xml
 
       - name: Run demo (JSON)
         run: bin/asd docs/blog/profile.json && bin/asd docs/todomvc/profile.json && bin/asd --and-tag=a,b --or-tag=c --color=red docs/blog/profile.json
