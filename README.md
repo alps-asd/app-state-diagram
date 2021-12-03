@@ -16,10 +16,9 @@ The diagram is hypermedia in SVG format with application states and state transi
 
 <a href="https://alps-asd.github.io/app-state-diagram/blog/profile.svg"><img src="https://alps-asd.github.io/app-state-diagram/blog/profile.svg"></a>
 
-## About ALPS
+## Documentation
 
-* [ALPS Quick Start (English)](https://hackmd.io/@koriym/quick-start-en)
-* [https://alps-asd.github.io/ (Japanese)](https://alps-asd.github.io/manuals/1.0/ja/index.html)
+* [https://alps-asd.github.io/](https://alps-asd.github.io/)
 
 ## Output Demo
 
