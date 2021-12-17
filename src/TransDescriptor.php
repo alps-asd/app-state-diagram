@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Koriym\AppStateDiagram;
 
-use Koriym\AppStateDiagram\Exception\RtMissingException;
+use Koriym\AppStateDiagram\Exception\MissingRtException;
 use stdClass;
 
 use function assert;
@@ -31,14 +31,14 @@ final class TransDescriptor extends AbstractDescriptor
         if (! isset($descriptor->rt) || ! is_string($descriptor->rt)) {
             assert(is_string($descriptor->id));
 
-            throw new RtMissingException($descriptor->id);
+            throw new MissingRtException($descriptor->id);
         }
 
         assert(is_string($descriptor->id));
 
         $pos = strpos($descriptor->rt, '#');
         if ($pos === false) {
-            throw new RtMissingException($descriptor->id);
+            throw new MissingRtException($descriptor->id);
         }
 
         $this->rt = substr($descriptor->rt, $pos + 1);

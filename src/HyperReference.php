@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Koriym\AppStateDiagram;
 
 use Generator;
-use Koriym\AppStateDiagram\Exception\SharpMissingInHrefException;
+use Koriym\AppStateDiagram\Exception\MissingHashSignInHrefException;
 use stdClass;
 
 use function array_shift;
@@ -38,7 +38,7 @@ class HyperReference
     {
         $fullPath = ($this->fullPath)($alpsFile, $href);
         if (! is_int(strpos($fullPath, '#'))) {
-            throw new SharpMissingInHrefException($href);
+            throw new MissingHashSignInHrefException($href);
         }
 
         [, $id] = explode('#', $fullPath);
