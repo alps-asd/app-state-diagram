@@ -6,6 +6,6 @@ namespace Koriym\AppStateDiagram\Exception;
 
 use RuntimeException;
 
-class RtMissingException extends RuntimeException
+class MissingRtException extends RuntimeException
 {
 }

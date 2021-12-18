@@ -6,7 +6,7 @@ namespace Koriym\AppStateDiagram;
 
 use JetBrains\PhpStorm\Immutable;
 use Koriym\AppStateDiagram\Exception\InvalidHrefException;
-use Koriym\AppStateDiagram\Exception\SharpMissingInHrefException;
+use Koriym\AppStateDiagram\Exception\MissingHashSignInHrefException;
 use stdClass;
 
 use function assert;
@@ -174,7 +174,7 @@ EOT;
 
         $pos = strpos($item->href, '#');
         if ($pos === false) {
-            throw new SharpMissingInHrefException($item->href); // @codeCoverageIgnore
+            throw new MissingHashSignInHrefException($item->href); // @codeCoverageIgnore
         }
 
         $id = substr($item->href, $pos + 1);

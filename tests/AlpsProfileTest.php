@@ -7,7 +7,7 @@ namespace Koriym\AppStateDiagram;
 use Koriym\AppStateDiagram\Exception\AlpsFileNotReadableException;
 use Koriym\AppStateDiagram\Exception\DescriptorNotFoundException;
 use Koriym\AppStateDiagram\Exception\InvalidLinkRelationException;
-use Koriym\AppStateDiagram\Exception\SharpMissingInHrefException;
+use Koriym\AppStateDiagram\Exception\MissingHashSignInHrefException;
 use PHPUnit\Framework\TestCase;
 
 use function stream_wrapper_register;
@@ -99,7 +99,7 @@ class AlpsProfileTest extends TestCase
 
     public function testNoRtTransDescriptor(): void
     {
-        $this->expectException(SharpMissingInHrefException::class);
+        $this->expectException(MissingHashSignInHrefException::class);
         new Profile(__DIR__ . '/Fake/invalid_rt_descriptor.json', new LabelName());
     }
 }
