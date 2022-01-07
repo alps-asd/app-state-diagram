@@ -10,5 +10,11 @@
     },
     "require-dev": {
         "jetbrains/phpstorm-attributes": "^1.0"
+    },
+    "config": {
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true,
+            "composer/package-versions-deprecated": true
+        }
     }
 }
