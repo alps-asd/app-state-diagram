@@ -46,6 +46,6 @@ final class JsonDecode
 
         assert($result instanceof ParsingException);
 
-        return new ParsingException('"' . $json . '" does not contain valid JSON' . "\n" . $result->getMessage(), $result->getDetails());
+        return new ParsingException($result->getMessage(), $result->getDetails());
     }
 }
