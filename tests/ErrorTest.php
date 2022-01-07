@@ -18,7 +18,7 @@ class ErrorTest extends TestCase
     public function testInvalidJson(): void
     {
         $this->expectException(ParsingException::class);
-        $this->expectErrorMessage('" does not contain valid JSON');
+        $this->expectErrorMessage('Expected one of:');
         new Profile(__DIR__ . '/Fake/invalid.json', new LabelName());
     }
 
