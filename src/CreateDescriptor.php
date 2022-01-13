@@ -6,6 +6,7 @@ namespace Koriym\AppStateDiagram;
 
 use Koriym\AppStateDiagram\Exception\DescriptorIsNotArrayException;
 use Koriym\AppStateDiagram\Exception\InvalidDescriptorException;
+use Koriym\AppStateDiagram\Exception\InvalidTypeException;
 use stdClass;
 
 use function assert;
@@ -18,6 +19,8 @@ use function property_exists;
 
 final class CreateDescriptor
 {
+    private const VALID_TYPES = ['semantic', 'safe', 'unsafe', 'idempotent'];
+
     /**
      * @param array<string, stdClass> $descriptorsArray
      *
@@ -117,6 +120,10 @@ final class CreateDescriptor
         $hasNoId = ! isset($descriptor->href) && ! isset($descriptor->id);
         if ($hasNoId) {
             throw new InvalidDescriptorException((string) json_encode($descriptor));
+        }
+
+        if (isset($descriptor->type) && ! in_array($descriptor->type, self::VALID_TYPES)) {
+            throw new InvalidTypeException((string) $descriptor->type);
         }
     }
 }
