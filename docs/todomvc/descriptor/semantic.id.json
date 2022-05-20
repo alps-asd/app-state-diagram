@@ -1,6 +1,0 @@
-{
-  "id": "id",
-  "def": "http://schema.org/identifier",
-  "type": "semantic",
-  "schema": "https://alps-io.github.io/schemas/alps.json"
-}

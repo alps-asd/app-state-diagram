@@ -1,6 +1,0 @@
-{
-  "id": "articleBody",
-  "def": "https://schema.org/articleBody",
-  "type": "semantic",
-  "schema": "https://alps-io.github.io/schemas/alps.json"
-}
