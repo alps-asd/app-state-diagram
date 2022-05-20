@@ -1,6 +1,0 @@
-{
-  "id": "doPost",
-  "def": "https://activitystrea.ms/specs/json/1.0/#post-verb",
-  "type": "unsafe",
-  "schema": "https://alps-io.github.io/schemas/alps.json"
-}

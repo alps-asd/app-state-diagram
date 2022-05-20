@@ -1,6 +1,0 @@
-{
-  "id": "dateCreated",
-  "def": "https://schema.org/dateCreated",
-  "type": "semantic",
-  "schema": "https://alps-io.github.io/schemas/alps.json"
-}
