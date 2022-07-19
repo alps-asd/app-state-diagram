@@ -1,5 +1,7 @@
 name: Release (app-state-diagram)
 on:
+  push:
+  pull_request:
   workflow_dispatch:
   release:
     types: [published]
@@ -25,4 +27,4 @@ jobs:
           password: ${{ secrets.CR_PAT }}
 
       - name: Build & Push Docker image
-        run: docker buildx build -t ghcr.io/${{ github.repository_owner }}/myimage:${GITHUB_SHA} -f app-state-diagram/Dockerfile --push --platform=linux/arm64,linux/amd64 app-state-diagram
+        run: docker buildx build --platform linux/amd64,linux/arm64 -t alps-asd/app-state-diagram:latest --push .
