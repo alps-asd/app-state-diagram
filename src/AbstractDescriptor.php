@@ -61,18 +61,18 @@ abstract class AbstractDescriptor
         $this->source = $descriptor;
         $this->id = (string) $descriptor->id;
         /** @psalm-suppress MixedAssignment */
-        $this->def = $descriptor->def ?? $descriptor->ref ?? $descriptor->src ?? null; //@phpstan-ignore-line
+        $this->def = $descriptor->def ?? $descriptor->ref ?? $descriptor->src ?? null;
         /** @psalm-suppress MixedAssignment */
-        $this->doc = $descriptor->doc ?? null; //@phpstan-ignore-line
+        $this->doc = $descriptor->doc ?? null;
         /** @psalm-suppress MixedAssignment */
-        $this->descriptor = $descriptor->descriptor ?? []; //@phpstan-ignore-line
+        $this->descriptor = $descriptor->descriptor ?? [];
         $this->parent = $parentDescriptor;
         /** @var string|list<string> $tag */
-        $tag = $descriptor->tag ?? []; //@phpstan-ignore-line
+        $tag = $descriptor->tag ?? [];
         /** @psalm-suppress MixedAssignment */
         $this->tags = is_string($tag) ? explode(' ', $tag) : $tag;
         /** @psalm-suppress MixedAssignment */
-        $this->title = $descriptor->title ?? ''; //@phpstan-ignore-line
+        $this->title = $descriptor->title ?? '';
         if (isset($descriptor->rel)) {
             $this->rel = (string) $descriptor->rel;
         }
@@ -83,7 +83,7 @@ abstract class AbstractDescriptor
         }
 
         /** @psalm-suppress all */
-        $this->linkRelations = new LinkRelations($descriptor->link ?? null); //@phpstan-ignore-line
+        $this->linkRelations = new LinkRelations($descriptor->link ?? null);
     }
 
     public function htmlLink(string $ext): string
