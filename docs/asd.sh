@@ -14,4 +14,4 @@ profile=$(cd "$(dirname "$target")" || exit; pwd)/$(basename "$target") # path/t
 dir=$(dirname "$profile") # path/to
 basename=$(basename "$profile") # profile.xml
 
-docker run -v "$dir:/work" -it --init --rm --name asd -p 3000:3000 ghcr.io/alps-asd/app-state-diagram composer global exec asd -- "$options" /work/"$basename"
+docker run --env COMPOSER_PROCESS_TIMEOUT=0 -v "$dir:/work" -it --init --rm --name asd -p 3000:3000 ghcr.io/alps-asd/app-state-diagram composer global exec asd -- "$options" /work/"$basename"
