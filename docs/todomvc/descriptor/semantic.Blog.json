@@ -1,6 +1,0 @@
-{
-  "id": "Blog",
-  "def": "https://schema.org/Blog",
-  "type": "semantic",
-  "schema": "https://alps-io.github.io/schemas/alps.json"
-}

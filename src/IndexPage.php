@@ -43,7 +43,7 @@ final class IndexPage
         $ext = $mode === DumpDocs::MODE_MARKDOWN ? 'md' : DumpDocs::MODE_HTML;
         $semantics = $this->semantics($descriptors, $ext);
         $tags = $this->tags($profile->tags, $ext);
-        $htmlTitle = htmlspecialchars($profile->title);
+        $htmlTitle = htmlspecialchars($profile->title ?: 'ALPS');
         $htmlDoc = nl2br(htmlspecialchars($profile->doc));
         $profileImage = $mode === DumpDocs::MODE_HTML ? 'docs/asd.html' : 'profile.svg';
         $md = <<<EOT
@@ -57,7 +57,7 @@ final class IndexPage
 {$semantics}{$tags}{$linkRelations}
 EOT;
         $this->file = sprintf('%s/index.%s', dirname($profile->alpsFile), $ext);
-        $this->content = $mode === DumpDocs::MODE_MARKDOWN ? $md : (new MdToHtml())('ALPS', $md);
+        $this->content = $mode === DumpDocs::MODE_MARKDOWN ? $md : (new MdToHtml())($htmlTitle, $md);
     }
 
     /**
