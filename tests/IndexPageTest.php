@@ -17,11 +17,13 @@ class IndexPageTest extends TestCase
         return $html;
     }
 
-    public function testInvokeMarkdownMode(): void
+    public function testInvokeMarkdownMode(): string
     {
         $alpsFile = __DIR__ . '/Fake/alps.json';
         $content = (new IndexPage(new Profile($alpsFile, new LabelName()), DumpDocs::MODE_MARKDOWN))->content;
         $this->assertStringContainsString('[About](docs/semantic.About.md) (semantic)', $content);
+
+        return $content;
     }
 
     /**
@@ -76,5 +78,37 @@ class IndexPageTest extends TestCase
         $html = (new IndexPage(new Profile($alpsFile, new LabelName())))->content;
         $this->assertStringContainsString('<li>rel: about <a rel="about" href="https://github.com/alps-asd/app-state-diagram/">https://github.com/alps-asd/app-state-diagram/</a></li>', $html);
         $this->assertStringContainsString('<li>rel: repository <a rel="repository" href="https://github.com/alps-asd/app-state-diagram/">https://github.com/alps-asd/app-state-diagram/</a></li>', $html);
+    }
+
+    public function testTitle(): void
+    {
+        $alpsFile = __DIR__ . '/Fake/title.json';
+        $html = (new IndexPage(new Profile($alpsFile, new LabelName())))->content;
+
+        $this->assertStringContainsString('<title>Title</title>', $html);
+    }
+
+    public function testTitleMarkdownMode(): void
+    {
+        $alpsFile = __DIR__ . '/Fake/title.json';
+        $content = (new IndexPage(new Profile($alpsFile, new LabelName()), DumpDocs::MODE_MARKDOWN))->content;
+
+        $this->assertStringContainsString('# Title', $content);
+    }
+
+    /**
+     * @depends testInvoke
+     */
+    public function testNoTitle(string $content): void
+    {
+        $this->assertStringContainsString('<title>ALPS</title>', $content);
+    }
+
+    /**
+     * @depends testInvokeMarkdownMode
+     */
+    public function testNoTitleMarkdownMode(string $content): void
+    {
+        $this->assertStringContainsString('# ALPS', $content);
     }
 }

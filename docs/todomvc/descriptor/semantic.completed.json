@@ -1,6 +1,0 @@
-{
-  "id": "completed",
-  "def": "http://mamund.site44.com/alps/def/completed.txt",
-  "type": "semantic",
-  "schema": "https://alps-io.github.io/schemas/alps.json"
-}
