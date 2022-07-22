@@ -43,11 +43,6 @@ You can try ASD in a minute without installing any tools.
 
 This is the most standard way.
 
-Pull the docker image and install ASD utility.
-
-```bash
-docker pull ghcr.io/alps-asd/app-state-diagram:latest
-```
 
 ```bash
 curl -L https://alps-asd.github.io/app-state-diagram/asd.sh > ./asd && chmod +x ./asd && sudo mv ./asd /usr/local/bin
