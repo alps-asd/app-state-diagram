@@ -57,19 +57,22 @@ final class DumpDocs
             $this->fileOutput($tag, $markDown, $basePath, $format);
         }
 
-        $imgSrc = str_replace(['json', 'xml'], 'svg', basename($alpsFile));
-        $this->dumpImage($profile->title, $docsDir, $imgSrc, $format);
+        $this->dumpImage($profile->title, $docsDir, $format, $alpsFile, '');
+        $this->dumpImage($profile->title, $docsDir, $format, $alpsFile, 'title.');
     }
 
-    private function dumpImage(string $title, string $docsDir, string $imgSrc, string $format): void
+    private function dumpImage(string $title, string $docsDir, string $format, string $alpsFile, string $type): void
     {
+        $imgSrc = str_replace(['json', 'xml'], "{$type}svg", basename($alpsFile));
         if ($format === self::MODE_HTML) {
-            $this->dumpImageHtml($title, $docsDir, $imgSrc);
+            $this->dumpImageHtml($title, $docsDir, $imgSrc, $type);
         }
     }
 
-    private function dumpImageHtml(string $title, string $docsDir, string $imgSrc): void
+    private function dumpImageHtml(string $title, string $docsDir, string $imgSrc, string $type): void
     {
+        $isIdMode = $type === '';
+        $link = $isIdMode ? 'id | <a href="asd.title.html">title</a>' : '<a href="asd.html">id</a> | title';
         $html = <<<EOT
 <html lang="en">
 <head>
@@ -77,12 +80,13 @@ final class DumpDocs
     <meta charset="UTF-8">
 </head>
 <body>
+    <div style="font-size: medium;" >{$link}</div>
     <iframe src="../{$imgSrc}" style="border:0; width:100%; height:95%" allow="fullscreen"></iframe>
 </body>
 </html>
 
 EOT;
-        file_put_contents($docsDir . '/asd.html', $html);
+        file_put_contents($docsDir . "/asd.{$type}html", $html);
     }
 
     private function convertHtml(string $title, string $markdown): string

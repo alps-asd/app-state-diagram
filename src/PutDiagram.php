@@ -43,6 +43,7 @@ final class PutDiagram
     public function invoke(AbstractProfile $profile, ?TaggedProfile $taggedProfile = null, ?string $color = null): void
     {
         $this->draw('', new LabelName(), $profile, $taggedProfile, $color);
+        $this->draw('.title', new LabelNameTitle(), $profile, $taggedProfile, $color);
     }
 
     public function draw(string $fileId, LabelNameInterface $labelName, AbstractProfile $profile, ?TaggedProfile $taggedProfile, ?string $color): void

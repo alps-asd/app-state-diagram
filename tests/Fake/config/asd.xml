@@ -8,5 +8,5 @@
         <and>tag2</and>
         <or>tag3</or>
     </filter>
-    <mode>markdown</mode>
+    <mode>html</mode>
 </asd>
