@@ -6,18 +6,18 @@ namespace Koriym\AppStateDiagram;
 
 final class ConfigFilter
 {
-    /** @var array<string>  */
+    /** @var list<string>  */
     public $and;
 
-    /** @var array<string>  */
+    /** @var list<string>  */
     public $or;
 
     /** @var string  */
     public $color;
 
     /**
-     * @param array<string> $and
-     * @param array<string> $or
+     * @param list<string> $and
+     * @param list<string> $or
      */
     public function __construct(array $and, array $or, string $color)
     {

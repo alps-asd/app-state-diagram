@@ -24,10 +24,10 @@ final class Option
     /** @var bool */
     public $watch;
 
-    /** @var array<string> */
+    /** @var list<string> */
     public $and;
 
-    /** @var array<string> */
+    /** @var list<string> */
     public $or;
 
     /** @var string */
@@ -55,7 +55,7 @@ final class Option
     /**
      * @param array<string, string|bool> $options
      *
-     * @return array<string>
+     * @return list<string>
      */
     private function parseAndTag(array $options, ?SimpleXMLElement $filter): array
     {

@@ -10,7 +10,7 @@ use function unlink;
 
 class PutDrawDiagramTest extends TestCase
 {
-    /** @var DrawDiagram */
+    /** @var PutDiagram */
     private $putDiagram;
 
     protected function setUp(): void

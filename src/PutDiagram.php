@@ -68,7 +68,7 @@ final class PutDiagram
         return $filteredSvg;
     }
 
-    public function convert(string $dotFile, string $dot)
+    public function convert(string $dotFile, string $dot): void
     {
         file_put_contents($dotFile, $dot);
         $svgFile = str_replace('dot', 'svg', $dotFile);
