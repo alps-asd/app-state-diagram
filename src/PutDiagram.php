@@ -75,7 +75,7 @@ final class PutDiagram
         $cmd = "dot -Tsvg {$dotFile} -o {$svgFile}";
         passthru($cmd, $status);
         if ($status !== 0) {
-            echo 'Warning: Graphviz error. https://graphviz.org/download/' . PHP_EOL;
+            echo 'Warning: Graphviz error. https://graphviz.org/download/' . PHP_EOL; // @codeCoverageIgnore
         }
     }
 }
