@@ -64,9 +64,20 @@ final class DumpDocs
     private function dumpImage(string $title, string $docsDir, string $format, string $alpsFile, string $type): void
     {
         $imgSrc = str_replace(['json', 'xml'], "{$type}svg", basename($alpsFile));
-        if ($format === self::MODE_HTML) {
-            $this->dumpImageHtml($title, $docsDir, $imgSrc, $type);
-        }
+        $format === self::MODE_HTML ?
+            $this->dumpImageHtml($title, $docsDir, $imgSrc, $type):
+            $this->dumpImageMd($title, $docsDir, $imgSrc, $type);
+    }
+
+    private function dumpImageMd(string $title, string $docsDir, string $imgSrc, string $type): void
+    {
+        $isIdMode = $type === '';
+        $link = $isIdMode ? 'id | [title](asd.title.md)' : '[id](asd.md) | title';
+        $html = <<<EOT
+{$link}
+<img src="../{$imgSrc}" alt="application state diagram">
+EOT;
+        file_put_contents($docsDir . "/asd.{$type}md", $html);
     }
 
     private function dumpImageHtml(string $title, string $docsDir, string $imgSrc, string $type): void
