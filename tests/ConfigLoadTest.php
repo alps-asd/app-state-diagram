@@ -19,7 +19,7 @@ class ConfigLoadTest extends TestCase
         $this->assertFalse($config->watch);
         $this->assertSame(['tag1', 'tag2'], $config->filter->and);
         $this->assertSame(['tag3'], $config->filter->or);
-        $this->assertSame(DumpDocs::MODE_HTML, $config->outputMode);
+        $this->assertSame(DumpDocs::MODE_MARKDOWN, $config->outputMode);
     }
 
     /**
