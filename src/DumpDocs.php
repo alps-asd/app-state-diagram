@@ -65,7 +65,7 @@ final class DumpDocs
     {
         $imgSrc = str_replace(['json', 'xml'], "{$type}svg", basename($alpsFile));
         $format === self::MODE_HTML ?
-            $this->dumpImageHtml($title, $docsDir, $imgSrc, $type):
+            $this->dumpImageHtml($title, $docsDir, $imgSrc, $type) :
             $this->dumpImageMd($title, $docsDir, $imgSrc, $type);
     }
 
