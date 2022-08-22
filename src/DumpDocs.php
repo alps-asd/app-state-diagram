@@ -75,6 +75,7 @@ final class DumpDocs
         $link = $isIdMode ? 'id | [title](asd.title.md)' : '[id](asd.md) | title';
         $html = <<<EOT
 {$link}
+
 <img src="../{$imgSrc}" alt="application state diagram">
 EOT;
         file_put_contents($docsDir . "/asd.{$type}md", $html);
