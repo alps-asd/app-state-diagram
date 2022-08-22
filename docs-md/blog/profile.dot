@@ -1,0 +1,23 @@
+digraph application_state_diagram {
+  graph [
+    labelloc="t";
+    fontname="Helvetica"
+    label="ALPS Blog";
+    URL="index.html" target="_parent"
+  ];
+  node [shape = box, style = "bold,filled" fillcolor="lightgray"];
+
+    Blog [margin=0.02, label=<<table cellspacing="0" cellpadding="5" border="0"><tr><td>Blog<br />(BlogPosting)<br /></td></tr></table>>,shape=box URL="docs/semantic.Blog.html" target="_parent"]
+    BlogPosting [margin=0.02, label=<<table cellspacing="0" cellpadding="5" border="0"><tr><td>BlogPosting<br />(id)<br />(dateCreated)<br />(articleBody)<br /></td></tr></table>>,shape=box URL="docs/semantic.BlogPosting.html" target="_parent"]
+
+    About -> Blog [label = <goBlog, collection (safe)> URL="docs/safe.goBlog.html" target="_parent" fontsize=13];
+    Blog -> About [label = <goAbout (safe)> URL="docs/safe.goAbout.html" target="_parent" fontsize=13];
+    Blog -> Blog [label = <doPost, collection (unsafe)> URL="docs/unsafe.doPost.html" target="_parent" fontsize=13];
+    Blog -> BlogPosting [label = <goBlogPosting, item (safe)> URL="docs/safe.goBlogPosting.html" target="_parent" fontsize=13];
+    BlogPosting -> Blog [label = <goBlog, collection (safe)> URL="docs/safe.goBlog.html" target="_parent" fontsize=13];
+    Index -> Blog [label = <goBlog, collection (safe)> URL="docs/safe.goBlog.html" target="_parent" fontsize=13];
+
+    About [label = <About> URL="docs/semantic.About.html" target="_parent"]
+    Index [label = <Index> URL="docs/semantic.Index.html" target="_parent"]
+
+}
