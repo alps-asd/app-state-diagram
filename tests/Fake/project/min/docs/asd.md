@@ -1,1 +1,2 @@
-    <iframe src="../profile.svg" style="border:0; width:100%; height:95%" allow="fullscreen"></iframe>
+id | [title](asd.title.md)
+<img src="../profile.svg" alt="application state diagram">

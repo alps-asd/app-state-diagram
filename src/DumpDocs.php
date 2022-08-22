@@ -66,10 +66,10 @@ final class DumpDocs
         $imgSrc = str_replace(['json', 'xml'], "{$type}svg", basename($alpsFile));
         $format === self::MODE_HTML ?
             $this->dumpImageHtml($title, $docsDir, $imgSrc, $type) :
-            $this->dumpImageMd($title, $docsDir, $imgSrc, $type);
+            $this->dumpImageMd($docsDir, $imgSrc, $type);
     }
 
-    private function dumpImageMd(string $title, string $docsDir, string $imgSrc, string $type): void
+    private function dumpImageMd(string $docsDir, string $imgSrc, string $type): void
     {
         $isIdMode = $type === '';
         $link = $isIdMode ? 'id | [title](asd.title.md)' : '[id](asd.md) | title';
