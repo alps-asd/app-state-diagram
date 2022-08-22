@@ -1,3 +1,3 @@
 id | [title](asd.title.md)
 
-<img src="../profile.svg" alt="application state diagram">
+[<img src="../profile.svg" alt="application state diagram">](../profile.svg)

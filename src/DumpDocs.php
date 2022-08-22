@@ -76,7 +76,7 @@ final class DumpDocs
         $html = <<<EOT
 {$link}
 
-<img src="../{$imgSrc}" alt="application state diagram">
+[<img src="../{$imgSrc}" alt="application state diagram">](../{$imgSrc})
 EOT;
         file_put_contents($docsDir . "/asd.{$type}md", $html);
     }
