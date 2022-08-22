@@ -179,7 +179,7 @@ EOT;
 
     private function isFragment(string $text): bool
     {
-        return substr($text, 0, 1) === '#';
+        return $text[0] === '#';
     }
 
     private function getDescriptorKeyValue(string $key, string $value): string
