@@ -41,9 +41,7 @@ final class Edge
         return $graph;
     }
 
-    /**
-     * @param list<Link> $links
-     */
+    /** @param list<Link> $links */
     private function singleLink(array $links): string
     {
         $link = $links[0];
@@ -60,9 +58,7 @@ final class Edge
         return sprintf($base . '];' . PHP_EOL, $link->from, $link->to, $link->label, $link->transDescriptor->type, $link->transDescriptor->id);
     }
 
-    /**
-     * @param list<Link> $links
-     */
+    /** @param list<Link> $links */
     private function multipleLink(array $links): string
     {
         assert(isset($links[0]));

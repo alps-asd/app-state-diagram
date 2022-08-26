@@ -7,7 +7,6 @@ namespace Koriym\AppStateDiagram;
 use Koriym\AppStateDiagram\Exception\DescriptorIsNotArrayException;
 use Koriym\AppStateDiagram\Exception\DescriptorNotFoundException;
 use Koriym\AppStateDiagram\Exception\InvalidDescriptorException;
-use Koriym\AppStateDiagram\Exception\InvalidLabelOptionException;
 use Koriym\AppStateDiagram\Exception\InvalidSemanticsException;
 use Koriym\AppStateDiagram\Exception\MissingRtException;
 use PHPUnit\Framework\TestCase;
@@ -50,12 +49,6 @@ class ErrorTest extends TestCase
     {
         $this->expectException(InvalidDescriptorException::class);
         (new DrawDiagram())(new Profile(__DIR__ . '/Fake/invalid_null.json', new LabelName()), new LabelName());
-    }
-
-    public function testInvalidLabelOptionException(): void
-    {
-        $this->expectException(InvalidLabelOptionException::class);
-        new Option(['label' => '1', 'l' => '2'], null, null);
     }
 
     public function testInvalidDescriptor(): void

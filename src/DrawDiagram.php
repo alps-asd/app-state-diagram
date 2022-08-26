@@ -20,9 +20,7 @@ use function substr;
 
 use const PHP_EOL;
 
-/**
- * @psalm-immutable
- */
+/** @psalm-immutable */
 #[Immutable]
 final class DrawDiagram
 {
@@ -80,9 +78,7 @@ EOT;
         return [$ids, $dot];
     }
 
-    /**
-     * @return list<string>
-     */
+    /** @return list<string> */
     private function getTransNodes(AbstractProfile $profile): array
     {
         $transNodes = [];
@@ -149,9 +145,7 @@ EOT;
         return $props;
     }
 
-    /**
-     * @param array<string, AbstractDescriptor> $descriptors
-     */
+    /** @param array<string, AbstractDescriptor> $descriptors */
     private function getHref(string $href, array $descriptors): AbstractDescriptor
     {
         $pos = strpos($href, '#');
@@ -161,9 +155,7 @@ EOT;
         return $descriptors[$index];
     }
 
-    /**
-     * @param array<string, AbstractDescriptor> $descriptors
-     */
+    /** @param array<string, AbstractDescriptor> $descriptors */
     private function isSemanticHref(stdClass $item, array $descriptors): bool
     {
         if (! property_exists($item, 'href')) {

@@ -79,9 +79,7 @@ final class TaggedProfile extends AbstractProfile
         $this->descriptors = $descriptors->descriptors;
     }
 
-    /**
-     * @param list<string> $andTags
-     */
+    /** @param list<string> $andTags */
     private function isFilteredAnd(AbstractDescriptor $descriptor, array $andTags): bool
     {
         if ($andTags === []) {
@@ -97,9 +95,7 @@ final class TaggedProfile extends AbstractProfile
         return true;
     }
 
-    /**
-     * @param list<string> $orTags
-     */
+    /** @param list<string> $orTags */
     private function isFilteredOr(AbstractDescriptor $descriptor, array $orTags): bool
     {
         if ($orTags === []) {
@@ -137,9 +133,7 @@ final class TaggedProfile extends AbstractProfile
         return explode('#', $href)[1];
     }
 
-    /**
-     * @param array<AbstractDescriptor> $allDescriptors
-     */
+    /** @param array<AbstractDescriptor> $allDescriptors */
     private function filteredDescriptor(AbstractDescriptor $edge, array $allDescriptors): Descriptors
     {
         $descriptors = new Descriptors();

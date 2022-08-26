@@ -37,15 +37,6 @@ class DrawDiagramTest extends TestCase
         $this->assertStringContainsString('State1 -> State3 [label = <<u>idempotent</u>>', $dot);
     }
 
-    public function testInvokeLabelNameBoth(): void
-    {
-        $profile = new Profile(__DIR__ . '/Fake/label.json', new LabelNameBoth());
-        $dot = ($this->drawDiagram)($profile, new LabelNameBoth());
-        $this->assertStringContainsString('State1 -> State1 [label = <goState1 (safe)>', $dot);
-        $this->assertStringContainsString('State1 -> State2 [label = <<b><u>doUnsafe (unsafe)</u></b>>', $dot);
-        $this->assertStringContainsString('State1 -> State3 [label = <<u>doIdempotent (idempotent)</u>>', $dot);
-    }
-
     public function testExternalHref(): void
     {
         $alpsFile = __DIR__ . '/Fake/extern_href.json';
@@ -201,9 +192,7 @@ class DrawDiagramTest extends TestCase
         return $dot;
     }
 
-    /**
-     * @depends testNoSemanticStateHasColor
-     */
+    /** @depends testNoSemanticStateHasColor */
     public function testEdgeHasColor(string $dot): void
     {
         $this->assertStringContainsString('s1 -> s2 [label = <t1 (safe)> URL="docs/safe.t1.html" target="_parent" fontsize=13 color="red"]', $dot);
@@ -214,9 +203,7 @@ class DrawDiagramTest extends TestCase
         $this->assertStringContainsString('s5 -> s6 [label = <t6 (safe)> URL="docs/safe.t6.html" target="_parent" fontsize=13]', $dot);
     }
 
-    /**
-     * @depends testNoSemanticStateHasColor
-     */
+    /** @depends testNoSemanticStateHasColor */
     public function testSemanticHasColor(string $dot): void
     {
         $this->assertStringContainsString(
@@ -225,9 +212,7 @@ class DrawDiagramTest extends TestCase
         );
     }
 
-    /**
-     * @depends testNoSemanticStateHasColor
-     */
+    /** @depends testNoSemanticStateHasColor */
     public function testNoStateWhenGivenTaggedProfile(string $dot): void
     {
         $this->assertStringNotContainsString('id [URL="docs/semantic.id.html"', $dot);

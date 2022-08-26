@@ -35,9 +35,7 @@ class TagTest extends TestCase
         return $profile;
     }
 
-    /**
-     * @depends testFilteredLinksByAndTag
-     */
+    /** @depends testFilteredLinksByAndTag */
     public function testFilteredDescriptorsByAndTag(TaggedProfile $profile): void
     {
         // State
@@ -83,9 +81,7 @@ class TagTest extends TestCase
         return $profile;
     }
 
-    /**
-     * @depends testFilteredLinksByOrTag
-     */
+    /** @depends testFilteredLinksByOrTag */
     public function testFilteredDescriptorsByOrTag(TaggedProfile $profile): void
     {
         // State

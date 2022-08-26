@@ -60,9 +60,7 @@ EOT;
         $this->content = $mode === DumpDocs::MODE_MARKDOWN ? $md : (new MdToHtml())($htmlTitle, $md);
     }
 
-    /**
-     * @param array<string, AbstractDescriptor> $semantics
-     */
+    /** @param array<string, AbstractDescriptor> $semantics */
     private function semantics(array $semantics, string $ext): string
     {
         $lines = [];
@@ -75,9 +73,7 @@ EOT;
         return implode(PHP_EOL, $lines);
     }
 
-    /**
-     * @param array<string, list<string>> $tags
-     */
+    /** @param array<string, list<string>> $tags */
     private function tags(array $tags, string $ext): string
     {
         if ($tags === []) {

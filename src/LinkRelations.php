@@ -18,9 +18,7 @@ final class LinkRelations
     /** @var list<LinkRelation> */
     private $links;
 
-    /**
-     * @param list<stdClass>|stdClass|null $link
-     */
+    /** @param list<stdClass>|stdClass|null $link */
     public function __construct($link = null)
     {
         if ($link === null) {

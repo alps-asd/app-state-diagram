@@ -257,9 +257,7 @@ EOT;
         return $descriptors;
     }
 
-    /**
-     * @param list<string> $tags
-     */
+    /** @param list<string> $tags */
     private function getTag(array $tags): string
     {
         if ($tags === []) {
@@ -269,9 +267,7 @@ EOT;
         return " * tag: {$this->getTagString($tags)}";
     }
 
-    /**
-     * @param list<string> $tags
-     */
+    /** @param list<string> $tags */
     private function getTagString(array $tags): string
     {
         $string = [];
@@ -282,9 +278,7 @@ EOT;
         return implode(', ', $string) . PHP_EOL;
     }
 
-    /**
-     * @param list<string> $descriptorIds
-     */
+    /** @param list<string> $descriptorIds */
     private function getTagDoc(string $tag, array $descriptorIds, string $title, string $asd): string
     {
         $list = '';
