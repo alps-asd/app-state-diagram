@@ -45,7 +45,7 @@ final class IndexPage
         $tags = $this->tags($profile->tags, $ext);
         $htmlTitle = htmlspecialchars($profile->title ?: 'ALPS');
         $htmlDoc = nl2br(htmlspecialchars($profile->doc));
-        $profileImage = $mode === DumpDocs::MODE_HTML ? 'docs/asd.html' : 'profile.svg';
+        $profileImage = $mode === DumpDocs::MODE_HTML ? 'docs/asd.html' : 'docs/asd.md';
         $md = <<<EOT
 # {$htmlTitle}
 

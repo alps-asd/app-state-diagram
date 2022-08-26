@@ -57,19 +57,34 @@ final class DumpDocs
             $this->fileOutput($tag, $markDown, $basePath, $format);
         }
 
-        $imgSrc = str_replace(['json', 'xml'], 'svg', basename($alpsFile));
-        $this->dumpImage($profile->title, $docsDir, $imgSrc, $format);
+        $this->dumpImage($profile->title, $docsDir, $format, $alpsFile, '');
+        $this->dumpImage($profile->title, $docsDir, $format, $alpsFile, 'title.');
     }
 
-    private function dumpImage(string $title, string $docsDir, string $imgSrc, string $format): void
+    private function dumpImage(string $title, string $docsDir, string $format, string $alpsFile, string $type): void
     {
-        if ($format === self::MODE_HTML) {
-            $this->dumpImageHtml($title, $docsDir, $imgSrc);
-        }
+        $imgSrc = str_replace(['json', 'xml'], "{$type}svg", basename($alpsFile));
+        $format === self::MODE_HTML ?
+            $this->dumpImageHtml($title, $docsDir, $imgSrc, $type) :
+            $this->dumpImageMd($docsDir, $imgSrc, $type);
     }
 
-    private function dumpImageHtml(string $title, string $docsDir, string $imgSrc): void
+    private function dumpImageMd(string $docsDir, string $imgSrc, string $type): void
     {
+        $isIdMode = $type === '';
+        $link = $isIdMode ? 'id | [title](asd.title.md)' : '[id](asd.md) | title';
+        $html = <<<EOT
+{$link}
+
+[<img src="../{$imgSrc}" alt="application state diagram">](../{$imgSrc})
+EOT;
+        file_put_contents($docsDir . "/asd.{$type}md", $html);
+    }
+
+    private function dumpImageHtml(string $title, string $docsDir, string $imgSrc, string $type): void
+    {
+        $isIdMode = $type === '';
+        $link = $isIdMode ? 'id | <a href="asd.title.html">title</a>' : '<a href="asd.html">id</a> | title';
         $html = <<<EOT
 <html lang="en">
 <head>
@@ -77,12 +92,13 @@ final class DumpDocs
     <meta charset="UTF-8">
 </head>
 <body>
+    <div style="font-size: medium;" >{$link}</div>
     <iframe src="../{$imgSrc}" style="border:0; width:100%; height:95%" allow="fullscreen"></iframe>
 </body>
 </html>
 
 EOT;
-        file_put_contents($docsDir . '/asd.html', $html);
+        file_put_contents($docsDir . "/asd.{$type}html", $html);
     }
 
     private function convertHtml(string $title, string $markdown): string
@@ -164,7 +180,7 @@ EOT;
 
     private function isFragment(string $text): bool
     {
-        return substr($text, 0, 1) === '#';
+        return $text[0] === '#';
     }
 
     private function getDescriptorKeyValue(string $key, string $value): string

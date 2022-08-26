@@ -10,6 +10,7 @@ use Koriym\AppStateDiagram\Exception\AlpsFileNotReadableException;
 use Koriym\AppStateDiagram\IndexPage;
 use Koriym\AppStateDiagram\LabelNameFactory;
 use Koriym\AppStateDiagram\Profile;
+use Koriym\AppStateDiagram\PutDiagram;
 use Koriym\AppStateDiagram\TaggedProfile;
 use Koriym\DataFile\Exception\DataFileNotFoundException;
 
@@ -51,48 +52,12 @@ if ($config->watch) {
     passthru('npm start -- --profile ' . $config->profile);
     exit(0);
 }
-try {
-    $labelName = LabelNameFactory::getInstance($config->label);
-    $profile = new Profile($config->profile, $labelName);
-    $dot = (new DrawDiagram())($profile, $labelName, null, null);
-    // dump docs/
-    (new DumpDocs())($profile, $config->profile, $config->outputMode);
 
-    if ($config->hasTag) {
-        $filteredProfile = new TaggedProfile($profile, $config->filter->or, $config->filter->and);
-        $tagDot = $config->filter->color ? (new DrawDiagram())($profile, $labelName, $filteredProfile, $config->filter->color) : (new DrawDiagram())($profile, $labelName, $filteredProfile);
-    }
+try {
+    (new PutDiagram())($config);
 } catch (Exception $e) {
     $shortName = (new \ReflectionClass($e))->getShortName();
     $msg = sprintf("asd: %s(%s)",$shortName, $e->getMessage());
     file_put_contents('php://stderr', $msg . PHP_EOL);
     exit(1);
 }
-$file = str_replace(['.xml','.json'], '.dot', $config->profile);
-file_put_contents($file, $dot);
-
-$svgFile = str_replace(['.xml', '.json'], '.svg', $config->profile);
-$cmd = "dot -Tsvg {$file} -o {$svgFile}";
-passthru($cmd, $status);
-if ($status !== 0) {
-    echo 'Warning: Graphviz error. https://graphviz.org/download/' . PHP_EOL;
-}
-
-$index = new IndexPage($profile, $config->outputMode);
-file_put_contents($index->file, $index->content);
-echo "ASD generated. {$index->file}" . PHP_EOL;
-echo sprintf('Descriptors(%s), Links(%s)', count($profile->descriptors), count($profile->links)) . PHP_EOL;
-
-if (!isset($tagDot)) {
-  exit(0);
-}
-
-$tagFile = dirname($file) . '/tag_' . basename($file);
-file_put_contents($tagFile, $tagDot);
-$filteredSvg = dirname($svgFile) . '/tag_' . basename($svgFile);
-$cmd = "dot -Tsvg {$tagFile} -o {$filteredSvg}";
-passthru($cmd, $status);
-if ($status !== 0) {
-    echo 'Warning: Graphviz error. https://graphviz.org/download/' . PHP_EOL;
-}
-echo sprintf('Tagged ASD generated. %s', $filteredSvg) . PHP_EOL;
