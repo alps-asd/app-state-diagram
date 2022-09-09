@@ -73,9 +73,7 @@ final class CreateLinks
         }
     }
 
-    /**
-     * @param list<stdClass> $instances
-     */
+    /** @param list<stdClass> $instances */
     private function scanTransition(SemanticDescriptor $semantic, array $instances): void
     {
         foreach ($instances as $instance) {

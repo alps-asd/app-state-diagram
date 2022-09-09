@@ -21,10 +21,6 @@ final class LabelNameFactory
             return new LabelNameTitle();
         }
 
-        if ($label === 'both') {
-            return new LabelNameBoth();
-        }
-
         return new LabelName();
     }
 }

@@ -21,11 +21,4 @@ final class LabelNameFactoryTest extends TestCase
 
         $this->assertInstanceOf(LabelNameTitle::class, $actual);
     }
-
-    public function testGetInstanceOfLabelNameBoth(): void
-    {
-        $actual = LabelNameFactory::getInstance('both');
-
-        $this->assertInstanceOf(LabelNameBoth::class, $actual);
-    }
 }

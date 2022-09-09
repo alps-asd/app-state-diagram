@@ -23,12 +23,9 @@ final class Config
     public $hasTag;
 
     /** @var string */
-    public $label;
-
-    /** @var string */
     public $outputMode;
 
-    public function __construct(string $profile, bool $watch, string $label, ConfigFilter $filter, string $outputMode = DumpDocs::MODE_HTML)
+    public function __construct(string $profile, bool $watch, ConfigFilter $filter, string $outputMode = DumpDocs::MODE_HTML)
     {
         if (! is_file($profile)) {
             throw new AlpsFileNotReadableException($profile);
@@ -38,7 +35,6 @@ final class Config
         $this->watch = $watch;
         $this->filter = $filter;
         $this->hasTag = $filter->and || $filter->or;
-        $this->label = $label;
         $this->outputMode = $outputMode;
     }
 }

@@ -19,9 +19,7 @@ class DumpDocsTest extends TestCase
         $this->assertFileExists(__DIR__ . '/Fake/project/min/docs/semantic.foo.html');
     }
 
-    /**
-     * @depends testInvoke
-     */
+    /** @depends testInvoke */
     public function testSemanticPageContainTitle(): void
     {
         $html = (string) file_get_contents(__DIR__ . '/Fake/project/min/docs/semantic.foo.html');
@@ -30,9 +28,7 @@ class DumpDocsTest extends TestCase
         $this->assertStringContainsString('title: foo-title', $html);
     }
 
-    /**
-     * @depends testInvoke
-     */
+    /** @depends testInvoke */
     public function testSemanticPageTableContainTitle(): void
     {
         $html = (string) file_get_contents(__DIR__ . '/Fake/project/min/docs/semantic.bar.html');

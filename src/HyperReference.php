@@ -78,9 +78,7 @@ class HyperReference
         return $instances;
     }
 
-    /**
-     * @return Generator<string>
-     */
+    /** @return Generator<string> */
     public function hrefGenerator(): Generator
     {
         while ($this->hrefs) {

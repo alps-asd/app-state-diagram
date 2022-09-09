@@ -26,9 +26,7 @@ class IndexPageTest extends TestCase
         return $content;
     }
 
-    /**
-     * @depends testInvoke
-     */
+    /** @depends testInvoke */
     public function testLinkRelationsIsMissing(string $html): void
     {
         $this->assertStringNotContainsString('Links', $html);
@@ -96,17 +94,13 @@ class IndexPageTest extends TestCase
         $this->assertStringContainsString('# Title', $content);
     }
 
-    /**
-     * @depends testInvoke
-     */
+    /** @depends testInvoke */
     public function testNoTitle(string $content): void
     {
         $this->assertStringContainsString('<title>ALPS</title>', $content);
     }
 
-    /**
-     * @depends testInvokeMarkdownMode
-     */
+    /** @depends testInvokeMarkdownMode */
     public function testNoTitleMarkdownMode(string $content): void
     {
         $this->assertStringContainsString('# ALPS', $content);

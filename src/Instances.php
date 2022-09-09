@@ -27,9 +27,7 @@ class Instances
         ksort($this->insntances);
     }
 
-    /**
-     * @return array<string, stdClass>
-     */
+    /** @return array<string, stdClass> */
     public function get(): array
     {
         return $this->insntances;

@@ -22,9 +22,7 @@ class ConfigLoadTest extends TestCase
         $this->assertSame(DumpDocs::MODE_MARKDOWN, $config->outputMode);
     }
 
-    /**
-     * @return array<string, mixed>
-     */
+    /** @return array<string, mixed> */
     public function testOverwriteConfig(): array
     {
         $options = [
@@ -42,7 +40,6 @@ class ConfigLoadTest extends TestCase
         $this->assertSame(['a', 'b'], $config->filter->and);
         $this->assertSame(['c', 'd'], $config->filter->or);
         $this->assertSame('red', $config->filter->color);
-        $this->assertSame('title', $config->label);
 
         return $options;
     }
@@ -61,13 +58,6 @@ class ConfigLoadTest extends TestCase
         $this->assertSame(['a', 'b'], $config->filter->and);
         $this->assertSame(['c', 'd'], $config->filter->or);
         $this->assertSame('red', $config->filter->color);
-        $this->assertSame('title', $config->label);
-    }
-
-    public function testMultipleLabelOptions(): void
-    {
-        $config = ConfigFactory::fromCommandLine(1, [__DIR__ . '/Fake/alps.json'], ['label' => 'both', 'l' => 'title']);
-        $this->assertSame('both', $config->label);
     }
 
     public function testInvalidProfile(): void

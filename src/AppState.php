@@ -12,9 +12,7 @@ use function sprintf;
 
 use const PHP_EOL;
 
-/**
- * @psalm-immutable
- */
+/** @psalm-immutable */
 #[Immutable]
 final class AppState
 {
@@ -70,9 +68,7 @@ final class AppState
         $this->remove($filterIds);
     }
 
-    /**
-     * @param list<string> $filterIds
-     */
+    /** @param list<string> $filterIds */
     private function remove(array $filterIds): void
     {
         foreach ($filterIds as $filterId) {
