@@ -63,7 +63,7 @@ class DrawDiagramTest extends TestCase
         );
         $dot = ($this->drawDiagram)($profile, new LabelName(), $taggedProfile, 'red');
         $this->assertStringContainsString(
-            's1 -> s2 [label=<<table border="0"><tr><td align="left" href="docs/safe.t1.html">t1 (safe)</td></tr><tr><td align="left" href="docs/safe.t2.html">t2 (safe)</td></tr></table>> fontsize=13 color="red"]',
+            's1 -> s3 [label=<<table border="0"><tr><td align="left" href="docs/safe.t3.html" tooltip="t3 (safe)" >t3 (safe)</td></tr><tr><td align="left" href="docs/safe.t4.html" tooltip="t4 (safe)" >t4 (safe)</td></tr></table>> fontsize=13]',
             $dot
         );
 
@@ -74,7 +74,7 @@ class DrawDiagramTest extends TestCase
     public function testNoTaggedMultipleLink(string $dot): void
     {
         $this->assertStringContainsString(
-            's1 -> s3 [label=<<table border="0"><tr><td align="left" href="docs/safe.t3.html">t3 (safe)</td></tr><tr><td align="left" href="docs/safe.t4.html">t4 (safe)</td></tr></table>> fontsize=13]',
+            's1 -> s3 [label=<<table border="0"><tr><td align="left" href="docs/safe.t3.html" tooltip="t3 (safe)" >t3 (safe)</td></tr><tr><td align="left" href="docs/safe.t4.html" tooltip="t4 (safe)" >t4 (safe)</td></tr></table>> fontsize=13]',
             $dot
         );
     }
