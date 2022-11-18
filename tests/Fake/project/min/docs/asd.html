@@ -2,9 +2,59 @@
 <head>
     <title></title>
     <meta charset="UTF-8">
+    <style>
+      :root {
+        --color-text-base: #24292e;
+        --color-border-base: #eaecef;
+        --color-link-base: #3366cc;
+        --font-size-base: 1rem;
+      }
+
+      .diagram-mode {
+        margin-block-end: 2rem;
+        border-bottom: 1px solid var(--color-border-base);
+        font-size: var(--font-size-base);
+      }
+
+      .diagram-mode__item {
+        display: inline-flex;
+        margin-inline: 0.5rem;
+        list-style: none;
+        color: var(--color-text-base);
+      }
+
+      .diagram-mode__text {
+        display: inline-flex;
+        position: relative;
+        box-sizing: border-box;
+        max-height: 4em;
+        margin-block-end: -1px;
+        padding-block: 1.5rem 0.5rem;
+        border-bottom: 1px solid;
+        text-decoration: none;
+        color: var(--color-text-base);
+      }
+
+      .diagram-mode__link {
+        display: inline-flex;
+        position: relative;
+        box-sizing: border-box;
+        max-height: 4em;
+        margin-block-end: -1px;
+        padding-block: 1.5rem 0.5rem;
+        cursor: pointer;
+        color: var(--color-link-base);
+        text-decoration: none;
+      }
+
+      .diagram-mode__link:hover,
+      .diagram-mode__link:focus {
+        border-bottom: 1px solid;
+      }
+    </style>
 </head>
 <body>
-    <div style="font-size: medium;" >id | <a href="asd.title.html">title</a></div>
+    <div><ul class="diagram-mode"> <li class="diagram-mode__item"> <span class="diagram-mode__text">id</span> </li><li class="diagram-mode__item"> <a href="asd.title.html" class="diagram-mode__link">title</a> </li></ul></div>
     <iframe src="../profile.svg" style="border:0; width:100%; height:95%" allow="fullscreen"></iframe>
 </body>
 </html>
