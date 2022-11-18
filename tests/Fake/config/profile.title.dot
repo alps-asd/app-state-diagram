@@ -7,8 +7,8 @@ digraph application_state_diagram {
   ];
   node [shape = box, style = "bold,filled" fillcolor="lightgray"];
 
-    Blog [margin=0.02, label=<<table cellspacing="0" cellpadding="5" border="0"><tr><td>@@@@Blog post list<br />(Blog post item)<br /></td></tr></table>>,shape=box URL="docs/semantic.Blog.html" target="_parent"]
-    BlogPosting [margin=0.02, label=<<table cellspacing="0" cellpadding="5" border="0"><tr><td>@@@@Blog post item<br />(id)<br />(dateCreated)<br />(articleBody)<br /></td></tr></table>>,shape=box URL="docs/semantic.BlogPosting.html" target="_parent"]
+    Blog [margin=0.02, label=<<table cellspacing="0" cellpadding="5" border="0"><tr><td>Blog post list<br />(Blog post item)<br /></td></tr></table>>,shape=box URL="docs/semantic.Blog.html" target="_parent"]
+    BlogPosting [margin=0.02, label=<<table cellspacing="0" cellpadding="5" border="0"><tr><td>Blog post item<br />(id)<br />(dateCreated)<br />(articleBody)<br /></td></tr></table>>,shape=box URL="docs/semantic.BlogPosting.html" target="_parent"]
 
     About -> Blog [label = <goBlog (safe)> URL="docs/safe.goBlog.html" target="_parent" fontsize=13];
     Blog -> About [label = <goAbout (safe)> URL="docs/safe.goAbout.html" target="_parent" fontsize=13];
