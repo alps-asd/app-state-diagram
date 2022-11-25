@@ -49,7 +49,8 @@ if ($config->watch) {
     if ($isFirstRun) {
         passthru('npm install');
     }
-    passthru('npm start -- --profile ' . $config->profile);
+
+    passthru("npm start -- --profile {$config->profile} --port {$config->port}");
     exit(0);
 }
 

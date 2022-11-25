@@ -20,6 +20,7 @@ class ConfigLoadTest extends TestCase
         $this->assertSame(['tag1', 'tag2'], $config->filter->and);
         $this->assertSame(['tag3'], $config->filter->or);
         $this->assertSame(DumpDocs::MODE_MARKDOWN, $config->outputMode);
+        $this->assertSame(3000, $config->port);
     }
 
     /** @return array<string, mixed> */
@@ -40,6 +41,7 @@ class ConfigLoadTest extends TestCase
         $this->assertSame(['a', 'b'], $config->filter->and);
         $this->assertSame(['c', 'd'], $config->filter->or);
         $this->assertSame('red', $config->filter->color);
+        $this->assertSame(3000, $config->port);
 
         return $options;
     }
@@ -58,6 +60,7 @@ class ConfigLoadTest extends TestCase
         $this->assertSame(['a', 'b'], $config->filter->and);
         $this->assertSame(['c', 'd'], $config->filter->or);
         $this->assertSame('red', $config->filter->color);
+        $this->assertSame(3000, $config->port);
     }
 
     public function testInvalidProfile(): void
