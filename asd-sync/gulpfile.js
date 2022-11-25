@@ -7,11 +7,13 @@ const path = require('path');
 const options = minimist(process.argv.slice(2), {
     string: 'profile',
     default: {
-        profile: __dirname + '/alps/alps.json'
+        profile: __dirname + '/alps/alps.json',
+        port: 3000,
     }
 });
 const profile = options.profile;
 const baseDir = path.dirname(profile);
+const port = options.port;
 
 function serve(cb) {
     browserSync({
@@ -21,6 +23,7 @@ function serve(cb) {
         ghostMode: false,
         open: 'external',
         notify: true,
+        port: port,
     });
     cb();
 }
