@@ -6,6 +6,7 @@ namespace Koriym\AppStateDiagram;
 
 use SimpleXMLElement;
 
+use function array_values;
 use function explode;
 use function filter_var;
 use function is_string;
@@ -56,15 +57,15 @@ final class Option
             return explode(',', $options['and-tag']);
         }
 
-        /** @var array<string> */ // phpcs:ignore SlevomatCodingStandard.Commenting.InlineDocCommentDeclaration.InvalidFormat
+        /** @var list<string> */ // phpcs:ignore SlevomatCodingStandard.Commenting.InlineDocCommentDeclaration.InvalidFormat
 
-        return $filter instanceof SimpleXMLElement && property_exists($filter, 'and') ? (array) $filter->and : [];
+        return $filter instanceof SimpleXMLElement && property_exists($filter, 'and') ? array_values((array) $filter->and) : [];
     }
 
     /**
      * @param array<string, string|bool> $options
      *
-     * @return array<string>
+     * @return list<string>
      */
     private function parseOrTag(array $options, ?SimpleXMLElement $filter): array
     {
@@ -72,9 +73,9 @@ final class Option
             return explode(',', $options['or-tag']);
         }
 
-        /** @var array<string> */ // phpcs:ignore SlevomatCodingStandard.Commenting.InlineDocCommentDeclaration.InvalidFormat
+        /** @var list<string> */ // phpcs:ignore SlevomatCodingStandard.Commenting.InlineDocCommentDeclaration.InvalidFormat
 
-        return $filter instanceof SimpleXMLElement && property_exists($filter, 'or') ? (array) $filter->or : [];
+        return $filter instanceof SimpleXMLElement && property_exists($filter, 'or') ? array_values((array) $filter->or) : [];
     }
 
     /** @param array<string, string|bool> $options */
