@@ -32,13 +32,15 @@ final class ConfigFactory
         /** @var ?SimpleXMLElement $filter */
         $filter = property_exists($xml, 'filter') ? $xml->filter : null;
         $mode = property_exists($xml, 'mode') ? (string) $xml->mode : DumpDocs::MODE_HTML;
-        $option = new Option($options, $filter);
+        $port = property_exists($xml, 'port') ? (int) $xml->port : null;
+        $option = new Option($options, $filter, $port);
 
         return new Config(
             $profile,
             $option->watch,
             new ConfigFilter($option->and, $option->or, $option->color),
-            $mode
+            $mode,
+            $option->port,
         );
     }
 
@@ -48,13 +50,14 @@ final class ConfigFactory
      */
     public static function fromCommandLine(int $argc, array $argv, array $options): Config
     {
-        $option = new Option($options, null);
+        $option = new Option($options, null, null);
 
         return new Config(
             (string) realpath($argv[$argc - 1]),
             $option->watch,
             new ConfigFilter($option->and, $option->or, $option->color),
-            $option->mode
+            $option->mode,
+            $option->port,
         );
     }
 }

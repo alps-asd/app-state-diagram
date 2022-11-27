@@ -9,6 +9,7 @@
             <xs:choice maxOccurs="unbounded">
                 <xs:element ref="alpsFile"/>
                 <xs:element ref="watch"/>
+                <xs:element ref="port"/>
                 <xs:element ref="filter"/>
                 <xs:element ref="label"/>
                 <xs:element ref="mode"/>
@@ -25,6 +26,17 @@
         <xs:annotation>
             <xs:documentation>Rendering in watch mode</xs:documentation>
         </xs:annotation>
+    </xs:element>
+    <xs:element name="port" default="3000">
+        <xs:annotation>
+            <xs:documentation>Watch mode server port</xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+            <xs:restriction base="xs:integer">
+                <xs:minInclusive value="1024"/>
+                <xs:maxInclusive value="49151"/>
+            </xs:restriction>
+        </xs:simpleType>
     </xs:element>
     <xs:element name="filter" type="filterType" >
         <xs:annotation>
