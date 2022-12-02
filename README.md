@@ -75,11 +75,11 @@ asd [options] [alpsFile]
     --and-tag={tag1, tag2} --or-tag={tag3} [--color=red]
         Filter graph
 
-    -l, --label={id|title|both}
-        Displayed words
-
     -m, --mode={markdown|html}
         Output format
+        
+    --port
+        Port number used in watch mode
 ```
 
 * Supports XML and JSON formats.
@@ -160,6 +160,14 @@ ASD uses an XML config file (by default, asd.xml). A barebones example looks lik
 You can start ASD development server with watch mode.
 Each time the profile file changes, the page is reloaded.
 
+If you want to start with a specific port number, you can specify the port number at startup as follows.
+
+```xml
+<asd>
+  <port>3001</port>
+</asd>
+```
+
 ### filter
 
 ```xml
@@ -176,14 +184,6 @@ Each time the profile file changes, the page is reloaded.
 You can extract partial graphs by specific tags, or color specific graphs.
 
 Specify a tag name in the "or" or "and" field to specify the condition. If you specify "color", the graph for that condition will be colored, but if you don't, only the graph for that condition will be extracted and drawn.
-
-### label
-
-```xml
-<asd>
-  <label>[string]</label>
-</asd>
-```
 
 ### markdown format
 
