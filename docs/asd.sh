@@ -20,6 +20,7 @@ done
 profile=$(cd "$(dirname "$target")" || exit; pwd)/$(basename "$target") # path/to/profile.xml (absolute path)
 dir=$(dirname "$profile") # path/to
 basename=$(basename "$profile") # profile.xml
+port=${PORT:-3000}
 
 docker pull ghcr.io/alps-asd/app-state-diagram:latest
-docker run --env COMPOSER_PROCESS_TIMEOUT=0 -v "$dir:/work" -it --init --rm -p ${port}:${port} ghcr.io/alps-asd/app-state-diagram composer global exec asd -- "$options" /work/"$basename"
+docker run --env COMPOSER_PROCESS_TIMEOUT=0 -v "$dir:/work" -it --init --rm -p "${port}:${port}" ghcr.io/alps-asd/app-state-diagram composer global exec asd -- "$options" /work/"$basename"
