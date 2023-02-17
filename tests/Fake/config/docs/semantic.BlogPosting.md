@@ -10,7 +10,7 @@ ALPS Blog: Semantic Descriptor
 | [id](semantic.id.md) | semantic |  |
 | [dateCreated](semantic.dateCreated.md) | semantic |  |
 | [articleBody](semantic.articleBody.md) | semantic |  |
-| [goBlog](safe.goBlog.md) | safe |  |
+| [goBlog](safe.goBlog.md) | safe | to blog |
 
 ---
 

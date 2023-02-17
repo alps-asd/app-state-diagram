@@ -6,7 +6,7 @@ ALPS Blog: Semantic Descriptor
 
 | id | type | title |
 |---|---|---|
-| [goBlog](safe.goBlog.md) | safe |  |
+| [goBlog](safe.goBlog.md) | safe | to blog |
 
 ---
 

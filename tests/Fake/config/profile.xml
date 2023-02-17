@@ -38,7 +38,7 @@
     <descriptor id="goBlogPosting" type="safe" title="to blog posting" rt="#BlogPosting">
         <descriptor href="#id"/>
     </descriptor>
-    <descriptor id="doPost" def="https://activitystrea.ms/specs/json/1.0/#post-verb" type="unsafe" rt="#Blog">
+    <descriptor id="doPost" def="https://activitystrea.ms/specs/json/1.0/#post-verb" type="unsafe" title="post article" rt="#Blog">
         <descriptor href="#articleBody"/>
     </descriptor>
 </alps>

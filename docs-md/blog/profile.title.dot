@@ -10,12 +10,12 @@ digraph application_state_diagram {
     Blog [margin=0.02, label=<<table cellspacing="0" cellpadding="5" border="0"><tr><td>Blog Post List<br />(Blog Post)<br /></td></tr></table>>,shape=box URL="docs/semantic.Blog.html" target="_parent"]
     BlogPosting [margin=0.02, label=<<table cellspacing="0" cellpadding="5" border="0"><tr><td>Blog Post<br />(identifier)<br />(create date)<br />(article body)<br /></td></tr></table>>,shape=box URL="docs/semantic.BlogPosting.html" target="_parent"]
 
-    About -> Blog [label = <goBlog, collection (safe)> URL="docs/safe.goBlog.html" target="_parent" fontsize=13];
-    Blog -> About [label = <goAbout (safe)> URL="docs/safe.goAbout.html" target="_parent" fontsize=13];
-    Blog -> Blog [label = <doPost, collection (unsafe)> URL="docs/unsafe.doPost.html" target="_parent" fontsize=13];
-    Blog -> BlogPosting [label = <goBlogPosting, item (safe)> URL="docs/safe.goBlogPosting.html" target="_parent" fontsize=13];
-    BlogPosting -> Blog [label = <goBlog, collection (safe)> URL="docs/safe.goBlog.html" target="_parent" fontsize=13];
-    Index -> Blog [label = <goBlog, collection (safe)> URL="docs/safe.goBlog.html" target="_parent" fontsize=13];
+    About -> Blog [label = <See the blog post list> URL="docs/safe.goBlog.html" target="_parent" fontsize=13];
+    Blog -> About [label = <Go to About> URL="docs/safe.goAbout.html" target="_parent" fontsize=13];
+    Blog -> Blog [label = <<b><u>Post the article</u></b>> URL="docs/unsafe.doPost.html" target="_parent" fontsize=13];
+    Blog -> BlogPosting [label = <See the blog post> URL="docs/safe.goBlogPosting.html" target="_parent" fontsize=13];
+    BlogPosting -> Blog [label = <See the blog post list> URL="docs/safe.goBlog.html" target="_parent" fontsize=13];
+    Index -> Blog [label = <See the blog post list> URL="docs/safe.goBlog.html" target="_parent" fontsize=13];
 
     About [label = <About Us> URL="docs/semantic.About.html" target="_parent"]
     Index [label = <Home> URL="docs/semantic.Index.html" target="_parent"]
