@@ -9,9 +9,9 @@ ALPS Blog: Semantic Descriptor
 | id | type | title |
 |---|---|---|
 | [BlogPosting](semantic.BlogPosting.md) | semantic | Blog post item |
-| [goAbout](safe.goAbout.md) | safe |  |
-| [goBlogPosting](safe.goBlogPosting.md) | safe |  |
-| [doPost](unsafe.doPost.md) | unsafe |  |
+| [goAbout](safe.goAbout.md) | safe | to about |
+| [goBlogPosting](safe.goBlogPosting.md) | safe | to blog posting |
+| [doPost](unsafe.doPost.md) | unsafe | post article |
 
 ---
 
