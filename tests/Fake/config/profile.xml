@@ -32,10 +32,10 @@
     </descriptor>
 
     <!-- Choreography -->
-    <descriptor id="goStart" type="safe" rt="#Blog"/>
-    <descriptor id="goAbout" type="safe" rt="#About"/>
-    <descriptor id="goBlog" type="safe" rt="#Blog"/>
-    <descriptor id="goBlogPosting" type="safe" rt="#BlogPosting">
+    <descriptor id="goStart" type="safe" title="to start" rt="#Blog"/>
+    <descriptor id="goAbout" type="safe" title="to about" rt="#About"/>
+    <descriptor id="goBlog" type="safe" title="to blog" rt="#Blog"/>
+    <descriptor id="goBlogPosting" type="safe" title="to blog posting" rt="#BlogPosting">
         <descriptor href="#id"/>
     </descriptor>
     <descriptor id="doPost" def="https://activitystrea.ms/specs/json/1.0/#post-verb" type="unsafe" rt="#Blog">
