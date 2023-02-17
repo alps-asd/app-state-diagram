@@ -42,7 +42,7 @@ final class PutDiagram
         }
     }
 
-    public function draw(string $fileId, LabelNameInterface $labelName, AbstractProfile $profile, ?TaggedProfile $taggedProfile, ?string $color): void
+    private function draw(string $fileId, LabelNameInterface $labelName, AbstractProfile $profile, ?TaggedProfile $taggedProfile, ?string $color): void
     {
         $dot = ($this->draw)($profile, $labelName, $taggedProfile, $color);
         $extention = $fileId . '.dot';
@@ -50,7 +50,7 @@ final class PutDiagram
         $this->convert($dotFile, $dot);
     }
 
-    public function drawTag(Profile $profile, Config $config, LabelName $labelName): string
+    private function drawTag(Profile $profile, Config $config, LabelName $labelName): string
     {
         $filteredProfile = new TaggedProfile($profile, $config->filter->or, $config->filter->and);
         $tagDot = $config->filter->color ? (new DrawDiagram())($profile, $labelName, $filteredProfile, $config->filter->color) : (new DrawDiagram())($profile, $labelName, $filteredProfile);
@@ -64,7 +64,7 @@ final class PutDiagram
         return $filteredSvg;
     }
 
-    public function convert(string $dotFile, string $dot): void
+    private function convert(string $dotFile, string $dot): void
     {
         file_put_contents($dotFile, $dot);
         $svgFile = str_replace('dot', 'svg', $dotFile);
