@@ -33,14 +33,14 @@ class PutDrawDiagramTest extends TestCase
      */
     public function testLinkId(): void
     {
-        $profileDot = file_get_contents(dirname(__DIR__) . '/tests/Fake/config/profile.dot');
+        $profileDot = (string) file_get_contents(dirname(__DIR__) . '/tests/Fake/config/profile.dot');
         $this->assertStringContainsString('About -> Blog [label = <goBlog (safe)> URL="docs/safe.goBlog.html"', $profileDot);
     }
 
     /** @depends testInvoke */
     public function testLinkTitle(): void
     {
-        $profileTitleDot = file_get_contents(dirname(__DIR__) . '/tests/Fake/config/profile.title.dot');
+        $profileTitleDot = (string) file_get_contents(dirname(__DIR__) . '/tests/Fake/config/profile.title.dot');
         $this->assertStringContainsString('About -> Blog [label = <to blog> URL="docs/safe.goBlog.html"', $profileTitleDot);
     }
 }
