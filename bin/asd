@@ -29,7 +29,7 @@ usage: asd [options] alps_file
 EOT;
     exit(0);
 }
-$options = getopt('c:w::l::m::', ['config:', 'watch::', 'color::', 'and-tag::', 'or-tag::', 'label::', 'mode::']);
+$options = getopt('c:w::m::', ['config:', 'watch::', 'color::', 'and-tag::', 'or-tag::', 'mode::', 'port::']);
 if ($argc === 1) {
     $options['c'] = getcwd();
 }
@@ -49,7 +49,8 @@ if ($config->watch) {
     if ($isFirstRun) {
         passthru('npm install');
     }
-    passthru('npm start -- --profile ' . $config->profile);
+
+    passthru("npm start -- --profile {$config->profile} --port {$config->port}");
     exit(0);
 }
 

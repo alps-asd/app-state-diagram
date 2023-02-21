@@ -1,6 +1,7 @@
 ALPS Blog: Semantic Descriptor
 # doPost
  * type: unsafe
+ * title: post article
  * def: [https://activitystrea.ms/specs/json/1.0/#post-verb](https://activitystrea.ms/specs/json/1.0/#post-verb)
  * rt: [Blog](semantic.Blog.md)
  * descriptor

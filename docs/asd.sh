@@ -10,9 +10,17 @@ argc=$#
 options=${*:1:$((argc-1))}
 target=${*:argc:1}
 
+while [[ $# -gt 0 ]]; do
+  case $1 in
+    --port=*) ARG="$1"; PORT+=("${ARG#*=}"); unset ARG; shift;;
+    *) shift;;
+  esac
+done
+
 profile=$(cd "$(dirname "$target")" || exit; pwd)/$(basename "$target") # path/to/profile.xml (absolute path)
 dir=$(dirname "$profile") # path/to
 basename=$(basename "$profile") # profile.xml
+port=${PORT:-3000}
 
 docker pull ghcr.io/alps-asd/app-state-diagram:latest
-docker run --env COMPOSER_PROCESS_TIMEOUT=0 -v "$dir:/work" -it --init --rm --name asd -p 3000:3000 ghcr.io/alps-asd/app-state-diagram composer global exec asd -- "$options" /work/"$basename"
+docker run --env COMPOSER_PROCESS_TIMEOUT=0 -v "$dir:/work" -it --init --rm -p "${port}:${port}" ghcr.io/alps-asd/app-state-diagram composer global exec asd -- "$options" /work/"$basename"

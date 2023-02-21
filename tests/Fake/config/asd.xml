@@ -3,6 +3,7 @@
      xsi:noNamespaceSchemaLocation="../../../docs/asd.xsd">
     <alpsFile>profile.xml</alpsFile>
     <watch>false</watch>
+    <port>3000</port>
     <filter>
         <and>tag1</and>
         <and>tag2</and>

@@ -54,7 +54,7 @@ final readonly class Edge implements Stringable
         assert(isset($links[0]));
         $trs = '';
         foreach ($links as $link) {
-            $trs .= sprintf('<tr><td align="left" href="docs/%s.%s.html">%s (%s)</td></tr>', $link->transDescriptor->type, $link->transDescriptor->id, $link->transDescriptor->id, $link->transDescriptor->type);
+            $trs .= sprintf('<tr><td align="left" href="docs/%s.%s.html" tooltip="%s (%s)" >%s (%s)</td></tr>', $link->transDescriptor->type, $link->transDescriptor->id, $link->transDescriptor->id, $link->transDescriptor->type, $link->transDescriptor->id, $link->transDescriptor->type);
         }
 
         $base = '    %s -> %s [label=<<table border="0">%s</table>> fontsize=13';

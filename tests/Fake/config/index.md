@@ -10,11 +10,11 @@ An ALPS profile example for ASD
    * [Blog](docs/semantic.Blog.md) (semantic), Blog post list
    * [BlogPosting](docs/semantic.BlogPosting.md) (semantic), Blog post item
    * [dateCreated](docs/semantic.dateCreated.md) (semantic)
-   * [doPost](docs/unsafe.doPost.md) (unsafe)
-   * [goAbout](docs/safe.goAbout.md) (safe)
-   * [goBlog](docs/safe.goBlog.md) (safe)
-   * [goBlogPosting](docs/safe.goBlogPosting.md) (safe)
-   * [goStart](docs/safe.goStart.md) (safe)
+   * [doPost](docs/unsafe.doPost.md) (unsafe), post article
+   * [goAbout](docs/safe.goAbout.md) (safe), to about
+   * [goBlog](docs/safe.goBlog.md) (safe), to blog
+   * [goBlogPosting](docs/safe.goBlogPosting.md) (safe), to blog posting
+   * [goStart](docs/safe.goStart.md) (safe), to start
    * [id](docs/semantic.id.md) (semantic)
    * [Index](docs/semantic.Index.md) (semantic), Index Page
  * Links

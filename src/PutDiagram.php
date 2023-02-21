@@ -25,27 +25,23 @@ final readonly class PutDiagram
 
     public function __invoke(Config $config): void
     {
-        $labelName = new LabelName();
-        $profile = new Profile($config->profile, $labelName);
-        $this->invoke($profile);
+        $profile = new Profile($config->profile, new LabelName());
+        $titleProfile = new Profile($config->profile, new LabelNameTitle());
+        $this->draw('', new LabelName(), $profile, null, null);
+        $this->draw('.title', new LabelNameTitle(), $titleProfile, null, null);
+
         (new DumpDocs())($profile, $config->profile, $config->outputMode);
         $index = new IndexPage($profile, $config->outputMode);
         file_put_contents($index->file, $index->content);
         echo "ASD generated. {$index->file}" . PHP_EOL;
         echo sprintf('Descriptors(%s), Links(%s)', count($profile->descriptors), count($profile->links)) . PHP_EOL;
         if ($config->hasTag) {
-            $taggedSvg = $this->drawTag($profile, $config, $labelName);
+            $taggedSvg = $this->drawTag($profile, $config, new LabelName());
             echo "Tagged ASD generated. {$taggedSvg}" . PHP_EOL;
         }
     }
 
-    public function invoke(AbstractProfile $profile, ?TaggedProfile $taggedProfile = null, ?string $color = null): void
-    {
-        $this->draw('', new LabelName(), $profile, $taggedProfile, $color);
-        $this->draw('.title', new LabelNameTitle(), $profile, $taggedProfile, $color);
-    }
-
-    public function draw(string $fileId, LabelNameInterface $labelName, AbstractProfile $profile, ?TaggedProfile $taggedProfile, ?string $color): void
+    private function draw(string $fileId, LabelNameInterface $labelName, AbstractProfile $profile, ?TaggedProfile $taggedProfile, ?string $color): void
     {
         $dot = ($this->draw)($profile, $labelName, $taggedProfile, $color);
         $extention = $fileId . '.dot';
@@ -53,7 +49,7 @@ final readonly class PutDiagram
         $this->convert($dotFile, $dot);
     }
 
-    public function drawTag(Profile $profile, Config $config, LabelName $labelName): string
+    private function drawTag(Profile $profile, Config $config, LabelName $labelName): string
     {
         $filteredProfile = new TaggedProfile($profile, $config->filter->or, $config->filter->and);
         $tagDot = $config->filter->color ? (new DrawDiagram())($profile, $labelName, $filteredProfile, $config->filter->color) : (new DrawDiagram())($profile, $labelName, $filteredProfile);
@@ -67,7 +63,7 @@ final readonly class PutDiagram
         return $filteredSvg;
     }
 
-    public function convert(string $dotFile, string $dot): void
+    private function convert(string $dotFile, string $dot): void
     {
         file_put_contents($dotFile, $dot);
         $svgFile = str_replace('dot', 'svg', $dotFile);

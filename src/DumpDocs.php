@@ -98,6 +98,10 @@ EOT;
         --font-size-base: 1rem;
       }
 
+      body {
+        font-family: sans-serif;
+      }
+
       .diagram-mode {
         margin-block-end: 2rem;
         border-bottom: 1px solid var(--color-border-base);

@@ -1,6 +1,7 @@
 ALPS Blog: Semantic Descriptor
 # goAbout
  * type: safe
+ * title: to about
  * rt: [About](semantic.About.md)
 
 ---
