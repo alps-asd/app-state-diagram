@@ -27,7 +27,7 @@ final class DrawDiagram
     public function __invoke(AbstractProfile $profile, ?LabelNameInterface $labelName, ?TaggedProfile $taggedProfile = null, ?string $color = null): string
     {
         $transNodes = $this->getTransNodes($profile);
-        $labelName = $labelName ?? new LabelName();
+        $labelName ??= new LabelName();
         $descriptors = $profile->descriptors;
         [$filterIds, $nodes] = $this->getNodes($transNodes, $labelName, $descriptors, $taggedProfile, $color);
         $edge = new Edge($profile, $taggedProfile, $color);

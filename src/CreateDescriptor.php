@@ -83,7 +83,7 @@ final class CreateDescriptor
     private function scanInlineDescriptor(stdClass $descriptor, array $descriptors): array
     {
         if (! is_array($descriptor->descriptor)) {
-            $msg = is_string($descriptor->descriptor) ? $descriptor->descriptor : json_encode($descriptor);
+            $msg = is_string($descriptor->descriptor) ? $descriptor->descriptor : json_encode($descriptor, JSON_THROW_ON_ERROR);
 
             throw new DescriptorIsNotArrayException((string) $msg);
         }
@@ -119,7 +119,7 @@ final class CreateDescriptor
     {
         $hasNoId = ! isset($descriptor->href) && ! isset($descriptor->id);
         if ($hasNoId) {
-            throw new InvalidDescriptorException((string) json_encode($descriptor));
+            throw new InvalidDescriptorException((string) json_encode($descriptor, JSON_THROW_ON_ERROR));
         }
 
         if (isset($descriptor->type) && ! in_array($descriptor->type, self::VALID_TYPES)) {

@@ -9,8 +9,7 @@ use PHPUnit\Framework\TestCase;
 
 class FullpathTest extends TestCase
 {
-    /** @var FullPath */
-    private $fullPath;
+    private \Koriym\AppStateDiagram\FullPath $fullPath;
 
     public function setUp(): void
     {

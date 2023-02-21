@@ -17,21 +17,16 @@ use function strpos;
 class HyperReference
 {
     /** @var array<string, string> */
-    private $hrefs = [];
+    private array $hrefs = [];
 
-    /** @var FullPath  */
-    private $fullPath;
+    private readonly \Koriym\AppStateDiagram\FullPath $fullPath;
 
     /** @var list<string> */
-    private $done = [];
+    private array $done = [];
 
-    /** @var LabelNameInterface */
-    private $labelName;
-
-    public function __construct(LabelNameInterface $labelName)
+    public function __construct(private readonly LabelNameInterface $labelName)
     {
         $this->fullPath = new FullPath();
-        $this->labelName = $labelName;
     }
 
     public function add(string $alpsFile, string $href): void

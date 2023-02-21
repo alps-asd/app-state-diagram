@@ -11,22 +11,10 @@ use function sprintf;
 
 use const PHP_EOL;
 
-final class Edge
+final readonly class Edge implements \Stringable
 {
-    /** @var AbstractProfile */
-    private $profile;
-
-    /** @var ?string */
-    private $color;
-
-    /** @var ?TaggedProfile */
-    private $taggedProfile;
-
-    public function __construct(AbstractProfile $profile, ?TaggedProfile $taggedProfile = null, ?string $color = null)
+    public function __construct(private AbstractProfile $profile, private ?\Koriym\AppStateDiagram\TaggedProfile $taggedProfile = null, private ?string $color = null)
     {
-        $this->profile = $profile;
-        $this->color = $color;
-        $this->taggedProfile = $taggedProfile;
     }
 
     public function __toString(): string

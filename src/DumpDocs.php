@@ -33,10 +33,10 @@ final class DumpDocs
     public const MODE_MARKDOWN = 'markdown';
 
     /** @var array<string, AbstractDescriptor> */
-    private $descriptors = [];
+    private array $descriptors = [];
 
     /** @var "html"|"md" */
-    private $ext;
+    private ?string $ext = null;
 
     public function __invoke(Profile $profile, string $alpsFile, string $format = self::MODE_HTML): void
     {

@@ -10,7 +10,7 @@ use stdClass;
 use function json_encode;
 use function sprintf;
 
-final class LinkRelation
+final class LinkRelation implements \Stringable
 {
     /** @var string */
     public $href;
@@ -24,11 +24,11 @@ final class LinkRelation
     public function __construct(stdClass $link)
     {
         if (! isset($link->href)) {
-            throw new InvalidLinkRelationException((string) json_encode($link));
+            throw new InvalidLinkRelationException((string) json_encode($link, JSON_THROW_ON_ERROR));
         }
 
         if (! isset($link->rel)) {
-            throw new InvalidLinkRelationException((string) json_encode($link));
+            throw new InvalidLinkRelationException((string) json_encode($link, JSON_THROW_ON_ERROR));
         }
 
         /** @psalm-suppress MixedAssignment */

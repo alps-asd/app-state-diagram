@@ -13,10 +13,10 @@ use function usort;
 
 use const PHP_EOL;
 
-final class LinkRelations
+final class LinkRelations implements \Stringable
 {
     /** @var list<LinkRelation> */
-    private $links;
+    private array $links;
 
     /** @param list<stdClass>|stdClass|null $link */
     public function __construct($link = null)
@@ -48,9 +48,7 @@ final class LinkRelations
             $linkRelations[] = new LinkRelation($link);
         }
 
-        usort($linkRelations, static function (LinkRelation $a, LinkRelation $b): int {
-            return strtoupper($a->rel) <=> strtoupper($b->rel);
-        });
+        usort($linkRelations, static fn(LinkRelation $a, LinkRelation $b): int => strtoupper($a->rel) <=> strtoupper($b->rel));
 
         return $linkRelations;
     }

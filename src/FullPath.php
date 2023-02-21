@@ -21,11 +21,11 @@ final class FullPath
             return $href;
         }
 
-        if (substr($href, 0, 4) === 'http') {
+        if (str_starts_with($href, 'http')) {
             return $href;
         }
 
-        if (substr($href, 0, 1) === '#') {
+        if (str_starts_with($href, '#')) {
             return sprintf('%s%s', $alpsFile, $href);
         }
 

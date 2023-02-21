@@ -16,8 +16,7 @@ use function property_exists;
 
 class DescriptorScannerTest extends TestCase
 {
-    /** @var CreateDescriptor */
-    private $scanner;
+    private \Koriym\AppStateDiagram\CreateDescriptor $scanner;
 
     protected function setUp(): void
     {
@@ -26,7 +25,7 @@ class DescriptorScannerTest extends TestCase
 
     public function testInvoke(): void
     {
-        $alps = json_decode((string) file_get_contents(__DIR__ . '/Fake/alps.json'));
+        $alps = json_decode((string) file_get_contents(__DIR__ . '/Fake/alps.json'), null, 512, JSON_THROW_ON_ERROR);
         assert(is_object($alps));
         assert(property_exists($alps, 'alps'));
         $semantics = ($this->scanner)($alps->alps->descriptor);
@@ -41,7 +40,7 @@ class DescriptorScannerTest extends TestCase
 
     public function testInvalidDescriptor(): void
     {
-        $alps = json_decode((string) file_get_contents(__DIR__ . '/Fake/invalid_missing_id.json'));
+        $alps = json_decode((string) file_get_contents(__DIR__ . '/Fake/invalid_missing_id.json'), null, 512, JSON_THROW_ON_ERROR);
         assert(is_object($alps));
         assert(property_exists($alps, 'alps'));
         $this->expectException(InvalidDescriptorException::class);
@@ -50,7 +49,7 @@ class DescriptorScannerTest extends TestCase
 
     public function testInlineDescriptorIsNotArray(): void
     {
-        $alps = json_decode((string) file_get_contents(__DIR__ . '/Fake/invalid_descriptor_array.json'));
+        $alps = json_decode((string) file_get_contents(__DIR__ . '/Fake/invalid_descriptor_array.json'), null, 512, JSON_THROW_ON_ERROR);
         assert(is_object($alps));
         assert(property_exists($alps, 'alps'));
         $this->expectException(DescriptorIsNotArrayException::class);

@@ -119,7 +119,7 @@ final class TaggedProfile extends AbstractProfile
 
         $href = $child->href;
         if (! isset($href)) {
-            throw new InvalidDescriptorMissingIdOrHrefException((string) json_encode($child)); // @codeCoverageIgnore
+            throw new InvalidDescriptorMissingIdOrHrefException((string) json_encode($child, JSON_THROW_ON_ERROR)); // @codeCoverageIgnore
         }
 
         assert(is_string($href));

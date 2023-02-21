@@ -14,10 +14,9 @@ use function str_replace;
 
 use const PHP_EOL;
 
-final class PutDiagram
+final readonly class PutDiagram
 {
-    /** @var DrawDiagram */
-    private $draw;
+    private \Koriym\AppStateDiagram\DrawDiagram $draw;
 
     public function __construct()
     {

@@ -6,16 +6,13 @@ namespace Koriym\AppStateDiagram;
 
 final class FakeAlpsJsonInputStreamWrapper
 {
-    /** @var string */
-    private $alpsFile;
+    private readonly string $alpsFile;
 
-    /** @var int */
-    private $position;
+    private int $position = 0;
 
     public function __construct()
     {
         $this->alpsFile = (string) file_get_contents(__DIR__ . '/remote_link.json');
-        $this->position = 0;
     }
 
     public function stream_open(string $path): bool

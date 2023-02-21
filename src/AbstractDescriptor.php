@@ -55,7 +55,7 @@ abstract class AbstractDescriptor
     public function __construct(object $descriptor, ?stdClass $parentDescriptor = null)
     {
         if (! isset($descriptor->id)) {
-            throw new InvalidSemanticsException((string) json_encode($descriptor));
+            throw new InvalidSemanticsException((string) json_encode($descriptor, JSON_THROW_ON_ERROR));
         }
 
         $this->source = $descriptor;

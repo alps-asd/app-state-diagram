@@ -19,20 +19,16 @@ use function strpos;
 final class CreateLinks
 {
     /** @var array<string, AbstractDescriptor> */
-    private $descriptors = [];
+    private array $descriptors = [];
 
     /** @var array<string, stdClass> */
-    private $rawDescriptors = [];
+    private array $rawDescriptors = [];
 
     /** @var array<string, Link> */
-    private $links = [];
+    private array $links = [];
 
-    /** @var LabelNameInterface */
-    private $label;
-
-    public function __construct(LabelNameInterface $label)
+    public function __construct(private readonly LabelNameInterface $label)
     {
-        $this->label = $label;
     }
 
     /**
@@ -65,7 +61,7 @@ final class CreateLinks
 
         $isTransitionalDescriptor = isset($raw->rt) && is_string($raw->rt) && is_int(strpos($raw->rt, '#'));
         if ($isTransitionalDescriptor) {
-            [, $id] = explode('#', $raw->rt);
+            [, $id] = explode('#', (string) $raw->rt);
             assert(isset($this->rawDescriptors[$id]));
 
             $rawDescriptor = $this->rawDescriptors[$id];
@@ -79,7 +75,7 @@ final class CreateLinks
         foreach ($instances as $instance) {
             $isHref = property_exists($instance, 'href') && is_string($instance->href);
             if ($isHref) {
-                [, $descriptorId] = explode('#', $instance->href);
+                [, $descriptorId] = explode('#', (string) $instance->href);
                 $isTransDescriptor = isset($this->descriptors[$descriptorId]) && $this->descriptors[$descriptorId] instanceof TransDescriptor;
                 if ($isTransDescriptor) {
                     $transSemantic = $this->descriptors[$descriptorId];
