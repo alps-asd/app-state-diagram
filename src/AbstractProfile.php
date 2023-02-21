@@ -22,5 +22,5 @@ abstract class AbstractProfile
     public $doc = '';
 
     /** @var string  */
-    public $alpsFile = '';
+    public string $alpsFile = '';
 }
