@@ -8,7 +8,7 @@ use PHPUnit\Framework\TestCase;
 
 class TagTest extends TestCase
 {
-    private \Koriym\AppStateDiagram\Profile $profile;
+    private Profile $profile;
 
     protected function setUp(): void
     {

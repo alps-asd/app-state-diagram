@@ -14,9 +14,11 @@ use function is_object;
 use function json_decode;
 use function property_exists;
 
+use const JSON_THROW_ON_ERROR;
+
 class DescriptorScannerTest extends TestCase
 {
-    private \Koriym\AppStateDiagram\CreateDescriptor $scanner;
+    private CreateDescriptor $scanner;
 
     protected function setUp(): void
     {

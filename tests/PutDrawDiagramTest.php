@@ -10,7 +10,7 @@ use function unlink;
 
 class PutDrawDiagramTest extends TestCase
 {
-    private \Koriym\AppStateDiagram\PutDiagram $putDiagram;
+    private PutDiagram $putDiagram;
 
     protected function setUp(): void
     {

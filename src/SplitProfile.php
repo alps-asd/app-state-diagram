@@ -30,8 +30,7 @@ final class SplitProfile
 {
     /** @var array<string, array{0: object, 1: list<stdClass>}> */
     private static ?array $instance = null;
-
-    private readonly \Koriym\XmlLoader\XmlLoader $xmlLoader;
+    private readonly XmlLoader $xmlLoader;
 
     public function __construct()
     {

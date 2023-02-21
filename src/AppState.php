@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Koriym\AppStateDiagram;
 
 use JetBrains\PhpStorm\Immutable;
+use Stringable;
 
 use function array_key_exists;
 use function assert;
@@ -14,7 +15,7 @@ use const PHP_EOL;
 
 /** @psalm-immutable */
 #[Immutable]
-final class AppState implements \Stringable
+final class AppState implements Stringable
 {
     /** @var array<string, AbstractDescriptor> */
     private $states;

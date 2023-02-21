@@ -16,7 +16,7 @@ use const PHP_EOL;
 
 final readonly class PutDiagram
 {
-    private \Koriym\AppStateDiagram\DrawDiagram $draw;
+    private DrawDiagram $draw;
 
     public function __construct()
     {

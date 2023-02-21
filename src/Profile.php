@@ -18,6 +18,8 @@ use function ksort;
 use function property_exists;
 use function substr;
 
+use const JSON_THROW_ON_ERROR;
+
 final class Profile extends AbstractProfile
 {
     /** @var string */
@@ -41,8 +43,7 @@ final class Profile extends AbstractProfile
 
     /** @var LinkRelations */
     public $linkRelations;
-
-    private readonly \Koriym\AppStateDiagram\LabelNameInterface $labelName;
+    private readonly LabelNameInterface $labelName;
 
     /**
      * @throws ParsingException

@@ -10,6 +10,7 @@ use function dirname;
 use function explode;
 use function file_exists;
 use function sprintf;
+use function str_starts_with;
 use function strrpos;
 use function substr;
 

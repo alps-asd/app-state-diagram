@@ -14,6 +14,8 @@ use function json_encode;
 use function property_exists;
 use function sprintf;
 
+use const JSON_THROW_ON_ERROR;
+
 abstract class AbstractDescriptor
 {
     /** @var string */

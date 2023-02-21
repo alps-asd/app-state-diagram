@@ -18,8 +18,7 @@ class HyperReference
 {
     /** @var array<string, string> */
     private array $hrefs = [];
-
-    private readonly \Koriym\AppStateDiagram\FullPath $fullPath;
+    private readonly FullPath $fullPath;
 
     /** @var list<string> */
     private array $done = [];

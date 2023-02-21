@@ -10,7 +10,7 @@ use function substr_count;
 
 class DrawDiagramTest extends TestCase
 {
-    private \Koriym\AppStateDiagram\DrawDiagram $drawDiagram;
+    private DrawDiagram $drawDiagram;
 
     protected function setUp(): void
     {

@@ -17,6 +17,8 @@ use function json_encode;
 use function ksort;
 use function property_exists;
 
+use const JSON_THROW_ON_ERROR;
+
 final class CreateDescriptor
 {
     private const VALID_TYPES = ['semantic', 'safe', 'unsafe', 'idempotent'];

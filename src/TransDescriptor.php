@@ -20,10 +20,12 @@ final class TransDescriptor extends AbstractDescriptor
     /** @var string */
     public $rt;
 
-    public function __construct(stdClass $descriptor, /** @inheritdoc */
-    public $parent)
-    {
+    public function __construct(
+        stdClass $descriptor, /** @inheritdoc */
+        public $parent
+    ) {
         parent::__construct($descriptor);
+
         assert(is_string($descriptor->type));
         $this->type = $descriptor->type;
         if (! isset($descriptor->rt) || ! is_string($descriptor->rt)) {

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Koriym\AppStateDiagram;
 
+use Stringable;
+
 use function assert;
 use function count;
 use function in_array;
@@ -11,9 +13,9 @@ use function sprintf;
 
 use const PHP_EOL;
 
-final readonly class Edge implements \Stringable
+final readonly class Edge implements Stringable
 {
-    public function __construct(private AbstractProfile $profile, private ?\Koriym\AppStateDiagram\TaggedProfile $taggedProfile = null, private ?string $color = null)
+    public function __construct(private AbstractProfile $profile, private ?TaggedProfile $taggedProfile = null, private ?string $color = null)
     {
     }
 

@@ -6,11 +6,14 @@ namespace Koriym\AppStateDiagram;
 
 use Koriym\AppStateDiagram\Exception\InvalidLinkRelationException;
 use stdClass;
+use Stringable;
 
 use function json_encode;
 use function sprintf;
 
-final class LinkRelation implements \Stringable
+use const JSON_THROW_ON_ERROR;
+
+final class LinkRelation implements Stringable
 {
     /** @var string */
     public $href;
