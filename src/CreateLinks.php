@@ -61,7 +61,7 @@ final class CreateLinks
 
         $isTransitionalDescriptor = isset($raw->rt) && is_string($raw->rt) && is_int(strpos($raw->rt, '#'));
         if ($isTransitionalDescriptor) {
-            [, $id] = explode('#', (string) $raw->rt);
+            [, $id] = explode('#', $raw->rt);
             assert(isset($this->rawDescriptors[$id]));
 
             $rawDescriptor = $this->rawDescriptors[$id];
@@ -75,7 +75,7 @@ final class CreateLinks
         foreach ($instances as $instance) {
             $isHref = property_exists($instance, 'href') && is_string($instance->href);
             if ($isHref) {
-                [, $descriptorId] = explode('#', (string) $instance->href);
+                [, $descriptorId] = explode('#', $instance->href);
                 $isTransDescriptor = isset($this->descriptors[$descriptorId]) && $this->descriptors[$descriptorId] instanceof TransDescriptor;
                 if ($isTransDescriptor) {
                     $transSemantic = $this->descriptors[$descriptorId];

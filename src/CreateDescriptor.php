@@ -87,7 +87,7 @@ final class CreateDescriptor
         if (! is_array($descriptor->descriptor)) {
             $msg = is_string($descriptor->descriptor) ? $descriptor->descriptor : json_encode($descriptor, JSON_THROW_ON_ERROR);
 
-            throw new DescriptorIsNotArrayException((string) $msg);
+            throw new DescriptorIsNotArrayException($msg);
         }
 
         /** @psalm-suppress MixedArgumentTypeCoercion */
@@ -121,7 +121,7 @@ final class CreateDescriptor
     {
         $hasNoId = ! isset($descriptor->href) && ! isset($descriptor->id);
         if ($hasNoId) {
-            throw new InvalidDescriptorException((string) json_encode($descriptor, JSON_THROW_ON_ERROR));
+            throw new InvalidDescriptorException(json_encode($descriptor, JSON_THROW_ON_ERROR));
         }
 
         if (isset($descriptor->type) && ! in_array($descriptor->type, self::VALID_TYPES)) {

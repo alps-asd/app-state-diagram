@@ -35,8 +35,8 @@ final class DumpDocs
     /** @var array<string, AbstractDescriptor> */
     private array $descriptors = [];
 
-    /** @var "html"|"md" */
-    private ?string $ext = null;
+    /** @var 'html'|'md' */
+    private ?string $ext = 'html';
 
     public function __invoke(Profile $profile, string $alpsFile, string $format = self::MODE_HTML): void
     {
@@ -162,7 +162,7 @@ EOT;
 
     private function fileOutput(string $title, string $markDown, string $basePath, string $format): void
     {
-        $file = sprintf('%s.%s', $basePath, $this->ext);
+        $file = sprintf('%s.%s', $basePath, (string) $this->ext);
         if ($format === self::MODE_MARKDOWN) {
             file_put_contents($file, $markDown);
 
@@ -254,7 +254,7 @@ EOT;
 
         assert($descriptor instanceof TransDescriptor);
 
-        return sprintf(' * rt: [%s](semantic.%s.%s)', $descriptor->rt, $descriptor->rt, $this->ext) . PHP_EOL;
+        return sprintf(' * rt: [%s](semantic.%s.%s)', $descriptor->rt, $descriptor->rt, (string) $this->ext) . PHP_EOL;
     }
 
     private function getDescriptorInDescriptor(AbstractDescriptor $descriptor): string
@@ -267,7 +267,7 @@ EOT;
 
         $table = sprintf(' * descriptor%s%s| id | type | title |%s|---|---|---|%s', PHP_EOL, PHP_EOL, PHP_EOL, PHP_EOL);
         foreach ($descriptors as $descriptor) {
-            $table .= sprintf('| %s | %s | %s |', $descriptor->htmlLink($this->ext), $descriptor->type, $descriptor->title) . PHP_EOL;
+            $table .= sprintf('| %s | %s | %s |', $descriptor->htmlLink((string) $this->ext), $descriptor->type, $descriptor->title) . PHP_EOL;
         }
 
         return $table;
@@ -338,7 +338,7 @@ EOT;
         $list = '';
         foreach ($descriptorIds as $descriptorId) {
             $descriptor = $this->descriptors[$descriptorId];
-            $list .= " * {$descriptor->htmlLink($this->ext)}" . PHP_EOL;
+            $list .= " * {$descriptor->htmlLink((string) $this->ext)}" . PHP_EOL;
         }
 
         $titleHeader = $title ? sprintf('%s: Tag', $title) : 'Tag';

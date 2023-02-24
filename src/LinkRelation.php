@@ -27,11 +27,11 @@ final class LinkRelation implements Stringable
     public function __construct(stdClass $link)
     {
         if (! isset($link->href)) {
-            throw new InvalidLinkRelationException((string) json_encode($link, JSON_THROW_ON_ERROR));
+            throw new InvalidLinkRelationException(json_encode($link, JSON_THROW_ON_ERROR));
         }
 
         if (! isset($link->rel)) {
-            throw new InvalidLinkRelationException((string) json_encode($link, JSON_THROW_ON_ERROR));
+            throw new InvalidLinkRelationException(json_encode($link, JSON_THROW_ON_ERROR));
         }
 
         /** @psalm-suppress MixedAssignment */

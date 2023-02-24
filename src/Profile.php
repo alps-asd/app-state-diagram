@@ -139,7 +139,7 @@ final class Profile extends AbstractProfile
                 continue;
             }
 
-            throw new InvalidDescriptorException((string) json_encode($rawDescriptor, JSON_THROW_ON_ERROR));
+            throw new InvalidDescriptorException(json_encode($rawDescriptor, JSON_THROW_ON_ERROR));
         }
     }
 
