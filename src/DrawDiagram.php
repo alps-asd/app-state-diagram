@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Koriym\AppStateDiagram;
 
-use JetBrains\PhpStorm\Immutable;
 use Koriym\AppStateDiagram\Exception\InvalidHrefException;
 use Koriym\AppStateDiagram\Exception\MissingHashSignInHrefException;
 use stdClass;
@@ -21,7 +20,6 @@ use function substr;
 use const PHP_EOL;
 
 /** @psalm-immutable */
-#[Immutable]
 final class DrawDiagram
 {
     public function __invoke(AbstractProfile $profile, ?LabelNameInterface $labelName, ?TaggedProfile $taggedProfile = null, ?string $color = null): string
