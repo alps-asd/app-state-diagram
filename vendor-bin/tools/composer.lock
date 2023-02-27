@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2a65a3a2dc4aa777a6c10d3d201b7279",
+    "content-hash": "4973a7f84d8cda2603ab53a3623a0423",
     "packages": [
         {
             "name": "amphp/amp",
@@ -897,16 +897,16 @@
         },
         {
             "name": "pdepend/pdepend",
-            "version": "2.12.1",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/pdepend/pdepend.git",
-                "reference": "7a892d56ceafd804b4a2ecc85184640937ce9e84"
+                "reference": "2dfbbedf74d7a01bedd9be040014ea9aed0eb7d8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/pdepend/pdepend/zipball/7a892d56ceafd804b4a2ecc85184640937ce9e84",
-                "reference": "7a892d56ceafd804b4a2ecc85184640937ce9e84",
+                "url": "https://api.github.com/repos/pdepend/pdepend/zipball/2dfbbedf74d7a01bedd9be040014ea9aed0eb7d8",
+                "reference": "2dfbbedf74d7a01bedd9be040014ea9aed0eb7d8",
                 "shasum": ""
             },
             "require": {
@@ -921,6 +921,7 @@
                 "phpunit/phpunit": "^4.8.36|^5.7.27",
                 "squizlabs/php_codesniffer": "^2.0.0"
             },
+            "default-branch": true,
             "bin": [
                 "src/bin/pdepend"
             ],
@@ -942,7 +943,7 @@
             "description": "Official version of pdepend to be handled with Composer",
             "support": {
                 "issues": "https://github.com/pdepend/pdepend/issues",
-                "source": "https://github.com/pdepend/pdepend/tree/2.12.1"
+                "source": "https://github.com/pdepend/pdepend/tree/master"
             },
             "funding": [
                 {
@@ -950,7 +951,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2022-09-08T19:30:37+00:00"
+            "time": "2023-02-21T13:00:24+00:00"
         },
         {
             "name": "phpdocumentor/reflection-common",
@@ -1119,16 +1120,16 @@
         },
         {
             "name": "phpmd/phpmd",
-            "version": "2.13.0",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpmd/phpmd.git",
-                "reference": "dad0228156856b3ad959992f9748514fa943f3e3"
+                "reference": "d13509f43331eb9ddc45a58e33c465be9bf1a783"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpmd/phpmd/zipball/dad0228156856b3ad959992f9748514fa943f3e3",
-                "reference": "dad0228156856b3ad959992f9748514fa943f3e3",
+                "url": "https://api.github.com/repos/phpmd/phpmd/zipball/d13509f43331eb9ddc45a58e33c465be9bf1a783",
+                "reference": "d13509f43331eb9ddc45a58e33c465be9bf1a783",
                 "shasum": ""
             },
             "require": {
@@ -1146,6 +1147,7 @@
                 "phpunit/phpunit": "^4.8.36 || ^5.7.27",
                 "squizlabs/php_codesniffer": "^2.0"
             },
+            "default-branch": true,
             "bin": [
                 "src/bin/phpmd"
             ],
@@ -1190,7 +1192,7 @@
             "support": {
                 "irc": "irc://irc.freenode.org/phpmd",
                 "issues": "https://github.com/phpmd/phpmd/issues",
-                "source": "https://github.com/phpmd/phpmd/tree/2.13.0"
+                "source": "https://github.com/phpmd/phpmd/tree/master"
             },
             "funding": [
                 {
@@ -1198,7 +1200,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2022-09-10T08:44:15+00:00"
+            "time": "2023-02-21T08:30:39+00:00"
         },
         {
             "name": "phpmetrics/phpmetrics",
@@ -3033,9 +3035,19 @@
             "time": "2020-11-17T11:09:47+00:00"
         }
     ],
-    "aliases": [],
+    "aliases": [
+        {
+            "package": "pdepend/pdepend",
+            "version": "9999999-dev",
+            "alias": "1.1.3",
+            "alias_normalized": "1.1.3.0"
+        }
+    ],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "phpmd/phpmd": 20,
+        "pdepend/pdepend": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": [],
