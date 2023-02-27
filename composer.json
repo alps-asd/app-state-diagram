@@ -22,8 +22,7 @@
     "require-dev": {
         "bamarni/composer-bin-plugin": "^1.4",
         "roave/security-advisories": "dev-latest",
-        "phpunit/phpunit": "^9.5",
-        "rector/rector": "^0.15.17"
+        "phpunit/phpunit": "^9.5"
     },
     "autoload": {
         "psr-4": {
