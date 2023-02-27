@@ -16,7 +16,6 @@ jobs:
         php-version:
           - '8.2'
         dependencies:
-          - lowest
           - highest
     steps:
       - name: Checkout
