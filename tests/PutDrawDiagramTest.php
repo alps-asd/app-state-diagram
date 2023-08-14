@@ -28,9 +28,7 @@ class PutDrawDiagramTest extends TestCase
         $this->assertFileExists($svgFile);
     }
 
-    /**
-     * @depends testInvoke
-     */
+    /** @depends testInvoke */
     public function testLinkId(): void
     {
         $profileDot = (string) file_get_contents(dirname(__DIR__) . '/tests/Fake/config/profile.dot');

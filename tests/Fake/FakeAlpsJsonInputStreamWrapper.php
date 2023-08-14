@@ -7,6 +7,9 @@ namespace Koriym\AppStateDiagram;
 final class FakeAlpsJsonInputStreamWrapper
 {
     /** @var string */
+    public $context;
+
+    /** @var string */
     private $alpsFile;
 
     /** @var int */

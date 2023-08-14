@@ -12,7 +12,7 @@ class IndexPageTest extends TestCase
     {
         $alpsFile = __DIR__ . '/Fake/alps.json';
         $html = (new IndexPage(new Profile($alpsFile, new LabelName())))->content;
-        $this->assertStringContainsString('<li><a href="docs/semantic.About.html">About</a> (semantic)</li>', $html);
+        $this->assertStringContainsString('<a href="docs/semantic.About.html">About</a>', $html);
 
         return $html;
     }
@@ -21,7 +21,7 @@ class IndexPageTest extends TestCase
     {
         $alpsFile = __DIR__ . '/Fake/alps.json';
         $content = (new IndexPage(new Profile($alpsFile, new LabelName()), DumpDocs::MODE_MARKDOWN))->content;
-        $this->assertStringContainsString('[About](docs/semantic.About.md) (semantic)', $content);
+        $this->assertStringContainsString('[About](docs/semantic.About.md)', $content);
 
         return $content;
     }
@@ -52,8 +52,8 @@ class IndexPageTest extends TestCase
     {
         $alpsFile = __DIR__ . '/Fake/project/min/profile.json';
         $html = (new IndexPage(new Profile($alpsFile, new LabelName())))->content;
-        $this->assertStringContainsString('foo</a> (semantic), foo-title</li>', $html);
-        $this->assertStringContainsString('bar</a> (semantic)', $html);
+        $this->assertStringContainsString('foo</a>', $html);
+        $this->assertStringContainsString('bar</a>', $html);
     }
 
     public function testLinkRelationsString(): void

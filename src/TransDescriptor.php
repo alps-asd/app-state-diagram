@@ -26,6 +26,7 @@ final class TransDescriptor extends AbstractDescriptor
     public function __construct(stdClass $descriptor, SemanticDescriptor $parent)
     {
         parent::__construct($descriptor);
+
         assert(is_string($descriptor->type));
         $this->type = $descriptor->type;
         if (! isset($descriptor->rt) || ! is_string($descriptor->rt)) {
