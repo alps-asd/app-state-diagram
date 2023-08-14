@@ -72,6 +72,7 @@ EOT;
             $href = sprintf('docs/%s.%s.%s', $semantic->type, $semantic->id, $ext);
             $lines[] = sprintf('|[%s](%s) | %s | %s |', $semantic->id, $href, $semantic->type, $semantic->title ?? '');
         }
+
         $lines[] = '';
 
         return implode(PHP_EOL, $lines) . PHP_EOL;
