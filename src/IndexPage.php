@@ -64,13 +64,17 @@ EOT;
     private function semantics(array $semantics, string $ext): string
     {
         $lines = [];
+        $lines[] = PHP_EOL;
+        $lines[] = '| id | type | title |';
+        $lines[] = '|-|-|-|';
+
         foreach ($semantics as $semantic) {
             $href = sprintf('docs/%s.%s.%s', $semantic->type, $semantic->id, $ext);
-            $title = $semantic->title ? sprintf(', %s', $semantic->title) : '';
-            $lines[] = sprintf('   * [%s](%s) (%s)%s', $semantic->id, $href, $semantic->type, $title);
+            $lines[] = sprintf('|[%s](%s) | %s | %s |', $semantic->id, $href, $semantic->type, $semantic->title ?? '');
         }
+        $lines[] = '';
 
-        return implode(PHP_EOL, $lines);
+        return implode(PHP_EOL, $lines) . PHP_EOL;
     }
 
     /** @param array<string, list<string>> $tags */
