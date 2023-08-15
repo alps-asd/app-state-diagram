@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Koriym\AppStateDiagram;
 
-final class Link
+use Stringable;
+
+final class Link implements Stringable
 {
     /** @var string */
     public $from;

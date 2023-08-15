@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Koriym\AppStateDiagram;
 
-use JetBrains\PhpStorm\Immutable;
+use Stringable;
 
 use function array_key_exists;
 use function assert;
@@ -13,20 +13,13 @@ use function sprintf;
 use const PHP_EOL;
 
 /** @psalm-immutable */
-#[Immutable]
-final class AppState
+final class AppState implements Stringable
 {
     /** @var array<string, AbstractDescriptor> */
     private $states;
 
     /** @var array<string, AbstractDescriptor> */
     private $taggedStates;
-
-    /** @var ?string */
-    private $color;
-
-    /** @var LabelNameInterface */
-    private $labelName;
 
     /**
      * @param Link[]                    $links
@@ -35,9 +28,8 @@ final class AppState
      *
      * @psalm-suppress ImpureMethodCall
      */
-    public function __construct(array $links, array $descriptors, LabelNameInterface $labelName, ?TaggedProfile $profile = null, ?string $color = null, array $filterIds = [])
+    public function __construct(array $links, array $descriptors, private readonly LabelNameInterface $labelName, ?TaggedProfile $profile = null, private readonly ?string $color = null, array $filterIds = [])
     {
-        $this->labelName = $labelName;
         $taggedStates = new Descriptors();
         if (isset($profile)) {
             foreach ($profile->links as $link) {
@@ -64,7 +56,6 @@ final class AppState
         }
 
         $this->states = $states->descriptors;
-        $this->color = $color;
         $this->remove($filterIds);
     }
 

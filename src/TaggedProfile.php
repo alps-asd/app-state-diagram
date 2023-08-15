@@ -15,6 +15,8 @@ use function is_string;
 use function json_encode;
 use function substr;
 
+use const JSON_THROW_ON_ERROR;
+
 final class TaggedProfile extends AbstractProfile
 {
     /** @var array<string, AbstractDescriptor> */
@@ -119,7 +121,7 @@ final class TaggedProfile extends AbstractProfile
 
         $href = $child->href;
         if (! isset($href)) {
-            throw new InvalidDescriptorMissingIdOrHrefException((string) json_encode($child)); // @codeCoverageIgnore
+            throw new InvalidDescriptorMissingIdOrHrefException(json_encode($child, JSON_THROW_ON_ERROR)); // @codeCoverageIgnore
         }
 
         assert(is_string($href));

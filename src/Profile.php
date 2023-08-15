@@ -18,6 +18,8 @@ use function ksort;
 use function property_exists;
 use function substr;
 
+use const JSON_THROW_ON_ERROR;
+
 final class Profile extends AbstractProfile
 {
     /** @var string */
@@ -29,34 +31,28 @@ final class Profile extends AbstractProfile
     /** @var string */
     public $doc;
 
-    /** @var string  */
-    public $alpsFile;
-
     /**
      * Descriptor instances (not reference)
      *
      * @var array<string, stdClass>
      */
-    private $instances = [];
+    private array $instances = [];
 
     /** @var array<string, list<string>> */
     public $tags = [];
 
     /** @var LinkRelations */
     public $linkRelations;
-
-    /** @var LabelNameInterface */
-    private $labelName;
+    private readonly LabelNameInterface $labelName;
 
     /**
      * @throws ParsingException
      *
      * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
      */
-    public function __construct(string $alpsFile, LabelNameInterface $labelName, bool $doFinalize = true)
+    public function __construct(public string $alpsFile, LabelNameInterface $labelName, bool $doFinalize = true)
     {
         $hyperReference = new HyperReference($labelName);
-        $this->alpsFile = $alpsFile;
         [$profile, $descriptors] = (new SplitProfile())($alpsFile);
         /** @psalm-suppress all */
         [$this->schema, $this->title, $this->doc] = [$profile->{'$schema'} ?? '', $profile->alps->title ?? '', $profile->alps->doc->value ??  ''];
@@ -143,7 +139,7 @@ final class Profile extends AbstractProfile
                 continue;
             }
 
-            throw new InvalidDescriptorException((string) json_encode($rawDescriptor));
+            throw new InvalidDescriptorException(json_encode($rawDescriptor, JSON_THROW_ON_ERROR));
         }
     }
 

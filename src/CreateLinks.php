@@ -19,20 +19,16 @@ use function strpos;
 final class CreateLinks
 {
     /** @var array<string, AbstractDescriptor> */
-    private $descriptors = [];
+    private array $descriptors = [];
 
     /** @var array<string, stdClass> */
-    private $rawDescriptors = [];
+    private array $rawDescriptors = [];
 
     /** @var array<string, Link> */
-    private $links = [];
+    private array $links = [];
 
-    /** @var LabelNameInterface */
-    private $label;
-
-    public function __construct(LabelNameInterface $label)
+    public function __construct(private readonly LabelNameInterface $label)
     {
-        $this->label = $label;
     }
 
     /**

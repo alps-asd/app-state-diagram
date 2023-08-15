@@ -17,7 +17,7 @@ use function property_exists;
 class Instances
 {
     /** @var array<string, stdClass> */
-    private $insntances = [];
+    private array $insntances = [];
 
     public function add(stdClass $instance): void
     {

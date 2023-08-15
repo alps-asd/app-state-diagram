@@ -12,8 +12,7 @@ use function unlink;
 
 class PutDrawDiagramTest extends TestCase
 {
-    /** @var PutDiagram */
-    private $putDiagram;
+    private PutDiagram $putDiagram;
 
     protected function setUp(): void
     {
@@ -28,9 +27,7 @@ class PutDrawDiagramTest extends TestCase
         $this->assertFileExists($svgFile);
     }
 
-    /**
-     * @depends testInvoke
-     */
+    /** @depends testInvoke */
     public function testLinkId(): void
     {
         $profileDot = (string) file_get_contents(dirname(__DIR__) . '/tests/Fake/config/profile.dot');

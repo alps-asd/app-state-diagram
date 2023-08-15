@@ -29,10 +29,8 @@ use const JSON_PRETTY_PRINT;
 final class SplitProfile
 {
     /** @var array<string, array{0: object, 1: list<stdClass>}> */
-    private static $instance;
-
-    /** @var XmlLoader */
-    private $xmlLoader;
+    private static ?array $instance = null;
+    private readonly XmlLoader $xmlLoader;
 
     public function __construct()
     {

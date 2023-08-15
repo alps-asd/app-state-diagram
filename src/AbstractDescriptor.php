@@ -14,6 +14,8 @@ use function json_encode;
 use function property_exists;
 use function sprintf;
 
+use const JSON_THROW_ON_ERROR;
+
 abstract class AbstractDescriptor
 {
     /** @var string */
@@ -55,7 +57,7 @@ abstract class AbstractDescriptor
     public function __construct(object $descriptor, ?stdClass $parentDescriptor = null)
     {
         if (! isset($descriptor->id)) {
-            throw new InvalidSemanticsException((string) json_encode($descriptor));
+            throw new InvalidSemanticsException(json_encode($descriptor, JSON_THROW_ON_ERROR));
         }
 
         $this->source = $descriptor;
