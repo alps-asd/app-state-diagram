@@ -15,6 +15,7 @@ use function filter_var;
 use function implode;
 use function is_dir;
 use function is_string;
+use function ksort;
 use function mkdir;
 use function property_exists;
 use function sprintf;
@@ -25,6 +26,8 @@ use function usort;
 
 use const FILTER_VALIDATE_URL;
 use const PHP_EOL;
+use const SORT_FLAG_CASE;
+use const SORT_STRING;
 
 /** @psalm-suppress MissingConstructor */
 final class DumpDocs
@@ -44,12 +47,15 @@ final class DumpDocs
         $this->ext = $format === self::MODE_MARKDOWN ? 'md' : self::MODE_HTML;
         $docsDir = $this->mkDir(dirname($alpsFile), 'docs');
         $asdFile = sprintf('../%s', basename(str_replace(['xml', 'json'], 'svg', $alpsFile)));
+        $markDown = '';
+        ksort($descriptors, SORT_FLAG_CASE | SORT_STRING);
         foreach ($descriptors as $descriptor) {
-            $markDown = $this->getSemanticDoc($descriptor, $asdFile, $profile->title);
-            $basePath = sprintf('%s/%s.%s', $docsDir, $descriptor->type, $descriptor->id);
-            $title = "{$descriptor->id} ({$descriptor->type})";
-            $this->fileOutput($title, $markDown, $basePath, $format);
+            $markDown .= $this->getSemanticDoc($descriptor, $asdFile, $profile->title);
         }
+
+        $basePath = sprintf('%s/descriptors', $docsDir);
+        $title = 'Semantic Descriptors';
+        $this->fileOutput($title, $markDown, $basePath, $format);
 
         foreach ($profile->tags as $tag => $descriptorIds) {
             $markDown = $this->getTagDoc($tag, $descriptorIds, $profile->title, $asdFile);
@@ -198,12 +204,9 @@ EOT;
         $titleHeader = $title ? sprintf('%s: Semantic Descriptor', $title) : 'Semantic Descriptor';
 
         return <<<EOT
-{$titleHeader}
-# {$descriptor->id}
+# <a name="{$descriptor->id}">{$descriptor->id}</a>
 {$description}{$rt}{$linkRelations}{$descriptorSemantic}
----
 
-[home](../index.{$this->ext}) | [asd]($asd)
 EOT;
     }
 
@@ -254,7 +257,7 @@ EOT;
 
         assert($descriptor instanceof TransDescriptor);
 
-        return sprintf(' * rt: [%s](semantic.%s.%s)', $descriptor->rt, $descriptor->rt, $this->ext) . PHP_EOL;
+        return sprintf(' * rt: [%s](#%s)', $descriptor->rt, $descriptor->rt) . PHP_EOL;
     }
 
     private function getDescriptorInDescriptor(AbstractDescriptor $descriptor): string

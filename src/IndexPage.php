@@ -53,8 +53,7 @@ final class IndexPage
 
  * [ALPS]({$profilePath})
  * [Application State Diagram]($profileImage)
- * Semantic Descriptors
-{$semantics}{$tags}{$linkRelations}
+ * [Semantic Descriptors](docs/descriptors.{$ext}){$tags}{$linkRelations}
 EOT;
         $this->file = sprintf('%s/index.%s', dirname($profile->alpsFile), $ext);
         $this->content = $mode === DumpDocs::MODE_MARKDOWN ? $md : (new MdToHtml())($htmlTitle, $md);
@@ -65,9 +64,8 @@ EOT;
     {
         $lines = [];
         foreach ($semantics as $semantic) {
-            $href = sprintf('docs/%s.%s.%s', $semantic->type, $semantic->id, $ext);
-            $title = $semantic->title ? sprintf(', %s', $semantic->title) : '';
-            $lines[] = sprintf('   * [%s](%s) (%s)%s', $semantic->id, $href, $semantic->type, $title);
+            $href = sprintf('docs/descriptors.%s#%s', $ext, $semantic->id);
+            $lines[] = sprintf('   * [%s](%s)', $semantic->id, $href);
         }
 
         return implode(PHP_EOL, $lines);

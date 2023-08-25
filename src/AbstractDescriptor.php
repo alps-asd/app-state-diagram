@@ -88,6 +88,6 @@ abstract class AbstractDescriptor
 
     public function htmlLink(string $ext): string
     {
-        return sprintf('[%s](%s.%s.%s)', $this->id, $this->type, $this->id, $ext);
+        return sprintf('[%s](#%s)', $this->id, $this->id);
     }
 }

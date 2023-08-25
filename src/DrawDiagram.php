@@ -185,7 +185,7 @@ EOT;
     %s [margin=0.02, label=<<table cellspacing="0" cellpadding="5" border="0"><tr><td>%s<br />%s</td></tr></table>>,shape=box URL="%s" target="_parent"
 EOT;
 
-        $url = sprintf('docs/%s.%s.html', $descriptor->type, $descriptor->id);
+        $url = sprintf('docs/descriptors.html#%s', $descriptor->id);
         assert($descriptor instanceof SemanticDescriptor);
 
         if (isset($color, $taggedProfile) && in_array($descriptor, $taggedProfile->descriptors)) {
