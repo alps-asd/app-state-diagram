@@ -39,20 +39,16 @@ final class DumpDocs
     private $descriptors = [];
 
     /** @var "html"|"md" */
-    private $ext;
+    private $ext = 'md';
 
     public function __invoke(Profile $profile, string $alpsFile, string $format = self::MODE_HTML): void
     {
-        $descriptors = $this->descriptors = $profile->descriptors;
         $this->ext = $format === self::MODE_MARKDOWN ? 'md' : self::MODE_HTML;
-        $docsDir = $this->mkDir(dirname($alpsFile), 'docs');
         $asdFile = sprintf('../%s', basename(str_replace(['xml', 'json'], 'svg', $alpsFile)));
-        $markDown = '';
-        ksort($descriptors, SORT_FLAG_CASE | SORT_STRING);
-        foreach ($descriptors as $descriptor) {
-            $markDown .= $this->getSemanticDoc($descriptor, $asdFile, $profile->title);
-        }
 
+        $markDown = $this->getSemanticDescriptorMarkDown($profile, $asdFile);
+
+        $docsDir = $this->mkDir(dirname($alpsFile), 'docs');
         $basePath = sprintf('%s/descriptors', $docsDir);
         $title = 'Semantic Descriptors';
         $this->fileOutput($title, $markDown, $basePath, $format);
@@ -168,6 +164,7 @@ EOT;
 
             return;
         }
+
         $html = $this->convertHtml($title, $markDown);
         $JsHtml = str_replace('</head>', <<<'EOT'
 <script>
@@ -259,7 +256,7 @@ EOT, $html);
         $titleHeader = $title ? sprintf('%s: Semantic Descriptor', $title) : 'Semantic Descriptor';
 
         return <<<EOT
-# <a name="{$descriptor->id}">{$descriptor->id}</a>
+### <a name="{$descriptor->id}">{$descriptor->id}</a>
 {$description}{$rt}{$linkRelations}{$descriptorSemantic}
 
 EOT;
@@ -388,6 +385,18 @@ EOT;
         }
 
         return implode(', ', $string) . PHP_EOL;
+    }
+
+    public function getSemanticDescriptorMarkDown(Profile $profile, string $asdFile): string
+    {
+        $descriptors = $this->descriptors = $profile->descriptors;
+        $markDown = '';
+        ksort($descriptors, SORT_FLAG_CASE | SORT_STRING);
+        foreach ($descriptors as $descriptor) {
+            $markDown .= $this->getSemanticDoc($descriptor, $asdFile, $profile->title);
+        }
+
+        return $markDown;
     }
 
     /** @param list<string> $descriptorIds */
