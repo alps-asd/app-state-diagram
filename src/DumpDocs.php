@@ -174,8 +174,69 @@ EOT;
 
             return;
         }
+        $html = $this->convertHtml($title, $markDown);
+        $JsHtml = str_replace('</head>', <<<'EOT'
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Get all anchor tags on the page
+    const links = document.querySelectorAll('a[href^="#"]');
 
-        file_put_contents($file, $this->convertHtml($title, $markDown));
+    // Set a click event for each link
+    links.forEach((link) => {
+      link.addEventListener('click', function (e) {
+        e.preventDefault();
+
+        // Get the 'name' attribute pointed to by the link
+        const targetName = this.getAttribute('href').slice(1); // Remove the hash
+        const targetElement = document.querySelector(`[name="${targetName}"]`);
+
+        if (!targetElement) {
+            console.error("Target element not found for link:", this.getAttribute('href'));
+            return;
+        }
+
+        // Get the absolute position on the page of the target element
+        const targetPosition = targetElement.getBoundingClientRect().top + window.pageYOffset;
+
+        // Get the current scroll position
+        const startPosition = window.pageYOffset;
+
+        // Calculate the distance to scroll
+        const distance = targetPosition - startPosition;
+
+        // Set animation duration
+        const duration = 1000; // 1 second
+        let startTime = null;
+
+        // Animation function
+        const animate = (currentTime) => {
+          if (!startTime) startTime = currentTime;
+          const timeElapsed = currentTime - startTime;
+          const run = ease(timeElapsed, startPosition, distance, duration);
+          window.scrollTo(0, run);
+          if (timeElapsed < duration) requestAnimationFrame(animate);
+        };
+
+        // Easing function
+        const ease = (t, b, c, d) => {
+          t /= d / 2;
+          if (t < 1) return (c / 2) * t * t + b;
+          t--;
+          return (-c / 2) * (t * (t - 2) - 1) + b;
+        };
+
+        // Start the animation
+        requestAnimationFrame(animate);
+
+        // Update URL after the scroll
+        history.pushState(null, null, '#' + targetName);
+      });
+    });
+})
+</script>
+</head>
+EOT, $html);
+        file_put_contents($file, $JsHtml);
     }
 
     private function mkDir(string $baseDir, string $dirName): string
