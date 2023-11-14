@@ -53,16 +53,19 @@ final class IndexPage
 
 {$htmlDoc}
 
- * [ALPS]({$profilePath})
- * [Application State Diagram]($profileImage)
-
+<!--<iframe src="profile.svg" style="border:0; width:100%; height:auto;" allow="fullscreen"></iframe>-->
+<a href="docs/asd.html"><img src="profile.svg"></a>
 ---
 
 ## Semantic Descriptors
 
  {$semanticMd}
+
+---
  
- * [Semantic Descriptors](docs/descriptors.{$ext}){$tags}{$linkRelations}
+ * [ALPS profile]({$profilePath})
+{$tags}{$linkRelations}
+
 EOT;
         $this->file = sprintf('%s/index.%s', dirname($profile->alpsFile), $ext);
         if ($mode === DumpDocs::MODE_MARKDOWN) {
