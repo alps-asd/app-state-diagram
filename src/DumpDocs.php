@@ -57,12 +57,6 @@ final class DumpDocs
         $title = 'Semantic Descriptors';
         $this->fileOutput($title, $markDown, $basePath, $format);
 
-        foreach ($profile->tags as $tag => $descriptorIds) {
-            $markDown = $this->getTagDoc($tag, $descriptorIds, $profile->title, $asdFile);
-            $basePath = sprintf('%s/tag.%s', $docsDir, $tag);
-            $this->fileOutput($tag, $markDown, $basePath, $format);
-        }
-
         $this->dumpImage($profile->title, $docsDir, $format, $alpsFile, '');
         $this->dumpImage($profile->title, $docsDir, $format, $alpsFile, 'title.');
     }
