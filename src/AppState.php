@@ -98,11 +98,11 @@ final class AppState
         if ($this->color === null) {
             $template = $base . ']' . PHP_EOL;
 
-            return sprintf($template, $descriptor->id, $this->labelName->getNodeLabel($descriptor), $descriptor->type, $descriptor->id);
+            return sprintf($template, $descriptor->id, $this->labelName->getNodeLabel($descriptor), $descriptor->id);
         }
 
         $template = $base . ' color="%s"]' . PHP_EOL;
 
-        return sprintf($template, $descriptor->id, $this->labelName->getNodeLabel($descriptor), $descriptor->type, $descriptor->id, $this->color);
+        return sprintf($template, $descriptor->id, $this->labelName->getNodeLabel($descriptor), $descriptor->id, $this->color);
     }
 }
