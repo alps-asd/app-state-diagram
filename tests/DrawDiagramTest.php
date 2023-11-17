@@ -142,11 +142,11 @@ class DrawDiagramTest extends TestCase
         $dot = ($this->drawDiagram)($profile, new LabelName(), $taggedProfile);
 
         $this->assertStringContainsString('label="tag test"', $dot);
-        $this->assertStringContainsString('s2 [label = <s2> URL="docs/semantic.s2.html" target="_parent"]', $dot);
-        $this->assertStringContainsString('s3 [label = <s3> URL="docs/semantic.s3.html" target="_parent"]', $dot);
-        $this->assertStringContainsString('s4 [label = <s4> URL="docs/semantic.s4.html" target="_parent"]', $dot);
-        $this->assertStringContainsString('s5 [label = <s5> URL="docs/semantic.s5.html" target="_parent"]', $dot);
-        $this->assertStringContainsString('s6 [label = <s6> URL="docs/semantic.s6.html" target="_parent"]', $dot);
+        $this->assertStringContainsString('s2 [label = <s2> URL="#s2" target="_parent"]', $dot);
+        $this->assertStringContainsString('s3 [label = <s3> URL="#s3" target="_parent"]', $dot);
+        $this->assertStringContainsString('s4 [label = <s4> URL="#s4" target="_parent"]', $dot);
+        $this->assertStringContainsString('s5 [label = <s5> URL="#s5" target="_parent"]', $dot);
+        $this->assertStringContainsString('s6 [label = <s6> URL="#s6" target="_parent"]', $dot);
 
         return $dot;
     }
@@ -166,7 +166,7 @@ class DrawDiagramTest extends TestCase
     public function testSemanticNoColor(string $dot): void
     {
         $this->assertStringContainsString(
-            's1 [margin=0.02, label=<<table cellspacing="0" cellpadding="5" border="0"><tr><td>s1<br />(id)<br /></td></tr></table>>,shape=box URL="docs/semantic.s1.html" target="_parent"]',
+            's1 [margin=0.02, label=<<table cellspacing="0" cellpadding="5" border="0"><tr><td>s1<br />(id)<br /></td></tr></table>>,shape=box URL="#s1" target="_parent"]',
             $dot
         );
     }
@@ -183,11 +183,11 @@ class DrawDiagramTest extends TestCase
         $dot = ($this->drawDiagram)($profile, new LabelName(), $taggedProfile, 'red');
 
         $this->assertStringContainsString('label="tag test"', $dot);
-        $this->assertStringContainsString('s2 [label = <s2> URL="docs/semantic.s2.html" target="_parent" color="red"]', $dot);
-        $this->assertStringContainsString('s3 [label = <s3> URL="docs/semantic.s3.html" target="_parent" color="red"]', $dot);
-        $this->assertStringContainsString('s4 [label = <s4> URL="docs/semantic.s4.html" target="_parent"]', $dot);
-        $this->assertStringContainsString('s5 [label = <s5> URL="docs/semantic.s5.html" target="_parent" color="red"]', $dot);
-        $this->assertStringContainsString('s6 [label = <s6> URL="docs/semantic.s6.html" target="_parent"]', $dot);
+        $this->assertStringContainsString('s2 [label = <s2> URL="#s2" target="_parent" color="red"]', $dot);
+        $this->assertStringContainsString('s3 [label = <s3> URL="#s3" target="_parent" color="red"]', $dot);
+        $this->assertStringContainsString('s4 [label = <s4> URL="#s4" target="_parent"]', $dot);
+        $this->assertStringContainsString('s5 [label = <s5> URL="#s5" target="_parent" color="red"]', $dot);
+        $this->assertStringContainsString('s6 [label = <s6> URL="#s6" target="_parent"]', $dot);
 
         return $dot;
     }
@@ -207,7 +207,7 @@ class DrawDiagramTest extends TestCase
     public function testSemanticHasColor(string $dot): void
     {
         $this->assertStringContainsString(
-            's1 [margin=0.02, label=<<table cellspacing="0" cellpadding="5" border="0"><tr><td>s1<br />(id)<br /></td></tr></table>>,shape=box URL="docs/semantic.s1.html" target="_parent" color="red"]',
+            's1 [margin=0.02, label=<<table cellspacing="0" cellpadding="5" border="0"><tr><td>s1<br />(id)<br /></td></tr></table>>,shape=box URL="#s1.html" target="_parent" color="red"]',
             $dot
         );
     }
@@ -215,7 +215,7 @@ class DrawDiagramTest extends TestCase
     /** @depends testNoSemanticStateHasColor */
     public function testNoStateWhenGivenTaggedProfile(string $dot): void
     {
-        $this->assertStringNotContainsString('id [URL="docs/semantic.id.html"', $dot);
+        $this->assertStringNotContainsString('id [URL="#id.html"', $dot);
         $this->assertStringNotContainsString('t1 [URL="docs/safe.t1.html"', $dot);
         $this->assertStringNotContainsString('t2 [URL="docs/safe.t2.html"', $dot);
         $this->assertStringNotContainsString('t5 [URL="docs/safe.t5.html"', $dot);
