@@ -16,6 +16,7 @@ use function str_replace;
 use function strtoupper;
 use function uasort;
 
+use const ENT_QUOTES;
 use const PATHINFO_BASENAME;
 use const PHP_EOL;
 
@@ -29,6 +30,12 @@ final class IndexPage
 
     public function __construct(Profile $profile, string $dot, string $mode = DumpDocs::MODE_HTML)
     {
+        $alpsProfile = htmlspecialchars(
+            (string) file_get_contents($profile->alpsFile),
+            ENT_QUOTES,
+            'UTF-8'
+        );
+
         $semanticMd = PHP_EOL . (new DumpDocs())->getSemanticDescriptorMarkDown($profile, $profile->alpsFile);
         $profilePath = pathinfo($profile->alpsFile, PATHINFO_BASENAME);
         $descriptors = $profile->descriptors;
@@ -70,10 +77,21 @@ final class IndexPage
  {$semanticMd}
 
 ---
- 
- * [ALPS profile]({$profilePath})
-{$tags}{$linkRelations}
 
+## Links
+
+{$linkRelations}
+
+---
+
+## Tags
+
+{$tags}
+
+---
+
+## Profile
+<pre><code>{$alpsProfile}</code></pre>
 EOT;
         $this->file = sprintf('%s/index.%s', dirname($profile->alpsFile), $ext);
         if ($mode === DumpDocs::MODE_MARKDOWN) {
