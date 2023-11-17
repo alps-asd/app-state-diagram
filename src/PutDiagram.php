@@ -28,11 +28,11 @@ final class PutDiagram
     {
         $profile = new Profile($config->profile, new LabelName());
         $titleProfile = new Profile($config->profile, new LabelNameTitle());
-        $this->draw('', new LabelName(), $profile, null, null);
+        $dot = $this->draw('', new LabelName(), $profile, null, null);
         $this->draw('.title', new LabelNameTitle(), $titleProfile, null, null);
 
         (new DumpDocs())($profile, $config->profile, $config->outputMode);
-        $index = new IndexPage($profile, $config->outputMode);
+        $index = new IndexPage($profile, $dot, $config->outputMode);
         file_put_contents($index->file, $index->content);
         echo "ASD generated. {$index->file}" . PHP_EOL;
         echo sprintf('Descriptors(%s), Links(%s)', count($profile->descriptors), count($profile->links)) . PHP_EOL;
@@ -42,12 +42,14 @@ final class PutDiagram
         }
     }
 
-    private function draw(string $fileId, LabelNameInterface $labelName, AbstractProfile $profile, ?TaggedProfile $taggedProfile, ?string $color): void
+    private function draw(string $fileId, LabelNameInterface $labelName, AbstractProfile $profile, ?TaggedProfile $taggedProfile, ?string $color): string
     {
         $dot = ($this->draw)($profile, $labelName, $taggedProfile, $color);
         $extention = $fileId . '.dot';
         $dotFile = str_replace(['.xml', '.json'], $extention, $profile->alpsFile);
         $this->convert($dotFile, $dot);
+
+        return $dot;
     }
 
     private function drawTag(Profile $profile, Config $config, LabelName $labelName): string

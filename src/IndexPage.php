@@ -6,6 +6,7 @@ namespace Koriym\AppStateDiagram;
 
 use function array_keys;
 use function dirname;
+use function file_get_contents;
 use function htmlspecialchars;
 use function implode;
 use function nl2br;
@@ -26,7 +27,7 @@ final class IndexPage
     /** @var string */
     public $file;
 
-    public function __construct(Profile $profile, string $mode = DumpDocs::MODE_HTML)
+    public function __construct(Profile $profile, string $dot, string $mode = DumpDocs::MODE_HTML)
     {
         $semanticMd = PHP_EOL . (new DumpDocs())->getSemanticDescriptorMarkDown($profile, $profile->alpsFile);
         $profilePath = pathinfo($profile->alpsFile, PATHINFO_BASENAME);
@@ -47,14 +48,21 @@ final class IndexPage
         $tags = $this->tags($profile->tags, $ext);
         $htmlTitle = htmlspecialchars($profile->title ?: 'ALPS');
         $htmlDoc = nl2br(htmlspecialchars($profile->doc));
-        $profileImage = $mode === DumpDocs::MODE_HTML ? 'docs/asd.html' : 'docs/asd.md';
         $md = <<<EOT
 # {$htmlTitle}
 
 {$htmlDoc}
 
-<!--<iframe src="profile.svg" style="border:0; width:100%; height:auto;" allow="fullscreen"></iframe>-->
-<a href="docs/asd.html"><img src="profile.svg"></a>
+<!-- Container for the ASD -->
+<div id="graph" style="text-align: center;"></div>
+<script>
+    var graphviz = d3.select("#graph").graphviz();
+    var dotString = '{{ dot }}';
+    graphviz.renderDot(dotString).on('end', function() {
+      applySmoothScrollToLinks(document.querySelectorAll('svg a[*|href^="#"]'));
+    });
+</script>
+
 ---
 
 ## Semantic Descriptors
@@ -75,68 +83,14 @@ EOT;
         }
 
         $html = (new MdToHtml())($htmlTitle, $md);
-
-        $this->content = str_replace('</head>', <<<'EOT'
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Get all anchor tags on the page
-    const links = document.querySelectorAll('a[href^="#"]');
-
-    // Set a click event for each link
-    links.forEach((link) => {
-      link.addEventListener('click', function (e) {
-        e.preventDefault();
-
-        // Get the 'name' attribute pointed to by the link
-        const targetName = this.getAttribute('href').slice(1); // Remove the hash
-        const targetElement = document.querySelector(`[name="${targetName}"]`);
-
-        if (!targetElement) {
-            console.error("Target element not found for link:", this.getAttribute('href'));
-            return;
-        }
-
-        // Get the absolute position on the page of the target element
-        const targetPosition = targetElement.getBoundingClientRect().top + window.pageYOffset;
-
-        // Get the current scroll position
-        const startPosition = window.pageYOffset;
-
-        // Calculate the distance to scroll
-        const distance = targetPosition - startPosition;
-
-        // Set animation duration
-        const duration = 1000; // 1 second
-        let startTime = null;
-
-        // Animation function
-        const animate = (currentTime) => {
-          if (!startTime) startTime = currentTime;
-          const timeElapsed = currentTime - startTime;
-          const run = ease(timeElapsed, startPosition, distance, duration);
-          window.scrollTo(0, run);
-          if (timeElapsed < duration) requestAnimationFrame(animate);
-        };
-
-        // Easing function
-        const ease = (t, b, c, d) => {
-          t /= d / 2;
-          if (t < 1) return (c / 2) * t * t + b;
-          t--;
-          return (-c / 2) * (t * (t - 2) - 1) + b;
-        };
-
-        // Start the animation
-        requestAnimationFrame(animate);
-
-        // Update URL after the scroll
-        history.pushState(null, null, '#' + targetName);
-      });
-    });
-})
-</script>
-</head>
-EOT, $html);
+        $escapedDot = str_replace("\n", '', $dot);
+        $easeHtml = str_replace(
+            '</head>',
+            file_get_contents(__DIR__ . '/js/ease.js')
+            . '</head>',
+            $html
+        );
+        $this->content = str_replace('{{ dot }}', $escapedDot, $easeHtml);
     }
 
     /** @param array<string, AbstractDescriptor> $semantics */
