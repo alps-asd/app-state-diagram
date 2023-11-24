@@ -137,7 +137,7 @@ EOT;
             $lines[] = "   * [{$tag}]({$href})";
         }
 
-        return PHP_EOL . ' * Tags' . PHP_EOL . implode(PHP_EOL, $lines);
+        return PHP_EOL . implode(PHP_EOL, $lines);
     }
 
     private function linkRelations(LinkRelations $linkRelations): string
