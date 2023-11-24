@@ -399,28 +399,6 @@ EOT;
         return $markDown;
     }
 
-    /** @param list<string> $descriptorIds */
-    private function getTagDoc(string $tag, array $descriptorIds, string $title, string $asd): string
-    {
-        $list = '';
-        foreach ($descriptorIds as $descriptorId) {
-            $descriptor = $this->descriptors[$descriptorId];
-            $list .= " * {$descriptor->htmlLink($this->ext)}" . PHP_EOL;
-        }
-
-        $titleHeader = $title ? sprintf('%s: Tag', $title) : 'Tag';
-
-        return <<<EOT
-{$titleHeader}
-# {$tag}
-
-{$list}
----
-
-[home](../index.{$this->ext}) | [asd]({$asd}) | {$tag} 
-EOT;
-    }
-
     private function getLinkRelations(LinkRelations $linkRelations): string
     {
         if ((string) $linkRelations === '') {
