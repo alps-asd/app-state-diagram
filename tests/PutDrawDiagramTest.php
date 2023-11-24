@@ -28,6 +28,14 @@ class PutDrawDiagramTest extends TestCase
         $this->assertFileExists($svgFile);
     }
 
+    public function testInvokeHtml(): void
+    {
+        $svgFile = __DIR__ . '/Fake/config/profile.svg';
+        @unlink($svgFile);
+        ($this->putDiagram)(ConfigFactory::fromFile(__DIR__ . '/Fake/config/asd.html.xml'));
+        $this->assertFileExists($svgFile);
+    }
+
     /**
      * @depends testInvoke
      */
