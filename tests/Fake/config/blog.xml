@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<alps
+     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:noNamespaceSchemaLocation="https://alps-io.github.io/schemas/alps.xsd">
+    <title>ALPS Blog</title>
+    <doc>An ALPS profile example for ASD</doc>
+    <link href="https://github.com/alps-asd/app-state-diagram/issues" rel="issue"/>
+
+    <!-- Ontology -->
+    <descriptor id="id" def="https://schema.org/identifier" title="identifier"/>
+    <descriptor id="articleBody" def="https://schema.org/articleBody" title="article body"/>
+    <descriptor id="dateCreated" def="https://schema.org/dateCreated" title="create date"/>
+
+    <!-- Taxonomy -->
+    <descriptor id="Index" title="Home">
+        <descriptor href="#goBlog"/>
+    </descriptor>
+    <descriptor id="About" title="About Us">
+        <descriptor href="#goBlog"/>
+    </descriptor>
+    <descriptor id="Blog" def="https://schema.org/Blog" title="Blog Post List" tag="collection">
+        <descriptor href="#goAbout"/>
+        <descriptor href="#doPost"/>
+        <descriptor href="#goBlogPosting"/>
+        <descriptor href="#BlogPosting"/>
+    </descriptor>
+    <descriptor id="BlogPosting" def="https://schema.org/BlogPosting" title="Blog Post" tag="item">
+        <descriptor href="#id"/>
+        <descriptor href="#dateCreated"/>
+        <descriptor href="#articleBody"/>
+        <descriptor href="#goBlog"/>
+    </descriptor>
+
+    <!-- Choreography -->
+    <descriptor id="goStart" type="safe" rt="#Blog" rel="collection" title="Go to Home"/>
+    <descriptor id="goAbout" type="safe" rt="#About" title="Go to About"/>
+    <descriptor id="goBlog" type="safe" rt="#Blog" rel="collection" title="See the blog post list"/>
+    <descriptor id="goBlogPosting" type="safe" rel="item" rt="#BlogPosting" title="See the blog post">
+        <descriptor href="#id"/>
+    </descriptor>
+    <descriptor id="doPost" def="https://activitystrea.ms/specs/json/1.0/#post-verb" type="unsafe" rel="collection" rt="#Blog" title="Post the article">
+        <descriptor href="#articleBody"/>
+    </descriptor>
+</alps>

@@ -1,0 +1,329 @@
+<html lang="en">
+<head>
+    <title>Semantic Descriptors</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/3.0.1/github-markdown.min.css">
+    <style>
+        .markdown-body {
+            box-sizing: border-box;
+            min-width: 200px;
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 25px;
+        }
+    
+        @media (max-width: 767px) {
+            .markdown-body {
+                padding: 15px;
+            }
+        }
+        #selector {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+    </style>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Get all anchor tags on the page
+    const links = document.querySelectorAll('a[href^="#"]');
+
+    // Set a click event for each link
+    links.forEach((link) => {
+      link.addEventListener('click', function (e) {
+        e.preventDefault();
+
+        // Get the 'name' attribute pointed to by the link
+        const targetName = this.getAttribute('href').slice(1); // Remove the hash
+        const targetElement = document.querySelector(`[name="${targetName}"]`);
+
+        if (!targetElement) {
+            console.error("Target element not found for link:", this.getAttribute('href'));
+            return;
+        }
+
+        // Get the absolute position on the page of the target element
+        const targetPosition = targetElement.getBoundingClientRect().top + window.pageYOffset;
+
+        // Get the current scroll position
+        const startPosition = window.pageYOffset;
+
+        // Calculate the distance to scroll
+        const distance = targetPosition - startPosition;
+
+        // Set animation duration
+        const duration = 1000; // 1 second
+        let startTime = null;
+
+        // Animation function
+        const animate = (currentTime) => {
+          if (!startTime) startTime = currentTime;
+          const timeElapsed = currentTime - startTime;
+          const run = ease(timeElapsed, startPosition, distance, duration);
+          window.scrollTo(0, run);
+          if (timeElapsed < duration) requestAnimationFrame(animate);
+        };
+
+        // Easing function
+        const ease = (t, b, c, d) => {
+          t /= d / 2;
+          if (t < 1) return (c / 2) * t * t + b;
+          t--;
+          return (-c / 2) * (t * (t - 2) - 1) + b;
+        };
+
+        // Start the animation
+        requestAnimationFrame(animate);
+
+        // Update URL after the scroll
+        history.pushState(null, null, '#' + targetName);
+      });
+    });
+})
+</script>
+</head>
+<body>
+    <div class="markdown-body">
+        <h3><a name="About">About</a></h3>
+
+<ul>
+<li>type: semantic</li>
+<li>title: About Us</li>
+<li>descriptor</li>
+</ul>
+
+<table>
+<thead>
+<tr>
+  <th>id</th>
+  <th>type</th>
+  <th>title</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><a href="#goBlog">goBlog</a></td>
+  <td>safe</td>
+  <td>See the blog post list</td>
+</tr>
+</tbody>
+</table>
+
+<h3><a name="articleBody">articleBody</a></h3>
+
+<ul>
+<li>type: semantic</li>
+<li>title: article body</li>
+<li>def: <a href="https://schema.org/articleBody">https://schema.org/articleBody</a></li>
+</ul>
+
+<h3><a name="Blog">Blog</a></h3>
+
+<ul>
+<li>type: semantic</li>
+<li>title: Blog Post List</li>
+<li>def: <a href="https://schema.org/Blog">https://schema.org/Blog</a></li>
+<li>tag: <a href="#tag-collection">collection</a></li>
+<li>descriptor</li>
+</ul>
+
+<table>
+<thead>
+<tr>
+  <th>id</th>
+  <th>type</th>
+  <th>title</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><a href="#BlogPosting">BlogPosting</a></td>
+  <td>semantic</td>
+  <td>Blog Post</td>
+</tr>
+<tr>
+  <td><a href="#goAbout">goAbout</a></td>
+  <td>safe</td>
+  <td>Go to About</td>
+</tr>
+<tr>
+  <td><a href="#goBlogPosting">goBlogPosting</a></td>
+  <td>safe</td>
+  <td>See the blog post</td>
+</tr>
+<tr>
+  <td><a href="#doPost">doPost</a></td>
+  <td>unsafe</td>
+  <td>Post the article</td>
+</tr>
+</tbody>
+</table>
+
+<h3><a name="BlogPosting">BlogPosting</a></h3>
+
+<ul>
+<li>type: semantic</li>
+<li>title: Blog Post</li>
+<li>def: <a href="https://schema.org/BlogPosting">https://schema.org/BlogPosting</a></li>
+<li>tag: <a href="#tag-item">item</a></li>
+<li>descriptor</li>
+</ul>
+
+<table>
+<thead>
+<tr>
+  <th>id</th>
+  <th>type</th>
+  <th>title</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><a href="#id">id</a></td>
+  <td>semantic</td>
+  <td>identifier</td>
+</tr>
+<tr>
+  <td><a href="#dateCreated">dateCreated</a></td>
+  <td>semantic</td>
+  <td>create date</td>
+</tr>
+<tr>
+  <td><a href="#articleBody">articleBody</a></td>
+  <td>semantic</td>
+  <td>article body</td>
+</tr>
+<tr>
+  <td><a href="#goBlog">goBlog</a></td>
+  <td>safe</td>
+  <td>See the blog post list</td>
+</tr>
+</tbody>
+</table>
+
+<h3><a name="dateCreated">dateCreated</a></h3>
+
+<ul>
+<li>type: semantic</li>
+<li>title: create date</li>
+<li>def: <a href="https://schema.org/dateCreated">https://schema.org/dateCreated</a></li>
+</ul>
+
+<h3><a name="doPost">doPost</a></h3>
+
+<ul>
+<li>type: unsafe</li>
+<li>title: Post the article</li>
+<li>def: <a href="https://activitystrea.ms/specs/json/1.0/#post-verb">https://activitystrea.ms/specs/json/1.0/#post-verb</a></li>
+<li>rel: collection</li>
+<li>rt: <a href="#Blog">Blog</a></li>
+<li>descriptor</li>
+</ul>
+
+<table>
+<thead>
+<tr>
+  <th>id</th>
+  <th>type</th>
+  <th>title</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><a href="#articleBody">articleBody</a></td>
+  <td>semantic</td>
+  <td>article body</td>
+</tr>
+</tbody>
+</table>
+
+<h3><a name="goAbout">goAbout</a></h3>
+
+<ul>
+<li>type: safe</li>
+<li>title: Go to About</li>
+<li>rt: <a href="#About">About</a></li>
+</ul>
+
+<h3><a name="goBlog">goBlog</a></h3>
+
+<ul>
+<li>type: safe</li>
+<li>title: See the blog post list</li>
+<li>rel: collection</li>
+<li>rt: <a href="#Blog">Blog</a></li>
+</ul>
+
+<h3><a name="goBlogPosting">goBlogPosting</a></h3>
+
+<ul>
+<li>type: safe</li>
+<li>title: See the blog post</li>
+<li>rel: item</li>
+<li>rt: <a href="#BlogPosting">BlogPosting</a></li>
+<li>descriptor</li>
+</ul>
+
+<table>
+<thead>
+<tr>
+  <th>id</th>
+  <th>type</th>
+  <th>title</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><a href="#id">id</a></td>
+  <td>semantic</td>
+  <td>identifier</td>
+</tr>
+</tbody>
+</table>
+
+<h3><a name="goStart">goStart</a></h3>
+
+<ul>
+<li>type: safe</li>
+<li>title: Go to Home</li>
+<li>rel: collection</li>
+<li>rt: <a href="#Blog">Blog</a></li>
+</ul>
+
+<h3><a name="id">id</a></h3>
+
+<ul>
+<li>type: semantic</li>
+<li>title: identifier</li>
+<li>def: <a href="https://schema.org/identifier">https://schema.org/identifier</a></li>
+</ul>
+
+<h3><a name="Index">Index</a></h3>
+
+<ul>
+<li>type: semantic</li>
+<li>title: Home</li>
+<li>descriptor</li>
+</ul>
+
+<table>
+<thead>
+<tr>
+  <th>id</th>
+  <th>type</th>
+  <th>title</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><a href="#goBlog">goBlog</a></td>
+  <td>safe</td>
+  <td>See the blog post list</td>
+</tr>
+</tbody>
+</table>
+
+    </div>
+</body>
+</html>

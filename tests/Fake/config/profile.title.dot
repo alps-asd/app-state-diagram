@@ -7,17 +7,17 @@ digraph application_state_diagram {
   ];
   node [shape = box, style = "bold,filled" fillcolor="lightgray"];
 
-    Blog [margin=0.02, label=<<table cellspacing="0" cellpadding="5" border="0"><tr><td>Blog post list<br />(Blog post item)<br /></td></tr></table>>,shape=box URL="docs/semantic.Blog.html" target="_parent"]
-    BlogPosting [margin=0.02, label=<<table cellspacing="0" cellpadding="5" border="0"><tr><td>Blog post item<br />(id)<br />(dateCreated)<br />(articleBody)<br /></td></tr></table>>,shape=box URL="docs/semantic.BlogPosting.html" target="_parent"]
+    Blog [margin=0.02, label=<<table cellspacing="0" cellpadding="5" border="0"><tr><td>Blog post list<br />(Blog post item)<br /></td></tr></table>>,shape=box URL="#Blog" target="_parent"]
+    BlogPosting [margin=0.02, label=<<table cellspacing="0" cellpadding="5" border="0"><tr><td>Blog post item<br />(id)<br />(dateCreated)<br />(articleBody)<br /></td></tr></table>>,shape=box URL="#BlogPosting" target="_parent"]
 
-    About -> Blog [label = <to blog> URL="docs/safe.goBlog.html" target="_parent" fontsize=13];
-    Blog -> About [label = <to about> URL="docs/safe.goAbout.html" target="_parent" fontsize=13];
-    Blog -> Blog [label = <<b><u>post article</u></b>> URL="docs/unsafe.doPost.html" target="_parent" fontsize=13];
-    Blog -> BlogPosting [label = <to blog posting> URL="docs/safe.goBlogPosting.html" target="_parent" fontsize=13];
-    BlogPosting -> Blog [label = <to blog> URL="docs/safe.goBlog.html" target="_parent" fontsize=13];
-    Index -> Blog [label = <to blog> URL="docs/safe.goBlog.html" target="_parent" fontsize=13];
+    About -> Blog [label = <to blog> URL="#goBlog" target="_parent" fontsize=13 class="goBlog" penwidth=1.5];
+    Blog -> About [label = <to about> URL="#goAbout" target="_parent" fontsize=13 class="goAbout" penwidth=1.5];
+    Blog -> Blog [label = <<b><u>post article</u></b>> URL="#doPost" target="_parent" fontsize=13 class="doPost" penwidth=1.5];
+    Blog -> BlogPosting [label = <to blog posting> URL="#goBlogPosting" target="_parent" fontsize=13 class="goBlogPosting" penwidth=1.5];
+    BlogPosting -> Blog [label = <to blog> URL="#goBlog" target="_parent" fontsize=13 class="goBlog" penwidth=1.5];
+    Index -> Blog [label = <to blog> URL="#goBlog" target="_parent" fontsize=13 class="goBlog" penwidth=1.5];
 
-    About [label = <About> URL="docs/semantic.About.html" target="_parent"]
-    Index [label = <Index Page> URL="docs/semantic.Index.html" target="_parent"]
+    About [label = <About> URL="#About" target="_parent"]
+    Index [label = <Index Page> URL="#Index" target="_parent"]
 
 }
