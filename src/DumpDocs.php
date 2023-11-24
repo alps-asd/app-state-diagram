@@ -240,7 +240,7 @@ EOT, $html);
         return $dir;
     }
 
-    private function getSemanticDoc(AbstractDescriptor $descriptor, string $asd, string $title): string
+    private function getSemanticDoc(AbstractDescriptor $descriptor, string $title): string
     {
         $descriptorSemantic = $this->getDescriptorInDescriptor($descriptor);
         $rt = $this->getRt($descriptor);
@@ -253,7 +253,6 @@ EOT, $html);
         $description .= $this->getDescriptorProp('rel', $descriptor);
         $description .= $this->getTag($descriptor->tags);
         $linkRelations = $this->getLinkRelations($descriptor->linkRelations);
-        $titleHeader = $title ? sprintf('%s: Semantic Descriptor', $title) : 'Semantic Descriptor';
 
         return <<<EOT
 ### <a name="{$descriptor->id}">{$descriptor->id}</a>
@@ -322,7 +321,7 @@ EOT;
 
         $table = sprintf(' * descriptor%s%s| id | type | title |%s|---|---|---|%s', PHP_EOL, PHP_EOL, PHP_EOL, PHP_EOL);
         foreach ($descriptors as $descriptor) {
-            $table .= sprintf('| %s | %s | %s |', $descriptor->htmlLink($this->ext), $descriptor->type, $descriptor->title) . PHP_EOL;
+            $table .= sprintf('| %s | %s | %s |', $descriptor->htmlLink(), $descriptor->type, $descriptor->title) . PHP_EOL;
         }
 
         return $table;
@@ -393,7 +392,7 @@ EOT;
         $markDown = '';
         ksort($descriptors, SORT_FLAG_CASE | SORT_STRING);
         foreach ($descriptors as $descriptor) {
-            $markDown .= $this->getSemanticDoc($descriptor, $asdFile, $profile->title);
+            $markDown .= $this->getSemanticDoc($descriptor, $profile->title);
         }
 
         return $markDown;

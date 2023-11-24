@@ -10,14 +10,12 @@ use function file_get_contents;
 use function htmlspecialchars;
 use function implode;
 use function nl2br;
-use function pathinfo;
 use function sprintf;
 use function str_replace;
 use function strtoupper;
 use function uasort;
 
 use const ENT_QUOTES;
-use const PATHINFO_BASENAME;
 use const PHP_EOL;
 
 final class IndexPage
@@ -37,7 +35,6 @@ final class IndexPage
         );
 
         $semanticMd = PHP_EOL . (new DumpDocs())->getSemanticDescriptorMarkDown($profile, $profile->alpsFile);
-        $profilePath = pathinfo($profile->alpsFile, PATHINFO_BASENAME);
         $descriptors = $profile->descriptors;
         uasort($descriptors, static function (AbstractDescriptor $a, AbstractDescriptor $b): int {
             $compareId = strtoupper($a->id) <=> strtoupper($b->id);
@@ -51,7 +48,6 @@ final class IndexPage
         });
         $linkRelations = $this->linkRelations($profile->linkRelations);
         $ext = $mode === DumpDocs::MODE_MARKDOWN ? 'md' : DumpDocs::MODE_HTML;
-        $semantics = $this->semantics($descriptors, $ext);
         $tags = $this->tags($profile->tags, $ext);
         $htmlTitle = htmlspecialchars($profile->title ?: 'ALPS');
         $htmlDoc = nl2br(htmlspecialchars($profile->doc));
@@ -109,18 +105,6 @@ EOT;
             $html
         );
         $this->content = str_replace('{{ dot }}', $escapedDot, $easeHtml);
-    }
-
-    /** @param array<string, AbstractDescriptor> $semantics */
-    private function semantics(array $semantics, string $ext): string
-    {
-        $lines = [];
-        foreach ($semantics as $semantic) {
-            $href = sprintf('docs/descriptors.%s#%s', $ext, $semantic->id);
-            $lines[] = sprintf('   * [%s](%s)', $semantic->id, $href);
-        }
-
-        return implode(PHP_EOL, $lines);
     }
 
     /** @param array<string, list<string>> $tags */

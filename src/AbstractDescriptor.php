@@ -86,7 +86,7 @@ abstract class AbstractDescriptor
         $this->linkRelations = new LinkRelations($descriptor->link ?? null);
     }
 
-    public function htmlLink(string $ext): string
+    public function htmlLink(): string
     {
         return sprintf('[%s](#%s)', $this->id, $this->id);
     }
