@@ -166,7 +166,7 @@ EOT;
         }
 
         $html = $this->convertHtml($title, $markDown);
-        $JsHtml = str_replace('</head>', <<<'EOT'
+        $jsHtml = str_replace('</head>', <<<'EOT'
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     // Get all anchor tags on the page
@@ -227,7 +227,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 </head>
 EOT, $html);
-        file_put_contents($file, $JsHtml);
+        file_put_contents($file, $jsHtml);
     }
 
     private function mkDir(string $baseDir, string $dirName): string
