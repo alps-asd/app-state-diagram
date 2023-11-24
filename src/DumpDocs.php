@@ -240,7 +240,7 @@ EOT, $html);
         return $dir;
     }
 
-    private function getSemanticDoc(AbstractDescriptor $descriptor, string $title): string
+    private function getSemanticDoc(AbstractDescriptor $descriptor): string
     {
         $descriptorSemantic = $this->getDescriptorInDescriptor($descriptor);
         $rt = $this->getRt($descriptor);
@@ -388,11 +388,12 @@ EOT;
 
     public function getSemanticDescriptorMarkDown(Profile $profile, string $asdFile): string
     {
+        unset($asdFile);
         $descriptors = $this->descriptors = $profile->descriptors;
         $markDown = '';
         ksort($descriptors, SORT_FLAG_CASE | SORT_STRING);
         foreach ($descriptors as $descriptor) {
-            $markDown .= $this->getSemanticDoc($descriptor, $profile->title);
+            $markDown .= $this->getSemanticDoc($descriptor);
         }
 
         return $markDown;
