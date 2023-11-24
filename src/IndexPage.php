@@ -146,6 +146,6 @@ EOT;
             return '';
         }
 
-        return PHP_EOL . ' * Links' . PHP_EOL . $linkRelations;
+        return PHP_EOL . $linkRelations;
     }
 }

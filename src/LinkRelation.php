@@ -41,12 +41,12 @@ final class LinkRelation
 
     public function __toString(): string
     {
-        return sprintf('   * %s', $this->toLink());
+        return $this->toLink();
     }
 
     private function toLink(): string
     {
-        $str = sprintf('rel: %s <a rel="%s" href="%s">%s</a>', $this->rel, $this->rel, $this->href, $this->href);
+        $str = sprintf('* <a rel="%s" href="%s">%s</a>', $this->rel, $this->href, $this->rel);
         if ($this->title !== '') {
             $str .= " {$this->title}";
         }

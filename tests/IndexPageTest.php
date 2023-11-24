@@ -27,9 +27,9 @@ class IndexPageTest extends TestCase
     }
 
     /** @depends testInvoke */
-    public function testLinkRelationsIsMissing(string $html): void
+    public function testLinkRelationsIsNotMissing(string $html): void
     {
-        $this->assertStringNotContainsString('Links', $html);
+        $this->assertStringContainsString('Links', $html);
     }
 
     public function testTagString(): void
@@ -60,22 +60,22 @@ class IndexPageTest extends TestCase
     {
         $alpsFile = __DIR__ . '/Fake/alps_has_single_link.json';
         $html = (new IndexPage(new Profile($alpsFile, new LabelName()), ''))->content;
-        $this->assertStringContainsString('<li>rel: about <a rel="about" href="https://github.com/alps-asd/app-state-diagram/index.html">https://github.com/alps-asd/app-state-diagram/index.html</a></li>', $html);
+        $this->assertStringContainsString('<a rel="about" href="https://github.com/alps-asd/app-state-diagram/index.html">about</a>', $html);
     }
 
     public function testLinkRelationsStringMarkdownMode(): void
     {
         $alpsFile = __DIR__ . '/Fake/alps_has_single_link.json';
         $md = (new IndexPage(new Profile($alpsFile, new LabelName()), '', DumpDocs::MODE_MARKDOWN))->content;
-        $this->assertStringContainsString('* rel: about <a rel="about" href="https://github.com/alps-asd/app-state-diagram/index.html">https://github.com/alps-asd/app-state-diagram/index.html</a>', $md);
+        $this->assertStringContainsString('* <a rel="about" href="https://github.com/alps-asd/app-state-diagram/index.html">about</a>', $md);
     }
 
     public function testMultipleLinkRelationsString(): void
     {
         $alpsFile = __DIR__ . '/Fake/alps_has_multiple_link.json';
         $html = (new IndexPage(new Profile($alpsFile, new LabelName()), ''))->content;
-        $this->assertStringContainsString('<li>rel: about <a rel="about" href="https://github.com/alps-asd/app-state-diagram/">https://github.com/alps-asd/app-state-diagram/</a></li>', $html);
-        $this->assertStringContainsString('<li>rel: repository <a rel="repository" href="https://github.com/alps-asd/app-state-diagram/">https://github.com/alps-asd/app-state-diagram/</a></li>', $html);
+        $this->assertStringContainsString('<a rel="about" href="https://github.com/alps-asd/app-state-diagram/">about</a>', $html);
+        $this->assertStringContainsString('<a rel="repository" href="https://github.com/alps-asd/app-state-diagram/">repository</a>', $html);
     }
 
     public function testTitle(): void
