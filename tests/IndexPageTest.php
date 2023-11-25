@@ -11,7 +11,7 @@ class IndexPageTest extends TestCase
     public function testInvoke(): string
     {
         $alpsFile = __DIR__ . '/Fake/alps.json';
-        $html = (new IndexPage(new Profile($alpsFile, new LabelName()), ''))->content;
+        $html = (new IndexPage($this->getConfig($alpsFile)))->content;
         $this->assertStringContainsString('<a name="About">About</a>', $html);
 
         return $html;
@@ -20,7 +20,7 @@ class IndexPageTest extends TestCase
     public function testInvokeMarkdownMode(): string
     {
         $alpsFile = __DIR__ . '/Fake/alps.json';
-        $content = (new IndexPage(new Profile($alpsFile, new LabelName()), '', DumpDocs::MODE_MARKDOWN))->content;
+        $content = (new IndexPage($this->getConfig($alpsFile, DumpDocs::MODE_MARKDOWN)))->content;
         $this->assertStringContainsString('<a name="About">About</a>', $content);
 
         return $content;
@@ -35,7 +35,7 @@ class IndexPageTest extends TestCase
     public function testTagString(): void
     {
         $alpsFile = __DIR__ . '/Fake/alps_tag.json';
-        $html = (new IndexPage(new Profile($alpsFile, new LabelName()), ''))->content;
+        $html = (new IndexPage($this->getConfig($alpsFile)))->content;
         $this->assertStringContainsString('<li><a href="docs/tag.a.html">a</a>', $html);
         $this->assertStringContainsString('<li><a href="docs/tag.b.html">b</a>', $html);
     }
@@ -43,7 +43,7 @@ class IndexPageTest extends TestCase
     public function testTagStringMarkdownMode(): void
     {
         $alpsFile = __DIR__ . '/Fake/alps_tag.json';
-        $content = (new IndexPage(new Profile($alpsFile, new LabelName()), '', DumpDocs::MODE_MARKDOWN))->content;
+        $content = (new IndexPage($this->getConfig($alpsFile, DumpDocs::MODE_MARKDOWN)))->content;
         $this->assertStringContainsString('[a](docs/tag.a.md)', $content);
         $this->assertStringContainsString('[b](docs/tag.b.md)', $content);
     }
@@ -51,7 +51,7 @@ class IndexPageTest extends TestCase
     public function testText(): void
     {
         $alpsFile = __DIR__ . '/Fake/project/min/profile.json';
-        $html = (new IndexPage(new Profile($alpsFile, new LabelName()), ''))->content;
+        $html = (new IndexPage($this->getConfig($alpsFile)))->content;
         $this->assertStringContainsString('foo-title</li>', $html);
         $this->assertStringContainsString('bar</a>', $html);
     }
@@ -59,21 +59,21 @@ class IndexPageTest extends TestCase
     public function testLinkRelationsString(): void
     {
         $alpsFile = __DIR__ . '/Fake/alps_has_single_link.json';
-        $html = (new IndexPage(new Profile($alpsFile, new LabelName()), ''))->content;
+        $html = (new IndexPage($this->getConfig($alpsFile)))->content;
         $this->assertStringContainsString('<a rel="about" href="https://github.com/alps-asd/app-state-diagram/index.html">about</a>', $html);
     }
 
     public function testLinkRelationsStringMarkdownMode(): void
     {
         $alpsFile = __DIR__ . '/Fake/alps_has_single_link.json';
-        $md = (new IndexPage(new Profile($alpsFile, new LabelName()), '', DumpDocs::MODE_MARKDOWN))->content;
-        $this->assertStringContainsString('* <a rel="about" href="https://github.com/alps-asd/app-state-diagram/index.html">about</a>', $md);
+        $content = (new IndexPage($this->getConfig($alpsFile, DumpDocs::MODE_MARKDOWN)))->content;
+        $this->assertStringContainsString('* <a rel="about" href="https://github.com/alps-asd/app-state-diagram/index.html">about</a>', $content);
     }
 
     public function testMultipleLinkRelationsString(): void
     {
         $alpsFile = __DIR__ . '/Fake/alps_has_multiple_link.json';
-        $html = (new IndexPage(new Profile($alpsFile, new LabelName()), ''))->content;
+        $html = (new IndexPage($this->getConfig($alpsFile)))->content;
         $this->assertStringContainsString('<a rel="about" href="https://github.com/alps-asd/app-state-diagram/">about</a>', $html);
         $this->assertStringContainsString('<a rel="repository" href="https://github.com/alps-asd/app-state-diagram/">repository</a>', $html);
     }
@@ -81,16 +81,14 @@ class IndexPageTest extends TestCase
     public function testTitle(): void
     {
         $alpsFile = __DIR__ . '/Fake/title.json';
-        $html = (new IndexPage(new Profile($alpsFile, new LabelName()), ''))->content;
-
+        $html = (new IndexPage($this->getConfig($alpsFile)))->content;
         $this->assertStringContainsString('<title>Title</title>', $html);
     }
 
     public function testTitleMarkdownMode(): void
     {
         $alpsFile = __DIR__ . '/Fake/title.json';
-        $content = (new IndexPage(new Profile($alpsFile, new LabelName()), '', DumpDocs::MODE_MARKDOWN))->content;
-
+        $content = (new IndexPage($this->getConfig($alpsFile, DumpDocs::MODE_MARKDOWN)))->content;
         $this->assertStringContainsString('# Title', $content);
     }
 
@@ -104,5 +102,10 @@ class IndexPageTest extends TestCase
     public function testNoTitleMarkdownMode(string $content): void
     {
         $this->assertStringContainsString('# ALPS', $content);
+    }
+
+    private function getConfig(string $alpsFile, string $outputMode = DumpDocs::MODE_HTML): Config
+    {
+        return new Config($alpsFile, false, new ConfigFilter([], [], ''), $outputMode);
     }
 }

@@ -26,8 +26,14 @@ final class IndexPage
     /** @var string */
     public $file;
 
-    public function __construct(Profile $profile, string $dot, string $mode = DumpDocs::MODE_HTML)
+    public function __construct(Config $config)
     {
+        $draw = new DrawDiagram();
+        $profile = new Profile($config->profile, new LabelName());
+        $titleProfile = new Profile($config->profile, new LabelNameTitle());
+        $dotId = $draw($profile, new LabelName());
+        $dotName = $draw($titleProfile, new LabelNameTitle());
+        $mode = $config->outputMode;
         $alpsProfile = htmlspecialchars(
             (string) file_get_contents($profile->alpsFile),
             ENT_QUOTES,
@@ -57,15 +63,73 @@ final class IndexPage
 {$htmlDoc}
 
 <!-- Container for the ASD -->
-<div id="graph" style="text-align: center;"></div>
+<div id="graphId" style="text-align: center; "></div>
+<div id="graphName" style="text-align: center; display: none;"></div>
 <script>
-    var graphviz = d3.select("#graph").graphviz();
-    var dotString = '{{ dot }}';
-    graphviz.renderDot(dotString).on('end', function() {
-      applySmoothScrollToLinks(document.querySelectorAll('svg a[*|href^="#"]'));
+    function renderGraph(graphId, dotString) {
+        var graphviz = d3.select(graphId).graphviz();
+        graphviz.renderDot(dotString).on('end', function() {
+            applySmoothScrollToLinks(document.querySelectorAll('svg a[*|href^="#"]'));
+        });
+    }
+
+    renderGraph("#graphId", '{{ dotId }}');
+    renderGraph("#graphName", '{{ dotName }}');
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const showIdElement = document.getElementById('show_id');
+    const showNameElement = document.getElementById('show_name');
+    const graphIdElement = document.getElementById('graphId');
+    const graphNameElement = document.getElementById('graphName');
+
+    showIdElement.addEventListener('click', function() {
+        graphIdElement.style.display = 'block';
+        graphNameElement.style.display = 'none';
+        showIdElement.classList.add('active');
+        showNameElement.classList.remove('active');
     });
+
+    showNameElement.addEventListener('click', function() {
+        graphNameElement.style.display = 'block';
+        graphIdElement.style.display = 'none';
+        showNameElement.classList.add('active');
+        showIdElement.classList.remove('active');
+    });
+});
 </script>
 
+<div id="selector">
+    <button id="show_id" class="active">ID</button>
+    <button id="show_name">Name</button>
+</div>
+
+<style>
+#selector {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+#selector button {
+    padding: 10px 20px;
+    border: 2px solid #ddd;
+    background-color: white;
+    font-family: 'Roboto', sans-serif;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+#selector button:hover {
+    background-color: #f0f0f0;
+    border-color: #bbb;
+}
+
+#selector button.active {
+    background-color: lightblue;
+    border-color: #888;
+}
+</style>
 ---
 
 ## Semantic Descriptors
@@ -97,14 +161,15 @@ EOT;
         }
 
         $html = (new MdToHtml())($htmlTitle, $md);
-        $escapedDot = str_replace("\n", '', $dot);
+        $escapedDotId = str_replace("\n", '', $dotId);
+        $escapedDotName = str_replace("\n", '', $dotName);
         $easeHtml = str_replace(
             '</head>',
             file_get_contents(__DIR__ . '/js/ease.js')
             . '</head>',
             $html
         );
-        $this->content = str_replace('{{ dot }}', $escapedDot, $easeHtml);
+        $this->content = str_replace(['{{ dotId }}', '{{ dotName }}'], [$escapedDotId, $escapedDotName], $easeHtml);
     }
 
     /** @param array<string, list<string>> $tags */
