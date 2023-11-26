@@ -45,17 +45,17 @@ final class Edge
     private function singleLink(array $links): string
     {
         $link = $links[0];
-        $base = '    %s -> %s [label = <%s> URL="#%s" target="_parent" fontsize=13';
+        $base = '    %s -> %s [label = <%s> URL="#%s" target="_parent" fontsize=13 class="%s"';
 
         if (! isset($this->color, $this->taggedProfile)) {
-            return sprintf($base . '];' . PHP_EOL, $link->from, $link->to, $link->label, $link->transDescriptor->id);
+            return sprintf($base . '];' . PHP_EOL, $link->from, $link->to, $link->label, $link->transDescriptor->id, $link->transDescriptor->id);
         }
 
         if (in_array($link, $this->taggedProfile->links)) {
-            return sprintf($base . ' color="%s"];' . PHP_EOL, $link->from, $link->to, $link->label, $link->transDescriptor->id, $this->color);
+            return sprintf($base . ' color="%s"];' . PHP_EOL, $link->from, $link->to, $link->label, $link->transDescriptor->id, $link->transDescriptor->id, $this->color);
         }
 
-        return sprintf($base . '];' . PHP_EOL, $link->from, $link->to, $link->label, $link->transDescriptor->id);
+        return sprintf($base . '];' . PHP_EOL, $link->from, $link->to, $link->label, $link->transDescriptor->id, $link->transDescriptor->id);
     }
 
     /** @param list<Link> $links */

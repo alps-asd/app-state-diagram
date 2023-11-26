@@ -57,6 +57,7 @@ final class IndexPage
         $tags = $this->tags($profile->tags, $ext);
         $htmlTitle = htmlspecialchars($profile->title ?: 'ALPS');
         $htmlDoc = nl2br(htmlspecialchars($profile->doc));
+        $setUpTagEvents = $this->getSetupTagEvents($config);
         $md = <<<EOT
 # {$htmlTitle}
 
@@ -97,8 +98,59 @@ document.addEventListener('DOMContentLoaded', function() {
         showIdElement.classList.remove('active');
     });
 });
+
+function setupTagEventListener(eventName, titles, color) {
+    document.addEventListener(eventName, function() {
+        titles.forEach(function(title) {
+            changeColorByTitle(title, color);
+        });
+    });
+}
+
+function setupTagTrigger(className) {
+  var spanElements = document.querySelectorAll('.' + className);
+
+  spanElements.forEach(function(span) {
+    span.addEventListener('click', function() {
+      document.dispatchEvent(new CustomEvent('tag-' + span.textContent.trim()));
+    });
+  });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+ {$setUpTagEvents}
+ setupTagTrigger('tag-trigger');
+});
+
 </script>
 
+<script>
+function changeColorByTitle(titleOrClass, newColor) {
+    // タイトルとクラス名で要素を探す
+    var elements = Array.from(document.getElementsByTagName('g'));
+
+    elements.forEach(function(element) {
+        var titleElement = element.getElementsByTagName('title')[0];
+        var title = titleElement ? titleElement.textContent : '';
+
+        // タイトルが一致するか、クラス名が含まれる場合に色を変更
+        if (title === titleOrClass || element.classList.contains(titleOrClass)) {
+            var polygons = Array.from(element.getElementsByTagName('polygon'));
+            var paths = Array.from(element.getElementsByTagName('path'));
+
+            polygons.forEach(function(polygon) {
+                polygon.setAttribute('fill', newColor);
+                polygon.setAttribute('stroke', newColor);
+            });
+
+            paths.forEach(function(path) {
+                path.setAttribute('stroke', newColor);
+            });
+        }
+    });
+}
+
+</script>
 <div id="selector">
     <button id="show_id" class="active">ID</button>
     <button id="show_name">Name</button>
@@ -129,8 +181,20 @@ document.addEventListener('DOMContentLoaded', function() {
     background-color: lightblue;
     border-color: #888;
 }
+
+.tag-trigger {
+    color: blue;
+    cursor: pointer;
+}
+
+.tag-trigger:hover{
+    text-decoration: underline;
+}
+
 </style>
 ---
+
+{$tags}
 
 ## Semantic Descriptors
 
@@ -141,12 +205,6 @@ document.addEventListener('DOMContentLoaded', function() {
 ## Links
 
 {$linkRelations}
-
----
-
-## Tags
-
-{$tags}
 
 ---
 
@@ -179,11 +237,10 @@ EOT;
             return '';
         }
 
-        $lines = [];
+        $lines = ['## Tags'];
         $tagKeys = array_keys($tags);
         foreach ($tagKeys as $tag) {
-            $href = "docs/tag.{$tag}.{$ext}";
-            $lines[] = "   * [{$tag}]({$href})";
+            $lines[] = "   * <span class='tag-trigger'>{$tag}</span>";
         }
 
         return PHP_EOL . implode(PHP_EOL, $lines);
@@ -196,5 +253,21 @@ EOT;
         }
 
         return PHP_EOL . $linkRelations;
+    }
+
+    private function getSetupTagEvents(Config $config): string
+    {
+        $setUpTagEvents = '';
+        $tags = (new Profile($config->profile, new LabelName()))->tags;
+        foreach ($tags as $tag => $ids) {
+            $idArr = [];
+            foreach ($ids as $id) {
+                $idArr[] .= "'{$id}'";
+            }
+
+            $setUpTagEvents .= sprintf("setupTagEventListener('tag-%s', [%s], '%s'); ", $tag, implode(', ', $idArr), 'lightgreen');
+        }
+
+        return $setUpTagEvents;
     }
 }
