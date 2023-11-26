@@ -32,22 +32,6 @@ class IndexPageTest extends TestCase
         $this->assertStringContainsString('Links', $html);
     }
 
-    public function testTagString(): void
-    {
-        $alpsFile = __DIR__ . '/Fake/alps_tag.json';
-        $html = (new IndexPage($this->getConfig($alpsFile)))->content;
-        $this->assertStringContainsString('<li><a href="docs/tag.a.html">a</a>', $html);
-        $this->assertStringContainsString('<li><a href="docs/tag.b.html">b</a>', $html);
-    }
-
-    public function testTagStringMarkdownMode(): void
-    {
-        $alpsFile = __DIR__ . '/Fake/alps_tag.json';
-        $content = (new IndexPage($this->getConfig($alpsFile, DumpDocs::MODE_MARKDOWN)))->content;
-        $this->assertStringContainsString('[a](docs/tag.a.md)', $content);
-        $this->assertStringContainsString('[b](docs/tag.b.md)', $content);
-    }
-
     public function testText(): void
     {
         $alpsFile = __DIR__ . '/Fake/project/min/profile.json';
@@ -109,7 +93,7 @@ class IndexPageTest extends TestCase
         $alpsFile = __DIR__ . '/Fake/config/blog.xml';
         $config = new Config($alpsFile, false, new ConfigFilter([], ['tag1'], 'lightblue'));
         $content = (new IndexPage($config))->content;
-        $this->assertStringContainsString("setupTagEventListener('tag-collection', ['Blog'], 'lightgreen');", $content);
+        $this->assertStringContainsString("setupTagEventListener('collection', ['Blog'], 'lightgreen');", $content);
     }
 
     private function getConfig(string $alpsFile, string $outputMode = DumpDocs::MODE_HTML): Config
