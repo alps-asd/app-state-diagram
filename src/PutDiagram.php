@@ -28,7 +28,7 @@ final class PutDiagram
     {
         $profile = new Profile($config->profile, new LabelName());
         $titleProfile = new Profile($config->profile, new LabelNameTitle());
-        $dot = $this->draw('', new LabelName(), $profile, null, null);
+        $this->draw('', new LabelName(), $profile, null, null);
         $this->draw('.title', new LabelNameTitle(), $titleProfile, null, null);
 
         (new DumpDocs())($profile, $config->profile, $config->outputMode);

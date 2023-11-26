@@ -32,6 +32,12 @@ final class MdToHtml
                 padding: 15px;
             }
         }
+        #selector {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
     </style>
 </head>
 <body>
