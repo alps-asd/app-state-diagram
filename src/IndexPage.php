@@ -98,26 +98,37 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function setupTagEventListener(eventName, titles, color) {
-    document.addEventListener(eventName, function() {
+    document.addEventListener('tagon-' + eventName, function() {
         titles.forEach(function(title) {
             changeColorByTitle(title, color);
         });
     });
+    document.addEventListener('tagoff-' + eventName, function() {
+        titles.forEach(function(title) {
+            changeColorByTitle(title, 'lightgrey');
+        });
+    });
 }
 
-function setupTagTrigger(className) {
-  var spanElements = document.querySelectorAll('.' + className);
+function setupTagTrigger() {
+    var checkboxes = document.querySelectorAll('.tag-trigger-checkbox');
 
-  spanElements.forEach(function(span) {
-    span.addEventListener('click', function() {
-      document.dispatchEvent(new CustomEvent('tag-' + span.textContent.trim()));
+    checkboxes.forEach(function(checkbox) {
+        checkbox.addEventListener('change', function() {
+            if (this.checked) {
+                var eventName = 'tagon-' + this.getAttribute('data-tag');
+                document.dispatchEvent(new CustomEvent(eventName));
+            } else {
+                var eventName = 'tagoff-' + this.getAttribute('data-tag');
+                document.dispatchEvent(new CustomEvent(eventName));
+            }
+        });
     });
-  });
 }
 
 document.addEventListener('DOMContentLoaded', function() {
  {$setUpTagEvents}
- setupTagTrigger('tag-trigger');
+ setupTagTrigger();
 });
 
 </script>
@@ -138,7 +149,6 @@ function changeColorByTitle(titleOrClass, newColor) {
 
             polygons.forEach(function(polygon) {
                 polygon.setAttribute('fill', newColor);
-                polygon.setAttribute('stroke', newColor);
             });
 
             paths.forEach(function(path) {
@@ -162,15 +172,6 @@ function changeColorByTitle(titleOrClass, newColor) {
     align-items: center;
     gap: 10px;
 }
-.tag-trigger {
-    color: blue;
-    cursor: pointer;
-}
-
-.tag-trigger:hover{
-    text-decoration: underline;
-}
-
 </style>
 ---
 
@@ -220,7 +221,7 @@ EOT;
         $lines = ['## Tags'];
         $tagKeys = array_keys($tags);
         foreach ($tagKeys as $tag) {
-            $lines[] = "   * <span class='tag-trigger'>{$tag}</span>";
+            $lines[] = sprintf('* <input type="checkbox" id="tag-%s" class="tag-trigger-checkbox" data-tag="%s"><label for="tag-%s"> %s</label>', $tag, $tag, $tag, $tag);
         }
 
         return PHP_EOL . implode(PHP_EOL, $lines);
@@ -245,7 +246,7 @@ EOT;
                 $idArr[] .= "'{$id}'";
             }
 
-            $setUpTagEvents .= sprintf("setupTagEventListener('tag-%s', [%s], '%s'); ", $tag, implode(', ', $idArr), 'lightgreen');
+            $setUpTagEvents .= sprintf("setupTagEventListener('%s', [%s], '%s'); ", $tag, implode(', ', $idArr), 'lightgreen');
         }
 
         return $setUpTagEvents;
