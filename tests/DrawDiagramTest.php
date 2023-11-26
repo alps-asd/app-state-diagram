@@ -154,12 +154,12 @@ class DrawDiagramTest extends TestCase
     /** @depends testTaggedProfileWhenColorIsNull */
     public function testEdgeNoColor(string $dot): void
     {
-        $this->assertStringContainsString('s1 -> s2 [label = <t1 (safe)> URL="#t1" target="_parent" fontsize=13]', $dot);
-        $this->assertStringContainsString('s1 -> s5 [label = <t5 (safe)> URL="#t5" target="_parent" fontsize=13]', $dot);
-        $this->assertStringContainsString('s2 -> s3 [label = <t2 (safe)> URL="#t2" target="_parent" fontsize=13]', $dot);
-        $this->assertStringContainsString('s2 -> s4 [label = <t4 (safe)> URL="#t4" target="_parent" fontsize=13]', $dot);
-        $this->assertStringContainsString('s3 -> s4 [label = <t3 (safe)> URL="#t3" target="_parent" fontsize=13]', $dot);
-        $this->assertStringContainsString('s5 -> s6 [label = <t6 (safe)> URL="#t6" target="_parent" fontsize=13]', $dot);
+        $this->assertStringContainsString('s1 -> s2 [label = <t1 (safe)> URL="#t1" target="_parent" fontsize=13 class="t1" penwidth=1.5]', $dot);
+        $this->assertStringContainsString('s1 -> s5 [label = <t5 (safe)> URL="#t5" target="_parent" fontsize=13 class="t5" penwidth=1.5]', $dot);
+        $this->assertStringContainsString('s2 -> s3 [label = <t2 (safe)> URL="#t2" target="_parent" fontsize=13 class="t2" penwidth=1.5]', $dot);
+        $this->assertStringContainsString('s2 -> s4 [label = <t4 (safe)> URL="#t4" target="_parent" fontsize=13 class="t4" penwidth=1.5]', $dot);
+        $this->assertStringContainsString('s3 -> s4 [label = <t3 (safe)> URL="#t3" target="_parent" fontsize=13 class="t3" penwidth=1.5]', $dot);
+        $this->assertStringContainsString('s5 -> s6 [label = <t6 (safe)> URL="#t6" target="_parent" fontsize=13 class="t6" penwidth=1.5]', $dot);
     }
 
     /** @depends testTaggedProfileWhenColorIsNull */
@@ -195,12 +195,12 @@ class DrawDiagramTest extends TestCase
     /** @depends testNoSemanticStateHasColor */
     public function testEdgeHasColor(string $dot): void
     {
-        $this->assertStringContainsString('s1 -> s2 [label = <t1 (safe)> URL="#t1" target="_parent" fontsize=13 color="red"]', $dot);
-        $this->assertStringContainsString('s1 -> s5 [label = <t5 (safe)> URL="#t5" target="_parent" fontsize=13 color="red"]', $dot);
-        $this->assertStringContainsString('s2 -> s3 [label = <t2 (safe)> URL="#t2" target="_parent" fontsize=13 color="red"]', $dot);
-        $this->assertStringContainsString('s2 -> s4 [label = <t4 (safe)> URL="#t4" target="_parent" fontsize=13]', $dot);
-        $this->assertStringContainsString('s3 -> s4 [label = <t3 (safe)> URL="#t3" target="_parent" fontsize=13]', $dot);
-        $this->assertStringContainsString('s5 -> s6 [label = <t6 (safe)> URL="#t6" target="_parent" fontsize=13]', $dot);
+        $this->assertStringContainsString('s1 -> s2 [label = <t1 (safe)> URL="#t1" target="_parent" fontsize=13 class="t1" penwidth=1.5 color="red"]', $dot);
+        $this->assertStringContainsString('s1 -> s5 [label = <t5 (safe)> URL="#t5" target="_parent" fontsize=13 class="t5" penwidth=1.5 color="red"]', $dot);
+        $this->assertStringContainsString('s2 -> s3 [label = <t2 (safe)> URL="#t2" target="_parent" fontsize=13 class="t2" penwidth=1.5 color="red"]', $dot);
+        $this->assertStringContainsString('s2 -> s4 [label = <t4 (safe)> URL="#t4" target="_parent" fontsize=13 class="t4" penwidth=1.5]', $dot);
+        $this->assertStringContainsString('s3 -> s4 [label = <t3 (safe)> URL="#t3" target="_parent" fontsize=13 class="t3" penwidth=1.5]', $dot);
+        $this->assertStringContainsString('s5 -> s6 [label = <t6 (safe)> URL="#t6" target="_parent" fontsize=13 class="t6" penwidth=1.5]', $dot);
     }
 
     /** @depends testNoSemanticStateHasColor */
