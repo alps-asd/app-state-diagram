@@ -29,7 +29,7 @@ usage: asd [options] alps_file
 EOT;
     exit(0);
 }
-$options = getopt('c:w::m::', ['config:', 'watch::', 'color::', 'and-tag::', 'or-tag::', 'mode::', 'port::']);
+$options = getopt('c:w::m::', ['config:', 'watch::', 'color::', 'mode::', 'port::']);
 if ($argc === 1) {
     $options['c'] = getcwd();
 }

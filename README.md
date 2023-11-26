@@ -72,9 +72,6 @@ asd [options] [alpsFile]
     -w, --watch
         Watch mode
 
-    --and-tag={tag1, tag2} --or-tag={tag3} [--color=red]
-        Filter graph
-
     -m, --mode={markdown|html}
         Output format
         
@@ -95,7 +92,6 @@ It is tedious and time consuming.
 
 * [php](https://www.php.net/manual/en/install.php)
 * [composer](https://getcomposer.org/)
-* [graphviz](https://graphviz.org/download/)
 * [npm](https://nodejs.org/en/download/)
 
 
@@ -107,9 +103,6 @@ PHP 8.0.6 (cli) (built: May  8 2021 01:58:51) ( NTS )
 
 % composer -V
 Composer version 2.0.13 2021-04-27 13:11:08
-
-% dot -V    
-dot - graphviz version 2.47.1 (20210417.1919)
 
 % npm -v
 7.17.0
@@ -167,24 +160,6 @@ If you want to start with a specific port number, you can specify the port numbe
   <port>3001</port>
 </asd>
 ```
-
-### filter
-
-```xml
-<asd>
-  <filter>
-    <and>[string]</and>
-    <and>[string]</and>
-    <or>[string]</or>
-    <color>[string]</color>
-  </filter>
-</asd>
-```
-
-You can extract partial graphs by specific tags, or color specific graphs.
-
-Specify a tag name in the "or" or "and" field to specify the condition. If you specify "color", the graph for that condition will be colored, but if you don't, only the graph for that condition will be extracted and drawn.
-
 ### markdown format
 
 If your repository is private and your account is not a GHE or GHE Cloud account, you cannot make GitHub Pqges private. In such a case, you can output the document as Markdown and make the document private.
