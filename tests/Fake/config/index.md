@@ -3,7 +3,7 @@
 An ALPS profile example for ASD
 
 <!-- Container for the ASDs -->
-<img src="profile.svg">
+[<img src="profile.svg">](profile.title.svg)
 ---
 
 

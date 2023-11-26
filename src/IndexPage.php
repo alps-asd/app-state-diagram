@@ -37,7 +37,7 @@ final class IndexPage
 <script src="https://unpkg.com/d3-graphviz@2.1.0/build/d3-graphviz.min.js"></script>
 {$indexJs}
 EOT;
-        $asd = $config->outputMode === DumpDocs::MODE_MARKDOWN ? '<img src="profile.svg">' : <<< EOTJS
+        $asd = $config->outputMode === DumpDocs::MODE_MARKDOWN ? '[<img src="profile.svg">](profile.title.svg)' : <<< EOTJS
 <div id="graphId" style="text-align: center; "></div>
 <div id="graphName" style="text-align: center; display: none;"></div>
 <script>
