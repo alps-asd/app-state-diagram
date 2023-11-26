@@ -28,36 +28,7 @@ final class IndexPage
 
     public function __construct(Config $config)
     {
-        $draw = new DrawDiagram();
-        $profile = new Profile($config->profile, new LabelName());
-        $titleProfile = new Profile($config->profile, new LabelNameTitle());
-        $dotId = $draw($profile, new LabelName());
-        $dotName = $draw($titleProfile, new LabelNameTitle());
-        $mode = $config->outputMode;
-        $alpsProfile = htmlspecialchars(
-            (string) file_get_contents($profile->alpsFile),
-            ENT_QUOTES,
-            'UTF-8'
-        );
-
-        $semanticMd = PHP_EOL . (new DumpDocs())->getSemanticDescriptorMarkDown($profile, $profile->alpsFile);
-        $descriptors = $profile->descriptors;
-        uasort($descriptors, static function (AbstractDescriptor $a, AbstractDescriptor $b): int {
-            $compareId = strtoupper($a->id) <=> strtoupper($b->id);
-            if ($compareId !== 0) {
-                return $compareId;
-            }
-
-            $order = ['semantic' => 0, 'safe' => 1, 'unsafe' => 2, 'idempotent' => 3];
-
-            return $order[$a->type] <=> $order[$b->type];
-        });
-        $linkRelations = $this->linkRelations($profile->linkRelations);
-        $ext = $mode === DumpDocs::MODE_MARKDOWN ? 'md' : DumpDocs::MODE_HTML;
-        $tags = $this->tags($profile->tags, $ext);
-        $htmlTitle = htmlspecialchars($profile->title ?: 'ALPS');
-        $htmlDoc = nl2br(htmlspecialchars($profile->doc));
-        $setUpTagEvents = $this->getSetupTagEvents($config);
+        [$profile, $dotId, $dotName, $mode, $alpsProfile, $semanticMd, $linkRelations, $ext, $tags, $htmlTitle, $htmlDoc, $setUpTagEvents] = $this->getDataFromConfig($config);
         $md = <<<EOT
 # {$htmlTitle}
 
@@ -67,35 +38,12 @@ final class IndexPage
 <div id="graphId" style="text-align: center; "></div>
 <div id="graphName" style="text-align: center; display: none;"></div>
 <script>
-    function renderGraph(graphId, dotString) {
-        var graphviz = d3.select(graphId).graphviz();
-        graphviz.renderDot(dotString).on('end', function() {
-            applySmoothScrollToLinks(document.querySelectorAll('svg a[*|href^="#"]'));
-        });
-    }
-
-    renderGraph("#graphId", '{{ dotId }}');
-    renderGraph("#graphName", '{{ dotName }}');
-</script>
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const graphIdElement = document.getElementById('graphId');
-    const graphNameElement = document.getElementById('graphName');
-
-    document.getElementById('show_id').addEventListener('change', function(e) {
-        if (e.target.checked) {
-            graphIdElement.style.display = 'block';
-            graphNameElement.style.display = 'none';
-        }
+function renderGraph(graphId, dotString) {
+    var graphviz = d3.select(graphId).graphviz();
+    graphviz.renderDot(dotString).on('end', function() {
+        applySmoothScrollToLinks(document.querySelectorAll('svg a[*|href^="#"]'));
     });
-
-    document.getElementById('show_name').addEventListener('change', function(e) {
-        if (e.target.checked) {
-            graphNameElement.style.display = 'block';
-            graphIdElement.style.display = 'none';
-        }
-    });
-});
+}
 
 function setupTagEventListener(eventName, titles, color) {
     document.addEventListener('tagon-' + eventName, function() {
@@ -112,7 +60,6 @@ function setupTagEventListener(eventName, titles, color) {
 
 function setupTagTrigger() {
     var checkboxes = document.querySelectorAll('.tag-trigger-checkbox');
-
     checkboxes.forEach(function(checkbox) {
         checkbox.addEventListener('change', function() {
             if (this.checked) {
@@ -126,14 +73,6 @@ function setupTagTrigger() {
     });
 }
 
-document.addEventListener('DOMContentLoaded', function() {
- {$setUpTagEvents}
- setupTagTrigger();
-});
-
-</script>
-
-<script>
 function changeColorByTitle(titleOrClass, newNodeColor, newEdgeColor) {
     // タイトルとクラス名で要素を探す
     var elements = Array.from(document.getElementsByTagName('g'));
@@ -157,6 +96,27 @@ function changeColorByTitle(titleOrClass, newNodeColor, newEdgeColor) {
         }
     });
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+    renderGraph("#graphId", '{{ dotId }}');
+    renderGraph("#graphName", '{{ dotName }}');
+    {$setUpTagEvents}
+    setupTagTrigger();
+    const graphIdElement = document.getElementById('graphId');
+    const graphNameElement = document.getElementById('graphName');
+    document.getElementById('show_id').addEventListener('change', function(e) {
+        if (e.target.checked) {
+            graphIdElement.style.display = 'block';
+            graphNameElement.style.display = 'none';
+        }
+    });
+    document.getElementById('show_name').addEventListener('change', function(e) {
+        if (e.target.checked) {
+            graphNameElement.style.display = 'block';
+            graphIdElement.style.display = 'none';
+        }
+    });
+});
 
 </script>
 <div id="selector" style="">
@@ -208,11 +168,11 @@ EOT;
             . '</head>',
             $html
         );
-        $this->content = str_replace(['{{ dotId }}', '{{ dotName }}'], [$escapedDotId, $escapedDotName], $easeHtml);
+        $this->content = str_replace(['{{ dotId }}', '{{ dotName }}', '{{ dotName }}'], [$escapedDotId, $escapedDotName], $easeHtml);
     }
 
     /** @param array<string, list<string>> $tags */
-    private function tags(array $tags, string $ext): string
+    private function tags(array $tags): string
     {
         if ($tags === []) {
             return '';
@@ -250,5 +210,42 @@ EOT;
         }
 
         return $setUpTagEvents;
+    }
+
+    /** @return list<mixed> */
+    public function getDataFromConfig(Config $config): array
+    {
+        $draw = new DrawDiagram();
+        $profile = new Profile($config->profile, new LabelName());
+        $titleProfile = new Profile($config->profile, new LabelNameTitle());
+        $dotId = $draw($profile, new LabelName());
+        $dotName = $draw($titleProfile, new LabelNameTitle());
+        $mode = $config->outputMode;
+        $alpsProfile = htmlspecialchars(
+            (string) file_get_contents($profile->alpsFile),
+            ENT_QUOTES,
+            'UTF-8'
+        );
+
+        $semanticMd = PHP_EOL . (new DumpDocs())->getSemanticDescriptorMarkDown($profile, $profile->alpsFile);
+        $descriptors = $profile->descriptors;
+        uasort($descriptors, static function (AbstractDescriptor $a, AbstractDescriptor $b): int {
+            $compareId = strtoupper($a->id) <=> strtoupper($b->id);
+            if ($compareId !== 0) {
+                return $compareId;
+            }
+
+            $order = ['semantic' => 0, 'safe' => 1, 'unsafe' => 2, 'idempotent' => 3];
+
+            return $order[$a->type] <=> $order[$b->type];
+        });
+        $linkRelations = $this->linkRelations($profile->linkRelations);
+        $ext = $mode === DumpDocs::MODE_MARKDOWN ? 'md' : DumpDocs::MODE_HTML;
+        $tags = $this->tags($profile->tags);
+        $htmlTitle = htmlspecialchars($profile->title ?: 'ALPS');
+        $htmlDoc = nl2br(htmlspecialchars($profile->doc));
+        $setUpTagEvents = $this->getSetupTagEvents($config);
+
+        return [$profile, $dotId, $dotName, $mode, $alpsProfile, $semanticMd, $linkRelations, $ext, $tags, $htmlTitle, $htmlDoc, $setUpTagEvents];
     }
 }
