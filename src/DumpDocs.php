@@ -380,7 +380,7 @@ EOT;
     {
         $string = [];
         foreach ($tags as $tag) {
-            $string[] = "[{$tag}](tag.{$tag}.{$this->ext})";
+            $string[] = "[{$tag}](#tag-{$tag})";
         }
 
         return implode(', ', $string) . PHP_EOL;

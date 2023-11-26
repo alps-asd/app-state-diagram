@@ -108,7 +108,7 @@ EOT;
         $lines = ['## Tags'];
         $tagKeys = array_keys($tags);
         foreach ($tagKeys as $tag) {
-            $lines[] = sprintf('* <input type="checkbox" id="tag-%s" class="tag-trigger-checkbox" data-tag="%s"><label for="tag-%s"> %s</label>', $tag, $tag, $tag, $tag);
+            $lines[] = sprintf('* <input type="checkbox" id="tag-%s" class="tag-trigger-checkbox" data-tag="%s" name="tag-%s"><label for="tag-%s"> %s</label>', $tag, $tag, $tag, $tag, $tag);
         }
 
         return PHP_EOL . implode(PHP_EOL, $lines);
