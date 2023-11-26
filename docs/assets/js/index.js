@@ -1,19 +1,21 @@
-
-function applySmoothScrollToLinks(links) {
-    links.forEach((link) => {
-        link.addEventListener('click', function (e) {
+// Applies smooth scroll to links
+const applySmoothScrollToLinks = (links) => {
+    links.forEach(link => {
+        link.addEventListener('click', (e) => {
             e.preventDefault();
-            const targetName = this.getAttribute('href').slice(1);
+            const targetName = link.getAttribute('href').slice(1);
             const targetElement = document.querySelector(`[name="${targetName}"]`);
             if (!targetElement) {
-                console.error("Target element not found for link:", this.getAttribute('href'));
+                console.error("Target element not found for link:", link.getAttribute('href'));
                 return;
             }
             smoothScrollTo(targetElement);
         });
-    });}
+    });
+};
 
-function smoothScrollTo(targetElement) {
+// Smoothly scrolls to the target element
+const smoothScrollTo = (targetElement) => {
     const targetPosition = targetElement.getBoundingClientRect().top + window.pageYOffset;
     const startPosition = window.pageYOffset;
     const distance = targetPosition - startPosition;
@@ -37,79 +39,81 @@ function smoothScrollTo(targetElement) {
 
     requestAnimationFrame(animate);
     history.pushState(null, null, '#' + targetElement.getAttribute('name'));
-}
-function renderGraph(graphId, dotString) {
-    var graphviz = d3.select(graphId).graphviz();
-    graphviz.renderDot(dotString).on('end', function () {
+};
+
+// Renders the graph and applies smooth scroll to links
+const renderGraph = (graphId, dotString) => {
+    const graphviz = d3.select(graphId).graphviz();
+    graphviz.renderDot(dotString).on('end', () => {
         applySmoothScrollToLinks(document.querySelectorAll('svg a[*|href^="#"]'));
     });
-}
+};
 
-function setupTagEventListener(eventName, titles, color) {
-    document.addEventListener('tagon-' + eventName, function () {
-        titles.forEach(function (title) {
+// Sets up event listeners for tags
+const setupTagEventListener = (eventName, titles, color) => {
+    document.addEventListener('tagon-' + eventName, () => {
+        titles.forEach(title => {
             changeColorByTitle(title, color, color);
         });
     });
-    document.addEventListener('tagoff-' + eventName, function () {
-        titles.forEach(function (title) {
+    document.addEventListener('tagoff-' + eventName, () => {
+        titles.forEach(title => {
             changeColorByTitle(title, 'lightgrey', 'black');
         });
     });
-}
+};
 
-function setupTagTrigger() {
-    var checkboxes = document.querySelectorAll('.tag-trigger-checkbox');
-    checkboxes.forEach(function (checkbox) {
+// Sets up triggers for tags
+const setupTagTrigger = () => {
+    const checkboxes = document.querySelectorAll('.tag-trigger-checkbox');
+    checkboxes.forEach(checkbox => {
         checkbox.addEventListener('change', function () {
-            if (this.checked) {
-                var eventName = 'tagon-' + this.getAttribute('data-tag');
-                document.dispatchEvent(new CustomEvent(eventName));
-            } else {
-                var eventName = 'tagoff-' + this.getAttribute('data-tag');
-                document.dispatchEvent(new CustomEvent(eventName));
-            }
+            this.checked ?
+                document.dispatchEvent(new CustomEvent('tagon-' + this.getAttribute('data-tag'))) :
+                document.dispatchEvent(new CustomEvent('tagoff-' + this.getAttribute('data-tag')));
         });
     });
-}
+};
 
-function changeColorByTitle(titleOrClass, newNodeColor, newEdgeColor) {
-    // タイトルとクラス名で要素を探す
-    var elements = Array.from(document.getElementsByTagName('g'));
+// Changes color of elements by title or class
+const changeColorByTitle = (titleOrClass, newNodeColor, newEdgeColor) => {
+    const elements = Array.from(document.getElementsByTagName('g'));
 
-    elements.forEach(function (element) {
-        var titleElement = element.getElementsByTagName('title')[0];
-        var title = titleElement ? titleElement.textContent : '';
+    elements.forEach(element => {
+        const titleElement = element.getElementsByTagName('title')[0];
+        const title = titleElement ? titleElement.textContent : '';
 
-        // タイトルが一致するか、クラス名が含まれる場合に色を変更
         if (title === titleOrClass || element.classList.contains(titleOrClass)) {
-            var polygons = Array.from(element.getElementsByTagName('polygon'));
-            var paths = Array.from(element.getElementsByTagName('path'));
+            const polygons = Array.from(element.getElementsByTagName('polygon'));
+            const paths = Array.from(element.getElementsByTagName('path'));
 
-            polygons.forEach(function (polygon) {
+            polygons.forEach(polygon => {
                 polygon.setAttribute('fill', newNodeColor);
             });
 
-            paths.forEach(function (path) {
+            paths.forEach(path => {
                 path.setAttribute('stroke', newEdgeColor);
             });
         }
     });
-}
+};
 
-function setupModeSwitch() {
+// Sets up mode switch for graph display
+const setupModeSwitch = () => {
     const graphIdElement = document.getElementById('graphId');
     const graphNameElement = document.getElementById('graphName');
-    document.getElementById('show_id').addEventListener('change', function (e) {
+
+    document.getElementById('show_id').addEventListener('change', (e) => {
         if (e.target.checked) {
             graphIdElement.style.display = 'block';
             graphNameElement.style.display = 'none';
         }
     });
-    document.getElementById('show_name').addEventListener('change', function (e) {
+
+    document.getElementById('show_name').addEventListener('change', (e) => {
         if (e.target.checked) {
             graphNameElement.style.display = 'block';
             graphIdElement.style.display = 'none';
         }
     });
-}
+};
