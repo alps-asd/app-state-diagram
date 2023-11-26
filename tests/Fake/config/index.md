@@ -2,97 +2,18 @@
 
 An ALPS profile example for ASD
 
-<!-- Container for the ASD -->
+<!-- Container for the ASDs -->
 <div id="graphId" style="text-align: center; "></div>
 <div id="graphName" style="text-align: center; display: none;"></div>
 <script>
-    function renderGraph(graphId, dotString) {
-        var graphviz = d3.select(graphId).graphviz();
-        graphviz.renderDot(dotString).on('end', function() {
-            applySmoothScrollToLinks(document.querySelectorAll('svg a[*|href^="#"]'));
-        });
-    }
-
-    renderGraph("#graphId", '{{ dotId }}');
-    renderGraph("#graphName", '{{ dotName }}');
-
     document.addEventListener('DOMContentLoaded', function() {
-    const graphIdElement = document.getElementById('graphId');
-    const graphNameElement = document.getElementById('graphName');
-
-    document.getElementById('show_id').addEventListener('change', function(e) {
-        if (e.target.checked) {
-            graphIdElement.style.display = 'block';
-            graphNameElement.style.display = 'none';
-        }
+        renderGraph("#graphId", '{{ dotId }}');
+        renderGraph("#graphName", '{{ dotName }}');
+        setupTagTrigger();
+        setupModeSwitch()
+        applySmoothScrollToLinks(document.querySelectorAll('a[href^="#"]'));
+        
     });
-
-    document.getElementById('show_name').addEventListener('change', function(e) {
-        if (e.target.checked) {
-            graphNameElement.style.display = 'block';
-            graphIdElement.style.display = 'none';
-        }
-    });
-});
-
-function setupTagEventListener(eventName, titles, color) {
-    document.addEventListener('tagon-' + eventName, function() {
-        titles.forEach(function(title) {
-            changeColorByTitle(title, color, color);
-        });
-    });
-    document.addEventListener('tagoff-' + eventName, function() {
-        titles.forEach(function(title) {
-            changeColorByTitle(title, 'lightgrey', 'black');
-        });
-    });
-}
-
-function setupTagTrigger() {
-    var checkboxes = document.querySelectorAll('.tag-trigger-checkbox');
-
-    checkboxes.forEach(function(checkbox) {
-        checkbox.addEventListener('change', function() {
-            if (this.checked) {
-                var eventName = 'tagon-' + this.getAttribute('data-tag');
-                document.dispatchEvent(new CustomEvent(eventName));
-            } else {
-                var eventName = 'tagoff-' + this.getAttribute('data-tag');
-                document.dispatchEvent(new CustomEvent(eventName));
-            }
-        });
-    });
-}
-
-document.addEventListener('DOMContentLoaded', function() {
- 
- setupTagTrigger();
-});
-
-function changeColorByTitle(titleOrClass, newNodeColor, newEdgeColor) {
-    // タイトルとクラス名で要素を探す
-    var elements = Array.from(document.getElementsByTagName('g'));
-
-    elements.forEach(function(element) {
-        var titleElement = element.getElementsByTagName('title')[0];
-        var title = titleElement ? titleElement.textContent : '';
-
-        // タイトルが一致するか、クラス名が含まれる場合に色を変更
-        if (title === titleOrClass || element.classList.contains(titleOrClass)) {
-            var polygons = Array.from(element.getElementsByTagName('polygon'));
-            var paths = Array.from(element.getElementsByTagName('path'));
-
-            polygons.forEach(function(polygon) {
-                polygon.setAttribute('fill', newNodeColor);
-            });
-
-            paths.forEach(function(path) {
-                path.setAttribute('stroke', newEdgeColor);
-            });
-        }
-    });
-}
-
 </script>
 <div id="selector" style="">
     <input type="radio" id="show_id" name="graph_selector" checked>
@@ -100,14 +21,6 @@ function changeColorByTitle(titleOrClass, newNodeColor, newEdgeColor) {
     <input type="radio" id="show_name" name="graph_selector">
     <label for="show_name">name</label>
 </div>
-<style>
-#selector {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
-}
-</style>
 ---
 
 

@@ -3,24 +3,7 @@
 An ALPS profile example for ASD
 
 <!-- Container for the ASDs -->
-<div id="graphId" style="text-align: center; "></div>
-<div id="graphName" style="text-align: center; display: none;"></div>
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        renderGraph("#graphId", '{{ dotId }}');
-        renderGraph("#graphName", '{{ dotName }}');
-        setupTagTrigger();
-        setupModeSwitch()
-        applySmoothScrollToLinks(document.querySelectorAll('a[href^="#"]'));
-        setupTagEventListener('collection', ['Blog'], 'lightgreen'); setupTagEventListener('item', ['BlogPosting'], 'lightgreen'); 
-    });
-</script>
-<div id="selector" style="">
-    <input type="radio" id="show_id" name="graph_selector" checked>
-    <label for="show_id">id<ID/label>
-    <input type="radio" id="show_name" name="graph_selector">
-    <label for="show_name">name</label>
-</div>
+<img src="profile.svg">
 ---
 
 
