@@ -31,7 +31,6 @@ final class PutDiagram
         $this->draw('', new LabelName(), $profile, null, null);
         $this->draw('.title', new LabelNameTitle(), $titleProfile, null, null);
 
-        (new DumpDocs())($profile, $config->profile, $config->outputMode);
         $index = new IndexPage($config);
         file_put_contents($index->file, $index->content);
         echo "ASD generated. {$index->file}" . PHP_EOL;
