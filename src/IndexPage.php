@@ -37,12 +37,7 @@ final class IndexPage
 <script src="https://unpkg.com/d3-graphviz@2.1.0/build/d3-graphviz.min.js"></script>
 {$indexJs}
 EOT;
-        $md = <<<EOT
-# {$htmlTitle}
-
-{$htmlDoc}
-
-<!-- Container for the ASDs -->
+        $asd = $config->outputMode === DumpDocs::MODE_MARKDOWN ? '<img src="profile.svg">' : <<< EOTJS
 <div id="graphId" style="text-align: center; "></div>
 <div id="graphName" style="text-align: center; display: none;"></div>
 <script>
@@ -61,6 +56,15 @@ EOT;
     <input type="radio" id="show_name" name="graph_selector">
     <label for="show_name">name</label>
 </div>
+EOTJS;
+
+        $md = <<<EOT
+# {$htmlTitle}
+
+{$htmlDoc}
+
+<!-- Container for the ASDs -->
+{$asd}
 ---
 
 {$tags}
