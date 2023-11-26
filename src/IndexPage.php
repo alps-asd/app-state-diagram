@@ -79,23 +79,21 @@ final class IndexPage
 </script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const showIdElement = document.getElementById('show_id');
-    const showNameElement = document.getElementById('show_name');
     const graphIdElement = document.getElementById('graphId');
     const graphNameElement = document.getElementById('graphName');
 
-    showIdElement.addEventListener('click', function() {
-        graphIdElement.style.display = 'block';
-        graphNameElement.style.display = 'none';
-        showIdElement.classList.add('active');
-        showNameElement.classList.remove('active');
+    document.getElementById('show_id').addEventListener('change', function(e) {
+        if (e.target.checked) {
+            graphIdElement.style.display = 'block';
+            graphNameElement.style.display = 'none';
+        }
     });
 
-    showNameElement.addEventListener('click', function() {
-        graphNameElement.style.display = 'block';
-        graphIdElement.style.display = 'none';
-        showNameElement.classList.add('active');
-        showIdElement.classList.remove('active');
+    document.getElementById('show_name').addEventListener('change', function(e) {
+        if (e.target.checked) {
+            graphNameElement.style.display = 'block';
+            graphIdElement.style.display = 'none';
+        }
     });
 });
 
@@ -151,37 +149,19 @@ function changeColorByTitle(titleOrClass, newColor) {
 }
 
 </script>
-<div id="selector">
-    <button id="show_id" class="active">ID</button>
-    <button id="show_name">Name</button>
+<div id="selector" style="">
+    <input type="radio" id="show_id" name="graph_selector" checked>
+    <label for="show_id">id<ID/label>
+    <input type="radio" id="show_name" name="graph_selector">
+    <label for="show_name">name</label>
 </div>
-
 <style>
 #selector {
     display: flex;
     justify-content: center;
-    gap: 20px;
+    align-items: center;
+    gap: 10px;
 }
-
-#selector button {
-    padding: 10px 20px;
-    border: 2px solid #ddd;
-    background-color: white;
-    font-family: 'Roboto', sans-serif;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-#selector button:hover {
-    background-color: #f0f0f0;
-    border-color: #bbb;
-}
-
-#selector button.active {
-    background-color: lightblue;
-    border-color: #888;
-}
-
 .tag-trigger {
     color: blue;
     cursor: pointer;
