@@ -7,19 +7,13 @@ namespace Koriym\AppStateDiagram;
 use stdClass;
 
 use function assert;
-use function basename;
-use function dirname;
 use function explode;
-use function file_put_contents;
 use function filter_var;
 use function implode;
-use function is_dir;
 use function is_string;
 use function ksort;
-use function mkdir;
 use function property_exists;
 use function sprintf;
-use function str_replace;
 use function strpos;
 use function substr;
 use function usort;
@@ -40,7 +34,6 @@ final class DumpDocs
 
     /** @var "html"|"md" */
     private $ext = 'md';
-
 
     private function getSemanticDoc(AbstractDescriptor $descriptor): string
     {
