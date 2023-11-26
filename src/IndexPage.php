@@ -100,12 +100,12 @@ document.addEventListener('DOMContentLoaded', function() {
 function setupTagEventListener(eventName, titles, color) {
     document.addEventListener('tagon-' + eventName, function() {
         titles.forEach(function(title) {
-            changeColorByTitle(title, color);
+            changeColorByTitle(title, color, color);
         });
     });
     document.addEventListener('tagoff-' + eventName, function() {
         titles.forEach(function(title) {
-            changeColorByTitle(title, 'lightgrey');
+            changeColorByTitle(title, 'lightgrey', 'black');
         });
     });
 }
@@ -134,7 +134,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 
 <script>
-function changeColorByTitle(titleOrClass, newColor) {
+function changeColorByTitle(titleOrClass, newNodeColor, newEdgeColor) {
     // タイトルとクラス名で要素を探す
     var elements = Array.from(document.getElementsByTagName('g'));
 
@@ -148,11 +148,11 @@ function changeColorByTitle(titleOrClass, newColor) {
             var paths = Array.from(element.getElementsByTagName('path'));
 
             polygons.forEach(function(polygon) {
-                polygon.setAttribute('fill', newColor);
+                polygon.setAttribute('fill', newNodeColor);
             });
 
             paths.forEach(function(path) {
-                path.setAttribute('stroke', newColor);
+                path.setAttribute('stroke', newEdgeColor);
             });
         }
     });
