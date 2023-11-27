@@ -29,7 +29,7 @@ final class IndexPage
     public function __construct(Config $config)
     {
         [$profile, $dotId, $dotName, $mode, $alpsProfile, $semanticMd, $linkRelations, $ext, $tags, $htmlTitle, $htmlDoc, $setUpTagEvents] = $this->getDataFromConfig($config);
-        $indexJsFile = dirname(__DIR__, 1) . '/docs/assets/js/index.js';
+        $indexJsFile = dirname(__DIR__, 1) . '/docs/assets/js/asd@0.1.0.js';
         $indexJs = sprintf('<script>%s</script>', file_get_contents($indexJsFile));
         $header = <<<EOT
 <script src="https://d3js.org/d3.v5.min.js"></script>
