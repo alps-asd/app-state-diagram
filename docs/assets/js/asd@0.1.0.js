@@ -1,17 +1,9 @@
 // Applies smooth scroll to links
-const applySmoothScrollToLinks = (links) => {
-    links.forEach(link => {
-        link.addEventListener('click', (e) => {
-            e.preventDefault();
-            const targetName = link.getAttribute('href').slice(1);
-            const targetElement = document.querySelector(`[id="${targetName}"]`);
-            if (!targetElement) {
-                console.error("Target element not found for link:", link.getAttribute('href'));
-                return;
-            }
-            smoothScrollTo(targetElement);
-        });
-    });
+const ease = (t, b, c, d) => {
+    t /= d / 2;
+    if (t < 1) return (c / 2) * t * t + b;
+    t--;
+    return (-c / 2) * (t * (t - 2) - 1) + b;
 };
 
 // Smoothly scrolls to the target element
@@ -30,16 +22,25 @@ const smoothScrollTo = (targetElement) => {
         if (timeElapsed < duration) requestAnimationFrame(animate);
     };
 
-    const ease = (t, b, c, d) => {
-        t /= d / 2;
-        if (t < 1) return (c / 2) * t * t + b;
-        t--;
-        return (-c / 2) * (t * (t - 2) - 1) + b;
-    };
-
     requestAnimationFrame(animate);
     history.pushState(null, null, '#' + targetElement.getAttribute('name'));
 };
+
+const applySmoothScrollToLinks = (links) => {
+    links.forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetName = link.getAttribute('href').slice(1);
+            const targetElement = document.querySelector(`[id="${targetName}"]`);
+            if (!targetElement) {
+                console.error("Target element not found for link:", link.getAttribute('href'));
+                return;
+            }
+            smoothScrollTo(targetElement);
+        });
+    });
+};
+
 
 // Renders the graph and applies smooth scroll to links
 const renderGraph = (graphId, dotString) => {
@@ -50,17 +51,15 @@ const renderGraph = (graphId, dotString) => {
 };
 
 // Sets up event listeners for tags
-const setupTagEventListener = (eventName, titles, color) => {
-    document.addEventListener('tagon-' + eventName, () => {
+const setupTagEventListener = (eventName, titles, color, defaultColor = 'lightgrey', defaultEdgeColor = 'black') => {
+    const changeColor = (useDefault) => {
         titles.forEach(title => {
-            changeColorByTitle(title, color, color);
+            changeColorByTitle(title, useDefault ? defaultColor : color, useDefault ? defaultEdgeColor : color);
         });
-    });
-    document.addEventListener('tagoff-' + eventName, () => {
-        titles.forEach(title => {
-            changeColorByTitle(title, 'lightgrey', 'black');
-        });
-    });
+    };
+
+    document.addEventListener(`tagon-${eventName}`, () => changeColor(false));
+    document.addEventListener(`tagoff-${eventName}`, () => changeColor(true));
 };
 
 // Sets up triggers for tags
@@ -99,21 +98,9 @@ const changeColorByTitle = (titleOrClass, newNodeColor, newEdgeColor) => {
 };
 
 // Sets up mode switch for graph display
-const setupModeSwitch = () => {
-    const graphIdElement = document.getElementById('asd-graph-id');
-    const graphNameElement = document.getElementById('asd-graph-name');
-
-    document.getElementById('asd-show-id').addEventListener('change', (e) => {
-        if (e.target.checked) {
-            graphIdElement.style.display = 'block';
-            graphNameElement.style.display = 'none';
-        }
-    });
-
-    document.getElementById('asd-show-name').addEventListener('change', (e) => {
-        if (e.target.checked) {
-            graphNameElement.style.display = 'block';
-            graphIdElement.style.display = 'none';
-        }
+const setupModeSwitch = (switchId, graphId, otherGraphId) => {
+    document.getElementById(switchId).addEventListener('change', (e) => {
+        document.getElementById(graphId).style.display = e.target.checked ? 'block' : 'none';
+        document.getElementById(otherGraphId).style.display = e.target.checked ? 'none' : 'block';
     });
 };

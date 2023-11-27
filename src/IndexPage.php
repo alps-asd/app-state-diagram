@@ -45,7 +45,8 @@ EOT;
         renderGraph("#asd-graph-id", '{{ dotId }}');
         renderGraph("#asd-graph-name", '{{ dotName }}');
         setupTagTrigger();
-        setupModeSwitch()
+        setupModeSwitch('asd-show-id', 'asd-graph-id', 'asd-graph-name');
+        setupModeSwitch('asd-show-name', 'asd-graph-name', 'asd-graph-id');
         applySmoothScrollToLinks(document.querySelectorAll('a[href^="#"]'));
         {$setUpTagEvents}
     });
