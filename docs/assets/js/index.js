@@ -4,7 +4,7 @@ const applySmoothScrollToLinks = (links) => {
         link.addEventListener('click', (e) => {
             e.preventDefault();
             const targetName = link.getAttribute('href').slice(1);
-            const targetElement = document.querySelector(`[name="${targetName}"]`);
+            const targetElement = document.querySelector(`[id="${targetName}"]`);
             if (!targetElement) {
                 console.error("Target element not found for link:", link.getAttribute('href'));
                 return;
@@ -100,17 +100,17 @@ const changeColorByTitle = (titleOrClass, newNodeColor, newEdgeColor) => {
 
 // Sets up mode switch for graph display
 const setupModeSwitch = () => {
-    const graphIdElement = document.getElementById('graphId');
-    const graphNameElement = document.getElementById('graphName');
+    const graphIdElement = document.getElementById('asd-graph-id');
+    const graphNameElement = document.getElementById('asd-graph-name');
 
-    document.getElementById('show_id').addEventListener('change', (e) => {
+    document.getElementById('asd-show-id').addEventListener('change', (e) => {
         if (e.target.checked) {
             graphIdElement.style.display = 'block';
             graphNameElement.style.display = 'none';
         }
     });
 
-    document.getElementById('show_name').addEventListener('change', (e) => {
+    document.getElementById('asd-show-name').addEventListener('change', (e) => {
         if (e.target.checked) {
             graphNameElement.style.display = 'block';
             graphIdElement.style.display = 'none';

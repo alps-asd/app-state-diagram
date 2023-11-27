@@ -50,7 +50,7 @@ final class DumpDocs
         $linkRelations = $this->getLinkRelations($descriptor->linkRelations);
 
         return <<<EOT
-### <a name="{$descriptor->id}">{$descriptor->id}</a>
+### <a id="{$descriptor->id}">{$descriptor->id}</a>
 {$description}{$rt}{$linkRelations}{$descriptorSemantic}
 
 EOT;

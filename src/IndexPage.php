@@ -38,23 +38,23 @@ final class IndexPage
 {$indexJs}
 EOT;
         $asd = $config->outputMode === DumpDocs::MODE_MARKDOWN ? '[<img src="profile.svg">](profile.title.svg)' : <<< EOTJS
-<div id="graphId" style="text-align: center; "></div>
-<div id="graphName" style="text-align: center; display: none;"></div>
+<div id="asd-graph-id" style="text-align: center; "></div>
+<div id="asd-graph-name" style="text-align: center; display: none;"></div>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        renderGraph("#graphId", '{{ dotId }}');
-        renderGraph("#graphName", '{{ dotName }}');
+        renderGraph("#asd-graph-id", '{{ dotId }}');
+        renderGraph("#asd-graph-name", '{{ dotName }}');
         setupTagTrigger();
         setupModeSwitch()
         applySmoothScrollToLinks(document.querySelectorAll('a[href^="#"]'));
         {$setUpTagEvents}
     });
 </script>
-<div id="selector" style="">
-    <input type="radio" id="show_id" name="graph_selector" checked>
-    <label for="show_id">id<ID/label>
-    <input type="radio" id="show_name" name="graph_selector">
-    <label for="show_name">name</label>
+<div class="asd-view-selector">
+    <input type="radio" id="asd-show-id" checked name="asd-view-selector">
+    <label for="asd-show-id">id<ID/label>
+    <input type="radio" id="asd-show-name" name="asd-view-selector">
+    <label for="asd-show-name">name</label>
 </div>
 EOTJS;
 

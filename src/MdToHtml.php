@@ -32,7 +32,7 @@ final class MdToHtml
                 padding: 15px;
             }
         }
-        #selector {
+        .asd-view-selector {
             display: flex;
             justify-content: center;
             align-items: center;
