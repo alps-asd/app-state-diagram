@@ -70,8 +70,6 @@ EOTJS;
 
 {$tags}
 
-## Links
-
 {$linkRelations}
 
 ## Semantic Descriptors
@@ -123,7 +121,7 @@ EOT;
             return '';
         }
 
-        return PHP_EOL . $linkRelations;
+        return '## Links' . PHP_EOL . $linkRelations;
     }
 
     private function getSetupTagEvents(Config $config): string
