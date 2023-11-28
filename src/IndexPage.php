@@ -67,19 +67,16 @@ EOTJS;
 
 <!-- Container for the ASDs -->
 {$asd}
----
 
 {$tags}
-
-## Semantic Descriptors
-
- {$semanticMd}
-
----
 
 ## Links
 
 {$linkRelations}
+
+## Semantic Descriptors
+
+ {$semanticMd}
 
 ---
 
