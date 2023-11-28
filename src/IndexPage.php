@@ -35,6 +35,7 @@ final class IndexPage
 <script src="https://d3js.org/d3.v5.min.js"></script>
 <script src="https://unpkg.com/viz.js@1.8.1/viz.js" type="javascript/worker"></script>
 <script src="https://unpkg.com/d3-graphviz@2.1.0/build/d3-graphviz.min.js"></script>
+<script src="https://alps-asd.github.io/app-state-diagram/assets/js/table.js"></script>
 {$indexJs}
 EOT;
         $asd = $config->outputMode === DumpDocs::MODE_MARKDOWN ? '[<img src="profile.svg">](profile.title.svg)' : <<< EOTJS
@@ -55,7 +56,7 @@ EOT;
     <input type="radio" id="asd-show-id" checked name="asd-view-selector">
     <label for="asd-show-id">id<ID/label>
     <input type="radio" id="asd-show-name" name="asd-view-selector">
-    <label for="asd-show-name">name</label>
+    <label for="asd-show-name">title</label>
 </div>
 EOTJS;
 
