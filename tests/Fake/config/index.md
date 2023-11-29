@@ -4,9 +4,11 @@ An ALPS profile example for ASD
 
 <!-- Container for the ASDs -->
 [<img src="profile.svg">](profile.title.svg)
----
 
 
+
+## Links
+* <a rel="issue" href="https://github.com/alps-asd/app-state-diagram/issues">issue</a>
 
 ## Semantic Descriptors
 
@@ -104,13 +106,6 @@ An ALPS profile example for ASD
 | [goBlog](#goBlog) | safe | to blog |
 
 
-
----
-
-## Links
-
-
-* <a rel="issue" href="https://github.com/alps-asd/app-state-diagram/issues">issue</a>
 
 ---
 

@@ -18,12 +18,15 @@ class PutDrawDiagramTest extends TestCase
         $this->putDiagram = new PutDiagram();
     }
 
-    public function testInvoke(): void
+    public function testInvokeMdWithHtml(): void
     {
-        $file = __DIR__ . '/Fake/config/index.md';
-        @unlink($file);
+        $mdFile = __DIR__ . '/Fake/config/index.md';
+        $htmlFile = __DIR__ . '/Fake/config/index.html';
+        @unlink($mdFile);
+        @unlink($htmlFile);
         ($this->putDiagram)(ConfigFactory::fromFile(__DIR__ . '/Fake/config/asd.xml'));
-        $this->assertFileExists($file);
+        $this->assertFileExists($mdFile);
+        $this->assertFileExists($htmlFile);
     }
 
     public function testInvokeHtml(): void

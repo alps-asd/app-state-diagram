@@ -10,6 +10,7 @@ use function file_put_contents;
 use function passthru;
 use function sprintf;
 use function str_replace;
+use function unlink;
 
 use const PHP_EOL;
 
@@ -28,14 +29,24 @@ final class PutDiagram
         $profile = new Profile($config->profile, new LabelName());
         $index = new IndexPage($config);
         if ($config->outputMode === DumpDocs::MODE_MARKDOWN) {
-            $titleProfile = new Profile($config->profile, new LabelNameTitle());
-            $this->draw('', new LabelName(), $profile, null, null);
-            $this->draw('.title', new LabelNameTitle(), $titleProfile, null, null);
+            $this->drawMarkdown($config, $profile);
         }
 
         file_put_contents($index->file, $index->content);
         echo "ASD generated. {$index->file}" . PHP_EOL;
         echo sprintf('Descriptors(%s), Links(%s)', count($profile->descriptors), count($profile->links)) . PHP_EOL;
+    }
+
+    public function drawMarkdown(Config $config, Profile $profile): void
+    {
+        $titleProfile = new Profile($config->profile, new LabelNameTitle());
+        $this->draw('', new LabelName(), $profile, null, null);
+        $this->draw('.title', new LabelNameTitle(), $titleProfile, null, null);
+        $indexConfig = clone $config;
+        $indexConfig->outputMode = DumpDocs::MODE_HTML;
+        $htmlIndex = new IndexPage($indexConfig);
+        file_put_contents($htmlIndex->file, $htmlIndex->content);
+        echo "ASD generated. {$htmlIndex->file}" . PHP_EOL;
     }
 
     private function draw(string $fileId, LabelNameInterface $labelName, AbstractProfile $profile, ?TaggedProfile $taggedProfile, ?string $color): void
@@ -54,5 +65,7 @@ final class PutDiagram
         if ($status !== 0) {
             echo 'Warning: Graphviz error' . PHP_EOL; // @codeCoverageIgnore
         }
+
+        @unlink($dotFile);
     }
 }
