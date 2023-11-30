@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Koriym\AppStateDiagram;
 
 use function array_keys;
+use function count;
 use function dirname;
 use function file_get_contents;
 use function htmlspecialchars;
@@ -128,13 +129,24 @@ EOT;
     {
         $setUpTagEvents = '';
         $tags = (new Profile($config->profile, new LabelName()))->tags;
+        $colors = [
+            'LightGreen',
+            'SkyBlue',
+            'LightCoral',
+            'LightSalmon',
+            'Khaki',
+            'Plum',
+            'Wheat',
+        ];
+        $numberOfColors = count($colors);
+        $i = 0;
         foreach ($tags as $tag => $ids) {
             $idArr = [];
             foreach ($ids as $id) {
                 $idArr[] .= "'{$id}'";
             }
 
-            $setUpTagEvents .= sprintf("setupTagEventListener('%s', [%s], '%s'); ", $tag, implode(', ', $idArr), 'lightgreen');
+            $setUpTagEvents .= sprintf("setupTagEventListener('%s', [%s], '%s'); ", $tag, implode(', ', $idArr), $colors[$i++ % $numberOfColors]);
         }
 
         return $setUpTagEvents;

@@ -93,7 +93,7 @@ class IndexPageTest extends TestCase
         $alpsFile = __DIR__ . '/Fake/config/blog.xml';
         $config = new Config($alpsFile, false, new ConfigFilter([], ['tag1'], 'lightblue'));
         $content = (new IndexPage($config))->content;
-        $this->assertStringContainsString("setupTagEventListener('collection', ['Blog'], 'lightgreen');", $content);
+        $this->assertStringContainsString("setupTagEventListener('collection', ['Blog']", $content);
     }
 
     private function getConfig(string $alpsFile, string $outputMode = DumpDocs::MODE_HTML): Config
