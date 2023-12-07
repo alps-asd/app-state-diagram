@@ -4,17 +4,19 @@ An ALPS profile example for ASD
 
 <!-- Container for the ASDs -->
 [<img src="profile.svg">](profile.title.svg)
----
 
 
 ## Tags
 * <input type="checkbox" id="tag-collection" class="tag-trigger-checkbox" data-tag="collection" name="tag-collection"><label for="tag-collection"> collection</label>
 * <input type="checkbox" id="tag-item" class="tag-trigger-checkbox" data-tag="item" name="tag-item"><label for="tag-item"> item</label>
 
+## Links
+* <a rel="issue" href="https://github.com/alps-asd/app-state-diagram/issues">issue</a>
+
 ## Semantic Descriptors
 
  
-### <a name="About">About</a>
+### <a id="About">About</a>
  * type: semantic
  * title: About Us
  * descriptor
@@ -23,12 +25,12 @@ An ALPS profile example for ASD
 |---|---|---|
 | [goBlog](#goBlog) | safe | See the blog post list |
 
-### <a name="articleBody">articleBody</a>
+### <a id="articleBody">articleBody</a>
  * type: semantic
  * title: article body
  * def: [https://schema.org/articleBody](https://schema.org/articleBody)
 
-### <a name="Blog">Blog</a>
+### <a id="Blog">Blog</a>
  * type: semantic
  * title: Blog Post List
  * def: [https://schema.org/Blog](https://schema.org/Blog)
@@ -42,7 +44,7 @@ An ALPS profile example for ASD
 | [goBlogPosting](#goBlogPosting) | safe | See the blog post |
 | [doPost](#doPost) | unsafe | Post the article |
 
-### <a name="BlogPosting">BlogPosting</a>
+### <a id="BlogPosting">BlogPosting</a>
  * type: semantic
  * title: Blog Post
  * def: [https://schema.org/BlogPosting](https://schema.org/BlogPosting)
@@ -56,12 +58,12 @@ An ALPS profile example for ASD
 | [articleBody](#articleBody) | semantic | article body |
 | [goBlog](#goBlog) | safe | See the blog post list |
 
-### <a name="dateCreated">dateCreated</a>
+### <a id="dateCreated">dateCreated</a>
  * type: semantic
  * title: create date
  * def: [https://schema.org/dateCreated](https://schema.org/dateCreated)
 
-### <a name="doPost">doPost</a>
+### <a id="doPost">doPost</a>
  * type: unsafe
  * title: Post the article
  * def: [https://activitystrea.ms/specs/json/1.0/#post-verb](https://activitystrea.ms/specs/json/1.0/#post-verb)
@@ -73,18 +75,18 @@ An ALPS profile example for ASD
 |---|---|---|
 | [articleBody](#articleBody) | semantic | article body |
 
-### <a name="goAbout">goAbout</a>
+### <a id="goAbout">goAbout</a>
  * type: safe
  * title: Go to About
  * rt: [About](#About)
 
-### <a name="goBlog">goBlog</a>
+### <a id="goBlog">goBlog</a>
  * type: safe
  * title: See the blog post list
  * rel: collection
  * rt: [Blog](#Blog)
 
-### <a name="goBlogPosting">goBlogPosting</a>
+### <a id="goBlogPosting">goBlogPosting</a>
  * type: safe
  * title: See the blog post
  * rel: item
@@ -95,18 +97,18 @@ An ALPS profile example for ASD
 |---|---|---|
 | [id](#id) | semantic | identifier |
 
-### <a name="goStart">goStart</a>
+### <a id="goStart">goStart</a>
  * type: safe
  * title: Go to Home
  * rel: collection
  * rt: [Blog](#Blog)
 
-### <a name="id">id</a>
+### <a id="id">id</a>
  * type: semantic
  * title: identifier
  * def: [https://schema.org/identifier](https://schema.org/identifier)
 
-### <a name="Index">Index</a>
+### <a id="Index">Index</a>
  * type: semantic
  * title: Home
  * descriptor
@@ -116,13 +118,6 @@ An ALPS profile example for ASD
 | [goBlog](#goBlog) | safe | See the blog post list |
 
 
-
----
-
-## Links
-
-
-* <a rel="issue" href="https://github.com/alps-asd/app-state-diagram/issues">issue</a>
 
 ---
 

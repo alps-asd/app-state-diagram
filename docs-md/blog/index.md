@@ -4,12 +4,14 @@ An ALPS profile example for ASD
 
 <!-- Container for the ASDs -->
 [<img src="profile.svg">](profile.title.svg)
----
 
 
 ## Tags
 * <input type="checkbox" id="tag-collection" class="tag-trigger-checkbox" data-tag="collection" name="tag-collection"><label for="tag-collection"> collection</label>
 * <input type="checkbox" id="tag-item" class="tag-trigger-checkbox" data-tag="item" name="tag-item"><label for="tag-item"> item</label>
+
+## Links
+* <a rel="issue" href="https://github.com/alps-asd/app-state-diagram/issues">issue</a>
 
 ## Semantic Descriptors
 
@@ -116,13 +118,6 @@ An ALPS profile example for ASD
 | [goBlog](#goBlog) | safe | See the blog post list |
 
 
-
----
-
-## Links
-
-
-* <a rel="issue" href="https://github.com/alps-asd/app-state-diagram/issues">issue</a>
 
 ---
 
