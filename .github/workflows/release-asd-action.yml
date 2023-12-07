@@ -25,8 +25,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           file: docker/asd-action/Dockerfile
-          context: .
-          platforms: linux/amd64,linux/arm64
+          context: docker/asd-action
           push: true
           tags: ghcr.io/alps-asd/asd-action:latest
         env:
