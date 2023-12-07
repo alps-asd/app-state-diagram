@@ -17,6 +17,7 @@
     "xmlhttprequest-ssl": "^2.0.0"
   },
   "dependencies": {
-    "npm-check-updates": "^11.7.1"
+    "npm-check-updates": "^11.7.1",
+    "viz.js": "^2.1.2"
   }
 }

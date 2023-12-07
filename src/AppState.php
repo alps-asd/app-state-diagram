@@ -78,7 +78,7 @@ final class AppState
 
     public function __toString(): string
     {
-        $base = '    %s [label = <%s> URL="docs/%s.%s.html" target="_parent"';
+        $base = '    %s [label = <%s> URL="#%s" target="_parent"';
         $dot = '';
         foreach ($this->taggedStates as $descriptor) {
             assert($descriptor instanceof SemanticDescriptor);
@@ -87,7 +87,7 @@ final class AppState
 
         foreach ($this->states as $descriptor) {
             assert($descriptor instanceof SemanticDescriptor);
-            $dot .= sprintf($base . ']' . PHP_EOL, $descriptor->id, $this->labelName->getNodeLabel($descriptor), $descriptor->type, $descriptor->id);
+            $dot .= sprintf($base . ']' . PHP_EOL, $descriptor->id, $this->labelName->getNodeLabel($descriptor), $descriptor->id);
         }
 
         return $dot;
@@ -98,11 +98,11 @@ final class AppState
         if ($this->color === null) {
             $template = $base . ']' . PHP_EOL;
 
-            return sprintf($template, $descriptor->id, $this->labelName->getNodeLabel($descriptor), $descriptor->type, $descriptor->id);
+            return sprintf($template, $descriptor->id, $this->labelName->getNodeLabel($descriptor), $descriptor->id);
         }
 
         $template = $base . ' color="%s"]' . PHP_EOL;
 
-        return sprintf($template, $descriptor->id, $this->labelName->getNodeLabel($descriptor), $descriptor->type, $descriptor->id, $this->color);
+        return sprintf($template, $descriptor->id, $this->labelName->getNodeLabel($descriptor), $descriptor->id, $this->color);
     }
 }

@@ -11,3 +11,9 @@
         padding: 15px;
     }
 }
+#asd_selector {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}

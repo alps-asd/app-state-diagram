@@ -10,54 +10,52 @@
         "id": "Index", "type": "semantic", "doc": {"value": "Index Page"},
         "descriptor": [
           {"href": "#start"}
-        ],
-        "tag": "main"
+        ]
       },
       {
         "id": "About", "type": "semantic",
         "descriptor": [
-          {"href": "#goBlog"}
-        ],
-        "tag": "about"
+          {"href": "#backToBlog"}
+        ]
       },
       {
         "id": "Blog", "type": "semantic", "def": "https://schema.org/Blog",
         "descriptor": [
-          {"href": "#BlogPosting"}, {"href": "#goBlogPosting"},
-          {"href": "#doPost"},
-          {"href": "#goAbout"}
+          {"href": "#BlogPosting"}, {"href": "#blogPosting"},
+          {"href": "#post"},
+          {"href": "#about"}
         ],
-        "tag": "main"
+        "tag": "tag1"
       },
       {
         "id": "BlogPosting", "type": "semantic", "def": "https://schema.org/BlogPosting",
         "descriptor": [
           {"href": "#id"}, {"href": "#articleBody"}, {"href": "#dateCreated"},
-          {"href": "#goBlog"}
+          {"href": "#blog"}
         ],
-        "tag": "main"
+        "tag": "tag1"
       },
 
       {"id": "id", "type": "semantic", "def": "http://schema.org/identifier"},
       {"id": "articleBody", "type": "semantic", "def": "https://schema.org/articleBody"},
       {"id": "dateCreated", "type": "semantic", "def": "https://schema.org/dateCreated"},
 
-      {"id": "start", "type": "safe", "rt": "#Blog", "tag": "main"},
-      {"id": "goBlog", "type": "safe", "rt": "#Blog", "tag": "main"},
+      {"id": "start", "type": "safe", "rt": "#Blog", "tag": "tag1"},
+      {"id": "backToBlog", "type": "safe", "rt": "#Blog"},
       {
-        "id": "goBlogPosting", "type": "safe", "rt": "#BlogPosting", "rel": "item", "tag": "main",
+        "id": "blogPosting", "type": "safe", "rt": "#BlogPosting", "rel": "item", "tag": "tag1",
         "descriptor": [
           {"href": "#id"}
         ]
       },
       {
-        "id": "doPost", "type": "unsafe", "def": "http://activitystrea.ms/specs/json/1.0/#post-verb", "rt": "#Blog",
+        "id": "post", "type": "unsafe", "def": "http://activitystrea.ms/specs/json/1.0/#post-verb", "rt": "#Blog",
         "descriptor": [
           {"href": "#articleBody"}
         ]
       },
-      {"id": "goAbout", "type": "safe", "rt": "#About", "tag": "about"},
-      {"id": "goBlog", "type": "safe", "rt": "#Blog", "rel": "collection about"}
+      {"id": "about", "type": "safe", "rt": "#About"},
+      {"id": "blog", "type": "safe", "rt": "#Blog", "rel": "collection"}
     ]
   }
 }

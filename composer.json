@@ -22,7 +22,7 @@
     "require-dev": {
         "bamarni/composer-bin-plugin": "^1.4",
         "roave/security-advisories": "dev-master",
-        "phpunit/phpunit": "^9.5"
+        "phpunit/phpunit": "^9.6.10"
     },
     "autoload": {
         "psr-4": {
@@ -47,6 +47,7 @@
         "post-update-cmd": ["@composer bin all update --ansi", "cd asd-sync && npm install"],
         "docs" : [
             "bin/asd -c docs/blog/asd.xml docs/blog/profile.xml",
+            "bin/asd -c docs/blog/asd.md.xml docs/blog/profile.md.xml",
             "bin/asd docs/todomvc/profile.json && bin/asd --or-tag=tag1 --color=red docs/filter/profile.json",
             "bin/asd -c docs-md/blog/asd.xml docs-md/blog/profile.xml"
         ],

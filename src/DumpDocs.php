@@ -7,24 +7,21 @@ namespace Koriym\AppStateDiagram;
 use stdClass;
 
 use function assert;
-use function basename;
-use function dirname;
 use function explode;
-use function file_put_contents;
 use function filter_var;
 use function implode;
-use function is_dir;
 use function is_string;
-use function mkdir;
+use function ksort;
 use function property_exists;
 use function sprintf;
-use function str_replace;
 use function strpos;
 use function substr;
 use function usort;
 
 use const FILTER_VALIDATE_URL;
 use const PHP_EOL;
+use const SORT_FLAG_CASE;
+use const SORT_STRING;
 
 /** @psalm-suppress MissingConstructor */
 final class DumpDocs
@@ -36,153 +33,9 @@ final class DumpDocs
     private $descriptors = [];
 
     /** @var "html"|"md" */
-    private $ext;
+    private $ext = 'md';
 
-    public function __invoke(Profile $profile, string $alpsFile, string $format = self::MODE_HTML): void
-    {
-        $descriptors = $this->descriptors = $profile->descriptors;
-        $this->ext = $format === self::MODE_MARKDOWN ? 'md' : self::MODE_HTML;
-        $docsDir = $this->mkDir(dirname($alpsFile), 'docs');
-        $asdFile = sprintf('../%s', basename(str_replace(['xml', 'json'], 'svg', $alpsFile)));
-        foreach ($descriptors as $descriptor) {
-            $markDown = $this->getSemanticDoc($descriptor, $asdFile, $profile->title);
-            $basePath = sprintf('%s/%s.%s', $docsDir, $descriptor->type, $descriptor->id);
-            $title = "{$descriptor->id} ({$descriptor->type})";
-            $this->fileOutput($title, $markDown, $basePath, $format);
-        }
-
-        foreach ($profile->tags as $tag => $descriptorIds) {
-            $markDown = $this->getTagDoc($tag, $descriptorIds, $profile->title, $asdFile);
-            $basePath = sprintf('%s/tag.%s', $docsDir, $tag);
-            $this->fileOutput($tag, $markDown, $basePath, $format);
-        }
-
-        $this->dumpImage($profile->title, $docsDir, $format, $alpsFile, '');
-        $this->dumpImage($profile->title, $docsDir, $format, $alpsFile, 'title.');
-    }
-
-    private function dumpImage(string $title, string $docsDir, string $format, string $alpsFile, string $type): void
-    {
-        $imgSrc = str_replace(['json', 'xml'], "{$type}svg", basename($alpsFile));
-        $format === self::MODE_HTML ?
-            $this->dumpImageHtml($title, $docsDir, $imgSrc, $type) :
-            $this->dumpImageMd($docsDir, $imgSrc, $type);
-    }
-
-    private function dumpImageMd(string $docsDir, string $imgSrc, string $type): void
-    {
-        $isIdMode = $type === '';
-        $link = $isIdMode ? 'id | [title](asd.title.md)' : '[id](asd.md) | title';
-        $html = <<<EOT
-{$link}
-
-[<img src="../{$imgSrc}" alt="application state diagram">](../{$imgSrc})
-EOT;
-        file_put_contents($docsDir . "/asd.{$type}md", $html);
-    }
-
-    private function dumpImageHtml(string $title, string $docsDir, string $imgSrc, string $type): void
-    {
-        $isIdMode = $type === '';
-        $link = $isIdMode ? '<ul class="diagram-mode"> <li class="diagram-mode__item"> <span class="diagram-mode__text">id</span> </li><li class="diagram-mode__item"> <a href="asd.title.html" class="diagram-mode__link">title</a> </li></ul>' : '<ul class="diagram-mode"> <li class="diagram-mode__item"> <a href="asd.html" class="diagram-mode__link">id</a> </li><li class="diagram-mode__item"> <span class="diagram-mode__text">title</span> </li></ul>';
-        $html = <<<EOT
-<html lang="en">
-<head>
-    <title>{$title}</title>
-    <meta charset="UTF-8">
-    <style>
-      :root {
-        --color-text-base: #24292e;
-        --color-border-base: #eaecef;
-        --color-link-base: #3366cc;
-        --font-size-base: 1rem;
-      }
-
-      body {
-        font-family: sans-serif;
-      }
-
-      .diagram-mode {
-        margin-block-end: 2rem;
-        border-bottom: 1px solid var(--color-border-base);
-        font-size: var(--font-size-base);
-      }
-
-      .diagram-mode__item {
-        display: inline-flex;
-        margin-inline: 0.5rem;
-        list-style: none;
-        color: var(--color-text-base);
-      }
-
-      .diagram-mode__text {
-        display: inline-flex;
-        position: relative;
-        box-sizing: border-box;
-        max-height: 4em;
-        margin-block-end: -1px;
-        padding-block: 1.5rem 0.5rem;
-        border-bottom: 1px solid;
-        text-decoration: none;
-        color: var(--color-text-base);
-      }
-
-      .diagram-mode__link {
-        display: inline-flex;
-        position: relative;
-        box-sizing: border-box;
-        max-height: 4em;
-        margin-block-end: -1px;
-        padding-block: 1.5rem 0.5rem;
-        cursor: pointer;
-        color: var(--color-link-base);
-        text-decoration: none;
-      }
-
-      .diagram-mode__link:hover,
-      .diagram-mode__link:focus {
-        border-bottom: 1px solid;
-      }
-    </style>
-</head>
-<body>
-    <div>{$link}</div>
-    <iframe src="../{$imgSrc}" style="border:0; width:100%; height:95%" allow="fullscreen"></iframe>
-</body>
-</html>
-
-EOT;
-        file_put_contents($docsDir . "/asd.{$type}html", $html);
-    }
-
-    private function convertHtml(string $title, string $markdown): string
-    {
-        return (new MdToHtml())($title, $markdown) . PHP_EOL;
-    }
-
-    private function fileOutput(string $title, string $markDown, string $basePath, string $format): void
-    {
-        $file = sprintf('%s.%s', $basePath, $this->ext);
-        if ($format === self::MODE_MARKDOWN) {
-            file_put_contents($file, $markDown);
-
-            return;
-        }
-
-        file_put_contents($file, $this->convertHtml($title, $markDown));
-    }
-
-    private function mkDir(string $baseDir, string $dirName): string
-    {
-        $dir = sprintf('%s/%s', $baseDir, $dirName);
-        if (! is_dir($dir)) {
-            mkdir($dir, 0777, true); // @codeCoverageIgnore
-        }
-
-        return $dir;
-    }
-
-    private function getSemanticDoc(AbstractDescriptor $descriptor, string $asd, string $title): string
+    private function getSemanticDoc(AbstractDescriptor $descriptor): string
     {
         $descriptorSemantic = $this->getDescriptorInDescriptor($descriptor);
         $rt = $this->getRt($descriptor);
@@ -195,15 +48,11 @@ EOT;
         $description .= $this->getDescriptorProp('rel', $descriptor);
         $description .= $this->getTag($descriptor->tags);
         $linkRelations = $this->getLinkRelations($descriptor->linkRelations);
-        $titleHeader = $title ? sprintf('%s: Semantic Descriptor', $title) : 'Semantic Descriptor';
 
         return <<<EOT
-{$titleHeader}
-# {$descriptor->id}
+### <a id="{$descriptor->id}">{$descriptor->id}</a>
 {$description}{$rt}{$linkRelations}{$descriptorSemantic}
----
 
-[home](../index.{$this->ext}) | [asd]($asd)
 EOT;
     }
 
@@ -254,7 +103,7 @@ EOT;
 
         assert($descriptor instanceof TransDescriptor);
 
-        return sprintf(' * rt: [%s](semantic.%s.%s)', $descriptor->rt, $descriptor->rt, $this->ext) . PHP_EOL;
+        return sprintf(' * rt: [%s](#%s)', $descriptor->rt, $descriptor->rt) . PHP_EOL;
     }
 
     private function getDescriptorInDescriptor(AbstractDescriptor $descriptor): string
@@ -267,7 +116,7 @@ EOT;
 
         $table = sprintf(' * descriptor%s%s| id | type | title |%s|---|---|---|%s', PHP_EOL, PHP_EOL, PHP_EOL, PHP_EOL);
         foreach ($descriptors as $descriptor) {
-            $table .= sprintf('| %s | %s | %s |', $descriptor->htmlLink($this->ext), $descriptor->type, $descriptor->title) . PHP_EOL;
+            $table .= sprintf('| %s | %s | %s |', $descriptor->htmlLink(), $descriptor->type, $descriptor->title) . PHP_EOL;
         }
 
         return $table;
@@ -293,10 +142,6 @@ EOT;
             assert(isset($this->descriptors[$id]));
 
             $original = clone $this->descriptors[$id];
-            if (isset($descriptor->title)) {
-                $original->title = (string) $descriptor->title;
-            }
-
             $descriptors[] = $original;
         }
 
@@ -326,32 +171,23 @@ EOT;
     {
         $string = [];
         foreach ($tags as $tag) {
-            $string[] = "[{$tag}](tag.{$tag}.{$this->ext})";
+            $string[] = "[{$tag}](#tag-{$tag})";
         }
 
         return implode(', ', $string) . PHP_EOL;
     }
 
-    /** @param list<string> $descriptorIds */
-    private function getTagDoc(string $tag, array $descriptorIds, string $title, string $asd): string
+    public function getSemanticDescriptorMarkDown(Profile $profile, string $asdFile): string
     {
-        $list = '';
-        foreach ($descriptorIds as $descriptorId) {
-            $descriptor = $this->descriptors[$descriptorId];
-            $list .= " * {$descriptor->htmlLink($this->ext)}" . PHP_EOL;
+        unset($asdFile);
+        $descriptors = $this->descriptors = $profile->descriptors;
+        $markDown = '';
+        ksort($descriptors, SORT_FLAG_CASE | SORT_STRING);
+        foreach ($descriptors as $descriptor) {
+            $markDown .= $this->getSemanticDoc($descriptor);
         }
 
-        $titleHeader = $title ? sprintf('%s: Tag', $title) : 'Tag';
-
-        return <<<EOT
-{$titleHeader}
-# {$tag}
-
-{$list}
----
-
-[home](../index.{$this->ext}) | [asd]({$asd}) | {$tag} 
-EOT;
+        return $markDown;
     }
 
     private function getLinkRelations(LinkRelations $linkRelations): string
@@ -360,6 +196,6 @@ EOT;
             return '';
         }
 
-        return ' * links' . PHP_EOL . $linkRelations . PHP_EOL;
+        return $linkRelations . PHP_EOL;
     }
 }

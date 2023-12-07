@@ -6,8 +6,6 @@ namespace Koriym\AppStateDiagram;
 
 use PHPUnit\Framework\TestCase;
 
-use function dirname;
-use function file_get_contents;
 use function unlink;
 
 class PutDrawDiagramTest extends TestCase
@@ -20,27 +18,22 @@ class PutDrawDiagramTest extends TestCase
         $this->putDiagram = new PutDiagram();
     }
 
-    public function testInvoke(): void
+    public function testInvokeMdWithHtml(): void
     {
-        $svgFile = __DIR__ . '/Fake/config/profile.svg';
-        @unlink($svgFile);
+        $mdFile = __DIR__ . '/Fake/config/index.md';
+        $htmlFile = __DIR__ . '/Fake/config/index.html';
+        @unlink($mdFile);
+        @unlink($htmlFile);
         ($this->putDiagram)(ConfigFactory::fromFile(__DIR__ . '/Fake/config/asd.xml'));
-        $this->assertFileExists($svgFile);
+        $this->assertFileExists($mdFile);
+        $this->assertFileExists($htmlFile);
     }
 
-    /**
-     * @depends testInvoke
-     */
-    public function testLinkId(): void
+    public function testInvokeHtml(): void
     {
-        $profileDot = (string) file_get_contents(dirname(__DIR__) . '/tests/Fake/config/profile.dot');
-        $this->assertStringContainsString('About -> Blog [label = <goBlog (safe)> URL="docs/safe.goBlog.html"', $profileDot);
-    }
-
-    /** @depends testInvoke */
-    public function testLinkTitle(): void
-    {
-        $profileTitleDot = (string) file_get_contents(dirname(__DIR__) . '/tests/Fake/config/profile.title.dot');
-        $this->assertStringContainsString('About -> Blog [label = <to blog> URL="docs/safe.goBlog.html"', $profileTitleDot);
+        $file = __DIR__ . '/Fake/config/index.html';
+        @unlink($file);
+        ($this->putDiagram)(ConfigFactory::fromFile(__DIR__ . '/Fake/config/asd.html.xml'));
+        $this->assertFileExists($file);
     }
 }

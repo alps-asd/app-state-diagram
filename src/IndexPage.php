@@ -5,16 +5,18 @@ declare(strict_types=1);
 namespace Koriym\AppStateDiagram;
 
 use function array_keys;
+use function count;
 use function dirname;
+use function file_get_contents;
 use function htmlspecialchars;
 use function implode;
 use function nl2br;
-use function pathinfo;
 use function sprintf;
+use function str_replace;
 use function strtoupper;
 use function uasort;
 
-use const PATHINFO_BASENAME;
+use const ENT_QUOTES;
 use const PHP_EOL;
 
 final class IndexPage
@@ -25,9 +27,147 @@ final class IndexPage
     /** @var string */
     public $file;
 
-    public function __construct(Profile $profile, string $mode = DumpDocs::MODE_HTML)
+    public function __construct(Config $config)
     {
-        $profilePath = pathinfo($profile->alpsFile, PATHINFO_BASENAME);
+        [$profile, $dotId, $dotName, $mode, $alpsProfile, $semanticMd, $linkRelations, $ext, $tags, $htmlTitle, $htmlDoc, $setUpTagEvents] = $this->getDataFromConfig($config);
+        $indexJsFile = dirname(__DIR__, 1) . '/docs/assets/js/asd@0.1.0.js';
+        $indexJs = sprintf('<script>%s</script>', file_get_contents($indexJsFile));
+        $header = <<<EOT
+<script src="https://d3js.org/d3.v5.min.js"></script>
+<script src="https://unpkg.com/viz.js@1.8.1/viz.js" type="javascript/worker"></script>
+<script src="https://unpkg.com/d3-graphviz@2.1.0/build/d3-graphviz.min.js"></script>
+<script src="https://alps-asd.github.io/app-state-diagram/assets/js/table.js"></script>
+{$indexJs}
+EOT;
+        $asd = $config->outputMode === DumpDocs::MODE_MARKDOWN ? '[<img src="profile.svg">](profile.title.svg)' : <<< EOTJS
+<div id="asd-graph-id" style="text-align: center; "></div>
+<div id="asd-graph-name" style="text-align: center; display: none;"></div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        renderGraph("#asd-graph-id", '{{ dotId }}');
+        renderGraph("#asd-graph-name", '{{ dotName }}');
+        setupTagTrigger();
+        setupModeSwitch('asd-show-id', 'asd-graph-id', 'asd-graph-name');
+        setupModeSwitch('asd-show-name', 'asd-graph-name', 'asd-graph-id');
+        applySmoothScrollToLinks(document.querySelectorAll('a[href^="#"]'));
+        {$setUpTagEvents}
+    });
+</script>
+<div class="asd-view-selector">
+    <input type="radio" id="asd-show-id" checked name="asd-view-selector">
+    <label for="asd-show-id">id<ID/label>
+    <input type="radio" id="asd-show-name" name="asd-view-selector">
+    <label for="asd-show-name">title</label>
+</div>
+EOTJS;
+
+        $md = <<<EOT
+# {$htmlTitle}
+
+{$htmlDoc}
+
+<!-- Container for the ASDs -->
+{$asd}
+
+{$tags}
+
+{$linkRelations}
+
+## Semantic Descriptors
+
+ {$semanticMd}
+
+---
+
+## Profile
+<pre><code>{$alpsProfile}</code></pre>
+EOT;
+        $this->file = sprintf('%s/index.%s', dirname($profile->alpsFile), $ext);
+        if ($mode === DumpDocs::MODE_MARKDOWN) {
+            $this->content = $md;
+
+            return;
+        }
+
+        $html = (new MdToHtml())($htmlTitle, $md);
+        $escapedDotId = str_replace("\n", '', $dotId);
+        $escapedDotName = str_replace("\n", '', $dotName);
+        $plusHeaderHtml = str_replace(
+            '</head>',
+            $header . '</head>',
+            $html
+        );
+        $this->content = str_replace(['{{ dotId }}', '{{ dotName }}', '{{ dotName }}'], [$escapedDotId, $escapedDotName], $plusHeaderHtml);
+    }
+
+    /** @param array<string, list<string>> $tags */
+    private function tags(array $tags): string
+    {
+        if ($tags === []) {
+            return '';
+        }
+
+        $lines = ['## Tags'];
+        $tagKeys = array_keys($tags);
+        foreach ($tagKeys as $tag) {
+            $lines[] = sprintf('* <input type="checkbox" id="tag-%s" class="tag-trigger-checkbox" data-tag="%s" name="tag-%s"><label for="tag-%s"> %s</label>', $tag, $tag, $tag, $tag, $tag);
+        }
+
+        return PHP_EOL . implode(PHP_EOL, $lines);
+    }
+
+    private function linkRelations(LinkRelations $linkRelations): string
+    {
+        if ((string) $linkRelations === '') {
+            return '';
+        }
+
+        return '## Links' . PHP_EOL . $linkRelations;
+    }
+
+    private function getSetupTagEvents(Config $config): string
+    {
+        $setUpTagEvents = '';
+        $tags = (new Profile($config->profile, new LabelName()))->tags;
+        $colors = [
+            'LightGreen',
+            'SkyBlue',
+            'LightCoral',
+            'LightSalmon',
+            'Khaki',
+            'Plum',
+            'Wheat',
+        ];
+        $numberOfColors = count($colors);
+        $i = 0;
+        foreach ($tags as $tag => $ids) {
+            $idArr = [];
+            foreach ($ids as $id) {
+                $idArr[] .= "'{$id}'";
+            }
+
+            $setUpTagEvents .= sprintf("setupTagEventListener('%s', [%s], '%s'); ", $tag, implode(', ', $idArr), $colors[$i++ % $numberOfColors]);
+        }
+
+        return $setUpTagEvents;
+    }
+
+    /** @return list<mixed> */
+    public function getDataFromConfig(Config $config): array
+    {
+        $draw = new DrawDiagram();
+        $profile = new Profile($config->profile, new LabelName());
+        $titleProfile = new Profile($config->profile, new LabelNameTitle());
+        $dotId = $draw($profile, new LabelName());
+        $dotName = $draw($titleProfile, new LabelNameTitle());
+        $mode = $config->outputMode;
+        $alpsProfile = htmlspecialchars(
+            (string) file_get_contents($profile->alpsFile),
+            ENT_QUOTES,
+            'UTF-8'
+        );
+
+        $semanticMd = PHP_EOL . (new DumpDocs())->getSemanticDescriptorMarkDown($profile, $profile->alpsFile);
         $descriptors = $profile->descriptors;
         uasort($descriptors, static function (AbstractDescriptor $a, AbstractDescriptor $b): int {
             $compareId = strtoupper($a->id) <=> strtoupper($b->id);
@@ -41,61 +181,11 @@ final class IndexPage
         });
         $linkRelations = $this->linkRelations($profile->linkRelations);
         $ext = $mode === DumpDocs::MODE_MARKDOWN ? 'md' : DumpDocs::MODE_HTML;
-        $semantics = $this->semantics($descriptors, $ext);
-        $tags = $this->tags($profile->tags, $ext);
+        $tags = $this->tags($profile->tags);
         $htmlTitle = htmlspecialchars($profile->title ?: 'ALPS');
         $htmlDoc = nl2br(htmlspecialchars($profile->doc));
-        $profileImage = $mode === DumpDocs::MODE_HTML ? 'docs/asd.html' : 'docs/asd.md';
-        $md = <<<EOT
-# {$htmlTitle}
+        $setUpTagEvents = $this->getSetupTagEvents($config);
 
-{$htmlDoc}
-
- * [ALPS]({$profilePath})
- * [Application State Diagram]($profileImage)
- * Semantic Descriptors
-{$semantics}{$tags}{$linkRelations}
-EOT;
-        $this->file = sprintf('%s/index.%s', dirname($profile->alpsFile), $ext);
-        $this->content = $mode === DumpDocs::MODE_MARKDOWN ? $md : (new MdToHtml())($htmlTitle, $md);
-    }
-
-    /** @param array<string, AbstractDescriptor> $semantics */
-    private function semantics(array $semantics, string $ext): string
-    {
-        $lines = [];
-        foreach ($semantics as $semantic) {
-            $href = sprintf('docs/%s.%s.%s', $semantic->type, $semantic->id, $ext);
-            $title = $semantic->title ? sprintf(', %s', $semantic->title) : '';
-            $lines[] = sprintf('   * [%s](%s) (%s)%s', $semantic->id, $href, $semantic->type, $title);
-        }
-
-        return implode(PHP_EOL, $lines);
-    }
-
-    /** @param array<string, list<string>> $tags */
-    private function tags(array $tags, string $ext): string
-    {
-        if ($tags === []) {
-            return '';
-        }
-
-        $lines = [];
-        $tagKeys = array_keys($tags);
-        foreach ($tagKeys as $tag) {
-            $href = "docs/tag.{$tag}.{$ext}";
-            $lines[] = "   * [{$tag}]({$href})";
-        }
-
-        return PHP_EOL . ' * Tags' . PHP_EOL . implode(PHP_EOL, $lines);
-    }
-
-    private function linkRelations(LinkRelations $linkRelations): string
-    {
-        if ((string) $linkRelations === '') {
-            return '';
-        }
-
-        return PHP_EOL . ' * Links' . PHP_EOL . $linkRelations;
+        return [$profile, $dotId, $dotName, $mode, $alpsProfile, $semanticMd, $linkRelations, $ext, $tags, $htmlTitle, $htmlDoc, $setUpTagEvents];
     }
 }

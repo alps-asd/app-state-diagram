@@ -11,8 +11,8 @@ class IndexPageTest extends TestCase
     public function testInvoke(): string
     {
         $alpsFile = __DIR__ . '/Fake/alps.json';
-        $html = (new IndexPage(new Profile($alpsFile, new LabelName())))->content;
-        $this->assertStringContainsString('<li><a href="docs/semantic.About.html">About</a> (semantic)</li>', $html);
+        $html = (new IndexPage($this->getConfig($alpsFile)))->content;
+        $this->assertStringContainsString('<a id="About">About</a>', $html);
 
         return $html;
     }
@@ -20,77 +20,59 @@ class IndexPageTest extends TestCase
     public function testInvokeMarkdownMode(): string
     {
         $alpsFile = __DIR__ . '/Fake/alps.json';
-        $content = (new IndexPage(new Profile($alpsFile, new LabelName()), DumpDocs::MODE_MARKDOWN))->content;
-        $this->assertStringContainsString('[About](docs/semantic.About.md) (semantic)', $content);
+        $content = (new IndexPage($this->getConfig($alpsFile, DumpDocs::MODE_MARKDOWN)))->content;
+        $this->assertStringContainsString('<a id="About">About</a>', $content);
 
         return $content;
     }
 
     /** @depends testInvoke */
-    public function testLinkRelationsIsMissing(string $html): void
+    public function testLinkRelationsIsNotMissing(string $html): void
     {
-        $this->assertStringNotContainsString('Links', $html);
-    }
-
-    public function testTagString(): void
-    {
-        $alpsFile = __DIR__ . '/Fake/alps_tag.json';
-        $html = (new IndexPage(new Profile($alpsFile, new LabelName())))->content;
-        $this->assertStringContainsString('<li><a href="docs/tag.a.html">a</a>', $html);
-        $this->assertStringContainsString('<li><a href="docs/tag.b.html">b</a>', $html);
-    }
-
-    public function testTagStringMarkdownMode(): void
-    {
-        $alpsFile = __DIR__ . '/Fake/alps_tag.json';
-        $content = (new IndexPage(new Profile($alpsFile, new LabelName()), DumpDocs::MODE_MARKDOWN))->content;
-        $this->assertStringContainsString('[a](docs/tag.a.md)', $content);
-        $this->assertStringContainsString('[b](docs/tag.b.md)', $content);
+        $this->assertStringContainsString('Links', $html);
     }
 
     public function testText(): void
     {
         $alpsFile = __DIR__ . '/Fake/project/min/profile.json';
-        $html = (new IndexPage(new Profile($alpsFile, new LabelName())))->content;
-        $this->assertStringContainsString('foo</a> (semantic), foo-title</li>', $html);
-        $this->assertStringContainsString('bar</a> (semantic)', $html);
+        $html = (new IndexPage($this->getConfig($alpsFile)))->content;
+        $this->assertStringContainsString('foo-title</li>', $html);
+        $this->assertStringContainsString('bar</a>', $html);
     }
 
     public function testLinkRelationsString(): void
     {
         $alpsFile = __DIR__ . '/Fake/alps_has_single_link.json';
-        $html = (new IndexPage(new Profile($alpsFile, new LabelName())))->content;
-        $this->assertStringContainsString('<li>rel: about <a rel="about" href="https://github.com/alps-asd/app-state-diagram/index.html">https://github.com/alps-asd/app-state-diagram/index.html</a></li>', $html);
+        $html = (new IndexPage($this->getConfig($alpsFile)))->content;
+        $this->assertStringContainsString('<a rel="about" href="https://github.com/alps-asd/app-state-diagram/index.html">about</a>', $html);
     }
 
     public function testLinkRelationsStringMarkdownMode(): void
     {
         $alpsFile = __DIR__ . '/Fake/alps_has_single_link.json';
-        $md = (new IndexPage(new Profile($alpsFile, new LabelName()), DumpDocs::MODE_MARKDOWN))->content;
-        $this->assertStringContainsString('* rel: about <a rel="about" href="https://github.com/alps-asd/app-state-diagram/index.html">https://github.com/alps-asd/app-state-diagram/index.html</a>', $md);
+        $content = (new IndexPage($this->getConfig($alpsFile, DumpDocs::MODE_MARKDOWN)))->content;
+        $this->assertStringContainsString('* <a rel="about" href="https://github.com/alps-asd/app-state-diagram/index.html">about</a>', $content);
     }
 
     public function testMultipleLinkRelationsString(): void
     {
         $alpsFile = __DIR__ . '/Fake/alps_has_multiple_link.json';
-        $html = (new IndexPage(new Profile($alpsFile, new LabelName())))->content;
-        $this->assertStringContainsString('<li>rel: about <a rel="about" href="https://github.com/alps-asd/app-state-diagram/">https://github.com/alps-asd/app-state-diagram/</a></li>', $html);
-        $this->assertStringContainsString('<li>rel: repository <a rel="repository" href="https://github.com/alps-asd/app-state-diagram/">https://github.com/alps-asd/app-state-diagram/</a></li>', $html);
+        $html = (new IndexPage($this->getConfig($alpsFile)))->content;
+        $this->assertStringContainsString('<a rel="about" href="https://github.com/alps-asd/app-state-diagram/">about</a>', $html);
+        $this->assertStringContainsString('<a rel="repository" href="https://github.com/alps-asd/app-state-diagram/">repository</a>', $html);
     }
 
     public function testTitle(): void
     {
         $alpsFile = __DIR__ . '/Fake/title.json';
-        $html = (new IndexPage(new Profile($alpsFile, new LabelName())))->content;
-
+        $html = (new IndexPage($this->getConfig($alpsFile)))->content;
         $this->assertStringContainsString('<title>Title</title>', $html);
     }
 
     public function testTitleMarkdownMode(): void
     {
         $alpsFile = __DIR__ . '/Fake/title.json';
-        $content = (new IndexPage(new Profile($alpsFile, new LabelName()), DumpDocs::MODE_MARKDOWN))->content;
-
+        $content = (new IndexPage($this->getConfig($alpsFile, DumpDocs::MODE_MARKDOWN)))->content;
         $this->assertStringContainsString('# Title', $content);
     }
 
@@ -104,5 +86,18 @@ class IndexPageTest extends TestCase
     public function testNoTitleMarkdownMode(string $content): void
     {
         $this->assertStringContainsString('# ALPS', $content);
+    }
+
+    public function testTagColor(): void
+    {
+        $alpsFile = __DIR__ . '/Fake/config/blog.xml';
+        $config = new Config($alpsFile, false, new ConfigFilter([], ['tag1'], 'lightblue'));
+        $content = (new IndexPage($config))->content;
+        $this->assertStringContainsString("setupTagEventListener('collection', ['Blog']", $content);
+    }
+
+    private function getConfig(string $alpsFile, string $outputMode = DumpDocs::MODE_HTML): Config
+    {
+        return new Config($alpsFile, false, new ConfigFilter([], [], ''), $outputMode);
     }
 }

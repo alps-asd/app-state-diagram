@@ -45,17 +45,17 @@ final class Edge
     private function singleLink(array $links): string
     {
         $link = $links[0];
-        $base = '    %s -> %s [label = <%s> URL="docs/%s.%s.html" target="_parent" fontsize=13';
+        $base = '    %s -> %s [label = <%s> URL="#%s" target="_parent" fontsize=13 class="%s" penwidth=1.5';
 
         if (! isset($this->color, $this->taggedProfile)) {
-            return sprintf($base . '];' . PHP_EOL, $link->from, $link->to, $link->label, $link->transDescriptor->type, $link->transDescriptor->id);
+            return sprintf($base . '];' . PHP_EOL, $link->from, $link->to, $link->label, $link->transDescriptor->id, $link->transDescriptor->id);
         }
 
         if (in_array($link, $this->taggedProfile->links)) {
-            return sprintf($base . ' color="%s"];' . PHP_EOL, $link->from, $link->to, $link->label, $link->transDescriptor->type, $link->transDescriptor->id, $this->color);
+            return sprintf($base . ' color="%s"];' . PHP_EOL, $link->from, $link->to, $link->label, $link->transDescriptor->id, $link->transDescriptor->id, $this->color);
         }
 
-        return sprintf($base . '];' . PHP_EOL, $link->from, $link->to, $link->label, $link->transDescriptor->type, $link->transDescriptor->id);
+        return sprintf($base . '];' . PHP_EOL, $link->from, $link->to, $link->label, $link->transDescriptor->id, $link->transDescriptor->id);
     }
 
     /** @param list<Link> $links */
@@ -64,7 +64,7 @@ final class Edge
         assert(isset($links[0]));
         $trs = '';
         foreach ($links as $link) {
-            $trs .= sprintf('<tr><td align="left" href="docs/%s.%s.html" tooltip="%s (%s)" >%s (%s)</td></tr>', $link->transDescriptor->type, $link->transDescriptor->id, $link->transDescriptor->id, $link->transDescriptor->type, $link->transDescriptor->id, $link->transDescriptor->type);
+            $trs .= sprintf('<tr><td align="left" href="#%s" tooltip="%s (%s)" >%s (%s)</td></tr>', $link->transDescriptor->id, $link->transDescriptor->id, $link->transDescriptor->type, $link->transDescriptor->id, $link->transDescriptor->type);
         }
 
         $base = '    %s -> %s [label=<<table border="0">%s</table>> fontsize=13';

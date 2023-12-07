@@ -1,1 +1,0 @@
-    <iframe src="../profile.svg" style="border:0; width:100%; height:95%" allow="fullscreen"></iframe>

@@ -17,40 +17,463 @@
                 padding: 15px;
             }
         }
+        .asd-view-selector {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
     </style>
-</head>
+<script src="https://d3js.org/d3.v5.min.js"></script>
+<script src="https://unpkg.com/viz.js@1.8.1/viz.js" type="javascript/worker"></script>
+<script src="https://unpkg.com/d3-graphviz@2.1.0/build/d3-graphviz.min.js"></script>
+<script src="https://alps-asd.github.io/app-state-diagram/assets/js/table.js"></script>
+<script>// Applies smooth scroll to links
+const ease = (t, b, c, d) => {
+    t /= d / 2;
+    if (t < 1) return (c / 2) * t * t + b;
+    t--;
+    return (-c / 2) * (t * (t - 2) - 1) + b;
+};
+
+// Smoothly scrolls to the target element
+const smoothScrollTo = (targetElement) => {
+    const targetPosition = targetElement.getBoundingClientRect().top + window.pageYOffset;
+    const startPosition = window.pageYOffset;
+    const distance = targetPosition - startPosition;
+    const duration = 1000;
+    let startTime = null;
+
+    const animate = (currentTime) => {
+        if (!startTime) startTime = currentTime;
+        const timeElapsed = currentTime - startTime;
+        const run = ease(timeElapsed, startPosition, distance, duration);
+        window.scrollTo(0, run);
+        if (timeElapsed < duration) requestAnimationFrame(animate);
+    };
+
+    requestAnimationFrame(animate);
+    history.pushState(null, null, '#' + targetElement.getAttribute('name'));
+};
+
+const applySmoothScrollToLinks = (links) => {
+    links.forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetName = link.getAttribute('href').slice(1);
+            const targetElement = document.querySelector(`[id="${targetName}"]`);
+            if (!targetElement) {
+                console.error("Target element not found for link:", link.getAttribute('href'));
+                return;
+            }
+            smoothScrollTo(targetElement);
+        });
+    });
+};
+
+
+// Renders the graph and applies smooth scroll to links
+const renderGraph = (graphId, dotString) => {
+    const graphviz = d3.select(graphId).graphviz();
+    graphviz.renderDot(dotString).on('end', () => {
+        applySmoothScrollToLinks(document.querySelectorAll('svg a[*|href^="#"]'));
+    });
+};
+
+// Sets up event listeners for tags
+const setupTagEventListener = (eventName, titles, color, defaultColor = 'lightgrey', defaultEdgeColor = 'black') => {
+    const changeColor = (useDefault) => {
+        titles.forEach(title => {
+            changeColorByTitle(title, useDefault ? defaultColor : color, useDefault ? defaultEdgeColor : color);
+        });
+    };
+
+    document.addEventListener(`tagon-${eventName}`, () => changeColor(false));
+    document.addEventListener(`tagoff-${eventName}`, () => changeColor(true));
+};
+
+// Sets up triggers for tags
+const setupTagTrigger = () => {
+    const checkboxes = document.querySelectorAll('.tag-trigger-checkbox');
+    checkboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', function () {
+            this.checked ?
+                document.dispatchEvent(new CustomEvent('tagon-' + this.getAttribute('data-tag'))) :
+                document.dispatchEvent(new CustomEvent('tagoff-' + this.getAttribute('data-tag')));
+        });
+    });
+};
+
+// Changes color of elements by title or class
+const changeColorByTitle = (titleOrClass, newNodeColor, newEdgeColor) => {
+    const elements = Array.from(document.getElementsByTagName('g'));
+
+    elements.forEach(element => {
+        const titleElement = element.getElementsByTagName('title')[0];
+        const title = titleElement ? titleElement.textContent : '';
+
+        if (title === titleOrClass || element.classList.contains(titleOrClass)) {
+            const polygons = Array.from(element.getElementsByTagName('polygon'));
+            const paths = Array.from(element.getElementsByTagName('path'));
+
+            polygons.forEach(polygon => {
+                polygon.setAttribute('fill', newNodeColor);
+            });
+
+            paths.forEach(path => {
+                path.setAttribute('stroke', newEdgeColor);
+            });
+        }
+    });
+};
+
+// Sets up mode switch for graph display
+const setupModeSwitch = (switchId, graphId, otherGraphId) => {
+    document.getElementById(switchId).addEventListener('change', (e) => {
+        document.getElementById(graphId).style.display = e.target.checked ? 'block' : 'none';
+        document.getElementById(otherGraphId).style.display = e.target.checked ? 'none' : 'block';
+    });
+};
+</script></head>
 <body>
     <div class="markdown-body">
         <h1>ALPS example</h1>
 
 <p>This is ALPS example.</p>
 
-<ul>
-<li><a href="profile.json">ALPS</a></li>
-<li><a href="docs/asd.html">Application State Diagram</a></li>
-<li>Semantic Descriptors
+<!-- Container for the ASDs -->
+
+<div id="asd-graph-id" style="text-align: center; "></div>
+
+<div id="asd-graph-name" style="text-align: center; display: none;"></div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        renderGraph("#asd-graph-id", 'digraph application_state_diagram {  graph [    labelloc="t";    fontname="Helvetica"    label="ALPS example";    URL="index.html" target="_parent"  ];  node [shape = box, style = "bold,filled" fillcolor="lightgray"];    Blog [margin=0.02, label=<<table cellspacing="0" cellpadding="5" border="0"><tr><td>Blog<br />(BlogPosting)<br /></td></tr></table>>,shape=box URL="#Blog" target="_parent"]    BlogPosting [margin=0.02, label=<<table cellspacing="0" cellpadding="5" border="0"><tr><td>BlogPosting<br />(id)<br />(articleBody)<br />(dateCreated)<br /></td></tr></table>>,shape=box URL="#BlogPosting" target="_parent"]    About -> Blog [label = <goBlog, collection about (safe)> URL="#goBlog" target="_parent" fontsize=13 class="goBlog" penwidth=1.5];    Blog -> About [label = <goAbout (safe)> URL="#goAbout" target="_parent" fontsize=13 class="goAbout" penwidth=1.5];    Blog -> Blog [label = <doPost (unsafe)> URL="#doPost" target="_parent" fontsize=13 class="doPost" penwidth=1.5];    Blog -> BlogPosting [label = <goBlogPosting, item (safe)> URL="#goBlogPosting" target="_parent" fontsize=13 class="goBlogPosting" penwidth=1.5];    BlogPosting -> Blog [label = <goBlog, collection about (safe)> URL="#goBlog" target="_parent" fontsize=13 class="goBlog" penwidth=1.5];    Index -> Blog [label = <start (safe)> URL="#start" target="_parent" fontsize=13 class="start" penwidth=1.5];    About [label = <About> URL="#About" target="_parent"]    Index [label = <Index> URL="#Index" target="_parent"]}');
+        renderGraph("#asd-graph-name", 'digraph application_state_diagram {  graph [    labelloc="t";    fontname="Helvetica"    label="ALPS example";    URL="index.html" target="_parent"  ];  node [shape = box, style = "bold,filled" fillcolor="lightgray"];    Blog [margin=0.02, label=<<table cellspacing="0" cellpadding="5" border="0"><tr><td>Blog<br />(BlogPosting)<br /></td></tr></table>>,shape=box URL="#Blog" target="_parent"]    BlogPosting [margin=0.02, label=<<table cellspacing="0" cellpadding="5" border="0"><tr><td>BlogPosting<br />(id)<br />(articleBody)<br />(dateCreated)<br /></td></tr></table>>,shape=box URL="#BlogPosting" target="_parent"]    About -> Blog [label = <goBlog> URL="#goBlog" target="_parent" fontsize=13 class="goBlog" penwidth=1.5];    Blog -> About [label = <goAbout> URL="#goAbout" target="_parent" fontsize=13 class="goAbout" penwidth=1.5];    Blog -> Blog [label = <<b><u>doPost</u></b>> URL="#doPost" target="_parent" fontsize=13 class="doPost" penwidth=1.5];    Blog -> BlogPosting [label = <goBlogPosting> URL="#goBlogPosting" target="_parent" fontsize=13 class="goBlogPosting" penwidth=1.5];    BlogPosting -> Blog [label = <goBlog> URL="#goBlog" target="_parent" fontsize=13 class="goBlog" penwidth=1.5];    Index -> Blog [label = <start> URL="#start" target="_parent" fontsize=13 class="start" penwidth=1.5];    About [label = <About> URL="#About" target="_parent"]    Index [label = <Index> URL="#Index" target="_parent"]}');
+        setupTagTrigger();
+        setupModeSwitch('asd-show-id', 'asd-graph-id', 'asd-graph-name');
+        setupModeSwitch('asd-show-name', 'asd-graph-name', 'asd-graph-id');
+        applySmoothScrollToLinks(document.querySelectorAll('a[href^="#"]'));
+        setupTagEventListener('about', ['About', 'goAbout'], 'LightGreen'); setupTagEventListener('main', ['Blog', 'BlogPosting', 'Index', 'goBlogPosting', 'start'], 'SkyBlue'); 
+    });
+</script>
+
+<div class="asd-view-selector">
+    <input type="radio" id="asd-show-id" checked name="asd-view-selector">
+    <label for="asd-show-id">id<ID/label>
+    <input type="radio" id="asd-show-name" name="asd-view-selector">
+    <label for="asd-show-name">title</label>
+</div>
+
+<h2>Tags</h2>
 
 <ul>
-<li><a href="docs/semantic.About.html">About</a> (semantic)</li>
-<li><a href="docs/safe.about.html">about</a> (safe)</li>
-<li><a href="docs/semantic.articleBody.html">articleBody</a> (semantic)</li>
-<li><a href="docs/safe.backToBlog.html">backToBlog</a> (safe)</li>
-<li><a href="docs/semantic.Blog.html">Blog</a> (semantic)</li>
-<li><a href="docs/safe.blog.html">blog</a> (safe)</li>
-<li><a href="docs/semantic.BlogPosting.html">BlogPosting</a> (semantic)</li>
-<li><a href="docs/safe.blogPosting.html">blogPosting</a> (safe)</li>
-<li><a href="docs/semantic.dateCreated.html">dateCreated</a> (semantic)</li>
-<li><a href="docs/semantic.id.html">id</a> (semantic)</li>
-<li><a href="docs/semantic.Index.html">Index</a> (semantic)</li>
-<li><a href="docs/unsafe.post.html">post</a> (unsafe)</li>
-<li><a href="docs/safe.start.html">start</a> (safe)</li>
-</ul></li>
-<li>Tags
-
-<ul>
-<li><a href="docs/tag.tag1.html">tag1</a></li>
-</ul></li>
+<li><input type="checkbox" id="tag-about" class="tag-trigger-checkbox" data-tag="about" name="tag-about"><label for="tag-about"> about</label></li>
+<li><input type="checkbox" id="tag-main" class="tag-trigger-checkbox" data-tag="main" name="tag-main"><label for="tag-main"> main</label></li>
 </ul>
+
+<h2>Semantic Descriptors</h2>
+
+<h3><a id="About">About</a></h3>
+
+<ul>
+<li>type: semantic</li>
+<li>tag: <a href="#tag-about">about</a></li>
+<li>descriptor</li>
+</ul>
+
+<table>
+<thead>
+<tr>
+  <th>id</th>
+  <th>type</th>
+  <th>title</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><a href="#goBlog">goBlog</a></td>
+  <td>safe</td>
+  <td></td>
+</tr>
+</tbody>
+</table>
+
+<h3><a id="articleBody">articleBody</a></h3>
+
+<ul>
+<li>type: semantic</li>
+<li>def: <a href="https://schema.org/articleBody">https://schema.org/articleBody</a></li>
+</ul>
+
+<h3><a id="Blog">Blog</a></h3>
+
+<ul>
+<li>type: semantic</li>
+<li>def: <a href="https://schema.org/Blog">https://schema.org/Blog</a></li>
+<li>tag: <a href="#tag-main">main</a></li>
+<li>descriptor</li>
+</ul>
+
+<table>
+<thead>
+<tr>
+  <th>id</th>
+  <th>type</th>
+  <th>title</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><a href="#BlogPosting">BlogPosting</a></td>
+  <td>semantic</td>
+  <td></td>
+</tr>
+<tr>
+  <td><a href="#goBlogPosting">goBlogPosting</a></td>
+  <td>safe</td>
+  <td></td>
+</tr>
+<tr>
+  <td><a href="#goAbout">goAbout</a></td>
+  <td>safe</td>
+  <td></td>
+</tr>
+<tr>
+  <td><a href="#doPost">doPost</a></td>
+  <td>unsafe</td>
+  <td></td>
+</tr>
+</tbody>
+</table>
+
+<h3><a id="BlogPosting">BlogPosting</a></h3>
+
+<ul>
+<li>type: semantic</li>
+<li>def: <a href="https://schema.org/BlogPosting">https://schema.org/BlogPosting</a></li>
+<li>tag: <a href="#tag-main">main</a></li>
+<li>descriptor</li>
+</ul>
+
+<table>
+<thead>
+<tr>
+  <th>id</th>
+  <th>type</th>
+  <th>title</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><a href="#id">id</a></td>
+  <td>semantic</td>
+  <td></td>
+</tr>
+<tr>
+  <td><a href="#articleBody">articleBody</a></td>
+  <td>semantic</td>
+  <td></td>
+</tr>
+<tr>
+  <td><a href="#dateCreated">dateCreated</a></td>
+  <td>semantic</td>
+  <td></td>
+</tr>
+<tr>
+  <td><a href="#goBlog">goBlog</a></td>
+  <td>safe</td>
+  <td></td>
+</tr>
+</tbody>
+</table>
+
+<h3><a id="dateCreated">dateCreated</a></h3>
+
+<ul>
+<li>type: semantic</li>
+<li>def: <a href="https://schema.org/dateCreated">https://schema.org/dateCreated</a></li>
+</ul>
+
+<h3><a id="doPost">doPost</a></h3>
+
+<ul>
+<li>type: unsafe</li>
+<li>def: <a href="http://activitystrea.ms/specs/json/1.0/#post-verb">http://activitystrea.ms/specs/json/1.0/#post-verb</a></li>
+<li>rt: <a href="#Blog">Blog</a></li>
+<li>descriptor</li>
+</ul>
+
+<table>
+<thead>
+<tr>
+  <th>id</th>
+  <th>type</th>
+  <th>title</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><a href="#articleBody">articleBody</a></td>
+  <td>semantic</td>
+  <td></td>
+</tr>
+</tbody>
+</table>
+
+<h3><a id="goAbout">goAbout</a></h3>
+
+<ul>
+<li>type: safe</li>
+<li>tag: <a href="#tag-about">about</a></li>
+<li>rt: <a href="#About">About</a></li>
+</ul>
+
+<h3><a id="goBlog">goBlog</a></h3>
+
+<ul>
+<li>type: safe</li>
+<li>rel: collection about</li>
+<li>rt: <a href="#Blog">Blog</a></li>
+</ul>
+
+<h3><a id="goBlogPosting">goBlogPosting</a></h3>
+
+<ul>
+<li>type: safe</li>
+<li>rel: item</li>
+<li>tag: <a href="#tag-main">main</a></li>
+<li>rt: <a href="#BlogPosting">BlogPosting</a></li>
+<li>descriptor</li>
+</ul>
+
+<table>
+<thead>
+<tr>
+  <th>id</th>
+  <th>type</th>
+  <th>title</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><a href="#id">id</a></td>
+  <td>semantic</td>
+  <td></td>
+</tr>
+</tbody>
+</table>
+
+<h3><a id="id">id</a></h3>
+
+<ul>
+<li>type: semantic</li>
+<li>def: <a href="http://schema.org/identifier">http://schema.org/identifier</a></li>
+</ul>
+
+<h3><a id="Index">Index</a></h3>
+
+<ul>
+<li>type: semantic</li>
+<li>doc: Index Page</li>
+<li>tag: <a href="#tag-main">main</a></li>
+<li>descriptor</li>
+</ul>
+
+<table>
+<thead>
+<tr>
+  <th>id</th>
+  <th>type</th>
+  <th>title</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><a href="#start">start</a></td>
+  <td>safe</td>
+  <td></td>
+</tr>
+</tbody>
+</table>
+
+<h3><a id="start">start</a></h3>
+
+<ul>
+<li>type: safe</li>
+<li>tag: <a href="#tag-main">main</a></li>
+<li>rt: <a href="#Blog">Blog</a></li>
+</ul>
+
+<hr />
+
+<h2>Profile</h2>
+
+<pre><code>{
+  &quot;$schema&quot;: &quot;https://alps-io.github.io/schemas/alps.json&quot;,
+  &quot;alps&quot;: {
+    &quot;title&quot;: &quot;ALPS example&quot;,
+    &quot;doc&quot;: {
+      &quot;value&quot;: &quot;This is ALPS example.&quot;
+    },
+    &quot;descriptor&quot;: [
+      {
+        &quot;id&quot;: &quot;Index&quot;, &quot;type&quot;: &quot;semantic&quot;, &quot;doc&quot;: {&quot;value&quot;: &quot;Index Page&quot;},
+        &quot;descriptor&quot;: [
+          {&quot;href&quot;: &quot;#start&quot;}
+        ],
+        &quot;tag&quot;: &quot;main&quot;
+      },
+      {
+        &quot;id&quot;: &quot;About&quot;, &quot;type&quot;: &quot;semantic&quot;,
+        &quot;descriptor&quot;: [
+          {&quot;href&quot;: &quot;#goBlog&quot;}
+        ],
+        &quot;tag&quot;: &quot;about&quot;
+      },
+      {
+        &quot;id&quot;: &quot;Blog&quot;, &quot;type&quot;: &quot;semantic&quot;, &quot;def&quot;: &quot;https://schema.org/Blog&quot;,
+        &quot;descriptor&quot;: [
+          {&quot;href&quot;: &quot;#BlogPosting&quot;}, {&quot;href&quot;: &quot;#goBlogPosting&quot;},
+          {&quot;href&quot;: &quot;#doPost&quot;},
+          {&quot;href&quot;: &quot;#goAbout&quot;}
+        ],
+        &quot;tag&quot;: &quot;main&quot;
+      },
+      {
+        &quot;id&quot;: &quot;BlogPosting&quot;, &quot;type&quot;: &quot;semantic&quot;, &quot;def&quot;: &quot;https://schema.org/BlogPosting&quot;,
+        &quot;descriptor&quot;: [
+          {&quot;href&quot;: &quot;#id&quot;}, {&quot;href&quot;: &quot;#articleBody&quot;}, {&quot;href&quot;: &quot;#dateCreated&quot;},
+          {&quot;href&quot;: &quot;#goBlog&quot;}
+        ],
+        &quot;tag&quot;: &quot;main&quot;
+      },
+
+      {&quot;id&quot;: &quot;id&quot;, &quot;type&quot;: &quot;semantic&quot;, &quot;def&quot;: &quot;http://schema.org/identifier&quot;},
+      {&quot;id&quot;: &quot;articleBody&quot;, &quot;type&quot;: &quot;semantic&quot;, &quot;def&quot;: &quot;https://schema.org/articleBody&quot;},
+      {&quot;id&quot;: &quot;dateCreated&quot;, &quot;type&quot;: &quot;semantic&quot;, &quot;def&quot;: &quot;https://schema.org/dateCreated&quot;},
+
+      {&quot;id&quot;: &quot;start&quot;, &quot;type&quot;: &quot;safe&quot;, &quot;rt&quot;: &quot;#Blog&quot;, &quot;tag&quot;: &quot;main&quot;},
+      {&quot;id&quot;: &quot;goBlog&quot;, &quot;type&quot;: &quot;safe&quot;, &quot;rt&quot;: &quot;#Blog&quot;, &quot;tag&quot;: &quot;main&quot;},
+      {
+        &quot;id&quot;: &quot;goBlogPosting&quot;, &quot;type&quot;: &quot;safe&quot;, &quot;rt&quot;: &quot;#BlogPosting&quot;, &quot;rel&quot;: &quot;item&quot;, &quot;tag&quot;: &quot;main&quot;,
+        &quot;descriptor&quot;: [
+          {&quot;href&quot;: &quot;#id&quot;}
+        ]
+      },
+      {
+        &quot;id&quot;: &quot;doPost&quot;, &quot;type&quot;: &quot;unsafe&quot;, &quot;def&quot;: &quot;http://activitystrea.ms/specs/json/1.0/#post-verb&quot;, &quot;rt&quot;: &quot;#Blog&quot;,
+        &quot;descriptor&quot;: [
+          {&quot;href&quot;: &quot;#articleBody&quot;}
+        ]
+      },
+      {&quot;id&quot;: &quot;goAbout&quot;, &quot;type&quot;: &quot;safe&quot;, &quot;rt&quot;: &quot;#About&quot;, &quot;tag&quot;: &quot;about&quot;},
+      {&quot;id&quot;: &quot;goBlog&quot;, &quot;type&quot;: &quot;safe&quot;, &quot;rt&quot;: &quot;#Blog&quot;, &quot;rel&quot;: &quot;collection about&quot;}
+    ]
+  }
+}
+</code></pre>
 
     </div>
 </body>
