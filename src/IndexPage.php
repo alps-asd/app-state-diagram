@@ -39,7 +39,7 @@ final class IndexPage
 <script src="https://alps-asd.github.io/app-state-diagram/assets/js/table.js"></script>
 {$indexJs}
 EOT;
-        $asd = $config->outputMode === DumpDocs::MODE_MARKDOWN ? '[<img src="profile.svg" alt="Application State Diagram">](profile.title.svg)' : <<< EOTJS
+        $asd = $config->outputMode === DumpDocs::MODE_MARKDOWN ? '[<img src="profile.svg" alt="application state diagram">](profile.title.svg)' : <<< EOTJS
 <div id="asd-graph-id" style="text-align: center; "></div>
 <div id="asd-graph-name" style="text-align: center; display: none;"></div>
 <script>
