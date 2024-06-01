@@ -10,6 +10,7 @@ use function dirname;
 use function explode;
 use function file_exists;
 use function sprintf;
+use function str_starts_with;
 use function strrpos;
 use function substr;
 
@@ -21,11 +22,11 @@ final class FullPath
             return $href;
         }
 
-        if (substr($href, 0, 4) === 'http') {
+        if (str_starts_with($href, 'http')) {
             return $href;
         }
 
-        if (substr($href, 0, 1) === '#') {
+        if (str_starts_with($href, '#')) {
             return sprintf('%s%s', $alpsFile, $href);
         }
 

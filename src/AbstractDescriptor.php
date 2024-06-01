@@ -52,8 +52,10 @@ abstract class AbstractDescriptor
     /** @var LinkRelations */
     public $linkRelations;
 
-    public function __construct(object $descriptor, ?stdClass $parentDescriptor = null)
-    {
+    public function __construct(
+        object $descriptor,
+        ?stdClass $parentDescriptor = null
+    ) {
         if (! isset($descriptor->id)) {
             throw new InvalidSemanticsException((string) json_encode($descriptor));
         }
