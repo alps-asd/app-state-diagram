@@ -15,15 +15,12 @@ use function substr;
 final class TransDescriptor extends AbstractDescriptor
 {
     /** @var string */
-    public $type;
-
-    /** @var string */
     public $rt;
 
     public function __construct(
         stdClass $descriptor,
         /** @inheritdoc */
-        public $parent
+        public stdClass|SemanticDescriptor|null $parent
     ) {
         parent::__construct($descriptor);
         assert(is_string($descriptor->type));

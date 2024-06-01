@@ -16,41 +16,22 @@ use function sprintf;
 
 abstract class AbstractDescriptor
 {
-    /** @var string */
-    public $id;
+    public string $id;
+    public ?string $def;
+    public stdClass|null $doc;
 
-    /** @var ?string */
-    public $def;
-
-    /** @var stdClass|null */
-    public $doc;
-
-    /** @var list<stdClass> */
-    public $descriptor;
-
-    /** @var string */
-    public $type = 'semantic';
-
-    /** @var ?string */
-    public $rel;
-
-    /** @var stdClass|SemanticDescriptor|null */
-    public $parent;
+    /** @var list<stdClass>|stdClass */
+    public array|stdClass $descriptor = [];
+    public string $type = 'semantic';
+    public ?string $rel = null;
+    public stdClass|SemanticDescriptor|null $parent;
 
     /** @var list<string> */
-    public $tags;
-
-    /** @var string */
-    public $title;
-
-    /** @var object */
-    public $source;
-
-    /** @var string|null */
-    public $href;
-
-    /** @var LinkRelations */
-    public $linkRelations;
+    public array $tags;
+    public string $title;
+    public object $source;
+    public ?string $href = null;
+    public LinkRelations $linkRelations;
 
     public function __construct(
         object $descriptor,
