@@ -55,7 +55,7 @@ EOT;
 </script>
 <div class="asd-view-selector">
     <input type="radio" id="asd-show-id" checked name="asd-view-selector">
-    <label for="asd-show-id">id<ID/label>
+    <label for="asd-show-id">id</label>
     <input type="radio" id="asd-show-name" name="asd-view-selector">
     <label for="asd-show-name">title</label>
 </div>
