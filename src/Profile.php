@@ -20,15 +20,6 @@ use function substr;
 
 final class Profile extends AbstractProfile
 {
-    /** @var string */
-    public $schema;
-
-    /** @var string */
-    public $title;
-
-    /** @var string */
-    public $doc;
-
     /**
      * Descriptor instances (not reference)
      *
@@ -48,7 +39,7 @@ final class Profile extends AbstractProfile
      * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
      */
     public function __construct(
-        public $alpsFile,
+        public string $alpsFile,
         public LabelNameInterface $labelName,
         public bool $doFinalize = true
     ) {
