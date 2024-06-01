@@ -126,7 +126,7 @@ EOT;
      *
      * @return list<string>
      */
-    private function getNodeProps(SemanticDescriptor $descriptor, LabelNameInterface $labelName, array $descriptors): array
+    private function getNodeProps(AbstractDescriptor $descriptor, LabelNameInterface $labelName, array $descriptors): array
     {
         $props = [];
         assert(is_iterable($descriptor->descriptor));
