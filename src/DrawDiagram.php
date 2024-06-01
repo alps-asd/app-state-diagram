@@ -30,7 +30,7 @@ final class DrawDiagram
         $transNodes = $this->getTransNodes($profile);
         $labelName ??= new LabelName();
         $descriptors = $profile->descriptors;
-        [$filterIds, $nodes] = $this->getNodes($transNodes, $labelName, $descriptors);
+        [, $nodes] = $this->getNodes($transNodes, $labelName, $descriptors);
         $edge = new Edge($profile);
         $graph = (string) $edge;
         $appSateWithNoLink = (string) (new AppState($profile->links, $profile->descriptors, $labelName));
