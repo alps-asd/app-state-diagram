@@ -23,7 +23,7 @@
         "bamarni/composer-bin-plugin": "^1.4",
         "roave/security-advisories": "dev-master",
         "phpunit/phpunit": "^9.6.10",
-        "rector/rector": "*"
+        "rector/rector": "^1.1"
     },
     "autoload": {
         "psr-4": {
