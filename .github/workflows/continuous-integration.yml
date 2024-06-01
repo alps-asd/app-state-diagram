@@ -24,9 +24,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v1
 
-      - name: Setup Graphviz
-        uses: ts-graphviz/setup-graphviz@v1
-
       - name: Setup PHP ${{ matrix.php-version }}
         uses: shivammathur/setup-php@v2
         with:
