@@ -8,7 +8,6 @@ use Stringable;
 
 use function assert;
 use function count;
-use function in_array;
 use function sprintf;
 
 use const PHP_EOL;
@@ -16,9 +15,7 @@ use const PHP_EOL;
 final class Edge implements Stringable
 {
     public function __construct(
-        private readonly AbstractProfile $profile,
-        private readonly ?TaggedProfile $taggedProfile = null,
-        private readonly ?string $color = null
+        private readonly AbstractProfile $profile
     ) {
     }
 
@@ -40,14 +37,6 @@ final class Edge implements Stringable
         $link = $links[0];
         $base = '    %s -> %s [label = <%s> URL="#%s" target="_parent" fontsize=13 class="%s" penwidth=1.5';
 
-        if (! isset($this->color, $this->taggedProfile)) {
-            return sprintf($base . '];' . PHP_EOL, $link->from, $link->to, $link->label, $link->transDescriptor->id, $link->transDescriptor->id);
-        }
-
-        if (in_array($link, $this->taggedProfile->links)) {
-            return sprintf($base . ' color="%s"];' . PHP_EOL, $link->from, $link->to, $link->label, $link->transDescriptor->id, $link->transDescriptor->id, $this->color);
-        }
-
         return sprintf($base . '];' . PHP_EOL, $link->from, $link->to, $link->label, $link->transDescriptor->id, $link->transDescriptor->id);
     }
 
@@ -61,16 +50,6 @@ final class Edge implements Stringable
         }
 
         $base = '    %s -> %s [label=<<table border="0">%s</table>> fontsize=13';
-
-        if (! isset($this->color, $this->taggedProfile)) {
-            return sprintf($base . '];' . PHP_EOL, $links[0]->from, $links[0]->to, $trs);
-        }
-
-        foreach ($links as $link) {
-            if (in_array($link, $this->taggedProfile->links)) {
-                return sprintf($base . ' color="%s"];' . PHP_EOL, $links[0]->from, $links[0]->to, $trs, $this->color);
-            }
-        }
 
         return sprintf($base . '];' . PHP_EOL, $links[0]->from, $links[0]->to, $trs);
     }

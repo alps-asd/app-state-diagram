@@ -17,8 +17,6 @@ class ConfigLoadTest extends TestCase
         $this->assertInstanceOf(Config::class, $config);
         $this->assertTrue(file_exists($config->profile));
         $this->assertFalse($config->watch);
-        $this->assertSame(['tag1', 'tag2'], $config->filter->and);
-        $this->assertSame(['tag3'], $config->filter->or);
         $this->assertSame(DumpDocs::MODE_MARKDOWN, $config->outputMode);
         $this->assertSame(3000, $config->port);
     }
@@ -38,10 +36,6 @@ class ConfigLoadTest extends TestCase
         $config = ConfigFactory::fromFile(__DIR__ . '/Fake/config', 1, [__DIR__ . '/Fake/alps.json'], $options);
         $this->assertSame(__DIR__ . '/Fake/alps.json', $config->profile);
         $this->assertTrue($config->watch);
-        $this->assertTrue($config->hasTag);
-        $this->assertSame(['a', 'b'], $config->filter->and);
-        $this->assertSame(['c', 'd'], $config->filter->or);
-        $this->assertSame('red', $config->filter->color);
         $this->assertSame(3001, $config->port);
 
         return $options;
@@ -57,10 +51,6 @@ class ConfigLoadTest extends TestCase
         $config = ConfigFactory::fromCommandLine(1, [__DIR__ . '/Fake/alps.json'], $options);
         $this->assertSame(__DIR__ . '/Fake/alps.json', $config->profile);
         $this->assertTrue($config->watch);
-        $this->assertTrue($config->hasTag);
-        $this->assertSame(['a', 'b'], $config->filter->and);
-        $this->assertSame(['c', 'd'], $config->filter->or);
-        $this->assertSame('red', $config->filter->color);
         $this->assertSame(3001, $config->port);
     }
 

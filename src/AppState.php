@@ -26,7 +26,6 @@ final class AppState implements Stringable
     /**
      * @param Link[]                    $links
      * @param array<AbstractDescriptor> $descriptors
-     * @param list<string>              $filterIds
      *
      * @psalm-suppress ImpureMethodCall
      */
@@ -34,17 +33,8 @@ final class AppState implements Stringable
         array $links,
         array $descriptors,
         private readonly LabelNameInterface $labelName,
-        ?TaggedProfile $profile = null,
-        private readonly ?string $color = null,
-        array $filterIds = []
     ) {
         $taggedStates = new Descriptors();
-        if (isset($profile)) {
-            foreach ($profile->links as $link) {
-                $taggedStates->add($descriptors[$link->from]);
-                $taggedStates->add($descriptors[$link->to]);
-            }
-        }
 
         $this->taggedStates = $taggedStates->descriptors;
 
@@ -64,15 +54,6 @@ final class AppState implements Stringable
         }
 
         $this->states = $states->descriptors;
-        $this->remove($filterIds);
-    }
-
-    /** @param list<string> $filterIds */
-    private function remove(array $filterIds): void
-    {
-        foreach ($filterIds as $filterId) {
-            unset($this->states[$filterId], $this->taggedStates[$filterId]);
-        }
     }
 
     public function __toString(): string
@@ -94,14 +75,8 @@ final class AppState implements Stringable
 
     private function format(SemanticDescriptor $descriptor, string $base): string
     {
-        if ($this->color === null) {
-            $template = $base . ']' . PHP_EOL;
+        $template = $base . ']' . PHP_EOL;
 
-            return sprintf($template, $descriptor->id, $this->labelName->getNodeLabel($descriptor), $descriptor->id);
-        }
-
-        $template = $base . ' color="%s"]' . PHP_EOL;
-
-        return sprintf($template, $descriptor->id, $this->labelName->getNodeLabel($descriptor), $descriptor->id, $this->color);
+        return sprintf($template, $descriptor->id, $this->labelName->getNodeLabel($descriptor), $descriptor->id);
     }
 }

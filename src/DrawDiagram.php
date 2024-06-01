@@ -12,6 +12,7 @@ use stdClass;
 use function assert;
 use function in_array;
 use function is_int;
+use function is_iterable;
 use function is_string;
 use function property_exists;
 use function sprintf;
@@ -24,15 +25,15 @@ use const PHP_EOL;
 #[Immutable]
 final class DrawDiagram
 {
-    public function __invoke(AbstractProfile $profile, ?LabelNameInterface $labelName, ?TaggedProfile $taggedProfile = null, ?string $color = null): string
+    public function __invoke(AbstractProfile $profile, ?LabelNameInterface $labelName): string
     {
         $transNodes = $this->getTransNodes($profile);
         $labelName ??= new LabelName();
         $descriptors = $profile->descriptors;
-        [$filterIds, $nodes] = $this->getNodes($transNodes, $labelName, $descriptors, $taggedProfile, $color);
-        $edge = new Edge($profile, $taggedProfile, $color);
+        [$filterIds, $nodes] = $this->getNodes($transNodes, $labelName, $descriptors);
+        $edge = new Edge($profile);
         $graph = (string) $edge;
-        $appSateWithNoLink = (string) (new AppState($profile->links, $profile->descriptors, $labelName, $taggedProfile, $color, $filterIds));
+        $appSateWithNoLink = (string) (new AppState($profile->links, $profile->descriptors, $labelName));
         $template = <<<'EOT'
 digraph application_state_diagram {
   graph [
@@ -58,7 +59,7 @@ EOT;
      *
      * @return array{0: list<string>, 1: string}
      */
-    public function getNodes(array $transNodes, LabelNameInterface $labelName, array $descriptors, ?TaggedProfile $taggedProfile, ?string $color): array
+    public function getNodes(array $transNodes, LabelNameInterface $labelName, array $descriptors): array
     {
         /** @var list<string> $ids */
         $ids = [];
@@ -68,7 +69,7 @@ EOT;
                 continue;
             }
 
-            [$id, $deltaDot] = $this->getNode($descriptor, $labelName, $descriptors, $taggedProfile, $color);
+            [$id, $deltaDot] = $this->getNode($descriptor, $labelName, $descriptors);
             $dot .= $deltaDot;
             if ($id) {
                 $ids[] = $id;
@@ -100,7 +101,7 @@ EOT;
      *
      * @return array{0: ?string, 1: string}
      */
-    private function getNode(AbstractDescriptor $descriptor, LabelNameInterface $labelName, array $descriptors, ?TaggedProfile $taggedProfile, ?string $color): array
+    private function getNode(AbstractDescriptor $descriptor, LabelNameInterface $labelName, array $descriptors): array
     {
         $hasDescriptor = $descriptor instanceof SemanticDescriptor && $descriptor->descriptor !== [];
         if (! $hasDescriptor) {
@@ -117,7 +118,7 @@ EOT;
             $inlineDescriptors .= sprintf('(%s)<br />', $prop);
         }
 
-        return [$descriptor->id, $this->template($descriptor, $inlineDescriptors, $labelName, $taggedProfile, $color)];
+        return [$descriptor->id, $this->template($descriptor, $inlineDescriptors, $labelName)];
     }
 
     /**
@@ -128,6 +129,7 @@ EOT;
     private function getNodeProps(SemanticDescriptor $descriptor, LabelNameInterface $labelName, array $descriptors): array
     {
         $props = [];
+        assert(is_iterable($descriptor->descriptor));
         foreach ($descriptor->descriptor as $item) {
             if ($this->isSemanticHref($item, $descriptors)) {
                 assert(is_string($item->href));
@@ -179,7 +181,7 @@ EOT;
         return $descriptor instanceof SemanticDescriptor;
     }
 
-    private function template(AbstractDescriptor $descriptor, string $props, LabelNameInterface $labelName, ?TaggedProfile $taggedProfile, ?string $color): string
+    private function template(AbstractDescriptor $descriptor, string $props, LabelNameInterface $labelName): string
     {
         $base = <<<'EOT'
     %s [margin=0.02, label=<<table cellspacing="0" cellpadding="5" border="0"><tr><td>%s<br />%s</td></tr></table>>,shape=box URL="%s" target="_parent"
@@ -187,10 +189,6 @@ EOT;
 
         $url = sprintf('#%s', $descriptor->id);
         assert($descriptor instanceof SemanticDescriptor);
-
-        if (isset($color, $taggedProfile) && in_array($descriptor, $taggedProfile->descriptors)) {
-            return sprintf($base . ' color="%s"]' . PHP_EOL, $descriptor->id, $labelName->getNodeLabel($descriptor), $props, $url, $color);
-        }
 
         return sprintf($base . ']' . PHP_EOL, $descriptor->id, $labelName->getNodeLabel($descriptor), $props, $url);
     }

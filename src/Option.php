@@ -4,88 +4,23 @@ declare(strict_types=1);
 
 namespace Koriym\AppStateDiagram;
 
-use SimpleXMLElement;
-
-use function array_values;
-use function explode;
 use function filter_var;
-use function is_string;
-use function property_exists;
 
 use const FILTER_VALIDATE_INT;
 
 /** @psalm-immutable */
 final class Option
 {
-    /** @var bool */
-    public $watch;
-
-    /** @var list<string> */
-    public $and;
-
-    /** @var list<string> */
-    public $or;
-
-    /** @var string */
-    public $color;
-
-    /** @var string */
-    public $mode;
-
-    /** @var int */
-    public $port;
+    public bool $watch;
+    public int $port;
+    public string $mode;
 
     /** @param array<string, string|bool> $options */
-    public function __construct(array $options, ?SimpleXMLElement $filter, ?int $port)
+    public function __construct(array $options, ?int $port)
     {
         $this->watch = isset($options['w']) || isset($options['watch']);
-        $this->and = $this->parseAndTag($options, $filter);
-        $this->or = $this->parseOrTag($options, $filter);
-        $this->color = $this->parseColor($options, $filter);
         $this->mode = $this->getMode($options);
         $this->port = $this->getPort($options, $port);
-    }
-
-    /**
-     * @param array<string, string|bool> $options
-     *
-     * @return list<string>
-     */
-    private function parseAndTag(array $options, ?SimpleXMLElement $filter): array
-    {
-        if (isset($options['and-tag']) && is_string($options['and-tag'])) {
-            return explode(',', $options['and-tag']);
-        }
-
-        /** @var list<string> */ // phpcs:ignore SlevomatCodingStandard.Commenting.InlineDocCommentDeclaration.InvalidFormat
-
-        return $filter instanceof SimpleXMLElement && property_exists($filter, 'and') ? array_values((array) $filter->and) : [];
-    }
-
-    /**
-     * @param array<string, string|bool> $options
-     *
-     * @return list<string>
-     */
-    private function parseOrTag(array $options, ?SimpleXMLElement $filter): array
-    {
-        if (isset($options['or-tag']) && is_string($options['or-tag'])) {
-            return explode(',', $options['or-tag']);
-        }
-
-        /** @var list<string> */ // phpcs:ignore SlevomatCodingStandard.Commenting.InlineDocCommentDeclaration.InvalidFormat
-
-        return $filter instanceof SimpleXMLElement && property_exists($filter, 'or') ? array_values((array) $filter->or) : [];
-    }
-
-    /** @param array<string, string|bool> $options */
-    private function parseColor(array $options, ?SimpleXMLElement $filter): string
-    {
-        if (isset($options['color']) && is_string($options['color'])) {
-            return $options['color'];
-        }
-
-        return $filter instanceof SimpleXMLElement && property_exists($filter, 'color') ? (string) $filter->color : '';
     }
 
     /** @param array<string, string|bool> $options */

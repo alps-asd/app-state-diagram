@@ -13,13 +13,9 @@ final class Config
     /** @var string  */
     public $profile;
 
-    /** @var bool */
-    public $hasTag;
-
     public function __construct(
         string $profile,
         public bool $watch,
-        public ConfigFilter $filter,
         public string $outputMode = DumpDocs::MODE_HTML,
         public int $port = 3000
     ) {
@@ -28,6 +24,5 @@ final class Config
         }
 
         $this->profile = $profile;
-        $this->hasTag = $this->filter->and || $this->filter->or;
     }
 }
