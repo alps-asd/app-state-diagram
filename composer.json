@@ -17,10 +17,10 @@
         "ext-dom": "*",
         "michelf/php-markdown": "^1.9",
         "seld/jsonlint": "^1.8",
-        "koriym/data-file": "^1.0"
+        "koriym/data-file": "^1.0",
+        "bamarni/composer-bin-plugin": "^1.4"
     },
     "require-dev": {
-        "bamarni/composer-bin-plugin": "^1.4",
         "roave/security-advisories": "dev-master",
         "phpunit/phpunit": "^9.6.10"
     },
@@ -62,7 +62,8 @@
         "sa": ["psalm --show-info=true", "./vendor/bin/phpstan analyse -c phpstan.neon"],
         "metrics": ["./vendor/bin/phpmetrics --report-html=build/metrics --exclude=Exception --log-junit=build/junit.xml --junit=build/junit.xml src"],
         "phpmd": ["./vendor/bin/phpmd src text ./phpmd.xml"],
-        "build": ["@cs", "@sa", "@pcov", "@metrics"]
+        "compile": ["./vendor/bin/box compile"],
+        "build": ["@cs", "@sa", "@pcov", "@metrics", "@compile"]
     },
     "config": {
         "allow-plugins": {

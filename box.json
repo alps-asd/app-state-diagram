@@ -1,0 +1,18 @@
+{
+    "alias": "asd.phar",
+    "base-path": "./",
+    "main": "bin/asd",
+    "output": "bin/asd.phar",
+    "directories": [
+        "asd-sync",
+        "src",
+        "src-xml",
+        "vendor",
+        "vendor-xml2json"
+    ],
+    "files": [
+        "docs/assets/js/asd@0.1.0.js",
+        "docs/assets/css/main.css",
+        "vendor/autoload.php"
+    ]
+}

@@ -44,7 +44,11 @@ try {
     exit(1);
 }
 if ($config->watch) {
-    chdir(dirname(__DIR__) . '/asd-sync');
+
+    $actualPath = Phar::running(false) !== '' ?
+                dirname(Phar::running(false),2) . '/asd-sync':
+                dirname(__DIR__) . '/asd-sync';
+    chdir($actualPath);
     $isFirstRun = ! is_dir(dirname(__DIR__) . '/asd-sync/node_modules');
     if ($isFirstRun) {
         passthru('npm install');
