@@ -27,12 +27,8 @@ final class CreateLinks
     /** @var array<string, Link> */
     private $links = [];
 
-    /** @var LabelNameInterface */
-    private $label;
-
-    public function __construct(LabelNameInterface $label)
+    public function __construct(private readonly LabelNameInterface $label)
     {
-        $this->label = $label;
     }
 
     /**

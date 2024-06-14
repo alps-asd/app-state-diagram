@@ -1,0 +1,63 @@
+name: Release PHAR
+
+on:
+  workflow_dispatch:
+  release:
+    types: [published]
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.3
+          tools: box
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 14
+
+      - name: Install Dependencies
+        run: |
+          composer install --no-dev
+          cd asd-sync
+          npm install
+          cd ..
+
+      - name: Build PHAR
+        run: box compile
+
+      - name: Upload PHAR
+        uses: actions/upload-artifact@v2
+        with:
+          name: asd.phar
+          path: bin/asd.phar
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: false
+          prerelease: false
+
+      - name: Download PHAR
+        uses: actions/download-artifact@v2
+        with:
+          name: asd.phar
+
+      - name: Attach artifacts to release
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./bin/asd.phar
+          asset_name: asd.phar
+          asset_content_type: application/octet-stream

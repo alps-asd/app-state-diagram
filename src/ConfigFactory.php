@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Koriym\AppStateDiagram;
 
 use Koriym\DataFile\XmlConfigLoad;
-use SimpleXMLElement;
 
 use function assert;
 use function dirname;
@@ -29,16 +28,13 @@ final class ConfigFactory
 
         $maybePath = (string) realpath($argv[$argc - 1]);
         $profile = is_file($maybePath) && $configFile !== $maybePath ? $maybePath : sprintf('%s/%s', $dir, (string) $xml->alpsFile);
-        /** @var ?SimpleXMLElement $filter */
-        $filter = property_exists($xml, 'filter') ? $xml->filter : null;
         $mode = property_exists($xml, 'mode') ? (string) $xml->mode : DumpDocs::MODE_HTML;
         $port = property_exists($xml, 'port') ? (int) $xml->port : null;
-        $option = new Option($options, $filter, $port);
+        $option = new Option($options, $port);
 
         return new Config(
             $profile,
             $option->watch,
-            new ConfigFilter($option->and, $option->or, $option->color),
             $mode,
             $option->port,
         );
@@ -50,12 +46,11 @@ final class ConfigFactory
      */
     public static function fromCommandLine(int $argc, array $argv, array $options): Config
     {
-        $option = new Option($options, null, null);
+        $option = new Option($options, null);
 
         return new Config(
             (string) realpath($argv[$argc - 1]),
             $option->watch,
-            new ConfigFilter($option->and, $option->or, $option->color),
             $option->mode,
             $option->port,
         );

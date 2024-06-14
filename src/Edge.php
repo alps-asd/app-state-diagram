@@ -4,29 +4,19 @@ declare(strict_types=1);
 
 namespace Koriym\AppStateDiagram;
 
+use Stringable;
+
 use function assert;
 use function count;
-use function in_array;
 use function sprintf;
 
 use const PHP_EOL;
 
-final class Edge
+final class Edge implements Stringable
 {
-    /** @var AbstractProfile */
-    private $profile;
-
-    /** @var ?string */
-    private $color;
-
-    /** @var ?TaggedProfile */
-    private $taggedProfile;
-
-    public function __construct(AbstractProfile $profile, ?TaggedProfile $taggedProfile = null, ?string $color = null)
-    {
-        $this->profile = $profile;
-        $this->color = $color;
-        $this->taggedProfile = $taggedProfile;
+    public function __construct(
+        private readonly AbstractProfile $profile
+    ) {
     }
 
     public function __toString(): string
@@ -47,14 +37,6 @@ final class Edge
         $link = $links[0];
         $base = '    %s -> %s [label = <%s> URL="#%s" target="_parent" fontsize=13 class="%s" penwidth=1.5';
 
-        if (! isset($this->color, $this->taggedProfile)) {
-            return sprintf($base . '];' . PHP_EOL, $link->from, $link->to, $link->label, $link->transDescriptor->id, $link->transDescriptor->id);
-        }
-
-        if (in_array($link, $this->taggedProfile->links)) {
-            return sprintf($base . ' color="%s"];' . PHP_EOL, $link->from, $link->to, $link->label, $link->transDescriptor->id, $link->transDescriptor->id, $this->color);
-        }
-
         return sprintf($base . '];' . PHP_EOL, $link->from, $link->to, $link->label, $link->transDescriptor->id, $link->transDescriptor->id);
     }
 
@@ -68,16 +50,6 @@ final class Edge
         }
 
         $base = '    %s -> %s [label=<<table border="0">%s</table>> fontsize=13';
-
-        if (! isset($this->color, $this->taggedProfile)) {
-            return sprintf($base . '];' . PHP_EOL, $links[0]->from, $links[0]->to, $trs);
-        }
-
-        foreach ($links as $link) {
-            if (in_array($link, $this->taggedProfile->links)) {
-                return sprintf($base . ' color="%s"];' . PHP_EOL, $links[0]->from, $links[0]->to, $trs, $this->color);
-            }
-        }
 
         return sprintf($base . '];' . PHP_EOL, $links[0]->from, $links[0]->to, $trs);
     }

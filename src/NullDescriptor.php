@@ -10,11 +10,8 @@ class NullDescriptor extends AbstractDescriptor
     public function __construct()
     {
         parent::__construct(new class {
-            /** @var string */
-            public $id = '';
-
-            /** @var string */
-            public $type = 'semantic';
+            public string $id = '';
+            public string $type = 'semantic';
         }, null);
     }
 }

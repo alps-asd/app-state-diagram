@@ -52,24 +52,6 @@ class DrawDiagramTest extends TestCase
         $this->assertSame(1, $numberOfArrow);
     }
 
-    public function testTaggedMultipleLinkWithColor(): string
-    {
-        $alpsFile = __DIR__ . '/Fake/multiple_link_tag.json';
-        $profile = new Profile($alpsFile, new LabelName());
-        $taggedProfile = new TaggedProfile(
-            new Profile($alpsFile, new LabelName()),
-            [],
-            ['tag']
-        );
-        $dot = ($this->drawDiagram)($profile, new LabelName(), $taggedProfile, 'red');
-        $this->assertStringContainsString(
-            's1 -> s3 [label=<<table border="0"><tr><td align="left" href="#t3" tooltip="t3 (safe)" >t3 (safe)</td></tr><tr><td align="left" href="#t4" tooltip="t4 (safe)" >t4 (safe)</td></tr></table>> fontsize=13]',
-            $dot
-        );
-
-        return $dot;
-    }
-
     /** @depends testTaggedMultipleLinkWithColor */
     public function testNoTaggedMultipleLink(string $dot): void
     {
@@ -112,45 +94,6 @@ class DrawDiagramTest extends TestCase
         $this->assertStringContainsString('s5 -> s6 [label = <t6 (safe)', $dot);
     }
 
-    public function testTaggedProfile(): void
-    {
-        $alpsFile = __DIR__ . '/Fake/alps_tag.json';
-        $taggedProfile = new TaggedProfile(
-            new Profile($alpsFile, new LabelName()),
-            [],
-            ['a', 'b']
-        );
-        $dot = ($this->drawDiagram)($taggedProfile, new LabelName());
-        $this->assertStringContainsString('label="tag test"', $dot);
-        $this->assertStringContainsString('s1 -> s2 [label = <t1 (safe)>', $dot);
-        $this->assertStringContainsString('s1 -> s5 [label = <t5 (safe)>', $dot);
-        $this->assertStringContainsString('s2 -> s3 [label = <t2 (safe)>', $dot);
-        $this->assertStringNotContainsString('s2 -> s4 [label = <t4 (safe)>', $dot);
-        $this->assertStringNotContainsString('s3 -> s4 [label = <t3 (safe)>', $dot);
-        $this->assertStringNotContainsString('s5 -> s6 [label = <t6 (safe)>', $dot);
-    }
-
-    public function testTaggedProfileWhenColorIsNull(): string
-    {
-        $alpsFile = __DIR__ . '/Fake/alps_tag.json';
-        $profile = new Profile($alpsFile, new LabelName());
-        $taggedProfile = new TaggedProfile(
-            new Profile($alpsFile, new LabelName()),
-            [],
-            ['a', 'b']
-        );
-        $dot = ($this->drawDiagram)($profile, new LabelName(), $taggedProfile);
-
-        $this->assertStringContainsString('label="tag test"', $dot);
-        $this->assertStringContainsString('s2 [label = <s2> URL="#s2" target="_parent"]', $dot);
-        $this->assertStringContainsString('s3 [label = <s3> URL="#s3" target="_parent"]', $dot);
-        $this->assertStringContainsString('s4 [label = <s4> URL="#s4" target="_parent"]', $dot);
-        $this->assertStringContainsString('s5 [label = <s5> URL="#s5" target="_parent"]', $dot);
-        $this->assertStringContainsString('s6 [label = <s6> URL="#s6" target="_parent"]', $dot);
-
-        return $dot;
-    }
-
     /** @depends testTaggedProfileWhenColorIsNull */
     public function testEdgeNoColor(string $dot): void
     {
@@ -169,27 +112,6 @@ class DrawDiagramTest extends TestCase
             's1 [margin=0.02, label=<<table cellspacing="0" cellpadding="5" border="0"><tr><td>s1<br />(id)<br /></td></tr></table>>,shape=box URL="#s1" target="_parent"]',
             $dot
         );
-    }
-
-    public function testNoSemanticStateHasColor(): string
-    {
-        $alpsFile = __DIR__ . '/Fake/alps_tag.json';
-        $profile = new Profile($alpsFile, new LabelName());
-        $taggedProfile = new TaggedProfile(
-            new Profile($alpsFile, new LabelName()),
-            [],
-            ['a', 'b']
-        );
-        $dot = ($this->drawDiagram)($profile, new LabelName(), $taggedProfile, 'red');
-
-        $this->assertStringContainsString('label="tag test"', $dot);
-        $this->assertStringContainsString('s2 [label = <s2> URL="#s2" target="_parent" color="red"]', $dot);
-        $this->assertStringContainsString('s3 [label = <s3> URL="#s3" target="_parent" color="red"]', $dot);
-        $this->assertStringContainsString('s4 [label = <s4> URL="#s4" target="_parent"]', $dot);
-        $this->assertStringContainsString('s5 [label = <s5> URL="#s5" target="_parent" color="red"]', $dot);
-        $this->assertStringContainsString('s6 [label = <s6> URL="#s6" target="_parent"]', $dot);
-
-        return $dot;
     }
 
     /** @depends testNoSemanticStateHasColor */

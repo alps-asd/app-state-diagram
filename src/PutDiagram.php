@@ -40,8 +40,8 @@ final class PutDiagram
     public function drawMarkdown(Config $config, Profile $profile): void
     {
         $titleProfile = new Profile($config->profile, new LabelNameTitle());
-        $this->draw('', new LabelName(), $profile, null, null);
-        $this->draw('.title', new LabelNameTitle(), $titleProfile, null, null);
+        $this->draw('', new LabelName(), $profile);
+        $this->draw('.title', new LabelNameTitle(), $titleProfile);
         $indexConfig = clone $config;
         $indexConfig->outputMode = DumpDocs::MODE_HTML;
         $htmlIndex = new IndexPage($indexConfig);
@@ -49,9 +49,9 @@ final class PutDiagram
         echo "ASD generated. {$htmlIndex->file}" . PHP_EOL;
     }
 
-    private function draw(string $fileId, LabelNameInterface $labelName, AbstractProfile $profile, ?TaggedProfile $taggedProfile, ?string $color): void
+    private function draw(string $fileId, LabelNameInterface $labelName, AbstractProfile $profile): void
     {
-        $dot = ($this->draw)($profile, $labelName, $taggedProfile, $color);
+        $dot = ($this->draw)($profile, $labelName);
         $extention = $fileId . '.dot';
         $dotFile = str_replace(['.xml', '.json'], $extention, $profile->alpsFile);
         $this->convert($dotFile, $dot);

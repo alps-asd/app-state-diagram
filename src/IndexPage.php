@@ -39,7 +39,7 @@ final class IndexPage
 <script src="https://alps-asd.github.io/app-state-diagram/assets/js/table.js"></script>
 {$indexJs}
 EOT;
-        $asd = $config->outputMode === DumpDocs::MODE_MARKDOWN ? '[<img src="profile.svg">](profile.title.svg)' : <<< EOTJS
+        $asd = $config->outputMode === DumpDocs::MODE_MARKDOWN ? '[<img src="profile.svg" alt="application state diagram">](profile.title.svg)' : <<< EOTJS
 <div id="asd-graph-id" style="text-align: center; "></div>
 <div id="asd-graph-name" style="text-align: center; display: none;"></div>
 <script>
@@ -55,7 +55,7 @@ EOT;
 </script>
 <div class="asd-view-selector">
     <input type="radio" id="asd-show-id" checked name="asd-view-selector">
-    <label for="asd-show-id">id<ID/label>
+    <label for="asd-show-id">id</label>
     <input type="radio" id="asd-show-name" name="asd-view-selector">
     <label for="asd-show-name">title</label>
 </div>
@@ -128,7 +128,7 @@ EOT;
     private function getSetupTagEvents(Config $config): string
     {
         $setUpTagEvents = '';
-        $tags = (new Profile($config->profile, new LabelName()))->tags;
+        $tags = (new Profile($config->profile, new LabelName(), true))->tags;
         $colors = [
             'LightGreen',
             'SkyBlue',
@@ -156,8 +156,8 @@ EOT;
     public function getDataFromConfig(Config $config): array
     {
         $draw = new DrawDiagram();
-        $profile = new Profile($config->profile, new LabelName());
-        $titleProfile = new Profile($config->profile, new LabelNameTitle());
+        $profile = new Profile($config->profile, new LabelName(), true);
+        $titleProfile = new Profile($config->profile, new LabelNameTitle(), true);
         $dotId = $draw($profile, new LabelName());
         $dotName = $draw($titleProfile, new LabelNameTitle());
         $mode = $config->outputMode;

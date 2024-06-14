@@ -7,20 +7,12 @@ namespace Koriym\AppStateDiagram;
 abstract class AbstractProfile
 {
     /** @var array<string, AbstractDescriptor> */
-    public $descriptors = [];
+    public array $descriptors = [];
 
-    /** @var Link[] */
-    public $links = [];
-
-    /** @var string */
-    public $schema = '';
-
-    /** @var string */
-    public $title = '';
-
-    /** @var string */
-    public $doc = '';
-
-    /** @var string  */
-    public $alpsFile = '';
+    /** @var array<Link> */
+    public array $links = [];
+    public string $schema = '';
+    public string $title = '';
+    public string $doc = '';
+    public string $alpsFile = '';
 }

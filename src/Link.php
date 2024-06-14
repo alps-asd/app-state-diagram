@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Koriym\AppStateDiagram;
 
-final class Link
+use Stringable;
+
+final class Link implements Stringable
 {
     /** @var string */
     public $from;
@@ -18,8 +20,11 @@ final class Link
     /** @var TransDescriptor */
     public $transDescriptor;
 
-    public function __construct(SemanticDescriptor $semantic, TransDescriptor $trans, LabelNameInterface $labelName)
-    {
+    public function __construct(
+        SemanticDescriptor $semantic,
+        TransDescriptor $trans,
+        LabelNameInterface $labelName
+    ) {
         $this->from = $semantic->id;
         $this->to = $trans->rt;
         $this->label = $labelName->getLinkLabel($trans);
