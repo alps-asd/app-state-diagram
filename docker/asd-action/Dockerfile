@@ -3,7 +3,6 @@ FROM php:alpine
 COPY --from=composer /usr/bin/composer /usr/bin/composer
 
 RUN apk upgrade --no-cache \
- && fc-cache -f \
  && RUN COMPOSER_ALLOW_SUPERUSER=1 composer global config allow-plugins.bamarni/composer-bin-plugin true \
  && COMPOSER_ALLOW_SUPERUSER=1 composer require koriym/app-state-diagram
 
