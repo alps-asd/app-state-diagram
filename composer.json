@@ -43,6 +43,8 @@
         "/bin/asd"
     ],
     "scripts": {
+        "post-install-cmd": "@composer bin all install --ansi",
+        "post-update-cmd": ["@composer bin all update --ansi", "cd asd-sync && npm install"],
         "docs" : [
             "bin/asd -c docs/blog/asd.xml docs/blog/profile.xml",
             "bin/asd -c docs/blog/asd.md.xml docs/blog/profile.md.xml",
