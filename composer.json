@@ -70,8 +70,8 @@
     },
     "extra": {
         "bamarni-bin": {
-            "bin-links": false,
-            "forward-command": false
+            "bin-links": true,
+            "forward-command": true
         }
     }
 }
