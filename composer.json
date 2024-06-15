@@ -17,11 +17,12 @@
         "ext-dom": "*",
         "michelf/php-markdown": "^1.9",
         "seld/jsonlint": "^1.8",
-        "koriym/data-file": "^1.0"
+        "koriym/data-file": "^1.0",
+        "bamarni/composer-bin-plugin": "^1.4"
     },
     "require-dev": {
+        "roave/security-advisories": "dev-master",
         "phpunit/phpunit": "^9.6.10",
-        "bamarni/composer-bin-plugin": "^1.4",
         "rector/rector": "^1.1"
     },
     "autoload": {
@@ -43,16 +44,11 @@
         "/bin/asd"
     ],
     "scripts": {
-        "post-install-cmd": "@composer bin all install --ansi",
-        "post-update-cmd": ["@composer bin all update --ansi", "cd asd-sync && npm install"],
-        "bin": "echo 'bin not installed'",
         "docs" : [
             "bin/asd -c docs/blog/asd.xml docs/blog/profile.xml",
             "bin/asd -c docs/blog/asd.md.xml docs/blog/profile.md.xml",
-            "bin/asd docs/todomvc/profile.json",
-            "bin/asd -c docs-md/blog/asd.xml docs-md/blog/profile.xml",
-            "bin/asd docs/bookstore/bookstore.xml",
-            "bin/asd docs/lms/lms.xml"
+            "bin/asd docs/todomvc/profile.json && bin/asd --or-tag=tag1 --color=red docs/filter/profile.json",
+            "bin/asd -c docs-md/blog/asd.xml docs-md/blog/profile.xml"
         ],
         "md" : "bin/asd -c docs/blog/asd.md.xml docs/blog/profile.xml",
         "test": ["./vendor/bin/phpunit"],
@@ -65,7 +61,7 @@
         "sa": ["psalm --show-info=true", "./vendor/bin/phpstan analyse -c phpstan.neon"],
         "metrics": ["./vendor/bin/phpmetrics --report-html=build/metrics --exclude=Exception --log-junit=build/junit.xml --junit=build/junit.xml src"],
         "phpmd": ["./vendor/bin/phpmd src text ./phpmd.xml"],
-        "compile": ["./vendor-bin/box/vendor/bin/box compile"],
+        "compile": ["composer update --no-dev", "rm -rf asd-sync/node_modules" ,"./vendor-bin/box/vendor/bin/box compile"],
         "build": ["@cs", "@sa", "@pcov", "@metrics", "@compile"]
     },
     "config": {
@@ -75,8 +71,8 @@
     },
     "extra": {
         "bamarni-bin": {
-            "bin-links": true,
-            "forward-command": true
+            "bin-links": false,
+            "forward-command": false
         }
     }
 }
