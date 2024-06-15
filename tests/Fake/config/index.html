@@ -17,7 +17,7 @@
                 padding: 15px;
             }
         }
-        #selector {
+        .asd-view-selector {
             display: flex;
             justify-content: center;
             align-items: center;
@@ -27,22 +27,17 @@
 <script src="https://d3js.org/d3.v5.min.js"></script>
 <script src="https://unpkg.com/viz.js@1.8.1/viz.js" type="javascript/worker"></script>
 <script src="https://unpkg.com/d3-graphviz@2.1.0/build/d3-graphviz.min.js"></script>
-<script>
-function applySmoothScrollToLinks(links) {
-    links.forEach((link) => {
-        link.addEventListener('click', function (e) {
-            e.preventDefault();
-            const targetName = this.getAttribute('href').slice(1);
-            const targetElement = document.querySelector(`[name="${targetName}"]`);
-            if (!targetElement) {
-                console.error("Target element not found for link:", this.getAttribute('href'));
-                return;
-            }
-            smoothScrollTo(targetElement);
-        });
-    });}
+<script src="https://alps-asd.github.io/app-state-diagram/assets/js/table.js"></script>
+<script>// Applies smooth scroll to links
+const ease = (t, b, c, d) => {
+    t /= d / 2;
+    if (t < 1) return (c / 2) * t * t + b;
+    t--;
+    return (-c / 2) * (t * (t - 2) - 1) + b;
+};
 
-function smoothScrollTo(targetElement) {
+// Smoothly scrolls to the target element
+const smoothScrollTo = (targetElement) => {
     const targetPosition = targetElement.getBoundingClientRect().top + window.pageYOffset;
     const startPosition = window.pageYOffset;
     const distance = targetPosition - startPosition;
@@ -57,91 +52,88 @@ function smoothScrollTo(targetElement) {
         if (timeElapsed < duration) requestAnimationFrame(animate);
     };
 
-    const ease = (t, b, c, d) => {
-        t /= d / 2;
-        if (t < 1) return (c / 2) * t * t + b;
-        t--;
-        return (-c / 2) * (t * (t - 2) - 1) + b;
-    };
-
     requestAnimationFrame(animate);
     history.pushState(null, null, '#' + targetElement.getAttribute('name'));
-}
-function renderGraph(graphId, dotString) {
-    var graphviz = d3.select(graphId).graphviz();
-    graphviz.renderDot(dotString).on('end', function () {
+};
+
+const applySmoothScrollToLinks = (links) => {
+    links.forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetName = link.getAttribute('href').slice(1);
+            const targetElement = document.querySelector(`[id="${targetName}"]`);
+            if (!targetElement) {
+                console.error("Target element not found for link:", link.getAttribute('href'));
+                return;
+            }
+            smoothScrollTo(targetElement);
+        });
+    });
+};
+
+
+// Renders the graph and applies smooth scroll to links
+const renderGraph = (graphId, dotString) => {
+    const graphviz = d3.select(graphId).graphviz();
+    graphviz.renderDot(dotString).on('end', () => {
         applySmoothScrollToLinks(document.querySelectorAll('svg a[*|href^="#"]'));
     });
-}
+};
 
-function setupTagEventListener(eventName, titles, color) {
-    document.addEventListener('tagon-' + eventName, function () {
-        titles.forEach(function (title) {
-            changeColorByTitle(title, color, color);
+// Sets up event listeners for tags
+const setupTagEventListener = (eventName, titles, color, defaultColor = 'lightgrey', defaultEdgeColor = 'black') => {
+    const changeColor = (useDefault) => {
+        titles.forEach(title => {
+            changeColorByTitle(title, useDefault ? defaultColor : color, useDefault ? defaultEdgeColor : color);
         });
-    });
-    document.addEventListener('tagoff-' + eventName, function () {
-        titles.forEach(function (title) {
-            changeColorByTitle(title, 'lightgrey', 'black');
-        });
-    });
-}
+    };
 
-function setupTagTrigger() {
-    var checkboxes = document.querySelectorAll('.tag-trigger-checkbox');
-    checkboxes.forEach(function (checkbox) {
+    document.addEventListener(`tagon-${eventName}`, () => changeColor(false));
+    document.addEventListener(`tagoff-${eventName}`, () => changeColor(true));
+};
+
+// Sets up triggers for tags
+const setupTagTrigger = () => {
+    const checkboxes = document.querySelectorAll('.tag-trigger-checkbox');
+    checkboxes.forEach(checkbox => {
         checkbox.addEventListener('change', function () {
-            if (this.checked) {
-                var eventName = 'tagon-' + this.getAttribute('data-tag');
-                document.dispatchEvent(new CustomEvent(eventName));
-            } else {
-                var eventName = 'tagoff-' + this.getAttribute('data-tag');
-                document.dispatchEvent(new CustomEvent(eventName));
-            }
+            this.checked ?
+                document.dispatchEvent(new CustomEvent('tagon-' + this.getAttribute('data-tag'))) :
+                document.dispatchEvent(new CustomEvent('tagoff-' + this.getAttribute('data-tag')));
         });
     });
-}
+};
 
-function changeColorByTitle(titleOrClass, newNodeColor, newEdgeColor) {
-    // タイトルとクラス名で要素を探す
-    var elements = Array.from(document.getElementsByTagName('g'));
+// Changes color of elements by title or class
+const changeColorByTitle = (titleOrClass, newNodeColor, newEdgeColor) => {
+    const elements = Array.from(document.getElementsByTagName('g'));
 
-    elements.forEach(function (element) {
-        var titleElement = element.getElementsByTagName('title')[0];
-        var title = titleElement ? titleElement.textContent : '';
+    elements.forEach(element => {
+        const titleElement = element.getElementsByTagName('title')[0];
+        const title = titleElement ? titleElement.textContent : '';
 
-        // タイトルが一致するか、クラス名が含まれる場合に色を変更
         if (title === titleOrClass || element.classList.contains(titleOrClass)) {
-            var polygons = Array.from(element.getElementsByTagName('polygon'));
-            var paths = Array.from(element.getElementsByTagName('path'));
+            const polygons = Array.from(element.getElementsByTagName('polygon'));
+            const paths = Array.from(element.getElementsByTagName('path'));
 
-            polygons.forEach(function (polygon) {
+            polygons.forEach(polygon => {
                 polygon.setAttribute('fill', newNodeColor);
             });
 
-            paths.forEach(function (path) {
+            paths.forEach(path => {
                 path.setAttribute('stroke', newEdgeColor);
             });
         }
     });
-}
+};
 
-function setupModeSwitch() {
-    const graphIdElement = document.getElementById('graphId');
-    const graphNameElement = document.getElementById('graphName');
-    document.getElementById('show_id').addEventListener('change', function (e) {
-        if (e.target.checked) {
-            graphIdElement.style.display = 'block';
-            graphNameElement.style.display = 'none';
-        }
+// Sets up mode switch for graph display
+const setupModeSwitch = (switchId, graphId, otherGraphId) => {
+    document.getElementById(switchId).addEventListener('change', (e) => {
+        document.getElementById(graphId).style.display = e.target.checked ? 'block' : 'none';
+        document.getElementById(otherGraphId).style.display = e.target.checked ? 'none' : 'block';
     });
-    document.getElementById('show_name').addEventListener('change', function (e) {
-        if (e.target.checked) {
-            graphNameElement.style.display = 'block';
-            graphIdElement.style.display = 'none';
-        }
-    });
-}
+};
 </script></head>
 <body>
     <div class="markdown-body">
@@ -151,33 +143,38 @@ function setupModeSwitch() {
 
 <!-- Container for the ASDs -->
 
-<div id="graphId" style="text-align: center; "></div>
+<div id="asd-graph-id" style="text-align: center; "></div>
 
-<div id="graphName" style="text-align: center; display: none;"></div>
+<div id="asd-graph-name" style="text-align: center; display: none;"></div>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        renderGraph("#graphId", 'digraph application_state_diagram {  graph [    labelloc="t";    fontname="Helvetica"    label="ALPS Blog";    URL="index.html" target="_parent"  ];  node [shape = box, style = "bold,filled" fillcolor="lightgray"];    Blog [margin=0.02, label=<<table cellspacing="0" cellpadding="5" border="0"><tr><td>Blog<br />(BlogPosting)<br /></td></tr></table>>,shape=box URL="#Blog" target="_parent"]    BlogPosting [margin=0.02, label=<<table cellspacing="0" cellpadding="5" border="0"><tr><td>BlogPosting<br />(id)<br />(dateCreated)<br />(articleBody)<br /></td></tr></table>>,shape=box URL="#BlogPosting" target="_parent"]    About -> Blog [label = <goBlog (safe)> URL="#goBlog" target="_parent" fontsize=13 class="goBlog" penwidth=1.5];    Blog -> About [label = <goAbout (safe)> URL="#goAbout" target="_parent" fontsize=13 class="goAbout" penwidth=1.5];    Blog -> Blog [label = <doPost (unsafe)> URL="#doPost" target="_parent" fontsize=13 class="doPost" penwidth=1.5];    Blog -> BlogPosting [label = <goBlogPosting (safe)> URL="#goBlogPosting" target="_parent" fontsize=13 class="goBlogPosting" penwidth=1.5];    BlogPosting -> Blog [label = <goBlog (safe)> URL="#goBlog" target="_parent" fontsize=13 class="goBlog" penwidth=1.5];    Index -> Blog [label = <goBlog (safe)> URL="#goBlog" target="_parent" fontsize=13 class="goBlog" penwidth=1.5];    About [label = <About> URL="#About" target="_parent"]    Index [label = <Index> URL="#Index" target="_parent"]}');
-        renderGraph("#graphName", 'digraph application_state_diagram {  graph [    labelloc="t";    fontname="Helvetica"    label="ALPS Blog";    URL="index.html" target="_parent"  ];  node [shape = box, style = "bold,filled" fillcolor="lightgray"];    Blog [margin=0.02, label=<<table cellspacing="0" cellpadding="5" border="0"><tr><td>Blog post list<br />(Blog post item)<br /></td></tr></table>>,shape=box URL="#Blog" target="_parent"]    BlogPosting [margin=0.02, label=<<table cellspacing="0" cellpadding="5" border="0"><tr><td>Blog post item<br />(id)<br />(dateCreated)<br />(articleBody)<br /></td></tr></table>>,shape=box URL="#BlogPosting" target="_parent"]    About -> Blog [label = <to blog> URL="#goBlog" target="_parent" fontsize=13 class="goBlog" penwidth=1.5];    Blog -> About [label = <to about> URL="#goAbout" target="_parent" fontsize=13 class="goAbout" penwidth=1.5];    Blog -> Blog [label = <<b><u>post article</u></b>> URL="#doPost" target="_parent" fontsize=13 class="doPost" penwidth=1.5];    Blog -> BlogPosting [label = <to blog posting> URL="#goBlogPosting" target="_parent" fontsize=13 class="goBlogPosting" penwidth=1.5];    BlogPosting -> Blog [label = <to blog> URL="#goBlog" target="_parent" fontsize=13 class="goBlog" penwidth=1.5];    Index -> Blog [label = <to blog> URL="#goBlog" target="_parent" fontsize=13 class="goBlog" penwidth=1.5];    About [label = <About> URL="#About" target="_parent"]    Index [label = <Index Page> URL="#Index" target="_parent"]}');
+        renderGraph("#asd-graph-id", 'digraph application_state_diagram {  graph [    labelloc="t";    fontname="Helvetica"    label="ALPS Blog";    URL="index.html" target="_parent"  ];  node [shape = box, style = "bold,filled" fillcolor="lightgray"];    Blog [margin=0.02, label=<<table cellspacing="0" cellpadding="5" border="0"><tr><td>Blog<br />(BlogPosting)<br /></td></tr></table>>,shape=box URL="#Blog" target="_parent"]    BlogPosting [margin=0.02, label=<<table cellspacing="0" cellpadding="5" border="0"><tr><td>BlogPosting<br />(id)<br />(dateCreated)<br />(articleBody)<br /></td></tr></table>>,shape=box URL="#BlogPosting" target="_parent"]    About -> Blog [label = <goBlog (safe)> URL="#goBlog" target="_parent" fontsize=13 class="goBlog" penwidth=1.5];    Blog -> About [label = <goAbout (safe)> URL="#goAbout" target="_parent" fontsize=13 class="goAbout" penwidth=1.5];    Blog -> Blog [label = <doPost (unsafe)> URL="#doPost" target="_parent" fontsize=13 class="doPost" penwidth=1.5];    Blog -> BlogPosting [label = <goBlogPosting (safe)> URL="#goBlogPosting" target="_parent" fontsize=13 class="goBlogPosting" penwidth=1.5];    BlogPosting -> Blog [label = <goBlog (safe)> URL="#goBlog" target="_parent" fontsize=13 class="goBlog" penwidth=1.5];    Index -> Blog [label = <goBlog (safe)> URL="#goBlog" target="_parent" fontsize=13 class="goBlog" penwidth=1.5];    About [label = <About> URL="#About" target="_parent"]    Index [label = <Index> URL="#Index" target="_parent"]}');
+        renderGraph("#asd-graph-name", 'digraph application_state_diagram {  graph [    labelloc="t";    fontname="Helvetica"    label="ALPS Blog";    URL="index.html" target="_parent"  ];  node [shape = box, style = "bold,filled" fillcolor="lightgray"];    Blog [margin=0.02, label=<<table cellspacing="0" cellpadding="5" border="0"><tr><td>Blog post list<br />(Blog post item)<br /></td></tr></table>>,shape=box URL="#Blog" target="_parent"]    BlogPosting [margin=0.02, label=<<table cellspacing="0" cellpadding="5" border="0"><tr><td>Blog post item<br />(id)<br />(dateCreated)<br />(articleBody)<br /></td></tr></table>>,shape=box URL="#BlogPosting" target="_parent"]    About -> Blog [label = <to blog> URL="#goBlog" target="_parent" fontsize=13 class="goBlog" penwidth=1.5];    Blog -> About [label = <to about> URL="#goAbout" target="_parent" fontsize=13 class="goAbout" penwidth=1.5];    Blog -> Blog [label = <<b><u>post article</u></b>> URL="#doPost" target="_parent" fontsize=13 class="doPost" penwidth=1.5];    Blog -> BlogPosting [label = <to blog posting> URL="#goBlogPosting" target="_parent" fontsize=13 class="goBlogPosting" penwidth=1.5];    BlogPosting -> Blog [label = <to blog> URL="#goBlog" target="_parent" fontsize=13 class="goBlog" penwidth=1.5];    Index -> Blog [label = <to blog> URL="#goBlog" target="_parent" fontsize=13 class="goBlog" penwidth=1.5];    About [label = <About> URL="#About" target="_parent"]    Index [label = <Index Page> URL="#Index" target="_parent"]}');
         setupTagTrigger();
-        setupModeSwitch()
+        setupModeSwitch('asd-show-id', 'asd-graph-id', 'asd-graph-name');
+        setupModeSwitch('asd-show-name', 'asd-graph-name', 'asd-graph-id');
         applySmoothScrollToLinks(document.querySelectorAll('a[href^="#"]'));
         
     });
 </script>
 
-<div id="selector" style="">
-    <input type="radio" id="show_id" name="graph_selector" checked>
-    <label for="show_id">id<ID/label>
-    <input type="radio" id="show_name" name="graph_selector">
-    <label for="show_name">name</label>
+<div class="asd-view-selector">
+    <input type="radio" id="asd-show-id" checked name="asd-view-selector">
+    <label for="asd-show-id">id<ID/label>
+    <input type="radio" id="asd-show-name" name="asd-view-selector">
+    <label for="asd-show-name">title</label>
 </div>
 
-<hr />
+<h2>Links</h2>
+
+<ul>
+<li><a rel="issue" href="https://github.com/alps-asd/app-state-diagram/issues">issue</a></li>
+</ul>
 
 <h2>Semantic Descriptors</h2>
 
-<h3><a name="About">About</a></h3>
+<h3><a id="About">About</a></h3>
 
 <ul>
 <li>type: semantic</li>
@@ -201,14 +198,14 @@ function setupModeSwitch() {
 </tbody>
 </table>
 
-<h3><a name="articleBody">articleBody</a></h3>
+<h3><a id="articleBody">articleBody</a></h3>
 
 <ul>
 <li>type: semantic</li>
 <li>def: <a href="https://schema.org/articleBody">https://schema.org/articleBody</a></li>
 </ul>
 
-<h3><a name="Blog">Blog</a></h3>
+<h3><a id="Blog">Blog</a></h3>
 
 <ul>
 <li>type: semantic</li>
@@ -250,7 +247,7 @@ function setupModeSwitch() {
 </tbody>
 </table>
 
-<h3><a name="BlogPosting">BlogPosting</a></h3>
+<h3><a id="BlogPosting">BlogPosting</a></h3>
 
 <ul>
 <li>type: semantic</li>
@@ -291,14 +288,14 @@ function setupModeSwitch() {
 </tbody>
 </table>
 
-<h3><a name="dateCreated">dateCreated</a></h3>
+<h3><a id="dateCreated">dateCreated</a></h3>
 
 <ul>
 <li>type: semantic</li>
 <li>def: <a href="https://schema.org/dateCreated">https://schema.org/dateCreated</a></li>
 </ul>
 
-<h3><a name="doPost">doPost</a></h3>
+<h3><a id="doPost">doPost</a></h3>
 
 <ul>
 <li>type: unsafe</li>
@@ -325,7 +322,7 @@ function setupModeSwitch() {
 </tbody>
 </table>
 
-<h3><a name="goAbout">goAbout</a></h3>
+<h3><a id="goAbout">goAbout</a></h3>
 
 <ul>
 <li>type: safe</li>
@@ -333,7 +330,7 @@ function setupModeSwitch() {
 <li>rt: <a href="#About">About</a></li>
 </ul>
 
-<h3><a name="goBlog">goBlog</a></h3>
+<h3><a id="goBlog">goBlog</a></h3>
 
 <ul>
 <li>type: safe</li>
@@ -341,7 +338,7 @@ function setupModeSwitch() {
 <li>rt: <a href="#Blog">Blog</a></li>
 </ul>
 
-<h3><a name="goBlogPosting">goBlogPosting</a></h3>
+<h3><a id="goBlogPosting">goBlogPosting</a></h3>
 
 <ul>
 <li>type: safe</li>
@@ -367,7 +364,7 @@ function setupModeSwitch() {
 </tbody>
 </table>
 
-<h3><a name="goStart">goStart</a></h3>
+<h3><a id="goStart">goStart</a></h3>
 
 <ul>
 <li>type: safe</li>
@@ -375,14 +372,14 @@ function setupModeSwitch() {
 <li>rt: <a href="#Blog">Blog</a></li>
 </ul>
 
-<h3><a name="id">id</a></h3>
+<h3><a id="id">id</a></h3>
 
 <ul>
 <li>type: semantic</li>
 <li>def: <a href="https://schema.org/identifier">https://schema.org/identifier</a></li>
 </ul>
 
-<h3><a name="Index">Index</a></h3>
+<h3><a id="Index">Index</a></h3>
 
 <ul>
 <li>type: semantic</li>
@@ -406,14 +403,6 @@ function setupModeSwitch() {
 </tr>
 </tbody>
 </table>
-
-<hr />
-
-<h2>Links</h2>
-
-<ul>
-<li><a rel="issue" href="https://github.com/alps-asd/app-state-diagram/issues">issue</a></li>
-</ul>
 
 <hr />
 

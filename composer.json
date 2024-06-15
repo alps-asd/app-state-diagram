@@ -43,8 +43,6 @@
         "/bin/asd"
     ],
     "scripts": {
-        "post-install-cmd": "@composer bin all install --ansi",
-        "post-update-cmd": ["@composer bin all update --ansi", "cd asd-sync && npm install"],
         "docs" : [
             "bin/asd -c docs/blog/asd.xml docs/blog/profile.xml",
             "bin/asd -c docs/blog/asd.md.xml docs/blog/profile.md.xml",
@@ -62,12 +60,18 @@
         "sa": ["psalm --show-info=true", "./vendor/bin/phpstan analyse -c phpstan.neon"],
         "metrics": ["./vendor/bin/phpmetrics --report-html=build/metrics --exclude=Exception --log-junit=build/junit.xml --junit=build/junit.xml src"],
         "phpmd": ["./vendor/bin/phpmd src text ./phpmd.xml"],
-        "compile": ["./vendor/bin/box compile"],
+        "compile": ["composer update --no-dev", "rm -rf asd-sync/node_modules" ,"./vendor-bin/box/vendor/bin/box compile"],
         "build": ["@cs", "@sa", "@pcov", "@metrics", "@compile"]
     },
     "config": {
         "allow-plugins": {
             "bamarni/composer-bin-plugin": true
+        }
+    },
+    "extra": {
+        "bamarni-bin": {
+            "bin-links": false,
+            "forward-command": false
         }
     }
 }
