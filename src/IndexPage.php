@@ -29,7 +29,7 @@ final class IndexPage
 
     public function __construct(Config $config)
     {
-        [$profile, $dotId, $dotName, $mode, $alpsProfile, $semanticMd, $linkRelations, $ext, $tags, $htmlTitle, $htmlDoc, $setUpTagEvents] = $this->getDataFromConfig($config);
+        $index = $this->getElements($config);
         $indexJsFile = dirname(__DIR__, 1) . '/docs/assets/js/asd@0.1.0.js';
         $indexJs = sprintf('<script>%s</script>', file_get_contents($indexJsFile));
         $header = <<<EOT
@@ -50,7 +50,7 @@ EOT;
         setupModeSwitch('asd-show-id', 'asd-graph-id', 'asd-graph-name');
         setupModeSwitch('asd-show-name', 'asd-graph-name', 'asd-graph-id');
         applySmoothScrollToLinks(document.querySelectorAll('a[href^="#"]'));
-        {$setUpTagEvents}
+        {$index->setUpTagEvents}
     });
 </script>
 <div class="asd-view-selector">
@@ -62,36 +62,36 @@ EOT;
 EOTJS;
 
         $md = <<<EOT
-# {$htmlTitle}
+# {$index->htmlTitle}
 
-{$htmlDoc}
+{$index->htmlDoc}
 
 <!-- Container for the ASDs -->
 {$asd}
 
-{$tags}
+{$index->tags}
 
-{$linkRelations}
+{$index->linkRelations}
 
 ## Semantic Descriptors
 
- {$semanticMd}
+ {$index->semanticMd}
 
 ---
 
 ## Profile
-<pre><code>{$alpsProfile}</code></pre>
+<pre><code>{$index->alpsProfile}</code></pre>
 EOT;
-        $this->file = sprintf('%s/index.%s', dirname($profile->alpsFile), $ext);
-        if ($mode === DumpDocs::MODE_MARKDOWN) {
+        $this->file = sprintf('%s/index.%s', dirname($index->profile->alpsFile), $index->ext);
+        if ($index->mode === DumpDocs::MODE_MARKDOWN) {
             $this->content = $md;
 
             return;
         }
 
-        $html = (new MdToHtml())($htmlTitle, $md);
-        $escapedDotId = str_replace("\n", '', $dotId);
-        $escapedDotName = str_replace("\n", '', $dotName);
+        $html = (new MdToHtml())($index->htmlTitle, $md);
+        $escapedDotId = str_replace("\n", '', $index->dotId);
+        $escapedDotName = str_replace("\n", '', $index->dotName);
         $plusHeaderHtml = str_replace(
             '</head>',
             $header . '</head>',
@@ -153,7 +153,7 @@ EOT;
     }
 
     /** @return list<mixed> */
-    public function getDataFromConfig(Config $config): array
+    public function getElements(Config $config): IndexPageElements
     {
         $draw = new DrawDiagram();
         $profile = new Profile($config->profile, new LabelName(), true);
@@ -186,6 +186,6 @@ EOT;
         $htmlDoc = nl2br(htmlspecialchars($profile->doc));
         $setUpTagEvents = $this->getSetupTagEvents($config);
 
-        return [$profile, $dotId, $dotName, $mode, $alpsProfile, $semanticMd, $linkRelations, $ext, $tags, $htmlTitle, $htmlDoc, $setUpTagEvents];
+        return new IndexPageElements($profile, $dotId, $dotName, $mode, $alpsProfile, $semanticMd, $linkRelations, $ext, $tags, $htmlTitle, $htmlDoc, $setUpTagEvents);
     }
 }
