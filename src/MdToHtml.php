@@ -19,6 +19,9 @@ final class MdToHtml
     <meta charset="UTF-8">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/3.0.1/github-markdown.min.css">
     <style>
+        body {
+            background-color: white;
+        }
         .markdown-body {
             box-sizing: border-box;
             min-width: 200px;
