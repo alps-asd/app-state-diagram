@@ -41,6 +41,24 @@ final class MdToHtml
             align-items: center;
             gap: 10px;
         }
+        #svg-container {
+            width: 100%;
+            height: 80vh; /* ビューポートの高さの80%を使用 */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            pointer-events: none; /* スクロール時の拡大縮小を防ぐ */
+        }
+        #asd-graph-id {
+            width: 100%;
+            height: 100%;
+            pointer-events: none; /* スクロール時の拡大縮小を防ぐ */
+        }
+        #asd-graph-id svg {
+            width: 100%;
+            height: 100%;
+            pointer-events: none; /* スクロール時の拡大縮小を防ぐ */
+        }
     </style>
 </head>
 <body>
