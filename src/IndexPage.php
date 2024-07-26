@@ -40,8 +40,10 @@ final class IndexPage
 {$indexJs}
 EOT;
         $asd = $config->outputMode === DumpDocs::MODE_MARKDOWN ? '[<img src="profile.svg" alt="application state diagram">](profile.title.svg)' : <<< EOTJS
-<div id="asd-graph-id" style="text-align: center; "></div>
-<div id="asd-graph-name" style="text-align: center; display: none;"></div>
+<div id="svg-container">
+    <div id="asd-graph-id" style="text-align: center; "></div>
+    <div id="asd-graph-name" style="text-align: center; display: none;"></div>
+</div>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         renderGraph("#asd-graph-id", '{{ dotId }}');
@@ -67,6 +69,7 @@ EOTJS;
 {$index->htmlDoc}
 
 <!-- Container for the ASDs -->
+
 {$asd}
 
 {$index->tags}
@@ -75,7 +78,9 @@ EOTJS;
 
 ## Semantic Descriptors
 
- {$index->semanticMd}
+{$index->semanticDescriptorList}
+
+{$index->semanticMd}
 
 ---
 
@@ -167,6 +172,7 @@ EOT;
             'UTF-8'
         );
 
+        $semanticDescriptorList = (new DumpDocs())->getSemanticDescriptorList($profile);
         $semanticMd = PHP_EOL . (new DumpDocs())->getSemanticDescriptorMarkDown($profile, $profile->alpsFile);
         $descriptors = $profile->descriptors;
         uasort($descriptors, static function (AbstractDescriptor $a, AbstractDescriptor $b): int {
@@ -186,6 +192,20 @@ EOT;
         $htmlDoc = nl2br(htmlspecialchars($profile->doc));
         $setUpTagEvents = $this->getSetupTagEvents($config);
 
-        return new IndexPageElements($profile, $dotId, $dotName, $mode, $alpsProfile, $semanticMd, $linkRelations, $ext, $tags, $htmlTitle, $htmlDoc, $setUpTagEvents);
+        return new IndexPageElements(
+            $profile,
+            $dotId,
+            $dotName,
+            $mode,
+            $alpsProfile,
+            $semanticMd,
+            $linkRelations,
+            $ext,
+            $tags,
+            $htmlTitle,
+            $htmlDoc,
+            $setUpTagEvents,
+            $semanticDescriptorList
+        );
     }
 }

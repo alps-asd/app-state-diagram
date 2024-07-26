@@ -18,7 +18,8 @@ final class IndexPageElements
         public readonly string $tags,
         public readonly string $htmlTitle,
         public readonly string $htmlDoc,
-        public readonly string $setUpTagEvents
+        public readonly string $setUpTagEvents,
+        public readonly string $semanticDescriptorList
     ) {
     }
 }

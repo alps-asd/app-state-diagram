@@ -192,6 +192,18 @@ EOT;
         return $markDown;
     }
 
+    public function getSemanticDescriptorList(Profile $profile): string
+    {
+        $descriptors = $profile->descriptors;
+        ksort($descriptors, SORT_FLAG_CASE | SORT_STRING);
+        $items = [];
+        foreach ($descriptors as $descriptor) {
+            $items[] = sprintf(' * [%s (%s)](#%s)', $descriptor->id,$descriptor->type, $descriptor->id);
+        }
+
+        return implode(PHP_EOL, $items);
+    }
+
     private function getLinkRelations(LinkRelations $linkRelations): string
     {
         if ((string) $linkRelations === '') {
