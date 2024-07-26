@@ -63,7 +63,7 @@
         "sa": ["psalm --show-info=true", "./vendor/bin/phpstan analyse -c phpstan.neon"],
         "metrics": ["./vendor/bin/phpmetrics --report-html=build/metrics --exclude=Exception --log-junit=build/junit.xml --junit=build/junit.xml src"],
         "phpmd": ["./vendor/bin/phpmd src text ./phpmd.xml"],
-        "compile": ["./vendor/bin/box compile"],
+        "compile": ["./vendor-bin/box/vendor/bin/box compile"],
         "build": ["@cs", "@sa", "@pcov", "@metrics", "@compile"]
     },
     "config": {

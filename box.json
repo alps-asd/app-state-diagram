@@ -13,6 +13,7 @@
     "files": [
         "docs/assets/js/asd@0.1.0.js",
         "docs/assets/css/main.css",
-        "vendor/autoload.php"
+        "vendor/autoload.php",
+        "alps.xsd"
     ]
 }
