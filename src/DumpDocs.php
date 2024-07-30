@@ -10,6 +10,7 @@ use function assert;
 use function explode;
 use function filter_var;
 use function implode;
+use function is_array;
 use function is_string;
 use function ksort;
 use function property_exists;
@@ -112,6 +113,7 @@ EOT;
             return '';
         }
 
+        assert(is_array($descriptor->descriptor));
         $descriptors = $this->getInlineDescriptors($descriptor->descriptor);
 
         $table = sprintf(' * descriptor%s%s| id | type | title |%s|---|---|---|%s', PHP_EOL, PHP_EOL, PHP_EOL, PHP_EOL);

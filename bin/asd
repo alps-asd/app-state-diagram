@@ -4,14 +4,8 @@
 declare(strict_types=1);
 
 use Koriym\AppStateDiagram\ConfigFactory;
-use Koriym\AppStateDiagram\DrawDiagram;
-use Koriym\AppStateDiagram\DumpDocs;
 use Koriym\AppStateDiagram\Exception\AlpsFileNotReadableException;
-use Koriym\AppStateDiagram\IndexPage;
-use Koriym\AppStateDiagram\LabelNameFactory;
-use Koriym\AppStateDiagram\Profile;
 use Koriym\AppStateDiagram\PutDiagram;
-use Koriym\AppStateDiagram\TaggedProfile;
 use Koriym\DataFile\Exception\DataFileNotFoundException;
 
 foreach ([__DIR__ . '/../../../autoload.php', __DIR__ . '/../vendor/autoload.php'] as $file) {
@@ -29,7 +23,7 @@ usage: asd [options] alps_file
 EOT;
     exit(0);
 }
-$options = getopt('c:w::m::', ['config:', 'watch::', 'color::', 'mode::', 'port::', "extract"]);
+$options = getopt('c:w::m::', ['config:', 'watch::', 'mode::', 'port::']);
 if ($argc === 1) {
     $options['c'] = getcwd();
 }
@@ -46,10 +40,10 @@ try {
 if ($config->watch) {
 
     $actualPath = Phar::running(false) !== '' ?
-                dirname(Phar::running(false),2) . '/libexec/asd-sync':
+                dirname(Phar::running(false),2) . '/asd-sync':
                 dirname(__DIR__) . '/asd-sync';
     chdir($actualPath);
-    $isFirstRun = ! is_dir($actualPath . '/asd-sync/node_modules');
+    $isFirstRun = ! is_dir(dirname(__DIR__) . '/asd-sync/node_modules');
     if ($isFirstRun) {
         passthru('npm install');
     }

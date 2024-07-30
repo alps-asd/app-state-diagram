@@ -25,13 +25,10 @@ class HyperReference
     /** @var list<string> */
     private $done = [];
 
-    /** @var LabelNameInterface */
-    private $labelName;
-
-    public function __construct(LabelNameInterface $labelName)
-    {
+    public function __construct(
+        private readonly LabelNameInterface $labelName
+    ) {
         $this->fullPath = new FullPath();
-        $this->labelName = $labelName;
     }
 
     public function add(string $alpsFile, string $href): void

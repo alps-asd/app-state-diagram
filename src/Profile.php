@@ -20,18 +20,6 @@ use function substr;
 
 final class Profile extends AbstractProfile
 {
-    /** @var string */
-    public $schema;
-
-    /** @var string */
-    public $title;
-
-    /** @var string */
-    public $doc;
-
-    /** @var string  */
-    public $alpsFile;
-
     /**
      * Descriptor instances (not reference)
      *
@@ -45,19 +33,18 @@ final class Profile extends AbstractProfile
     /** @var LinkRelations */
     public $linkRelations;
 
-    /** @var LabelNameInterface */
-    private $labelName;
-
     /**
      * @throws ParsingException
      *
      * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
      */
-    public function __construct(string $alpsFile, LabelNameInterface $labelName, bool $doFinalize = true)
-    {
+    public function __construct(
+        public string $alpsFile,
+        public LabelNameInterface $labelName,
+        public bool $doFinalize = true
+    ) {
         $hyperReference = new HyperReference($labelName);
-        $this->alpsFile = $alpsFile;
-        [$profile, $descriptors] = (new SplitProfile())($alpsFile);
+        [$profile, $descriptors] = (new SplitProfile())($this->alpsFile);
         /** @psalm-suppress all */
         [$this->schema, $this->title, $this->doc] = [$profile->{'$schema'} ?? '', $profile->alps->title ?? '', $profile->alps->doc->value ??  ''];
         /** @psalm-suppress all */

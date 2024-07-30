@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Koriym\AppStateDiagram;
 
 use stdClass;
+use Stringable;
 
 use function implode;
 use function is_array;
@@ -13,7 +14,7 @@ use function usort;
 
 use const PHP_EOL;
 
-final class LinkRelations
+final class LinkRelations implements Stringable
 {
     /** @var list<LinkRelation> */
     private $links;
@@ -48,9 +49,7 @@ final class LinkRelations
             $linkRelations[] = new LinkRelation($link);
         }
 
-        usort($linkRelations, static function (LinkRelation $a, LinkRelation $b): int {
-            return strtoupper($a->rel) <=> strtoupper($b->rel);
-        });
+        usort($linkRelations, static fn (LinkRelation $a, LinkRelation $b): int => strtoupper($a->rel) <=> strtoupper($b->rel));
 
         return $linkRelations;
     }
