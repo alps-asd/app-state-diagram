@@ -158,7 +158,7 @@ EOT;
     }
 
     /** @return list<mixed> */
-    public function getElements(Config $config): IndexPageElements
+    private function getElements(Config $config): IndexPageElements
     {
         $draw = new DrawDiagram();
         $profile = new Profile($config->profile, new LabelName(), true);
