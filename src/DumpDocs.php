@@ -198,7 +198,7 @@ EOT;
         ksort($descriptors, SORT_FLAG_CASE | SORT_STRING);
         $items = [];
         foreach ($descriptors as $descriptor) {
-            $items[] = sprintf(' * [%s (%s)](#%s)', $descriptor->id,$descriptor->type, $descriptor->id);
+            $items[] = sprintf(' * [%s (%s)](#%s)', $descriptor->id, $descriptor->type, $descriptor->id);
         }
 
         return implode(PHP_EOL, $items);
