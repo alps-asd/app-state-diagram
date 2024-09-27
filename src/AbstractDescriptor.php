@@ -18,7 +18,7 @@ abstract class AbstractDescriptor
 {
     public string $id;
     public ?string $def;
-    public stdClass|null $doc;
+    public stdClass|null|string $doc;
 
     /** @var list<stdClass>|stdClass */
     public array|stdClass $descriptor = [];
