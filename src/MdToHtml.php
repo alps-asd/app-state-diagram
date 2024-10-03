@@ -43,7 +43,7 @@ final class MdToHtml
         }
         #svg-container {
             width: 100%;
-            height: 80vh; /* ビューポートの高さの80%を使用 */
+            height: auto;
             display: flex;
             justify-content: center;
             align-items: center;
