@@ -49,8 +49,9 @@
         "docs" : [
             "bin/asd -c docs/blog/asd.xml docs/blog/profile.xml",
             "bin/asd -c docs/blog/asd.md.xml docs/blog/profile.md.xml",
-            "bin/asd docs/todomvc/profile.json && bin/asd --or-tag=tag1 --color=red docs/filter/profile.json",
-            "bin/asd -c docs-md/blog/asd.xml docs-md/blog/profile.xml"
+            "bin/asd docs/todomvc/profile.json",
+            "bin/asd -c docs-md/blog/asd.xml docs-md/blog/profile.xml",
+            "bin/asd docs/bookstore/bookstore.xml"
         ],
         "md" : "bin/asd -c docs/blog/asd.md.xml docs/blog/profile.xml",
         "test": ["./vendor/bin/phpunit"],
