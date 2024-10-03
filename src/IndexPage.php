@@ -45,15 +45,20 @@ EOT;
     <div id="asd-graph-name" style="text-align: center; display: none;"></div>
 </div>
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        renderGraph("#asd-graph-id", '{{ dotId }}');
-        renderGraph("#asd-graph-name", '{{ dotName }}');
+    document.addEventListener('DOMContentLoaded', async function() {
+        try {
+            await Promise.all([
+                    renderGraph("#asd-graph-id", '{{ dotId }}'),
+                    renderGraph("#asd-graph-name", '{{ dotName }}')
+            ]);
         setupTagTrigger();
         setupModeSwitch('asd-show-id', 'asd-graph-id', 'asd-graph-name');
         setupModeSwitch('asd-show-name', 'asd-graph-name', 'asd-graph-id');
         applySmoothScrollToLinks(document.querySelectorAll('a[href^="#"]'));
         {$index->setUpTagEvents}
-    });
+    } catch (error) {
+           console.error("Error in main process:", error);
+    }});
 </script>
 <div class="asd-view-selector">
     <input type="radio" id="asd-show-id" checked name="asd-view-selector">
