@@ -84,7 +84,28 @@ EOTJS;
 
 ## Semantic Descriptors
 
+<div class="descriptor-list" markdown="1">
 {$index->semanticDescriptorList}
+</div>
+
+<div class="legend">
+    <div class="legend-item">
+        <span class="legend-icon semantic"></span>
+        Semantic
+    </div>
+    <div class="legend-item">
+        <span class="legend-icon safe"></span>
+        Safe
+    </div>
+    <div class="legend-item">
+        <span class="legend-icon unsafe"></span>
+        Unsafe
+    </div>
+    <div class="legend-item">
+        <span class="legend-icon idempotent"></span>
+        Idempotent
+    </div>
+</div>
 
 {$index->semanticMd}
 
