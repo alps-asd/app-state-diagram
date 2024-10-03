@@ -17,11 +17,11 @@
         "ext-dom": "*",
         "michelf/php-markdown": "^1.9",
         "seld/jsonlint": "^1.8",
-        "koriym/data-file": "^1.0",
-        "bamarni/composer-bin-plugin": "^1.4"
+        "koriym/data-file": "^1.0"
     },
     "require-dev": {
         "phpunit/phpunit": "^9.6.10",
+        "bamarni/composer-bin-plugin": "^1.4",
         "rector/rector": "^1.1"
     },
     "autoload": {
