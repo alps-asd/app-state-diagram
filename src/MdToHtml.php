@@ -35,12 +35,6 @@ final class MdToHtml
                 padding: 15px;
             }
         }
-        .asd-view-selector {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 10px;
-        }
         #svg-container {
             width: 100%;
             height: auto;
@@ -48,13 +42,37 @@ final class MdToHtml
             justify-content: center;
             align-items: center;
         }
-        #asd-graph-id {
-            width: 100%;
-            height: 100%;
+        .asd-view-selector {
+            display: flex;
+            align-items: center;
+            margin-top: 40px;
+            margin-bottom: 10px;
         }
-        #asd-graph-id svg {
-            width: 100%;
-            height: auto;
+        .asd-view-selector label {
+            margin-right: 10px;
+        }
+        .asd-view-selector input[type="radio"] {
+            margin-right: 5px;
+        }
+        .selector-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .selector-label {
+            min-width: 40px;
+            margin-right: 10px;
+        }
+        .selector-options {
+            display: flex;
+        }
+        .selector-option {
+            margin-right: 15px;
+        }
+        input[type="radio"],
+        input[type="checkbox"] {
+            margin-right: 2px;
+            vertical-align: middle;
         }
     </style>
 </head>

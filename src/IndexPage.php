@@ -51,16 +51,17 @@ EOT;
                     renderGraph("#asd-graph-id", '{{ dotId }}'),
                     renderGraph("#asd-graph-name", '{{ dotName }}')
             ]);
-        setupTagTrigger();
-        setupModeSwitch('asd-show-id', 'asd-graph-id', 'asd-graph-name');
-        setupModeSwitch('asd-show-name', 'asd-graph-name', 'asd-graph-id');
-        applySmoothScrollToLinks(document.querySelectorAll('a[href^="#"]'));
-        {$index->setUpTagEvents}
-    } catch (error) {
-           console.error("Error in main process:", error);
-    }});
+            setupTagTrigger();
+            setupModeSwitch('asd-show-id', 'asd-graph-id', 'asd-graph-name');
+            setupModeSwitch('asd-show-name', 'asd-graph-name', 'asd-graph-id');
+            applySmoothScrollToLinks(document.querySelectorAll('a[href^="#"]'));
+            {$index->setUpTagEvents}
+        } catch (error) {
+               console.error("Error in main process:", error);
+        }});
 </script>
 <div class="asd-view-selector">
+    <span class="selector-label">View:</span>
     <input type="radio" id="asd-show-id" checked name="asd-view-selector">
     <label for="asd-show-id">id</label>
     <input type="radio" id="asd-show-name" name="asd-view-selector">
@@ -117,13 +118,13 @@ EOT;
             return '';
         }
 
-        $lines = ['## Tags'];
+        $lines = ['<span class="selector-label">Tags:</span>'];
         $tagKeys = array_keys($tags);
         foreach ($tagKeys as $tag) {
-            $lines[] = sprintf('* <input type="checkbox" id="tag-%s" class="tag-trigger-checkbox" data-tag="%s" name="tag-%s"><label for="tag-%s"> %s</label>', $tag, $tag, $tag, $tag, $tag);
+            $lines[] = sprintf('<span class="selector-option"><input type="checkbox" id="tag-%s" class="tag-trigger-checkbox" data-tag="%s" name="tag-%s"><label for="tag-%s"> %s</label></span>', $tag, $tag, $tag, $tag, $tag);
         }
 
-        return PHP_EOL . implode(PHP_EOL, $lines);
+        return sprintf('<div class="selector-container">%s</div>', implode(PHP_EOL, $lines));
     }
 
     private function linkRelations(LinkRelations $linkRelations): string
