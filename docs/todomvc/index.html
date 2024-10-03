@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/3.0.1/github-markdown.min.css">
     <style>
+        body {
+            background-color: white;
+        }
         .markdown-body {
             box-sizing: border-box;
             min-width: 200px;
@@ -17,11 +20,136 @@
                 padding: 15px;
             }
         }
-        .asd-view-selector {
+        #svg-container {
+            width: 100%;
+            height: auto;
             display: flex;
             justify-content: center;
             align-items: center;
+        }
+        .asd-view-selector {
+            display: flex;
+            align-items: center;
+            margin-top: 40px;
+            margin-bottom: 10px;
+        }
+        .asd-view-selector label {
+            margin-right: 10px;
+        }
+        .asd-view-selector input[type="radio"] {
+            margin-right: 5px;
+        }
+        .selector-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .selector-label {
+            min-width: 40px;
+            margin-right: 10px;
+        }
+        .selector-options {
+            display: flex;
+        }
+        .selector-option {
+            margin-right: 15px;
+        }
+        input[type="radio"],
+        input[type="checkbox"] {
+            margin-right: 2px;
+            vertical-align: middle;
+        }
+        
+        /* Sematic Descriptor List */
+        .descriptor-list {
+            max-width: 100%;
+            margin: 0;
+            padding: 20px;
+        }
+        .descriptor-list ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+            width: 100%;
+        }
+        .descriptor-list li {
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+        }
+        .descriptor-list .indicator {
+            width: 16px;
+            height: 16px;
+            display: inline-block;
+            margin-right: 8px;
+            border: 1px solid #000;
+        }
+        .descriptor-list .semantic { 
+            background-color: #FFFFFF; 
+        }
+        .descriptor-list .safe { 
+            background-color: #00A86B;
+            background-image: linear-gradient(45deg, #008000 25%, transparent 25%, transparent 75%, #008000 75%, #008000), 
+                              linear-gradient(45deg, #008000 25%, transparent 25%, transparent 75%, #008000 75%, #008000);
+            background-size: 8px 8px;
+            background-position: 0 0, 4px 4px;
+        }
+        .descriptor-list .unsafe { 
+            background-color: #FF4136;
+            background-image: repeating-linear-gradient(45deg, #FF4136, #FF4136 4px, #FF725C 4px, #FF725C 8px);
+        }
+        
+        .descriptor-list .idempotent { 
+            background-color: #FFDC00;
+            background-image: radial-gradient(#FFB700 20%, transparent 20%),
+                              radial-gradient(#FFB700 20%, transparent 20%);
+            background-size: 8px 8px;
+            background-position: 0 0, 4px 4px;
+        }
+        .descriptor-list .item-name {
+            color: #000;
+            text-decoration: none;
+        }
+        
+        .legend {
+            background-color: #ffffff;
+            border-radius: 8px;
+            padding: 10px;
+            display: inline-flex;
+            flex-wrap: wrap;
             gap: 10px;
+            margin-bottom: 20px;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+            color: #333;
+        }
+        .legend-icon {
+            width: 16px;
+            height: 16px;
+            border: 1px solid #000;
+            margin-right: 8px;
+        }
+        .legend .semantic { background-color: #FFFFFF; }
+        .legend .safe { 
+            background-color: #00A86B;
+            background-image: linear-gradient(45deg, #008000 25%, transparent 25%, transparent 75%, #008000 75%, #008000), 
+                              linear-gradient(45deg, #008000 25%, transparent 25%, transparent 75%, #008000 75%, #008000);
+            background-size: 8px 8px;
+            background-position: 0 0, 4px 4px;
+        }
+        .legend .unsafe { 
+            background-color: #FF4136;
+            background-image: repeating-linear-gradient(45deg, #FF4136, #FF4136 4px, #FF725C 4px, #FF725C 8px);
+        }
+        .legend .idempotent { 
+            background-color: #FFDC00;
+            background-image: radial-gradient(#FFB700 20%, transparent 20%),
+                              radial-gradient(#FFB700 20%, transparent 20%);
+            background-size: 8px 8px;
+            background-position: 0 0, 4px 4px;
         }
     </style>
 <script src="https://d3js.org/d3.v5.min.js"></script>
@@ -74,9 +202,10 @@ const applySmoothScrollToLinks = (links) => {
 
 // Renders the graph and applies smooth scroll to links
 const renderGraph = (graphId, dotString) => {
-    const graphviz = d3.select(graphId).graphviz();
-    graphviz.renderDot(dotString).on('end', () => {
-        applySmoothScrollToLinks(document.querySelectorAll('svg a[*|href^="#"]'));
+    d3.select(graphId).graphviz()
+        .zoom(false)
+        .renderDot(dotString).on('end', () => {
+            applySmoothScrollToLinks(document.querySelectorAll('svg a[*|href^="#"]'));
     });
 };
 
@@ -143,23 +272,30 @@ const setupModeSwitch = (switchId, graphId, otherGraphId) => {
 
 <!-- Container for the ASDs -->
 
-<div id="asd-graph-id" style="text-align: center; "></div>
-
-<div id="asd-graph-name" style="text-align: center; display: none;"></div>
+<div id="svg-container">
+    <div id="asd-graph-id" style="text-align: center; "></div>
+    <div id="asd-graph-name" style="text-align: center; display: none;"></div>
+</div>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        renderGraph("#asd-graph-id", 'digraph application_state_diagram {  graph [    labelloc="t";    fontname="Helvetica"    label="MVC ToDo List";    URL="index.html" target="_parent"  ];  node [shape = box, style = "bold,filled" fillcolor="lightgray"];    TodoItem [margin=0.02, label=<<table cellspacing="0" cellpadding="5" border="0"><tr><td>TodoItem<br />(id)<br />(title)<br />(completed)<br /></td></tr></table>>,shape=box URL="#TodoItem" target="_parent"]    TodoList [margin=0.02, label=<<table cellspacing="0" cellpadding="5" border="0"><tr><td>TodoList<br />(id)<br />(title)<br />(completed)<br /></td></tr></table>>,shape=box URL="#TodoList" target="_parent"]    Home -> Related [label = <goRelated (safe)> URL="#goRelated" target="_parent" fontsize=13 class="goRelated" penwidth=1.5];    Home -> TodoList [label = <listAll (safe)> URL="#listAll" target="_parent" fontsize=13 class="listAll" penwidth=1.5];    Related -> Home [label = <goHome (safe)> URL="#goHome" target="_parent" fontsize=13 class="goHome" penwidth=1.5];    Related -> TodoItem [label=<<table border="0"><tr><td align="left" href="#add" tooltip="add (unsafe)" >add (unsafe)</td></tr><tr><td align="left" href="#edit" tooltip="edit (idempotent)" >edit (idempotent)</td></tr><tr><td align="left" href="#read" tooltip="read (safe)" >read (safe)</td></tr></table>> fontsize=13];    Related -> TodoList [label=<<table border="0"><tr><td align="left" href="#listActive" tooltip="listActive (safe)" >listActive (safe)</td></tr><tr><td align="left" href="#listAll" tooltip="listAll (safe)" >listAll (safe)</td></tr><tr><td align="left" href="#listCompleted" tooltip="listCompleted (safe)" >listCompleted (safe)</td></tr><tr><td align="left" href="#remove" tooltip="remove (idempotent)" >remove (idempotent)</td></tr></table>> fontsize=13];    TodoItem -> Related [label = <goRelated (safe)> URL="#goRelated" target="_parent" fontsize=13 class="goRelated" penwidth=1.5];    TodoItem -> TodoItem [label=<<table border="0"><tr><td align="left" href="#clearCompleted" tooltip="clearCompleted (idempotent)" >clearCompleted (idempotent)</td></tr><tr><td align="left" href="#edit" tooltip="edit (idempotent)" >edit (idempotent)</td></tr><tr><td align="left" href="#markCompleted" tooltip="markCompleted (idempotent)" >markCompleted (idempotent)</td></tr></table>> fontsize=13];    TodoItem -> TodoList [label=<<table border="0"><tr><td align="left" href="#listAll" tooltip="listAll (safe)" >listAll (safe)</td></tr><tr><td align="left" href="#remove" tooltip="remove (idempotent)" >remove (idempotent)</td></tr></table>> fontsize=13];    TodoList -> Home [label = <goHome (safe)> URL="#goHome" target="_parent" fontsize=13 class="goHome" penwidth=1.5];    TodoList -> Related [label = <goRelated (safe)> URL="#goRelated" target="_parent" fontsize=13 class="goRelated" penwidth=1.5];    TodoList -> TodoItem [label=<<table border="0"><tr><td align="left" href="#add" tooltip="add (unsafe)" >add (unsafe)</td></tr><tr><td align="left" href="#read" tooltip="read (safe)" >read (safe)</td></tr></table>> fontsize=13];    TodoList -> TodoList [label=<<table border="0"><tr><td align="left" href="#goFirst" tooltip="goFirst (safe)" >goFirst (safe)</td></tr><tr><td align="left" href="#goLast" tooltip="goLast (safe)" >goLast (safe)</td></tr><tr><td align="left" href="#goNext" tooltip="goNext (safe)" >goNext (safe)</td></tr><tr><td align="left" href="#goPrevious" tooltip="goPrevious (safe)" >goPrevious (safe)</td></tr><tr><td align="left" href="#listActive" tooltip="listActive (safe)" >listActive (safe)</td></tr><tr><td align="left" href="#listAll" tooltip="listAll (safe)" >listAll (safe)</td></tr><tr><td align="left" href="#listCompleted" tooltip="listCompleted (safe)" >listCompleted (safe)</td></tr></table>> fontsize=13];    Home [label = <Home> URL="#Home" target="_parent"]    Related [label = <Related> URL="#Related" target="_parent"]    TodoList [label = <TodoList> URL="#TodoList" target="_parent"]    TodoItem [label = <TodoItem> URL="#TodoItem" target="_parent"]}');
-        renderGraph("#asd-graph-name", 'digraph application_state_diagram {  graph [    labelloc="t";    fontname="Helvetica"    label="MVC ToDo List";    URL="index.html" target="_parent"  ];  node [shape = box, style = "bold,filled" fillcolor="lightgray"];    TodoItem [margin=0.02, label=<<table cellspacing="0" cellpadding="5" border="0"><tr><td>TodoItem<br />(id)<br />(title)<br />(completed)<br /></td></tr></table>>,shape=box URL="#TodoItem" target="_parent"]    TodoList [margin=0.02, label=<<table cellspacing="0" cellpadding="5" border="0"><tr><td>TodoList<br />(id)<br />(title)<br />(completed)<br /></td></tr></table>>,shape=box URL="#TodoList" target="_parent"]    Home -> Related [label = <goRelated> URL="#goRelated" target="_parent" fontsize=13 class="goRelated" penwidth=1.5];    Home -> TodoList [label = <listAll> URL="#listAll" target="_parent" fontsize=13 class="listAll" penwidth=1.5];    Related -> Home [label = <goHome> URL="#goHome" target="_parent" fontsize=13 class="goHome" penwidth=1.5];    Related -> TodoItem [label=<<table border="0"><tr><td align="left" href="#add" tooltip="add (unsafe)" >add (unsafe)</td></tr><tr><td align="left" href="#edit" tooltip="edit (idempotent)" >edit (idempotent)</td></tr><tr><td align="left" href="#read" tooltip="read (safe)" >read (safe)</td></tr></table>> fontsize=13];    Related -> TodoList [label=<<table border="0"><tr><td align="left" href="#listActive" tooltip="listActive (safe)" >listActive (safe)</td></tr><tr><td align="left" href="#listAll" tooltip="listAll (safe)" >listAll (safe)</td></tr><tr><td align="left" href="#listCompleted" tooltip="listCompleted (safe)" >listCompleted (safe)</td></tr><tr><td align="left" href="#remove" tooltip="remove (idempotent)" >remove (idempotent)</td></tr></table>> fontsize=13];    TodoItem -> Related [label = <goRelated> URL="#goRelated" target="_parent" fontsize=13 class="goRelated" penwidth=1.5];    TodoItem -> TodoItem [label=<<table border="0"><tr><td align="left" href="#clearCompleted" tooltip="clearCompleted (idempotent)" >clearCompleted (idempotent)</td></tr><tr><td align="left" href="#edit" tooltip="edit (idempotent)" >edit (idempotent)</td></tr><tr><td align="left" href="#markCompleted" tooltip="markCompleted (idempotent)" >markCompleted (idempotent)</td></tr></table>> fontsize=13];    TodoItem -> TodoList [label=<<table border="0"><tr><td align="left" href="#listAll" tooltip="listAll (safe)" >listAll (safe)</td></tr><tr><td align="left" href="#remove" tooltip="remove (idempotent)" >remove (idempotent)</td></tr></table>> fontsize=13];    TodoList -> Home [label = <goHome> URL="#goHome" target="_parent" fontsize=13 class="goHome" penwidth=1.5];    TodoList -> Related [label = <goRelated> URL="#goRelated" target="_parent" fontsize=13 class="goRelated" penwidth=1.5];    TodoList -> TodoItem [label=<<table border="0"><tr><td align="left" href="#add" tooltip="add (unsafe)" >add (unsafe)</td></tr><tr><td align="left" href="#read" tooltip="read (safe)" >read (safe)</td></tr></table>> fontsize=13];    TodoList -> TodoList [label=<<table border="0"><tr><td align="left" href="#goFirst" tooltip="goFirst (safe)" >goFirst (safe)</td></tr><tr><td align="left" href="#goLast" tooltip="goLast (safe)" >goLast (safe)</td></tr><tr><td align="left" href="#goNext" tooltip="goNext (safe)" >goNext (safe)</td></tr><tr><td align="left" href="#goPrevious" tooltip="goPrevious (safe)" >goPrevious (safe)</td></tr><tr><td align="left" href="#listActive" tooltip="listActive (safe)" >listActive (safe)</td></tr><tr><td align="left" href="#listAll" tooltip="listAll (safe)" >listAll (safe)</td></tr><tr><td align="left" href="#listCompleted" tooltip="listCompleted (safe)" >listCompleted (safe)</td></tr></table>> fontsize=13];    Home [label = <Home> URL="#Home" target="_parent"]    Related [label = <Related> URL="#Related" target="_parent"]    TodoList [label = <TodoList> URL="#TodoList" target="_parent"]    TodoItem [label = <TodoItem> URL="#TodoItem" target="_parent"]}');
-        setupTagTrigger();
-        setupModeSwitch('asd-show-id', 'asd-graph-id', 'asd-graph-name');
-        setupModeSwitch('asd-show-name', 'asd-graph-name', 'asd-graph-id');
-        applySmoothScrollToLinks(document.querySelectorAll('a[href^="#"]'));
-        
-    });
+    document.addEventListener('DOMContentLoaded', async function() {
+        try {
+            await Promise.all([
+                    renderGraph("#asd-graph-id", 'digraph application_state_diagram {  graph [    labelloc="t";    fontname="Helvetica"    label="MVC ToDo List";    URL="index.html" target="_parent"  ];  node [shape = box, style = "bold,filled" fillcolor="lightgray"];    TodoItem [margin=0.02, label=<<table cellspacing="0" cellpadding="5" border="0"><tr><td>TodoItem<br />(id)<br />(title)<br />(completed)<br /></td></tr></table>>,shape=box URL="#TodoItem" target="_parent"]    TodoList [margin=0.02, label=<<table cellspacing="0" cellpadding="5" border="0"><tr><td>TodoList<br />(id)<br />(title)<br />(completed)<br /></td></tr></table>>,shape=box URL="#TodoList" target="_parent"]    Home -> Related [label = <goRelated (safe)> URL="#goRelated" target="_parent" fontsize=13 class="goRelated" penwidth=1.5];    Home -> TodoList [label = <listAll (safe)> URL="#listAll" target="_parent" fontsize=13 class="listAll" penwidth=1.5];    Related -> Home [label = <goHome (safe)> URL="#goHome" target="_parent" fontsize=13 class="goHome" penwidth=1.5];    Related -> TodoItem [label=<<table border="0"><tr><td align="left" href="#add" tooltip="add (unsafe)" >add (unsafe)</td></tr><tr><td align="left" href="#edit" tooltip="edit (idempotent)" >edit (idempotent)</td></tr><tr><td align="left" href="#read" tooltip="read (safe)" >read (safe)</td></tr></table>> fontsize=13];    Related -> TodoList [label=<<table border="0"><tr><td align="left" href="#listActive" tooltip="listActive (safe)" >listActive (safe)</td></tr><tr><td align="left" href="#listAll" tooltip="listAll (safe)" >listAll (safe)</td></tr><tr><td align="left" href="#listCompleted" tooltip="listCompleted (safe)" >listCompleted (safe)</td></tr><tr><td align="left" href="#remove" tooltip="remove (idempotent)" >remove (idempotent)</td></tr></table>> fontsize=13];    TodoItem -> Related [label = <goRelated (safe)> URL="#goRelated" target="_parent" fontsize=13 class="goRelated" penwidth=1.5];    TodoItem -> TodoItem [label=<<table border="0"><tr><td align="left" href="#clearCompleted" tooltip="clearCompleted (idempotent)" >clearCompleted (idempotent)</td></tr><tr><td align="left" href="#edit" tooltip="edit (idempotent)" >edit (idempotent)</td></tr><tr><td align="left" href="#markCompleted" tooltip="markCompleted (idempotent)" >markCompleted (idempotent)</td></tr></table>> fontsize=13];    TodoItem -> TodoList [label=<<table border="0"><tr><td align="left" href="#listAll" tooltip="listAll (safe)" >listAll (safe)</td></tr><tr><td align="left" href="#remove" tooltip="remove (idempotent)" >remove (idempotent)</td></tr></table>> fontsize=13];    TodoList -> Home [label = <goHome (safe)> URL="#goHome" target="_parent" fontsize=13 class="goHome" penwidth=1.5];    TodoList -> Related [label = <goRelated (safe)> URL="#goRelated" target="_parent" fontsize=13 class="goRelated" penwidth=1.5];    TodoList -> TodoItem [label=<<table border="0"><tr><td align="left" href="#add" tooltip="add (unsafe)" >add (unsafe)</td></tr><tr><td align="left" href="#read" tooltip="read (safe)" >read (safe)</td></tr></table>> fontsize=13];    TodoList -> TodoList [label=<<table border="0"><tr><td align="left" href="#goFirst" tooltip="goFirst (safe)" >goFirst (safe)</td></tr><tr><td align="left" href="#goLast" tooltip="goLast (safe)" >goLast (safe)</td></tr><tr><td align="left" href="#goNext" tooltip="goNext (safe)" >goNext (safe)</td></tr><tr><td align="left" href="#goPrevious" tooltip="goPrevious (safe)" >goPrevious (safe)</td></tr><tr><td align="left" href="#listActive" tooltip="listActive (safe)" >listActive (safe)</td></tr><tr><td align="left" href="#listAll" tooltip="listAll (safe)" >listAll (safe)</td></tr><tr><td align="left" href="#listCompleted" tooltip="listCompleted (safe)" >listCompleted (safe)</td></tr></table>> fontsize=13];    Home [label = <Home> URL="#Home" target="_parent"]    Related [label = <Related> URL="#Related" target="_parent"]    TodoList [label = <TodoList> URL="#TodoList" target="_parent"]    TodoItem [label = <TodoItem> URL="#TodoItem" target="_parent"]}'),
+                    renderGraph("#asd-graph-name", 'digraph application_state_diagram {  graph [    labelloc="t";    fontname="Helvetica"    label="MVC ToDo List";    URL="index.html" target="_parent"  ];  node [shape = box, style = "bold,filled" fillcolor="lightgray"];    TodoItem [margin=0.02, label=<<table cellspacing="0" cellpadding="5" border="0"><tr><td>TodoItem<br />(id)<br />(title)<br />(completed)<br /></td></tr></table>>,shape=box URL="#TodoItem" target="_parent"]    TodoList [margin=0.02, label=<<table cellspacing="0" cellpadding="5" border="0"><tr><td>TodoList<br />(id)<br />(title)<br />(completed)<br /></td></tr></table>>,shape=box URL="#TodoList" target="_parent"]    Home -> Related [label = <goRelated> URL="#goRelated" target="_parent" fontsize=13 class="goRelated" penwidth=1.5];    Home -> TodoList [label = <listAll> URL="#listAll" target="_parent" fontsize=13 class="listAll" penwidth=1.5];    Related -> Home [label = <goHome> URL="#goHome" target="_parent" fontsize=13 class="goHome" penwidth=1.5];    Related -> TodoItem [label=<<table border="0"><tr><td align="left" href="#add" tooltip="add (unsafe)" >add (unsafe)</td></tr><tr><td align="left" href="#edit" tooltip="edit (idempotent)" >edit (idempotent)</td></tr><tr><td align="left" href="#read" tooltip="read (safe)" >read (safe)</td></tr></table>> fontsize=13];    Related -> TodoList [label=<<table border="0"><tr><td align="left" href="#listActive" tooltip="listActive (safe)" >listActive (safe)</td></tr><tr><td align="left" href="#listAll" tooltip="listAll (safe)" >listAll (safe)</td></tr><tr><td align="left" href="#listCompleted" tooltip="listCompleted (safe)" >listCompleted (safe)</td></tr><tr><td align="left" href="#remove" tooltip="remove (idempotent)" >remove (idempotent)</td></tr></table>> fontsize=13];    TodoItem -> Related [label = <goRelated> URL="#goRelated" target="_parent" fontsize=13 class="goRelated" penwidth=1.5];    TodoItem -> TodoItem [label=<<table border="0"><tr><td align="left" href="#clearCompleted" tooltip="clearCompleted (idempotent)" >clearCompleted (idempotent)</td></tr><tr><td align="left" href="#edit" tooltip="edit (idempotent)" >edit (idempotent)</td></tr><tr><td align="left" href="#markCompleted" tooltip="markCompleted (idempotent)" >markCompleted (idempotent)</td></tr></table>> fontsize=13];    TodoItem -> TodoList [label=<<table border="0"><tr><td align="left" href="#listAll" tooltip="listAll (safe)" >listAll (safe)</td></tr><tr><td align="left" href="#remove" tooltip="remove (idempotent)" >remove (idempotent)</td></tr></table>> fontsize=13];    TodoList -> Home [label = <goHome> URL="#goHome" target="_parent" fontsize=13 class="goHome" penwidth=1.5];    TodoList -> Related [label = <goRelated> URL="#goRelated" target="_parent" fontsize=13 class="goRelated" penwidth=1.5];    TodoList -> TodoItem [label=<<table border="0"><tr><td align="left" href="#add" tooltip="add (unsafe)" >add (unsafe)</td></tr><tr><td align="left" href="#read" tooltip="read (safe)" >read (safe)</td></tr></table>> fontsize=13];    TodoList -> TodoList [label=<<table border="0"><tr><td align="left" href="#goFirst" tooltip="goFirst (safe)" >goFirst (safe)</td></tr><tr><td align="left" href="#goLast" tooltip="goLast (safe)" >goLast (safe)</td></tr><tr><td align="left" href="#goNext" tooltip="goNext (safe)" >goNext (safe)</td></tr><tr><td align="left" href="#goPrevious" tooltip="goPrevious (safe)" >goPrevious (safe)</td></tr><tr><td align="left" href="#listActive" tooltip="listActive (safe)" >listActive (safe)</td></tr><tr><td align="left" href="#listAll" tooltip="listAll (safe)" >listAll (safe)</td></tr><tr><td align="left" href="#listCompleted" tooltip="listCompleted (safe)" >listCompleted (safe)</td></tr></table>> fontsize=13];    Home [label = <Home> URL="#Home" target="_parent"]    Related [label = <Related> URL="#Related" target="_parent"]    TodoList [label = <TodoList> URL="#TodoList" target="_parent"]    TodoItem [label = <TodoItem> URL="#TodoItem" target="_parent"]}')
+            ]);
+            setupTagTrigger();
+            setupModeSwitch('asd-show-id', 'asd-graph-id', 'asd-graph-name');
+            setupModeSwitch('asd-show-name', 'asd-graph-name', 'asd-graph-id');
+            applySmoothScrollToLinks(document.querySelectorAll('a[href^="#"]'));
+            
+        } catch (error) {
+               console.error("Error in main process:", error);
+        }});
 </script>
 
 <div class="asd-view-selector">
+    <span class="selector-label">View:</span>
     <input type="radio" id="asd-show-id" checked name="asd-view-selector">
     <label for="asd-show-id">id</label>
     <input type="radio" id="asd-show-name" name="asd-view-selector">
@@ -173,6 +309,54 @@ const setupModeSwitch = (switchId, graphId, otherGraphId) => {
 </ul>
 
 <h2>Semantic Descriptors</h2>
+
+<div class="descriptor-list">
+
+<ul>
+<li><span class="indicator unsafe" data-tooltip="unsafe"> </span> <a href="#add">add</a></li>
+<li><span class="indicator idempotent" data-tooltip="idempotent"> </span> <a href="#clearCompleted">clearCompleted</a></li>
+<li><span class="indicator semantic" data-tooltip="semantic"> </span> <a href="#completed">completed</a></li>
+<li><span class="indicator idempotent" data-tooltip="idempotent"> </span> <a href="#edit">edit</a></li>
+<li><span class="indicator safe" data-tooltip="safe"> </span> <a href="#goFirst">goFirst</a></li>
+<li><span class="indicator safe" data-tooltip="safe"> </span> <a href="#goHome">goHome</a></li>
+<li><span class="indicator safe" data-tooltip="safe"> </span> <a href="#goLast">goLast</a></li>
+<li><span class="indicator safe" data-tooltip="safe"> </span> <a href="#goNext">goNext</a></li>
+<li><span class="indicator safe" data-tooltip="safe"> </span> <a href="#goPrevious">goPrevious</a></li>
+<li><span class="indicator safe" data-tooltip="safe"> </span> <a href="#goRelated">goRelated</a></li>
+<li><span class="indicator semantic" data-tooltip="semantic"> </span> <a href="#Home">Home</a></li>
+<li><span class="indicator semantic" data-tooltip="semantic"> </span> <a href="#id">id</a></li>
+<li><span class="indicator safe" data-tooltip="safe"> </span> <a href="#listActive">listActive</a></li>
+<li><span class="indicator safe" data-tooltip="safe"> </span> <a href="#listAll">listAll</a></li>
+<li><span class="indicator safe" data-tooltip="safe"> </span> <a href="#listCompleted">listCompleted</a></li>
+<li><span class="indicator idempotent" data-tooltip="idempotent"> </span> <a href="#markCompleted">markCompleted</a></li>
+<li><span class="indicator safe" data-tooltip="safe"> </span> <a href="#read">read</a></li>
+<li><span class="indicator semantic" data-tooltip="semantic"> </span> <a href="#Related">Related</a></li>
+<li><span class="indicator idempotent" data-tooltip="idempotent"> </span> <a href="#remove">remove</a></li>
+<li><span class="indicator semantic" data-tooltip="semantic"> </span> <a href="#title">title</a></li>
+<li><span class="indicator semantic" data-tooltip="semantic"> </span> <a href="#TodoItem">TodoItem</a></li>
+<li><span class="indicator semantic" data-tooltip="semantic"> </span> <a href="#TodoList">TodoList</a></li>
+</ul>
+
+</div>
+
+<div class="legend">
+    <div class="legend-item">
+        <span class="legend-icon semantic"></span>
+        Semantic
+    </div>
+    <div class="legend-item">
+        <span class="legend-icon safe"></span>
+        Safe
+    </div>
+    <div class="legend-item">
+        <span class="legend-icon unsafe"></span>
+        Unsafe
+    </div>
+    <div class="legend-item">
+        <span class="legend-icon idempotent"></span>
+        Idempotent
+    </div>
+</div>
 
 <h3><a id="add">add</a></h3>
 
