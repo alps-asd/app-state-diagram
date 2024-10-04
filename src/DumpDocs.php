@@ -36,6 +36,7 @@ final class DumpDocs
     /** @var "html"|"md" */
     private $ext = 'md';
 
+    /** @psalm-suppress PossiblyInvalidPropertyFetch */
     private function getSemanticDoc(AbstractDescriptor $descriptor): string
     {
         $descriptorSemantic = $this->getDescriptorInDescriptor($descriptor);
