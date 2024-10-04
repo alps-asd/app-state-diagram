@@ -4,6 +4,7 @@
 declare(strict_types=1);
 
 use Koriym\AppStateDiagram\ConfigFactory;
+use Koriym\AppStateDiagram\Diagram;
 use Koriym\AppStateDiagram\Exception\AlpsFileNotReadableException;
 use Koriym\AppStateDiagram\PutDiagram;
 use Koriym\DataFile\Exception\DataFileNotFoundException;
@@ -23,7 +24,7 @@ usage: asd [options] alps_file
 EOT;
     exit(0);
 }
-$options = getopt('c:w::m::', ['config:', 'watch::', 'mode::', 'port::']);
+$options = getopt('c:e::w::m::', ['config:', 'echo::', 'watch::', 'mode::', 'port::']);
 if ($argc === 1) {
     $options['c'] = getcwd();
 }
@@ -53,7 +54,14 @@ if ($config->watch) {
 }
 
 try {
-    (new PutDiagram())($config);
+    $index = (new Diagram())($config);
+    $isEcho =  (isset($options['e']) || isset($options['echo']));
+    if ($isEcho) {
+        echo $index->content;
+        exit;
+    }
+    file_put_contents($index->file, $index->content);
+    echo "ASD generated. {$index->file}" . PHP_EOL;
 } catch (Exception $e) {
     $shortName = (new \ReflectionClass($e))->getShortName();
     $msg = sprintf("asd: %s(%s)",$shortName, $e->getMessage());

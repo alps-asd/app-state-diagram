@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<alps
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://alps-io.github.io/schemas/alps.xsd">
+    <title>オンライン書店カタログシステム2</title>
+    <doc>オンライン書店の書籍カタログを管理し、ユーザーの購買フローを定義するためのALPSプロファイル。</doc>
+    <link href="https://github.com/example/online-bookstore-api/issues" rel="issue"/>
+
+    <!-- Ontology -->
+    <descriptor id="id" def="https://schema.org/identifier" title="識別子"/>
+    <descriptor id="title" def="https://schema.org/name" title="タイトル"/>
+    <descriptor id="author" def="https://schema.org/author" title="著者"/>
+    <descriptor id="isbn" def="https://schema.org/isbn" title="ISBN"/>
+    <descriptor id="price" def="https://schema.org/price" title="価格"/>
+    <descriptor id="category" def="https://schema.org/category" title="カテゴリー"/>
+    <descriptor id="quantity" def="https://schema.org/quantityValue" title="数量"/>
+    <descriptor id="totalAmount" def="https://schema.org/totalPrice" title="合計金額"/>
+    <descriptor id="userName" def="https://schema.org/name" title="ユーザー名"/>
+    <descriptor id="userEmail" def="https://schema.org/email" title="メールアドレス"/>
+    <descriptor id="shippingAddress" def="https://schema.org/address" title="配送先住所"/>
+    <descriptor id="paymentMethod" def="https://schema.org/paymentMethod" title="支払い方法"/>
+
+    <!-- Taxonomy -->
+    <descriptor id="Home" title="ホーム画面">
+        <descriptor href="#goToCatalog"/>
+        <descriptor href="#goToCart"/>
+    </descriptor>
+
+    <descriptor id="Catalog" def="https://schema.org/CollectionPage" title="書籍カタログ" tag="collection">
+        <descriptor href="#goListBooks"/>
+        <descriptor href="#goSearchBooks"/>
+        <descriptor href="#goGetCategories"/>
+        <descriptor href="#goToBookDetails"/>
+        <descriptor href="#goToCart"/>
+        <descriptor href="#Book"/>
+    </descriptor>
+
+    <descriptor id="Book" def="https://schema.org/Book" title="書籍" tag="item">
+        <descriptor href="#id"/>
+        <descriptor href="#title"/>
+        <descriptor href="#author"/>
+        <descriptor href="#isbn"/>
+        <descriptor href="#price"/>
+        <descriptor href="#category"/>
+        <descriptor href="#doAddToCart"/>
+        <descriptor href="#goToCatalog"/>
+    </descriptor>
+
+    <descriptor id="Category" def="https://schema.org/Category" title="カテゴリー" tag="item">
+        <descriptor href="#id"/>
+        <descriptor href="#title"/>
+    </descriptor>
+
+    <descriptor id="ShoppingCart" def="https://schema.org/ShoppingCart" title="ショッピングカート" tag="collection">
+        <descriptor href="#goListCartItems"/>
+        <descriptor href="#doUpdateQuantity"/>
+        <descriptor href="#doRemoveFromCart"/>
+        <descriptor href="#goToCheckout"/>
+        <descriptor href="#goToCatalog"/>
+    </descriptor>
+
+    <descriptor id="Checkout" title="決済画面">
+        <descriptor href="#doUserInfo"/>
+        <descriptor href="#doShippingInfo"/>
+        <descriptor href="#doPaymentInfo"/>
+        <descriptor href="#doPlaceOrder"/>
+        <descriptor href="#goToCart"/>
+    </descriptor>
+
+    <descriptor id="OrderConfirmation" title="注文確認画面">
+        <descriptor href="#goOrderDetails"/>
+        <descriptor href="#goToHome"/>
+    </descriptor>
+
+    <!-- Choreography -->
+    <descriptor id="goToHome" type="safe" rt="#Home" title="ホーム画面に移動"/>
+    <descriptor id="goToCatalog" type="safe" rt="#Catalog" title="カタログ画面に移動"/>
+    <descriptor id="goToBookDetails" type="safe" rt="#Book" title="書籍詳細画面に移動">
+        <descriptor href="#id"/>
+    </descriptor>
+    <descriptor id="goToCart" type="safe" rt="#ShoppingCart" title="カート画面に移動"/>
+    <descriptor id="goToCheckout" type="safe" rt="#Checkout" title="決済画面に移動"/>
+
+    <descriptor id="goListBooks" type="safe" rt="#Catalog" rel="collection" title="書籍一覧の取得">
+        <doc>カタログ内のすべての書籍一覧を取得する。ページネーションやソート順の指定が可能。</doc>
+    </descriptor>
+    <descriptor id="goSearchBooks" type="safe" rt="#Catalog" rel="collection" title="書籍の検索">
+        <doc>指定された検索クエリに基づいて書籍を検索する。</doc>
+        <descriptor href="#query"/>
+    </descriptor>
+    <descriptor id="query" title="検索クエリ">
+        <doc>検索に使用するキーワードや条件。</doc>
+    </descriptor>
+    <descriptor id="goGetCategories" type="safe" rt="#Catalog" rel="collection" title="カテゴリー一覧の取得">
+        <doc>利用可能なすべての書籍カテゴリーの一覧を取得する。</doc>
+    </descriptor>
+    <descriptor id="goGetBookDetails" type="safe" rt="#Book" rel="item" title="書籍詳細の取得">
+        <doc>指定された書籍IDに基づいて、特定の書籍の詳細情報を取得する。</doc>
+        <descriptor href="#id"/>
+    </descriptor>
+
+    <descriptor id="doAddToCart" type="unsafe" rt="#ShoppingCart" rel="collection" title="カートに追加">
+        <doc>指定された書籍をショッピングカートに追加する。</doc>
+        <descriptor href="#id"/>
+        <descriptor href="#quantity"/>
+    </descriptor>
+    <descriptor id="goListCartItems" type="safe" rt="#ShoppingCart" rel="collection" title="カート内アイテム一覧の取得"/>
+    <descriptor id="doUpdateQuantity" type="idempotent" rt="#ShoppingCart" title="カート内アイテムの数量更新">
+        <descriptor href="#id"/>
+        <descriptor href="#quantity"/>
+    </descriptor>
+    <descriptor id="doRemoveFromCart" type="idempotent" rt="#ShoppingCart" title="カートからアイテムを削除">
+        <descriptor href="#id"/>
+    </descriptor>
+
+    <descriptor id="doUserInfo" type="unsafe" rt="#Checkout" title="ユーザー情報の入力">
+        <descriptor href="#userName"/>
+        <descriptor href="#userEmail"/>
+    </descriptor>
+    <descriptor id="doShippingInfo" type="unsafe" rt="#Checkout" title="配送情報の入力">
+        <descriptor href="#shippingAddress"/>
+    </descriptor>
+    <descriptor id="doPaymentInfo" type="unsafe" rt="#Checkout" title="支払い情報の入力">
+        <descriptor href="#paymentMethod"/>
+    </descriptor>
+    <descriptor id="doPlaceOrder" type="unsafe" rt="#OrderConfirmation" title="注文の確定">
+        <doc>ユーザーの入力情報を基に注文を確定し、注文確認画面に遷移する。</doc>
+    </descriptor>
+
+    <descriptor id="goOrderDetails" type="safe" rt="#OrderConfirmation" title="注文詳細の表示">
+        <doc>確定した注文の詳細情報を表示する。</doc>
+    </descriptor>
+</alps>

@@ -44,9 +44,10 @@ const applySmoothScrollToLinks = (links) => {
 
 // Renders the graph and applies smooth scroll to links
 const renderGraph = (graphId, dotString) => {
-    const graphviz = d3.select(graphId).graphviz();
-    graphviz.renderDot(dotString).on('end', () => {
-        applySmoothScrollToLinks(document.querySelectorAll('svg a[*|href^="#"]'));
+    d3.select(graphId).graphviz()
+        .zoom(false)
+        .renderDot(dotString).on('end', () => {
+            applySmoothScrollToLinks(document.querySelectorAll('svg a[*|href^="#"]'));
     });
 };
 

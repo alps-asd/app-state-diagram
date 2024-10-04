@@ -19,6 +19,7 @@ use function uasort;
 use const ENT_QUOTES;
 use const PHP_EOL;
 
+/** @psalm-suppress InvalidPropertyFetch */
 final class IndexPage
 {
     /** @var string */
@@ -29,7 +30,7 @@ final class IndexPage
 
     public function __construct(Config $config)
     {
-        [$profile, $dotId, $dotName, $mode, $alpsProfile, $semanticMd, $linkRelations, $ext, $tags, $htmlTitle, $htmlDoc, $setUpTagEvents] = $this->getDataFromConfig($config);
+        $index = $this->getElements($config);
         $indexJsFile = dirname(__DIR__, 1) . '/docs/assets/js/asd@0.1.0.js';
         $indexJs = sprintf('<script>%s</script>', file_get_contents($indexJsFile));
         $header = <<<EOT
@@ -39,21 +40,30 @@ final class IndexPage
 <script src="https://alps-asd.github.io/app-state-diagram/assets/js/table.js"></script>
 {$indexJs}
 EOT;
+        $legend = IndexPageElements::LEGEND;
         $asd = $config->outputMode === DumpDocs::MODE_MARKDOWN ? '[<img src="profile.svg" alt="application state diagram">](profile.title.svg)' : <<< EOTJS
-<div id="asd-graph-id" style="text-align: center; "></div>
-<div id="asd-graph-name" style="text-align: center; display: none;"></div>
+<div id="svg-container">
+    <div id="asd-graph-id" style="text-align: center; "></div>
+    <div id="asd-graph-name" style="text-align: center; display: none;"></div>
+</div>
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        renderGraph("#asd-graph-id", '{{ dotId }}');
-        renderGraph("#asd-graph-name", '{{ dotName }}');
-        setupTagTrigger();
-        setupModeSwitch('asd-show-id', 'asd-graph-id', 'asd-graph-name');
-        setupModeSwitch('asd-show-name', 'asd-graph-name', 'asd-graph-id');
-        applySmoothScrollToLinks(document.querySelectorAll('a[href^="#"]'));
-        {$setUpTagEvents}
-    });
+    document.addEventListener('DOMContentLoaded', async function() {
+        try {
+            await Promise.all([
+                    renderGraph("#asd-graph-id", '{{ dotId }}'),
+                    renderGraph("#asd-graph-name", '{{ dotName }}')
+            ]);
+            setupTagTrigger();
+            setupModeSwitch('asd-show-id', 'asd-graph-id', 'asd-graph-name');
+            setupModeSwitch('asd-show-name', 'asd-graph-name', 'asd-graph-id');
+            applySmoothScrollToLinks(document.querySelectorAll('a[href^="#"]'));
+            {$index->setUpTagEvents}
+        } catch (error) {
+               console.error("Error in main process:", error);
+        }});
 </script>
 <div class="asd-view-selector">
+    <span class="selector-label">View:</span>
     <input type="radio" id="asd-show-id" checked name="asd-view-selector">
     <label for="asd-show-id">id</label>
     <input type="radio" id="asd-show-name" name="asd-view-selector">
@@ -62,36 +72,42 @@ EOT;
 EOTJS;
 
         $md = <<<EOT
-# {$htmlTitle}
+# {$index->htmlTitle}
 
-{$htmlDoc}
+{$index->htmlDoc}
 
 <!-- Container for the ASDs -->
+
 {$asd}
 
-{$tags}
+{$index->tags}
 
-{$linkRelations}
+{$index->linkRelations}
 
 ## Semantic Descriptors
 
- {$semanticMd}
+<div class="descriptor-list" markdown="1">
+{$index->semanticDescriptorList}
+</div>
+
+{$legend}
+{$index->semanticMd}
 
 ---
 
 ## Profile
-<pre><code>{$alpsProfile}</code></pre>
+<pre><code>{$index->alpsProfile}</code></pre>
 EOT;
-        $this->file = sprintf('%s/index.%s', dirname($profile->alpsFile), $ext);
-        if ($mode === DumpDocs::MODE_MARKDOWN) {
+        $this->file = sprintf('%s/index.%s', dirname($index->profile->alpsFile), $index->ext);
+        if ($index->mode === DumpDocs::MODE_MARKDOWN) {
             $this->content = $md;
 
             return;
         }
 
-        $html = (new MdToHtml())($htmlTitle, $md);
-        $escapedDotId = str_replace("\n", '', $dotId);
-        $escapedDotName = str_replace("\n", '', $dotName);
+        $html = (new MdToHtml())($index->htmlTitle, $md);
+        $escapedDotId = str_replace("\n", '', $index->dotId);
+        $escapedDotName = str_replace("\n", '', $index->dotName);
         $plusHeaderHtml = str_replace(
             '</head>',
             $header . '</head>',
@@ -107,13 +123,13 @@ EOT;
             return '';
         }
 
-        $lines = ['## Tags'];
+        $lines = ['<span class="selector-label">Tags:</span>'];
         $tagKeys = array_keys($tags);
         foreach ($tagKeys as $tag) {
-            $lines[] = sprintf('* <input type="checkbox" id="tag-%s" class="tag-trigger-checkbox" data-tag="%s" name="tag-%s"><label for="tag-%s"> %s</label>', $tag, $tag, $tag, $tag, $tag);
+            $lines[] = sprintf('<span class="selector-option"><input type="checkbox" id="tag-%s" class="tag-trigger-checkbox" data-tag="%s" name="tag-%s"><label for="tag-%s"> %s</label></span>', $tag, $tag, $tag, $tag, $tag);
         }
 
-        return PHP_EOL . implode(PHP_EOL, $lines);
+        return sprintf('<div class="selector-container">%s</div>', implode(PHP_EOL, $lines));
     }
 
     private function linkRelations(LinkRelations $linkRelations): string
@@ -152,8 +168,7 @@ EOT;
         return $setUpTagEvents;
     }
 
-    /** @return list<mixed> */
-    public function getDataFromConfig(Config $config): array
+    private function getElements(Config $config): IndexPageElements
     {
         $draw = new DrawDiagram();
         $profile = new Profile($config->profile, new LabelName(), true);
@@ -167,6 +182,7 @@ EOT;
             'UTF-8'
         );
 
+        $semanticDescriptorList = (new DumpDocs())->getSemanticDescriptorList($profile);
         $semanticMd = PHP_EOL . (new DumpDocs())->getSemanticDescriptorMarkDown($profile, $profile->alpsFile);
         $descriptors = $profile->descriptors;
         uasort($descriptors, static function (AbstractDescriptor $a, AbstractDescriptor $b): int {
@@ -186,6 +202,20 @@ EOT;
         $htmlDoc = nl2br(htmlspecialchars($profile->doc));
         $setUpTagEvents = $this->getSetupTagEvents($config);
 
-        return [$profile, $dotId, $dotName, $mode, $alpsProfile, $semanticMd, $linkRelations, $ext, $tags, $htmlTitle, $htmlDoc, $setUpTagEvents];
+        return new IndexPageElements(
+            $profile,
+            $dotId,
+            $dotName,
+            $mode,
+            $alpsProfile,
+            $semanticMd,
+            $linkRelations,
+            $ext,
+            $tags,
+            $htmlTitle,
+            $htmlDoc,
+            $setUpTagEvents,
+            $semanticDescriptorList
+        );
     }
 }
