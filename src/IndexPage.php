@@ -19,6 +19,7 @@ use function uasort;
 use const ENT_QUOTES;
 use const PHP_EOL;
 
+/** @psalm-suppress InvalidPropertyFetch */
 final class IndexPage
 {
     /** @var string */
@@ -184,7 +185,6 @@ EOT;
         return $setUpTagEvents;
     }
 
-    /** @return list<mixed> */
     private function getElements(Config $config): IndexPageElements
     {
         $draw = new DrawDiagram();
