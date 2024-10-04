@@ -8,17 +8,7 @@ use Michelf\MarkdownExtra;
 
 final class MdToHtml
 {
-    public function __invoke(string $title, string $markdown): string
-    {
-        $htmlDiv = MarkdownExtra::defaultTransform($markdown);
-
-        return /** @lang HTML */<<<EOT
-<html lang="en">
-<head>
-    <title>{$title}</title>
-    <meta charset="UTF-8">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/3.0.1/github-markdown.min.css">
-    <style>
+    public const STYLE = '<style>
         body {
             background-color: white;
         }
@@ -166,7 +156,20 @@ final class MdToHtml
             background-size: 8px 8px;
             background-position: 0 0, 4px 4px;
         }
-    </style>
+    </style>';
+
+    public function __invoke(string $title, string $markdown): string
+    {
+        $style = self::STYLE;
+        $htmlDiv = MarkdownExtra::defaultTransform($markdown);
+
+        return /** @lang HTML */<<<EOT
+<html lang="en">
+<head>
+    <title>{$title}</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/3.0.1/github-markdown.min.css">
+    {$style}
 </head>
 <body>
     <div class="markdown-body">

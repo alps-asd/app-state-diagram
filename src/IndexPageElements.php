@@ -6,6 +6,27 @@ namespace Koriym\AppStateDiagram;
 
 final class IndexPageElements
 {
+    public const LEGEND = '<div class="legend">
+    <div class="legend-item">
+        <span class="legend-icon semantic"></span>
+        Semantic
+    </div>
+    <div class="legend-item">
+        <span class="legend-icon safe"></span>
+        Safe
+    </div>
+    <div class="legend-item">
+        <span class="legend-icon unsafe"></span>
+        Unsafe
+    </div>
+    <div class="legend-item">
+        <span class="legend-icon idempotent"></span>
+        Idempotent
+    </div>
+</div>
+';
+
+    /** @SuppressWarnings(PHPMD.ExcessiveParameterList) */
     public function __construct(
         public readonly Profile $profile,
         public readonly string $dotId,

@@ -40,6 +40,7 @@ final class IndexPage
 <script src="https://alps-asd.github.io/app-state-diagram/assets/js/table.js"></script>
 {$indexJs}
 EOT;
+        $legend = IndexPageElements::LEGEND;
         $asd = $config->outputMode === DumpDocs::MODE_MARKDOWN ? '[<img src="profile.svg" alt="application state diagram">](profile.title.svg)' : <<< EOTJS
 <div id="svg-container">
     <div id="asd-graph-id" style="text-align: center; "></div>
@@ -89,25 +90,7 @@ EOTJS;
 {$index->semanticDescriptorList}
 </div>
 
-<div class="legend">
-    <div class="legend-item">
-        <span class="legend-icon semantic"></span>
-        Semantic
-    </div>
-    <div class="legend-item">
-        <span class="legend-icon safe"></span>
-        Safe
-    </div>
-    <div class="legend-item">
-        <span class="legend-icon unsafe"></span>
-        Unsafe
-    </div>
-    <div class="legend-item">
-        <span class="legend-icon idempotent"></span>
-        Idempotent
-    </div>
-</div>
-
+{$legend}
 {$index->semanticMd}
 
 ---
