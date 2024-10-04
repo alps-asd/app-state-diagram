@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<alps
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://alps-io.github.io/schemas/alps.xsd">
+    <descriptor id="Home" title="Home">
+        <descriptor href="#goState" />
+    </descriptor>
+    <descriptor id="State" title="State">
+        <descriptor href="#goNext" />
+        <descriptor href="#goPrev" />
+    </descriptor>
+    <descriptor id="goState" title="go state" type="safe" rt="#State" />
+    <descriptor id="goNext" title="go next state" type="safe" rt="#State" />
+    <descriptor id="goPrev" title="go prev state" type="safe" rt="#State" />
+</alps>
