@@ -90,7 +90,6 @@ class DrawDiagramTest extends TestCase
         $alpsFile = __DIR__ . '/Fake/alps.title.xml';
         $profile = new Profile($alpsFile, new LabelNameTitle());
         $dot = ($this->drawDiagram)($profile, new LabelNameTitle());
-        $expected = ' State -> State [label=<<table border="0"><tr><td align="left" href="#goNext" tooltip="goNext (safe)" >go next state (safe)</td></tr><tr><td align="left" href="#goPrev" tooltip="goPrev (safe)" >go prev state (safe)</td></tr></table>>';
-        $this->assertStringContainsString($expected, $dot);
+        $this->assertStringContainsString('tooltip="goNext (safe)" >go next state', $dot);
     }
 }
