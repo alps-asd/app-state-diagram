@@ -47,12 +47,11 @@ final class Edge implements Stringable
         $trs = '';
         foreach ($links as $link) {
             $trs .= sprintf(
-                '<tr><td align="left" href="#%s" tooltip="%s (%s)" >%s (%s)</td></tr>',
+                '<tr><td align="left" href="#%s" tooltip="%s (%s)" >%s</td></tr>',
                 $link->transDescriptor->id,
                 $link->transDescriptor->id,
                 $link->transDescriptor->type,
-                $link->label,
-                $link->transDescriptor->type
+                $link->label
             );
         }
 
