@@ -105,10 +105,10 @@
         <xs:attribute name="ext" type="xs:string"/>
         <xs:attribute name="name" type="xs:string"/>
         <xs:attribute name="title" type="xs:string"/>
-        <xs:attribute name="rt" type="xs:string"/>
+        <xs:attribute name="rt" type="rtType"/>
         <xs:attribute name="def" type="xs:anyURI"/>
         <xs:attribute name="tag" type="xs:string"/>
-        <xs:attribute name="rel" type="xs:string"/>
+        <xs:attribute name="rel" type="relType"/>
         <xs:anyAttribute/>
     </xs:complexType>
     <xs:complexType name="extType">
@@ -149,4 +149,146 @@
             </xs:extension>
         </xs:simpleContent>
     </xs:complexType>
+    <xs:simpleType name="rtType">
+        <xs:restriction base="xs:string">
+            <xs:pattern value=".*#.*"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="relType">
+        <xs:union memberTypes="predefinedRelType strictUriType"/>
+    </xs:simpleType>
+    <xs:simpleType name="predefinedRelType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="about"/>
+            <xs:enumeration value="acl"/>
+            <xs:enumeration value="alternate"/>
+            <xs:enumeration value="amphtml"/>
+            <xs:enumeration value="appendix"/>
+            <xs:enumeration value="apple-touch-icon"/>
+            <xs:enumeration value="apple-touch-startup-image"/>
+            <xs:enumeration value="archives"/>
+            <xs:enumeration value="author"/>
+            <xs:enumeration value="blocked-by"/>
+            <xs:enumeration value="bookmark"/>
+            <xs:enumeration value="c2pa-manifest"/>
+            <xs:enumeration value="canonical"/>
+            <xs:enumeration value="chapter"/>
+            <xs:enumeration value="cite-as"/>
+            <xs:enumeration value="collection"/>
+            <xs:enumeration value="compression-dictionary"/>
+            <xs:enumeration value="contents"/>
+            <xs:enumeration value="convertedfrom"/>
+            <xs:enumeration value="copyright"/>
+            <xs:enumeration value="create-form"/>
+            <xs:enumeration value="current"/>
+            <xs:enumeration value="describedby"/>
+            <xs:enumeration value="describes"/>
+            <xs:enumeration value="disclosure"/>
+            <xs:enumeration value="dns-prefetch"/>
+            <xs:enumeration value="duplicate"/>
+            <xs:enumeration value="edit"/>
+            <xs:enumeration value="edit-form"/>
+            <xs:enumeration value="edit-media"/>
+            <xs:enumeration value="enclosure"/>
+            <xs:enumeration value="external"/>
+            <xs:enumeration value="first"/>
+            <xs:enumeration value="glossary"/>
+            <xs:enumeration value="help"/>
+            <xs:enumeration value="hosts"/>
+            <xs:enumeration value="hub"/>
+            <xs:enumeration value="ice-server"/>
+            <xs:enumeration value="icon"/>
+            <xs:enumeration value="index"/>
+            <xs:enumeration value="intervalafter"/>
+            <xs:enumeration value="intervalbefore"/>
+            <xs:enumeration value="intervalcontains"/>
+            <xs:enumeration value="intervaldisjoint"/>
+            <xs:enumeration value="intervalduring"/>
+            <xs:enumeration value="intervalequals"/>
+            <xs:enumeration value="intervalfinishedby"/>
+            <xs:enumeration value="intervalfinishes"/>
+            <xs:enumeration value="intervalin"/>
+            <xs:enumeration value="intervalmeets"/>
+            <xs:enumeration value="intervalmetby"/>
+            <xs:enumeration value="intervaloverlappedby"/>
+            <xs:enumeration value="intervaloverlaps"/>
+            <xs:enumeration value="intervalstartedby"/>
+            <xs:enumeration value="intervalstarts"/>
+            <xs:enumeration value="item"/>
+            <xs:enumeration value="last"/>
+            <xs:enumeration value="latest-version"/>
+            <xs:enumeration value="license"/>
+            <xs:enumeration value="linkset"/>
+            <xs:enumeration value="lrdd"/>
+            <xs:enumeration value="manifest"/>
+            <xs:enumeration value="mask-icon"/>
+            <xs:enumeration value="me"/>
+            <xs:enumeration value="media-feed"/>
+            <xs:enumeration value="memento"/>
+            <xs:enumeration value="micropub"/>
+            <xs:enumeration value="modulepreload"/>
+            <xs:enumeration value="monitor"/>
+            <xs:enumeration value="monitor-group"/>
+            <xs:enumeration value="next"/>
+            <xs:enumeration value="next-archive"/>
+            <xs:enumeration value="nofollow"/>
+            <xs:enumeration value="noopener"/>
+            <xs:enumeration value="noreferrer"/>
+            <xs:enumeration value="opener"/>
+            <xs:enumeration value="openid2.local_id"/>
+            <xs:enumeration value="openid2.provider"/>
+            <xs:enumeration value="original"/>
+            <xs:enumeration value="p3pv1"/>
+            <xs:enumeration value="payment"/>
+            <xs:enumeration value="pingback"/>
+            <xs:enumeration value="preconnect"/>
+            <xs:enumeration value="predecessor-version"/>
+            <xs:enumeration value="prefetch"/>
+            <xs:enumeration value="preload"/>
+            <xs:enumeration value="prerender"/>
+            <xs:enumeration value="prev"/>
+            <xs:enumeration value="prev-archive"/>
+            <xs:enumeration value="preview"/>
+            <xs:enumeration value="previous"/>
+            <xs:enumeration value="privacy-policy"/>
+            <xs:enumeration value="profile"/>
+            <xs:enumeration value="publication"/>
+            <xs:enumeration value="related"/>
+            <xs:enumeration value="replies"/>
+            <xs:enumeration value="restconf"/>
+            <xs:enumeration value="ruleinput"/>
+            <xs:enumeration value="search"/>
+            <xs:enumeration value="section"/>
+            <xs:enumeration value="self"/>
+            <xs:enumeration value="service"/>
+            <xs:enumeration value="service-desc"/>
+            <xs:enumeration value="service-doc"/>
+            <xs:enumeration value="service-meta"/>
+            <xs:enumeration value="sip-trunking-capability"/>
+            <xs:enumeration value="sponsored"/>
+            <xs:enumeration value="start"/>
+            <xs:enumeration value="status"/>
+            <xs:enumeration value="stylesheet"/>
+            <xs:enumeration value="subsection"/>
+            <xs:enumeration value="successor-version"/>
+            <xs:enumeration value="sunset"/>
+            <xs:enumeration value="tag"/>
+            <xs:enumeration value="terms-of-service"/>
+            <xs:enumeration value="timegate"/>
+            <xs:enumeration value="timemap"/>
+            <xs:enumeration value="type"/>
+            <xs:enumeration value="ugc"/>
+            <xs:enumeration value="up"/>
+            <xs:enumeration value="version-history"/>
+            <xs:enumeration value="via"/>
+            <xs:enumeration value="webmention"/>
+            <xs:enumeration value="working-copy"/>
+            <xs:enumeration value="working-copy-of"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="strictUriType">
+        <xs:restriction base="xs:anyURI">
+            <xs:pattern value="https?://.*"/>
+        </xs:restriction>
+    </xs:simpleType>
 </xs:schema>
