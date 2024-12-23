@@ -33,7 +33,7 @@ jobs:
         run: box compile
 
       - name: Upload PHAR
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: asd.phar
           path: bin/asd.phar
