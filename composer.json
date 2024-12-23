@@ -17,12 +17,11 @@
         "ext-dom": "*",
         "michelf/php-markdown": "^1.9",
         "seld/jsonlint": "^1.8",
-        "koriym/data-file": "^1.0",
-        "bamarni/composer-bin-plugin": "^1.4"
+        "koriym/data-file": "^1.0"
     },
     "require-dev": {
-        "roave/security-advisories": "dev-master",
         "phpunit/phpunit": "^9.6.10",
+        "bamarni/composer-bin-plugin": "^1.4",
         "rector/rector": "^1.1"
     },
     "autoload": {
@@ -44,11 +43,15 @@
         "/bin/asd"
     ],
     "scripts": {
+        "post-install-cmd": "@composer bin all install --ansi",
+        "post-update-cmd": ["@composer bin all update --ansi", "cd asd-sync && npm install"],
+        "bin": "echo 'bin not installed'",
         "docs" : [
             "bin/asd -c docs/blog/asd.xml docs/blog/profile.xml",
             "bin/asd -c docs/blog/asd.md.xml docs/blog/profile.md.xml",
-            "bin/asd docs/todomvc/profile.json && bin/asd --or-tag=tag1 --color=red docs/filter/profile.json",
-            "bin/asd -c docs-md/blog/asd.xml docs-md/blog/profile.xml"
+            "bin/asd docs/todomvc/profile.json",
+            "bin/asd -c docs-md/blog/asd.xml docs-md/blog/profile.xml",
+            "bin/asd docs/bookstore/bookstore.xml"
         ],
         "md" : "bin/asd -c docs/blog/asd.md.xml docs/blog/profile.xml",
         "test": ["./vendor/bin/phpunit"],
@@ -71,8 +74,8 @@
     },
     "extra": {
         "bamarni-bin": {
-            "bin-links": false,
-            "forward-command": false
+            "bin-links": true,
+            "forward-command": true
         }
     }
 }
