@@ -24,7 +24,7 @@
             width: 100%;
             height: auto;
             display: flex;
-            justify-content: center;
+            justify-content: left;
             align-items: center;
         }
         .asd-view-selector {
@@ -152,9 +152,9 @@
             background-position: 0 0, 4px 4px;
         }
     </style>
-<script src="https://d3js.org/d3.v5.min.js"></script>
-<script src="https://unpkg.com/viz.js@1.8.1/viz.js" type="javascript/worker"></script>
-<script src="https://unpkg.com/d3-graphviz@2.1.0/build/d3-graphviz.min.js"></script>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://unpkg.com/@hpcc-js/wasm/dist/graphviz.umd.js" type="javascript/worker"></script>
+    <script src="https://unpkg.com/d3-graphviz@5.6.0/build/d3-graphviz.min.js"></script>
 <script src="https://alps-asd.github.io/app-state-diagram/assets/js/table.js"></script>
 <script>// Applies smooth scroll to links
 const ease = (t, b, c, d) => {
@@ -204,6 +204,7 @@ const applySmoothScrollToLinks = (links) => {
 const renderGraph = (graphId, dotString) => {
     d3.select(graphId).graphviz()
         .zoom(false)
+        .fit(true)
         .renderDot(dotString).on('end', () => {
             applySmoothScrollToLinks(document.querySelectorAll('svg a[*|href^="#"]'));
     });
