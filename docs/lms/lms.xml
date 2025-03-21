@@ -1,0 +1,993 @@
+<alps version="1.0"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="https://alps-io.github.io/schemas/alps.xsd">
+    <title>学習管理システム (LMS)</title>
+    <doc>エンタープライズグレードの学習管理システムの完全なセマンティックボキャブラリとインタラクションモデルを定義する包括的な ALPS (Application-Level Profile Semantics) プロファイル。この仕様は、ユーザー管理 (生徒、講師、管理者)、コースの作成と配信、コンテンツ管理、評価、採点、コミュニケーションツール、コラボレーション機能、分析、アクセシビリティなど、オンライン教育のすべての側面をカバーしています。このプロファイルは、セマンティック記述子、状態遷移、およびナビゲーションパターンに編成されており、教育テクノロジープラットフォーム全体での標準化された実装と相互運用性をサポートします。</doc>
+    <!-- セクション 1: セマンティック定義 (オントロジー) -->
+
+    <!-- コアユーザータイプ -->
+    <descriptor id="user" title="ユーザー" def="https://schema.org/Person">
+        <descriptor id="userId" title="ユーザー識別子" def="https://schema.org/identifier"/>
+        <descriptor id="userName" title="ユーザー名" def="https://schema.org/name"/>
+        <descriptor id="userEmail" title="ユーザーメールアドレス" def="https://schema.org/email"/>
+        <descriptor id="userPassword" title="ユーザーパスワード"/>
+        <descriptor id="userRole" title="ユーザー役割"/>
+        <descriptor id="userPreferences" title="ユーザー設定"/>
+    </descriptor>
+
+    <descriptor id="student" title="生徒" doc="コースに登録し、コンテンツにアクセスし、課題を提出する個人">
+        <descriptor id="enrolledCourses" title="登録コース"/>
+        <descriptor id="progress" title="学習進捗"/>
+        <descriptor id="grades" title="生徒の成績"/>
+    </descriptor>
+
+    <descriptor id="instructor" title="講師" doc="コースを作成および管理し、生徒の進捗を評価する教育者">
+        <descriptor id="taughtCourses" title="担当コース"/>
+        <descriptor id="instructorExpertise" title="専門分野"/>
+    </descriptor>
+
+    <descriptor id="administrator" title="管理者" doc="システム全体を監督し、ユーザーアカウントとコースカタログを管理する人">
+        <descriptor id="adminPermissions" title="管理者権限"/>
+    </descriptor>
+
+    <!-- コース関連 -->
+    <descriptor id="course" title="コース" def="https://schema.org/Course">
+        <descriptor id="courseId" title="コース識別子" def="https://schema.org/identifier"/>
+        <descriptor id="courseTitle" title="コースタイトル" def="https://schema.org/name"/>
+        <descriptor id="courseDescription" title="コース説明" def="https://schema.org/description"/>
+        <descriptor id="courseCategory" title="コースカテゴリ" def="https://schema.org/courseCategory"/>
+        <descriptor id="startDate" title="開始日" def="https://schema.org/startDate"/>
+        <descriptor id="endDate" title="終了日" def="https://schema.org/endDate"/>
+        <descriptor id="enrollmentCapacity" title="登録定員" def="https://schema.org/maximumEnrollment"/>
+        <descriptor id="difficultyLevel" title="難易度"/>
+        <descriptor id="courseStatus" title="コースステータス"/>
+        <descriptor id="prerequisites" title="前提条件"/>
+    </descriptor>
+
+    <descriptor id="module" title="コースモジュール" doc="コンテンツを論理的な順序で整理するためのコースのセクション">
+        <descriptor id="moduleId" title="モジュール識別子"/>
+        <descriptor id="moduleTitle" title="モジュールタイトル" def="https://schema.org/name"/>
+        <descriptor id="moduleDescription" title="モジュール説明" def="https://schema.org/description"/>
+        <descriptor id="moduleOrder" title="モジュール順序"/>
+    </descriptor>
+
+    <descriptor id="content" title="コースコンテンツ" doc="さまざまな形式の教材">
+        <descriptor id="contentId" title="コンテンツ識別子"/>
+        <descriptor id="contentTitle" title="コンテンツタイトル" def="https://schema.org/name"/>
+        <descriptor id="contentDescription" title="コンテンツ説明" def="https://schema.org/description"/>
+        <descriptor id="contentType" title="コンテンツタイプ"/>
+        <descriptor id="contentData" title="コンテンツデータ"/>
+        <descriptor id="contentStatus" title="コンテンツステータス" doc="下書きまたは公開済み"/>
+        <descriptor id="contentAccessibility" title="コンテンツアクセシビリティ機能"/>
+    </descriptor>
+
+    <!-- 評価関連 -->
+    <descriptor id="assignment" title="課題" doc="学習を評価するために生徒に割り当てられたタスク">
+        <descriptor id="assignmentId" title="課題識別子"/>
+        <descriptor id="assignmentTitle" title="課題タイトル" def="https://schema.org/name"/>
+        <descriptor id="assignmentDescription" title="課題説明" def="https://schema.org/description"/>
+        <descriptor id="assignmentType" title="課題タイプ"/>
+        <descriptor id="dueDate" title="期日" def="https://schema.org/endDate"/>
+        <descriptor id="maxScore" title="最高得点"/>
+        <descriptor id="weightage" title="全体成績における重み"/>
+    </descriptor>
+
+    <descriptor id="submission" title="課題提出物" doc="課題に対する生徒の回答">
+        <descriptor id="submissionId" title="提出物識別子"/>
+        <descriptor id="submissionContent" title="提出内容"/>
+        <descriptor id="submissionDate" title="提出日" def="https://schema.org/dateCreated"/>
+        <descriptor id="submissionStatus" title="提出ステータス"/>
+    </descriptor>
+
+    <descriptor id="grade" title="成績" doc="生徒の提出物の評価">
+        <descriptor id="gradeId" title="成績識別子"/>
+        <descriptor id="gradeValue" title="成績値"/>
+        <descriptor id="feedback" title="フィードバック"/>
+        <descriptor id="gradedDate" title="採点日"/>
+    </descriptor>
+
+    <descriptor id="rubric" title="採点ルーブリック" doc="生徒の成果物を評価するための基準">
+        <descriptor id="rubricId" title="ルーブリック識別子"/>
+        <descriptor id="rubricTitle" title="ルーブリックタイトル"/>
+        <descriptor id="rubricCriteria" title="ルーブリック基準"/>
+    </descriptor>
+
+    <!-- コミュニケーション関連 -->
+    <descriptor id="discussion" title="ディスカッションフォーラム" doc="質疑応答のためのプラットフォーム">
+        <descriptor id="discussionId" title="ディスカッション識別子"/>
+        <descriptor id="discussionTitle" title="ディスカッションタイトル" def="https://schema.org/name"/>
+        <descriptor id="discussionDescription" title="ディスカッション説明" def="https://schema.org/description"/>
+        <descriptor id="posts" title="ディスカッション投稿"/>
+    </descriptor>
+
+    <descriptor id="post" title="ディスカッション投稿" doc="ディスカッションフォーラムのメッセージ">
+        <descriptor id="postId" title="投稿識別子"/>
+        <descriptor id="postContent" title="投稿内容" def="https://schema.org/text"/>
+        <descriptor id="postDate" title="投稿日" def="https://schema.org/dateCreated"/>
+        <descriptor id="postAuthor" title="投稿者" def="https://schema.org/author"/>
+        <descriptor id="replies" title="投稿への返信"/>
+    </descriptor>
+
+    <descriptor id="notification" title="通知" doc="ユーザーに通知するためのシステムメッセージ">
+        <descriptor id="notificationId" title="通知識別子"/>
+        <descriptor id="notificationContent" title="通知内容"/>
+        <descriptor id="notificationType" title="通知タイプ"/>
+        <descriptor id="notificationDate" title="通知日" def="https://schema.org/dateCreated"/>
+        <descriptor id="notificationStatus" title="通知ステータス"/>
+    </descriptor>
+
+    <descriptor id="message" title="ダイレクトメッセージ" doc="ユーザー間のプライベートなコミュニケーション">
+        <descriptor id="messageId" title="メッセージ識別子"/>
+        <descriptor id="messageContent" title="メッセージ内容" def="https://schema.org/text"/>
+        <descriptor id="messageDate" title="メッセージ日付" def="https://schema.org/dateCreated"/>
+        <descriptor id="messageSender" title="メッセージ送信者"/>
+        <descriptor id="messageRecipient" title="メッセージ受信者"/>
+        <descriptor id="messageAttachments" title="メッセージ添付ファイル"/>
+    </descriptor>
+
+    <descriptor id="group" title="学生グループ" doc="コラボレーションのための学生の集まり">
+        <descriptor id="groupId" title="グループ識別子"/>
+        <descriptor id="groupName" title="グループ名" def="https://schema.org/name"/>
+        <descriptor id="groupMembers" title="グループメンバー"/>
+        <descriptor id="groupWorkspace" title="共有ワークスペース"/>
+    </descriptor>
+
+    <descriptor id="webinar" title="オンラインセッション" doc="リアルタイムのバーチャルクラスセッション">
+        <descriptor id="webinarId" title="ウェビナー識別子"/>
+        <descriptor id="webinarTitle" title="ウェビナータイトル" def="https://schema.org/name"/>
+        <descriptor id="webinarDescription" title="ウェビナー説明" def="https://schema.org/description"/>
+        <descriptor id="webinarDate" title="ウェビナー日付" def="https://schema.org/startDate"/>
+        <descriptor id="webinarDuration" title="ウェビナー時間" def="https://schema.org/duration"/>
+        <descriptor id="webinarUrl" title="ウェビナーURL" def="https://schema.org/url"/>
+        <descriptor id="webinarRecording" title="ウェビナー録画"/>
+    </descriptor>
+
+    <!-- 分析関連 -->
+    <descriptor id="analytics" title="ユーザー分析" doc="ユーザーのエンゲージメントとアクティビティに関するデータ">
+        <descriptor id="loginFrequency" title="ログイン頻度"/>
+        <descriptor id="contentViewed" title="閲覧コンテンツ"/>
+        <descriptor id="timeSpent" title="プラットフォーム利用時間"/>
+        <descriptor id="assignmentCompletionTime" title="課題完了時間"/>
+    </descriptor>
+
+    <descriptor id="report" title="システムレポート" doc="分析のための集計データ">
+        <descriptor id="reportId" title="レポート識別子"/>
+        <descriptor id="reportTitle" title="レポートタイトル"/>
+        <descriptor id="reportType" title="レポートタイプ"/>
+        <descriptor id="reportData" title="レポートデータ"/>
+        <descriptor id="reportDate" title="レポート生成日" def="https://schema.org/dateCreated"/>
+    </descriptor>
+
+    <!-- アクセシビリティとモバイル -->
+    <descriptor id="language" title="インターフェース言語" def="https://schema.org/inLanguage"/>
+
+    <descriptor id="accessibilityFeature" title="アクセシビリティ機能" def="https://schema.org/accessibilityFeature"/>
+
+    <descriptor id="offlineContent" title="オフラインコンテンツ" doc="インターネット接続なしでアクセスするためにダウンロードされたコンテンツ"/>
+
+    <!-- セクション 2: 包含関係 (分類) -->
+
+    <!-- メインアプリケーションの状態 -->
+    <descriptor id="Home" title="ホームページ" doc="システムランディングページ">
+        <descriptor href="#course"/>
+        <descriptor href="#notification"/>
+        <descriptor href="#goCourseList"/>
+        <descriptor href="#goUserProfile"/>
+        <descriptor href="#goMessageCenter"/>
+        <descriptor href="#goNotifications"/>
+        <descriptor href="#goSettings"/>
+        <descriptor href="#goReportCenter"/>
+    </descriptor>
+
+    <!-- ユーザー管理の状態 -->
+    <descriptor id="Login" title="ログインページ" tag="user-management">
+        <descriptor href="#userEmail"/>
+        <descriptor href="#userPassword"/>
+        <descriptor href="#doLogin"/>
+        <descriptor href="#goRegister"/>
+        <descriptor href="#doResetPassword"/>
+    </descriptor>
+
+    <descriptor id="Register" title="登録ページ" tag="user-management">
+        <descriptor href="#userName"/>
+        <descriptor href="#userEmail"/>
+        <descriptor href="#userPassword"/>
+        <descriptor href="#userRole"/>
+        <descriptor href="#doRegister"/>
+        <descriptor href="#goLogin"/>
+    </descriptor>
+
+    <descriptor id="UserProfile" title="ユーザープロフィールページ" tag="user-management">
+        <descriptor href="#user"/>
+        <descriptor href="#doUpdateProfile"/>
+        <descriptor href="#goHome"/>
+        <descriptor href="#goEnrolledCourses"/>
+    </descriptor>
+
+    <descriptor id="UserList" title="ユーザー管理ページ" tag="user-management, admin-tools">
+        <descriptor href="#user"/>
+        <descriptor href="#doCreateUser"/>
+        <descriptor href="#doDeleteUser"/>
+        <descriptor href="#doUpdateUser"/>
+        <descriptor href="#goUserDetail"/>
+        <descriptor href="#goHome"/>
+    </descriptor>
+
+    <descriptor id="UserDetail" title="ユーザー詳細ページ" tag="user-management, admin-tools">
+        <descriptor href="#user"/>
+        <descriptor href="#doUpdateUser"/>
+        <descriptor href="#doDeleteUser"/>
+        <descriptor href="#goUserList"/>
+    </descriptor>
+
+    <!-- コース管理の状態 -->
+    <descriptor id="CourseList" title="コース一覧ページ" tag="course-management">
+        <descriptor href="#course"/>
+        <descriptor href="#doFilterCourses"/>
+        <descriptor href="#goCourseDetail"/>
+        <descriptor href="#goCreateCourse"/>
+        <descriptor href="#goHome"/>
+    </descriptor>
+
+    <descriptor id="CourseDetail" title="コース詳細ページ" tag="course-management">
+        <descriptor href="#course"/>
+        <descriptor href="#module"/>
+        <descriptor href="#assignment"/>
+        <descriptor href="#discussion"/>
+        <descriptor href="#instructor"/>
+        <descriptor href="#doEnrollCourse"/>
+        <descriptor href="#goModuleDetail"/>
+        <descriptor href="#goAssignmentList"/>
+        <descriptor href="#goDiscussionList"/>
+        <descriptor href="#goEditCourse"/>
+        <descriptor href="#goCourseList"/>
+        <descriptor href="#goProgressDashboard"/>
+        <descriptor href="#goWebinarSchedule"/>
+        <descriptor href="#goAnalyticsDashboard"/>
+        <descriptor href="#goAnnouncementCreation"/>
+        <descriptor href="#goGradebook"/>
+    </descriptor>
+
+    <descriptor id="CourseCreation" title="コース作成ページ" tag="course-management, content-creation">
+        <descriptor href="#course"/>
+        <descriptor href="#doCreateCourse"/>
+        <descriptor href="#doSaveDraftCourse"/>
+        <descriptor href="#goCourseList"/>
+    </descriptor>
+
+    <descriptor id="CourseEdit" title="コース編集ページ" tag="course-management, content-creation">
+        <descriptor href="#course"/>
+        <descriptor href="#doUpdateCourse"/>
+        <descriptor href="#doDeleteCourse"/>
+        <descriptor href="#doSaveDraftCourse"/>
+        <descriptor href="#doPublishCourse"/>
+        <descriptor href="#goCourseDetail"/>
+    </descriptor>
+
+    <descriptor id="ModuleList" title="コースモジュールページ" tag="course-management, content-creation">
+        <descriptor href="#module"/>
+        <descriptor href="#doCreateModule"/>
+        <descriptor href="#goModuleDetail"/>
+        <descriptor href="#goCourseDetail"/>
+    </descriptor>
+
+    <descriptor id="ModuleDetail" title="モジュール詳細ページ" tag="course-management, content-creation">
+        <descriptor href="#module"/>
+        <descriptor href="#content"/>
+        <descriptor href="#doUpdateModule"/>
+        <descriptor href="#doDeleteModule"/>
+        <descriptor href="#goContentDetail"/>
+        <descriptor href="#goCreateContent"/>
+        <descriptor href="#goModuleList"/>
+    </descriptor>
+
+    <descriptor id="ContentCreation" title="コンテンツ作成ページ" tag="content-creation">
+        <descriptor href="#content"/>
+        <descriptor href="#contentType"/>
+        <descriptor href="#contentAccessibility"/>
+        <descriptor href="#doCreateContent"/>
+        <descriptor href="#doSaveDraftContent"/>
+        <descriptor href="#doPreviewContent"/>
+        <descriptor href="#goModuleDetail"/>
+    </descriptor>
+
+    <descriptor id="ContentDetail" title="コンテンツ詳細ページ" tag="content-creation">
+        <descriptor href="#content"/>
+        <descriptor href="#doUpdateContent"/>
+        <descriptor href="#doDeleteContent"/>
+        <descriptor href="#doPreviewContent"/>
+        <descriptor href="#goModuleDetail"/>
+    </descriptor>
+
+    <!-- 登録と進捗の状態 -->
+    <descriptor id="EnrolledCourses" title="登録コースページ" tag="enrollment">
+        <descriptor href="#course"/>
+        <descriptor href="#progress"/>
+        <descriptor href="#goCourseDetail"/>
+        <descriptor href="#goHome"/>
+    </descriptor>
+
+    <descriptor id="ProgressDashboard" title="学習進捗ダッシュボード" tag="progress-tracking">
+        <descriptor href="#course"/>
+        <descriptor href="#module"/>
+        <descriptor href="#progress"/>
+        <descriptor href="#goCourseDetail"/>
+        <descriptor href="#goModuleDetail"/>
+        <descriptor href="#goEnrolledCourses"/>
+    </descriptor>
+
+    <descriptor id="ClassProgress" title="クラス進捗ダッシュボード" tag="progress-tracking, instructor-tools">
+        <descriptor href="#student"/>
+        <descriptor href="#course"/>
+        <descriptor href="#progress"/>
+        <descriptor href="#doFilterStudents"/>
+        <descriptor href="#goStudentProgress"/>
+        <descriptor href="#goCourseDetail"/>
+    </descriptor>
+
+    <descriptor id="StudentProgress" title="個別学生進捗" tag="progress-tracking, instructor-tools">
+        <descriptor href="#student"/>
+        <descriptor href="#course"/>
+        <descriptor href="#module"/>
+        <descriptor href="#progress"/>
+        <descriptor href="#doExtendDeadline"/>
+        <descriptor href="#goClassProgress"/>
+    </descriptor>
+
+    <!-- 評価の状態 -->
+    <descriptor id="AssignmentList" title="コース課題ページ" tag="assessment">
+        <descriptor href="#assignment"/>
+        <descriptor href="#doFilterAssignments"/>
+        <descriptor href="#goAssignmentDetail"/>
+        <descriptor href="#goCreateAssignment"/>
+        <descriptor href="#goCourseDetail"/>
+    </descriptor>
+
+    <descriptor id="AssignmentCreation" title="課題作成ページ" tag="assessment, content-creation">
+        <descriptor href="#assignment"/>
+        <descriptor href="#assignmentType"/>
+        <descriptor href="#rubric"/>
+        <descriptor href="#doCreateAssignment"/>
+        <descriptor href="#doCreateRubric"/>
+        <descriptor href="#goAssignmentList"/>
+    </descriptor>
+
+    <descriptor id="AssignmentDetail" title="課題詳細ページ" tag="assessment">
+        <descriptor href="#assignment"/>
+        <descriptor href="#rubric"/>
+        <descriptor href="#submission"/>
+        <descriptor href="#doUpdateAssignment"/>
+        <descriptor href="#doDeleteAssignment"/>
+        <descriptor href="#doSubmitAssignment"/>
+        <descriptor href="#goSubmissionList"/>
+        <descriptor href="#goAssignmentList"/>
+    </descriptor>
+
+    <descriptor id="SubmissionList" title="課題提出物ページ" tag="assessment, grading">
+        <descriptor href="#submission"/>
+        <descriptor href="#doFilterSubmissions"/>
+        <descriptor href="#goSubmissionDetail"/>
+        <descriptor href="#goAssignmentDetail"/>
+    </descriptor>
+
+    <descriptor id="SubmissionDetail" title="提出物詳細ページ" tag="assessment, grading">
+        <descriptor href="#submission"/>
+        <descriptor href="#grade"/>
+        <descriptor href="#feedback"/>
+        <descriptor href="#rubric"/>
+        <descriptor href="#doGradeSubmission"/>
+        <descriptor href="#doProvideFeedback"/>
+        <descriptor href="#goSubmissionList"/>
+    </descriptor>
+
+    <descriptor id="Gradebook" title="コース成績表" tag="assessment, grading">
+        <descriptor href="#student"/>
+        <descriptor href="#assignment"/>
+        <descriptor href="#grade"/>
+        <descriptor href="#doExportGrades"/>
+        <descriptor href="#doCalculateOverallGrades"/>
+        <descriptor href="#goSubmissionDetail"/>
+        <descriptor href="#goCourseDetail"/>
+    </descriptor>
+
+    <!-- コミュニケーションの状態 -->
+    <descriptor id="DiscussionList" title="コースディスカッションページ" tag="communication">
+        <descriptor href="#discussion"/>
+        <descriptor href="#doFilterDiscussions"/>
+        <descriptor href="#goDiscussionDetail"/>
+        <descriptor href="#goCreateDiscussion"/>
+        <descriptor href="#goCourseDetail"/>
+    </descriptor>
+
+    <descriptor id="DiscussionDetail" title="ディスカッショントピックページ" tag="communication">
+        <descriptor href="#discussion"/>
+        <descriptor href="#post"/>
+        <descriptor href="#doCreatePost"/>
+        <descriptor href="#doReplyToPost"/>
+        <descriptor href="#goDiscussionList"/>
+    </descriptor>
+
+    <descriptor id="External" title="外部システム" doc="LMS 外部の外部システムまたは URL を表します"/>
+
+    <descriptor id="AnnouncementCreation" title="お知らせ作成ページ" tag="communication, instructor-tools">
+        <descriptor href="#notification"/>
+        <descriptor href="#doCreateAnnouncement"/>
+        <descriptor href="#goCourseDetail"/>
+    </descriptor>
+
+    <descriptor id="MessageCenter" title="メッセージセンター" tag="communication">
+        <descriptor href="#message"/>
+        <descriptor href="#doFilterMessages"/>
+        <descriptor href="#goCreateMessage"/>
+        <descriptor href="#goMessageDetail"/>
+        <descriptor href="#goHome"/>
+    </descriptor>
+
+    <descriptor id="MessageDetail" title="メッセージ詳細ページ" tag="communication">
+        <descriptor href="#message"/>
+        <descriptor href="#doReplyToMessage"/>
+        <descriptor href="#doAttachFile"/>
+        <descriptor href="#goMessageCenter"/>
+    </descriptor>
+
+    <descriptor id="GroupManagement" title="グループ管理ページ" tag="collaboration">
+        <descriptor href="#group"/>
+        <descriptor href="#doCreateGroup"/>
+        <descriptor href="#doUpdateGroup"/>
+        <descriptor href="#doDeleteGroup"/>
+        <descriptor href="#goGroupDetail"/>
+        <descriptor href="#goCourseDetail"/>
+    </descriptor>
+
+    <descriptor id="GroupDetail" title="グループ詳細ページ" tag="collaboration">
+        <descriptor href="#group"/>
+        <descriptor href="#groupWorkspace"/>
+        <descriptor href="#doAddGroupMember"/>
+        <descriptor href="#doRemoveGroupMember"/>
+        <descriptor href="#goGroupManagement"/>
+    </descriptor>
+
+    <descriptor id="WebinarSchedule" title="ウェビナースケジュールページ" tag="communication, instructor-tools">
+        <descriptor href="#webinar"/>
+        <descriptor href="#doCreateWebinar"/>
+        <descriptor href="#doUpdateWebinar"/>
+        <descriptor href="#doDeleteWebinar"/>
+        <descriptor href="#goWebinarDetail"/>
+        <descriptor href="#goCourseDetail"/>
+    </descriptor>
+
+    <descriptor id="WebinarDetail" title="ウェビナー詳細ページ" tag="communication">
+        <descriptor href="#webinar"/>
+        <descriptor href="#webinarRecording"/>
+        <descriptor href="#doJoinWebinar"/>
+        <descriptor href="#doViewRecording"/>
+        <descriptor href="#goWebinarSchedule"/>
+    </descriptor>
+
+    <!-- 分析とレポートの状態 -->
+    <descriptor id="AnalyticsDashboard" title="分析ダッシュボード" tag="analytics, instructor-tools">
+        <descriptor href="#analytics"/>
+        <descriptor href="#student"/>
+        <descriptor href="#course"/>
+        <descriptor href="#doFilterAnalytics"/>
+        <descriptor href="#doExportAnalytics"/>
+        <descriptor href="#goCourseDetail"/>
+    </descriptor>
+
+    <descriptor id="ReportCenter" title="レポートセンター" tag="analytics, admin-tools">
+        <descriptor href="#report"/>
+        <descriptor href="#doGenerateReport"/>
+        <descriptor href="#doExportReport"/>
+        <descriptor href="#goReportDetail"/>
+        <descriptor href="#goHome"/>
+    </descriptor>
+
+    <descriptor id="ReportDetail" title="レポート詳細ページ" tag="analytics, admin-tools">
+        <descriptor href="#report"/>
+        <descriptor href="#doExportReport"/>
+        <descriptor href="#goReportCenter"/>
+    </descriptor>
+
+    <!-- アクセシビリティと設定 -->
+    <descriptor id="Settings" title="ユーザー設定ページ" tag="accessibility, user-management">
+        <descriptor href="#language"/>
+        <descriptor href="#accessibilityFeature"/>
+        <descriptor href="#userPreferences"/>
+        <descriptor href="#doUpdateSettings"/>
+        <descriptor href="#goUserProfile"/>
+    </descriptor>
+
+    <!-- 外部コンテンツの状態 -->
+    <descriptor id="WebinarView" title="ウェビナー視聴ページ" tag="communication">
+        <descriptor href="#webinar"/>
+        <descriptor href="#goWebinarDetail"/>
+    </descriptor>
+
+    <descriptor id="RecordingView" title="録画視聴ページ" tag="communication">
+        <descriptor href="#webinarRecording"/>
+        <descriptor href="#goWebinarDetail"/>
+    </descriptor>
+
+    <descriptor id="MobileAccess" title="モバイルアプリケーションの状態" tag="mobile-access">
+        <descriptor href="#course"/>
+        <descriptor href="#notification"/>
+        <descriptor href="#offlineContent"/>
+        <descriptor href="#doDownloadContent"/>
+        <descriptor href="#doEnableNotifications"/>
+        <descriptor href="#goHome"/>
+        <descriptor href="#goCourseList"/>
+        <descriptor href="#goEnrolledCourses"/>
+    </descriptor>
+
+    <!-- セクション 3: 状態遷移 (コレオグラフィ) -->
+
+    <!-- 認証遷移 -->
+    <descriptor id="doLogin" type="unsafe" title="システムにログイン" rt="#Home"/>
+
+    <descriptor id="doRegister" type="unsafe" title="新規ユーザー登録" rt="#Login">
+        <descriptor href="#userName"/>
+        <descriptor href="#userEmail"/>
+        <descriptor href="#userPassword"/>
+        <descriptor href="#userRole"/>
+    </descriptor>
+
+    <descriptor id="doResetPassword" type="unsafe" title="パスワードリセット" rt="#Login">
+        <descriptor href="#userEmail"/>
+    </descriptor>
+
+    <descriptor id="doLogout" type="idempotent" title="システムからログアウト" rt="#Login"/>
+
+    <!-- ナビゲーション遷移 -->
+    <descriptor id="goHome" type="safe" title="ホームページへ" rt="#Home"/>
+
+    <descriptor id="goLogin" type="safe" title="ログインページへ" rt="#Login"/>
+
+    <descriptor id="goRegister" type="safe" title="登録ページへ" rt="#Register"/>
+
+    <descriptor id="goSettings" type="safe" title="設定ページへ" rt="#Settings"/>
+
+    <descriptor id="goReportCenter" type="safe" title="レポートセンターへ" rt="#ReportCenter"/>
+
+    <descriptor id="goProgressDashboard" type="safe" title="進捗ダッシュボードへ" rt="#ProgressDashboard"/>
+
+    <descriptor id="goAnalyticsDashboard" type="safe" title="分析ダッシュボードへ" rt="#AnalyticsDashboard"/>
+
+    <descriptor id="goAnnouncementCreation" type="safe" title="お知らせ作成へ" rt="#AnnouncementCreation"/>
+
+    <descriptor id="goGradebook" type="safe" title="成績表へ" rt="#Gradebook"/>
+
+    <descriptor id="goReportDetail" type="safe" title="レポート詳細へ" rt="#ReportDetail">
+        <descriptor href="#reportId"/>
+    </descriptor>
+
+    <descriptor id="goUserProfile" type="safe" title="ユーザープロフィールを表示" rt="#UserProfile"/>
+
+    <descriptor id="goUserList" type="safe" title="ユーザーリストを表示" rt="#UserList"/>
+
+    <descriptor id="goUserDetail" type="safe" title="ユーザー詳細を表示" rt="#UserDetail">
+        <descriptor href="#userId"/>
+    </descriptor>
+
+    <descriptor id="goCourseList" type="safe" title="コースリストを表示" rt="#CourseList"/>
+
+    <descriptor id="goCourseDetail" type="safe" title="コース詳細を表示" rt="#CourseDetail">
+        <descriptor href="#courseId"/>
+    </descriptor>
+
+    <descriptor id="goCreateCourse" type="safe" title="コース作成へ" rt="#CourseCreation"/>
+
+    <descriptor id="goEditCourse" type="safe" title="コース編集へ" rt="#CourseEdit">
+        <descriptor href="#courseId"/>
+    </descriptor>
+
+    <descriptor id="goModuleList" type="safe" title="モジュールリストを表示" rt="#ModuleList">
+        <descriptor href="#courseId"/>
+    </descriptor>
+
+    <descriptor id="goModuleDetail" type="safe" title="モジュール詳細を表示" rt="#ModuleDetail">
+        <descriptor href="#moduleId"/>
+    </descriptor>
+
+    <descriptor id="goCreateContent" type="safe" title="コンテンツ作成へ" rt="#ContentCreation"/>
+
+    <descriptor id="goContentDetail" type="safe" title="コンテンツ詳細を表示" rt="#ContentDetail">
+        <descriptor href="#contentId"/>
+    </descriptor>
+
+    <descriptor id="goEnrolledCourses" type="safe" title="登録コースを表示" rt="#EnrolledCourses"/>
+
+    <descriptor id="goAssignmentList" type="safe" title="課題リストを表示" rt="#AssignmentList">
+        <descriptor href="#courseId"/>
+    </descriptor>
+
+    <descriptor id="goCreateAssignment" type="safe" title="課題作成へ" rt="#AssignmentCreation"/>
+
+    <descriptor id="goAssignmentDetail" type="safe" title="課題詳細を表示" rt="#AssignmentDetail">
+        <descriptor href="#assignmentId"/>
+    </descriptor>
+
+    <descriptor id="goSubmissionList" type="safe" title="提出物リストを表示" rt="#SubmissionList">
+        <descriptor href="#assignmentId"/>
+    </descriptor>
+
+    <descriptor id="goSubmissionDetail" type="safe" title="提出物詳細を表示" rt="#SubmissionDetail">
+        <descriptor href="#submissionId"/>
+    </descriptor>
+
+    <descriptor id="goDiscussionList" type="safe" title="ディスカッションリストを表示" rt="#DiscussionList">
+        <descriptor href="#courseId"/>
+    </descriptor>
+
+    <descriptor id="goDiscussionDetail" type="safe" title="ディスカッション詳細を表示" rt="#DiscussionDetail">
+        <descriptor href="#discussionId"/>
+    </descriptor>
+
+    <descriptor id="goCreateDiscussion" type="safe" title="ディスカッション作成へ" rt="#DiscussionDetail"/>
+
+    <descriptor id="goMessageCenter" type="safe" title="メッセージセンターへ" rt="#MessageCenter"/>
+
+    <descriptor id="goCreateMessage" type="safe" title="メッセージ作成へ" rt="#MessageDetail"/>
+
+    <descriptor id="goMessageDetail" type="safe" title="メッセージ詳細を表示" rt="#MessageDetail">
+        <descriptor href="#messageId"/>
+    </descriptor>
+
+    <descriptor id="goGroupManagement" type="safe" title="グループ管理へ" rt="#GroupManagement">
+        <descriptor href="#courseId"/>
+    </descriptor>
+
+    <descriptor id="goGroupDetail" type="safe" title="グループ詳細を表示" rt="#GroupDetail">
+        <descriptor href="#groupId"/>
+    </descriptor>
+
+    <descriptor id="goWebinarSchedule" type="safe" title="ウェビナースケジュールを表示" rt="#WebinarSchedule">
+        <descriptor href="#courseId"/>
+    </descriptor>
+
+    <descriptor id="goWebinarDetail" type="safe" title="ウェビナー詳細を表示" rt="#WebinarDetail">
+        <descriptor href="#webinarId"/>
+    </descriptor>
+
+    <descriptor id="goNotifications" type="safe" title="通知を表示" rt="#MessageCenter"/>
+
+    <descriptor id="goClassProgress" type="safe" title="クラス進捗を表示" rt="#ClassProgress">
+        <descriptor href="#courseId"/>
+    </descriptor>
+
+    <descriptor id="goStudentProgress" type="safe" title="学生進捗を表示" rt="#StudentProgress">
+        <descriptor href="#courseId"/>
+        <descriptor href="#userId"/>
+    </descriptor>
+
+    <!-- コース管理遷移 -->
+    <descriptor id="doCreateCourse" type="unsafe" title="新規コース作成" rt="#CourseDetail">
+        <descriptor href="#courseTitle"/>
+        <descriptor href="#courseDescription"/>
+        <descriptor href="#courseCategory"/>
+        <descriptor href="#startDate"/>
+        <descriptor href="#endDate"/>
+        <descriptor href="#enrollmentCapacity"/>
+        <descriptor href="#difficultyLevel"/>
+    </descriptor>
+
+    <descriptor id="doUpdateCourse" type="idempotent" title="コース更新" rt="#CourseDetail">
+        <descriptor href="#courseId"/>
+        <descriptor href="#courseTitle"/>
+        <descriptor href="#courseDescription"/>
+        <descriptor href="#courseCategory"/>
+        <descriptor href="#startDate"/>
+        <descriptor href="#endDate"/>
+        <descriptor href="#enrollmentCapacity"/>
+        <descriptor href="#difficultyLevel"/>
+    </descriptor>
+
+    <descriptor id="doDeleteCourse" type="idempotent" title="コース削除" rt="#CourseList">
+        <descriptor href="#courseId"/>
+    </descriptor>
+
+    <descriptor id="doCreateModule" type="unsafe" title="コースモジュール作成" rt="#ModuleDetail">
+        <descriptor href="#courseId"/>
+        <descriptor href="#moduleTitle"/>
+        <descriptor href="#moduleDescription"/>
+        <descriptor href="#moduleOrder"/>
+    </descriptor>
+
+    <descriptor id="doUpdateModule" type="idempotent" title="モジュール更新" rt="#ModuleDetail">
+        <descriptor href="#moduleId"/>
+        <descriptor href="#moduleTitle"/>
+        <descriptor href="#moduleDescription"/>
+        <descriptor href="#moduleOrder"/>
+    </descriptor>
+
+    <descriptor id="doDeleteModule" type="idempotent" title="モジュール削除" rt="#ModuleList">
+        <descriptor href="#moduleId"/>
+    </descriptor>
+
+    <descriptor id="doCreateContent" type="unsafe" title="コンテンツ作成" rt="#ContentDetail">
+        <descriptor href="#moduleId"/>
+        <descriptor href="#contentTitle"/>
+        <descriptor href="#contentDescription"/>
+        <descriptor href="#contentType"/>
+        <descriptor href="#contentData"/>
+        <descriptor href="#contentAccessibility"/>
+    </descriptor>
+
+    <descriptor id="doUpdateContent" type="idempotent" title="コンテンツ更新" rt="#ContentDetail">
+        <descriptor href="#contentId"/>
+        <descriptor href="#contentTitle"/>
+        <descriptor href="#contentDescription"/>
+        <descriptor href="#contentType"/>
+        <descriptor href="#contentData"/>
+        <descriptor href="#contentAccessibility"/>
+    </descriptor>
+
+    <descriptor id="doDeleteContent" type="idempotent" title="コンテンツ削除" rt="#ModuleDetail">
+        <descriptor href="#contentId"/>
+    </descriptor>
+
+    <descriptor id="doSaveDraftCourse" type="idempotent" title="コースを下書きとして保存" rt="#CourseEdit"/>
+
+    <descriptor id="doSaveDraftContent" type="idempotent" title="コンテンツを下書きとして保存" rt="#ContentCreation"/>
+
+    <descriptor id="doPreviewContent" type="safe" title="コンテンツプレビュー" rt="#ContentDetail">
+        <descriptor href="#contentId"/>
+    </descriptor>
+
+    <descriptor id="doPublishCourse" type="idempotent" title="コース公開" rt="#CourseDetail">
+        <descriptor href="#courseId"/>
+    </descriptor>
+
+    <!-- 登録遷移 -->
+    <!-- Enrollment Transitions -->
+    <descriptor id="doEnrollCourse" type="unsafe" title="コース登録" rt="#EnrolledCourses">
+        <descriptor href="#courseId"/>
+        <descriptor href="#userId"/>
+    </descriptor>
+
+    <descriptor id="doUnenrollCourse" type="idempotent" title="コース登録解除" rt="#EnrolledCourses">
+        <descriptor href="#courseId"/>
+        <descriptor href="#userId"/>
+    </descriptor>
+
+    <descriptor id="doExtendDeadline" type="idempotent" title="締め切り延長" rt="#StudentProgress">
+        <descriptor href="#courseId"/>
+        <descriptor href="#userId"/>
+        <descriptor href="#endDate"/>
+    </descriptor>
+
+    <!-- Assignment Transitions -->
+    <descriptor id="doCreateAssignment" type="unsafe" title="課題作成" rt="#AssignmentDetail">
+        <descriptor href="#courseId"/>
+        <descriptor href="#assignmentTitle"/>
+        <descriptor href="#assignmentDescription"/>
+        <descriptor href="#assignmentType"/>
+        <descriptor href="#dueDate"/>
+        <descriptor href="#maxScore"/>
+    </descriptor>
+
+    <descriptor id="doUpdateAssignment" type="idempotent" title="課題更新" rt="#AssignmentDetail">
+        <descriptor href="#assignmentId"/>
+        <descriptor href="#assignmentTitle"/>
+        <descriptor href="#assignmentDescription"/>
+        <descriptor href="#assignmentType"/>
+        <descriptor href="#dueDate"/>
+        <descriptor href="#maxScore"/>
+    </descriptor>
+
+    <descriptor id="doDeleteAssignment" type="idempotent" title="課題削除" rt="#AssignmentList">
+        <descriptor href="#assignmentId"/>
+    </descriptor>
+
+    <descriptor id="doCreateRubric" type="unsafe" title="採点ルーブリック作成" rt="#AssignmentDetail">
+        <descriptor href="#assignmentId"/>
+        <descriptor href="#rubricTitle"/>
+        <descriptor href="#rubricCriteria"/>
+    </descriptor>
+
+    <descriptor id="doSubmitAssignment" type="unsafe" title="課題提出" rt="#AssignmentDetail">
+        <descriptor href="#assignmentId"/>
+        <descriptor href="#submissionContent"/>
+    </descriptor>
+
+    <descriptor id="doGradeSubmission" type="idempotent" title="提出物採点" rt="#SubmissionDetail">
+        <descriptor href="#submissionId"/>
+        <descriptor href="#gradeValue"/>
+        <descriptor href="#feedback"/>
+    </descriptor>
+
+    <descriptor id="doProvideFeedback" type="idempotent" title="フィードバック提供" rt="#SubmissionDetail">
+        <descriptor href="#submissionId"/>
+        <descriptor href="#feedback"/>
+    </descriptor>
+
+    <descriptor id="doExportGrades" type="safe" title="成績エクスポート" rt="#Gradebook">
+        <descriptor href="#courseId"/>
+    </descriptor>
+
+    <descriptor id="doCalculateOverallGrades" type="safe" title="総合評価計算" rt="#Gradebook">
+        <descriptor href="#courseId"/>
+    </descriptor>
+
+    <!-- Communication Transitions -->
+    <descriptor id="doCreateDiscussion" type="unsafe" title="ディスカッション作成" rt="#DiscussionDetail">
+        <descriptor href="#courseId"/>
+        <descriptor href="#discussionTitle"/>
+        <descriptor href="#discussionDescription"/>
+    </descriptor>
+
+    <descriptor id="doCreatePost" type="unsafe" title="ディスカッション投稿作成" rt="#DiscussionDetail">
+        <descriptor href="#discussionId"/>
+        <descriptor href="#postContent"/>
+    </descriptor>
+
+    <descriptor id="doReplyToPost" type="unsafe" title="投稿に返信" rt="#DiscussionDetail">
+        <descriptor href="#postId"/>
+        <descriptor href="#postContent"/>
+    </descriptor>
+
+    <descriptor id="doCreateAnnouncement" type="unsafe" title="お知らせ作成" rt="#CourseDetail">
+        <descriptor href="#courseId"/>
+        <descriptor href="#notificationContent"/>
+    </descriptor>
+
+    <descriptor id="doReplyToMessage" type="unsafe" title="メッセージに返信" rt="#MessageDetail">
+        <descriptor href="#messageId"/>
+        <descriptor href="#messageContent"/>
+    </descriptor>
+
+    <descriptor id="doAttachFile" type="unsafe" title="メッセージにファイルを添付" rt="#MessageDetail">
+        <descriptor href="#messageId"/>
+        <descriptor href="#messageAttachments"/>
+    </descriptor>
+
+    <descriptor id="doCreateGroup" type="unsafe" title="学生グループ作成" rt="#GroupDetail">
+        <descriptor href="#courseId"/>
+        <descriptor href="#groupName"/>
+        <descriptor href="#groupMembers"/>
+    </descriptor>
+
+    <descriptor id="doUpdateGroup" type="idempotent" title="グループ更新" rt="#GroupDetail">
+        <descriptor href="#groupId"/>
+        <descriptor href="#groupName"/>
+    </descriptor>
+
+    <descriptor id="doDeleteGroup" type="idempotent" title="グループ削除" rt="#GroupManagement">
+        <descriptor href="#groupId"/>
+    </descriptor>
+
+    <descriptor id="doAddGroupMember" type="unsafe" title="グループメンバー追加" rt="#GroupDetail">
+        <descriptor href="#groupId"/>
+        <descriptor href="#userId"/>
+    </descriptor>
+
+    <descriptor id="doRemoveGroupMember" type="idempotent" title="グループメンバー削除" rt="#GroupDetail">
+        <descriptor href="#groupId"/>
+        <descriptor href="#userId"/>
+    </descriptor>
+
+    <descriptor id="doCreateWebinar" type="unsafe" title="ウェビナー作成" rt="#WebinarDetail">
+        <descriptor href="#courseId"/>
+        <descriptor href="#webinarTitle"/>
+        <descriptor href="#webinarDescription"/>
+        <descriptor href="#webinarDate"/>
+        <descriptor href="#webinarDuration"/>
+        <descriptor href="#webinarUrl"/>
+    </descriptor>
+
+    <descriptor id="doUpdateWebinar" type="idempotent" title="ウェビナー更新" rt="#WebinarDetail">
+        <descriptor href="#webinarId"/>
+        <descriptor href="#webinarTitle"/>
+        <descriptor href="#webinarDescription"/>
+        <descriptor href="#webinarDate"/>
+        <descriptor href="#webinarDuration"/>
+        <descriptor href="#webinarUrl"/>
+    </descriptor>
+
+    <descriptor id="doDeleteWebinar" type="idempotent" title="ウェビナー削除" rt="#WebinarSchedule">
+        <descriptor href="#webinarId"/>
+    </descriptor>
+
+    <descriptor id="doJoinWebinar" type="safe" title="ウェビナー参加" rt="#WebinarView">
+        <descriptor href="#webinarId"/>
+        <descriptor href="#webinarUrl"/>
+    </descriptor>
+
+    <descriptor id="doViewRecording" type="safe" title="ウェビナー録画視聴" rt="#RecordingView">
+        <descriptor href="#webinarId"/>
+        <descriptor href="#webinarRecording"/>
+    </descriptor>
+
+    <!-- Analytics Transitions -->
+    <descriptor id="doFilterAnalytics" type="safe" title="分析データフィルタリング" rt="#AnalyticsDashboard">
+        <descriptor href="#courseId"/>
+        <descriptor href="#startDate"/>
+        <descriptor href="#endDate"/>
+    </descriptor>
+
+    <descriptor id="doExportAnalytics" type="safe" title="分析データエクスポート" rt="#AnalyticsDashboard">
+        <descriptor href="#courseId"/>
+    </descriptor>
+
+    <descriptor id="doGenerateReport" type="unsafe" title="システムレポート生成" rt="#ReportDetail">
+        <descriptor href="#reportTitle"/>
+        <descriptor href="#reportType"/>
+        <descriptor href="#startDate"/>
+        <descriptor href="#endDate"/>
+    </descriptor>
+
+    <descriptor id="doExportReport" type="safe" title="レポートデータエクスポート" rt="#ReportDetail">
+        <descriptor href="#reportId"/>
+    </descriptor>
+
+    <!-- Filter Transitions -->
+    <descriptor id="doFilterCourses" type="safe" title="コースリストフィルタリング" rt="#CourseList">
+        <descriptor href="#courseCategory"/>
+        <descriptor href="#instructor"/>
+        <descriptor href="#courseStatus"/>
+    </descriptor>
+
+    <descriptor id="doFilterStudents" type="safe" title="学生リストフィルタリング" rt="#ClassProgress">
+        <descriptor href="#courseId"/>
+    </descriptor>
+
+    <descriptor id="doFilterAssignments" type="safe" title="課題リストフィルタリング" rt="#AssignmentList">
+        <descriptor href="#courseId"/>
+        <descriptor href="#dueDate"/>
+    </descriptor>
+
+    <descriptor id="doFilterSubmissions" type="safe" title="提出物リストフィルタリング" rt="#SubmissionList">
+        <descriptor href="#assignmentId"/>
+        <descriptor href="#submissionStatus"/>
+    </descriptor>
+
+    <descriptor id="doFilterDiscussions" type="safe" title="ディスカッションリストフィルタリング" rt="#DiscussionList">
+        <descriptor href="#courseId"/>
+    </descriptor>
+
+    <descriptor id="doFilterMessages" type="safe" title="メッセージフィルタリング" rt="#MessageCenter">
+        <descriptor href="#messageSender"/>
+        <descriptor href="#messageDate"/>
+    </descriptor>
+
+    <!-- User Management Transitions -->
+    <descriptor id="doUpdateProfile" type="idempotent" title="ユーザープロフィール更新" rt="#UserProfile">
+        <descriptor href="#userName"/>
+        <descriptor href="#userEmail"/>
+        <descriptor href="#userPassword"/>
+        <descriptor href="#userPreferences"/>
+    </descriptor>
+
+    <descriptor id="doCreateUser" type="unsafe" title="ユーザー作成" rt="#UserDetail">
+        <descriptor href="#userName"/>
+        <descriptor href="#userEmail"/>
+        <descriptor href="#userPassword"/>
+        <descriptor href="#userRole"/>
+    </descriptor>
+
+    <descriptor id="doUpdateUser" type="idempotent" title="ユーザー更新" rt="#UserDetail">
+        <descriptor href="#userId"/>
+        <descriptor href="#userName"/>
+        <descriptor href="#userEmail"/>
+        <descriptor href="#userRole"/>
+        <descriptor href="#adminPermissions"/>
+    </descriptor>
+
+    <descriptor id="doDeleteUser" type="idempotent" title="ユーザー削除" rt="#UserList">
+        <descriptor href="#userId"/>
+    </descriptor>
+
+    <!-- Settings Transitions -->
+    <descriptor id="doUpdateSettings" type="idempotent" title="設定更新" rt="#Settings">
+        <descriptor href="#language"/>
+        <descriptor href="#accessibilityFeature"/>
+        <descriptor href="#userPreferences"/>
+    </descriptor>
+
+    <!-- Mobile Transitions -->
+    <descriptor id="doDownloadContent" type="unsafe" title="オフラインアクセス用コンテンツダウンロード" rt="#MobileAccess">
+        <descriptor href="#contentId"/>
+    </descriptor>
+
+    <descriptor id="doEnableNotifications" type="idempotent" title="モバイル通知有効化" rt="#MobileAccess"/>
+
+</alps>
