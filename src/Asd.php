@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Koriym\AppStateDiagram;
 
+/** @codeCoverageIgnore  */
 final class Asd
 {
     public function __invoke(string $profile): string
