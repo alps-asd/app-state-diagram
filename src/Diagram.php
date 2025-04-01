@@ -13,6 +13,7 @@ use function unlink;
 
 use const PHP_EOL;
 
+/** @codeCoverageIgnore  */
 final class Diagram
 {
     /** @var DrawDiagram */

@@ -3,15 +3,20 @@ name: Update copyright year(s) in license file
 on:
   workflow_dispatch:
   schedule:
-    - cron: "0 3 1 1 *"
+    - cron: "0 3 1 1 *" # 毎年1月1日03:00 (UTC)
 
 jobs:
-  run:
+  update-license:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout repository
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - uses: FantasticFiasco/action-update-license-year@v2
+
+      # LICENSEファイル内の年を更新
+      - name: Update license year
+        uses: FantasticFiasco/action-update-license-year@v2
         with:
           token: ${{ secrets.GITHUB_TOKEN }}

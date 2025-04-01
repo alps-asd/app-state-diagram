@@ -29,7 +29,6 @@ final class MdToHtml
             width: 100%;
             height: auto;
             display: flex;
-            justify-content: center;
             align-items: center;
         }
         .asd-view-selector {

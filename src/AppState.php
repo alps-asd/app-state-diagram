@@ -58,10 +58,6 @@ final class AppState implements Stringable
     {
         $base = '    %s [label = <%s> URL="#%s" target="_parent"';
         $dot = '';
-        foreach ($this->taggedStates as $descriptor) {
-            assert($descriptor instanceof SemanticDescriptor);
-            $dot .= $this->format($descriptor, $base);
-        }
 
         foreach ($this->states as $descriptor) {
             assert($descriptor instanceof SemanticDescriptor);
@@ -69,12 +65,5 @@ final class AppState implements Stringable
         }
 
         return $dot;
-    }
-
-    private function format(SemanticDescriptor $descriptor, string $base): string
-    {
-        $template = $base . ']' . PHP_EOL;
-
-        return sprintf($template, $descriptor->id, $this->labelName->getNodeLabel($descriptor), $descriptor->id);
     }
 }

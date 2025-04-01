@@ -3,6 +3,7 @@
 An ALPS profile example for ASD
 
 <!-- Container for the ASDs -->
+
 [<img src="profile.svg" alt="application state diagram">](profile.title.svg)
 
 
@@ -12,7 +13,41 @@ An ALPS profile example for ASD
 
 ## Semantic Descriptors
 
- 
+<div class="descriptor-list" markdown="1">
+ * <span class="indicator semantic" data-tooltip="semantic"> </span> [About](#About)
+ * <span class="indicator semantic" data-tooltip="semantic"> </span> [articleBody](#articleBody)
+ * <span class="indicator semantic" data-tooltip="semantic"> </span> [Blog](#Blog)
+ * <span class="indicator semantic" data-tooltip="semantic"> </span> [BlogPosting](#BlogPosting)
+ * <span class="indicator semantic" data-tooltip="semantic"> </span> [dateCreated](#dateCreated)
+ * <span class="indicator unsafe" data-tooltip="unsafe"> </span> [doPost](#doPost)
+ * <span class="indicator safe" data-tooltip="safe"> </span> [goAbout](#goAbout)
+ * <span class="indicator safe" data-tooltip="safe"> </span> [goBlog](#goBlog)
+ * <span class="indicator safe" data-tooltip="safe"> </span> [goBlogPosting](#goBlogPosting)
+ * <span class="indicator safe" data-tooltip="safe"> </span> [goStart](#goStart)
+ * <span class="indicator semantic" data-tooltip="semantic"> </span> [id](#id)
+ * <span class="indicator semantic" data-tooltip="semantic"> </span> [Index](#Index)
+</div>
+
+<div class="legend">
+    <div class="legend-item">
+        <span class="legend-icon semantic"></span>
+        Semantic
+    </div>
+    <div class="legend-item">
+        <span class="legend-icon safe"></span>
+        Safe
+    </div>
+    <div class="legend-item">
+        <span class="legend-icon unsafe"></span>
+        Unsafe
+    </div>
+    <div class="legend-item">
+        <span class="legend-icon idempotent"></span>
+        Idempotent
+    </div>
+</div>
+
+
 ### <a id="About">About</a>
  * type: semantic
  * descriptor

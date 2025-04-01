@@ -8,8 +8,10 @@ on:
 jobs:
   release:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@v4
 
       - name: Set up PHP
         uses: shivammathur/setup-php@v2
@@ -19,48 +21,26 @@ jobs:
           ini-file: production
 
       - name: Set up Node.js
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v4
         with:
-          node-version: 14
+          node-version: 18
 
       - name: Install Dependencies
         run: |
           composer install --no-dev
           cd asd-sync
-          npm install
+          npm ci
           cd ..
 
       - name: Build PHAR
         run: box compile
 
-      - name: Upload PHAR
-        uses: actions/upload-artifact@v4
-        with:
-          name: asd.phar
-          path: bin/asd.phar
-
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
+      # GitHub CLI を使って Release 作成＆PHAR を添付
+      - name: Create GitHub Release and Upload PHAR
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ github.ref_name }}
-          release_name: "Release ${{ github.ref_name }}"
-          draft: false
-          prerelease: false
-
-      - name: Download PHAR
-        uses: actions/download-artifact@v4
-        with:
-          name: asd.phar
-
-      - name: Attach artifacts to release
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./bin/asd.phar
-          asset_name: asd.phar
-          asset_content_type: application/octet-stream
+        run: |
+          gh release create "${GITHUB_REF_NAME}" \
+            --title "Release ${GITHUB_REF_NAME}" \
+            --notes "PHAR release for tag ${GITHUB_REF_NAME}" \
+            ./bin/asd.phar#asd.phar

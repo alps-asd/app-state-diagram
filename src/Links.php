@@ -6,6 +6,7 @@ namespace Koriym\AppStateDiagram;
 
 use function sprintf;
 
+/** @codeCoverageIgnore  */
 class Links
 {
     /**
