@@ -84,12 +84,6 @@ EOTJS;
 
 {$index->linkRelations}
 
-## Semantic Descriptors
-
-<div class="descriptor-list" markdown="1">
-{$index->semanticDescriptorList}
-</div>
-
 {$legend}
 {$index->semanticMd}
 
