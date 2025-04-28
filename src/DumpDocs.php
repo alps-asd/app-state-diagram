@@ -45,7 +45,13 @@ final class DumpDocs
 
         $value = (string) $descriptor->{$key};
         if ($key === 'def' && $this->isUrl($value)) {
-            return sprintf('%s: [%s](%s)', $key, $value, $value);
+            // URLのプロトコル部分を削除してコンパクトに表示
+            $displayValue = preg_replace('#^https?://#', '', $value);
+            // 長いURLは省略表示する（30文字以上の場合）
+            if (strlen($displayValue) > 30) {
+                $displayValue = substr($displayValue, 0, 27) . '...';
+            }
+            return sprintf('%s: [%s](%s)', $key, $displayValue, $value);
         }
 
         if ($key === 'href' && $this->isFragment($value)) {
