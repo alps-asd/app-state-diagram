@@ -195,16 +195,16 @@ final class DumpDocs
     {
         $id = sprintf('[%s](#%s)', $descriptor->id, $descriptor->id);
         $title = $descriptor->title ?? '';
-        $type = $descriptor->type;
+        $legendType = sprintf(' <span class="legend"><span class="legend-icon %s"></span></span>', $descriptor->type);
         $rt = $this->getRt($descriptor);
         $contained = $this->getContainedDescriptorsMarkdown($descriptor);
         $extras = $this->getExtrasMarkdown($descriptor);
 
         return sprintf(
             '| %s | %s | %s | %s | %s | %s |',
+            $legendType,
             $id,
             $title,
-            $type,
             $rt,
             $contained,
             $extras
