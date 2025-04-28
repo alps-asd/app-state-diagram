@@ -123,6 +123,13 @@ final class MdToHtml
             flex-wrap: wrap;
             gap: 10px;
             margin-bottom: 20px;
+        }        
+        table .legend {
+            background-color: transparent;
+            padding: 0;
+            margin: 0;
+            display: inline-flex;
+            align-items: center;
         }
         .legend-item {
             display: flex;
