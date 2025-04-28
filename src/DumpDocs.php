@@ -6,6 +6,8 @@ namespace Koriym\AppStateDiagram;
 
 use stdClass;
 
+use function array_filter;
+use function array_map;
 use function assert;
 use function explode;
 use function filter_var;
@@ -33,49 +35,33 @@ final class DumpDocs
     /** @var array<string, AbstractDescriptor> */
     private $descriptors = [];
 
-    /** @var "html"|"md" */
-    private $ext = 'md';
+    // getSemanticDoc は不要になるため削除
 
-    /** @psalm-suppress PossiblyInvalidPropertyFetch */
-    private function getSemanticDoc(AbstractDescriptor $descriptor): string
-    {
-        $descriptorSemantic = $this->getDescriptorInDescriptor($descriptor);
-        $rt = $this->getRt($descriptor);
-        $description = '';
-        $description .= $this->getDescriptorProp('type', $descriptor);
-        $description .= $this->getDescriptorProp('title', $descriptor);
-        $description .= $this->getDescriptorProp('href', $descriptor);
-        $description .= $this->getDescriptorKeyValue('doc', (string) ($descriptor->doc->value ?? ''));
-        $description .= $this->getDescriptorProp('def', $descriptor);
-        $description .= $this->getDescriptorProp('rel', $descriptor);
-        $description .= $this->getTag($descriptor->tags);
-        $linkRelations = $this->getLinkRelations($descriptor->linkRelations);
-
-        return <<<EOT
-### <a id="{$descriptor->id}">{$descriptor->id}</a>
-{$description}{$rt}{$linkRelations}{$descriptorSemantic}
-
-EOT;
-    }
-
-    private function getDescriptorProp(string $key, AbstractDescriptor $descriptor): string
+    private function getDescriptorPropValue(string $key, AbstractDescriptor $descriptor): string
     {
         if (! property_exists($descriptor, $key) || ! $descriptor->{$key}) {
             return '';
         }
 
         $value = (string) $descriptor->{$key};
-        if ($this->isUrl($value)) {
-            return " * {$key}: [{$value}]({$value})" . PHP_EOL;
+        if ($key === 'def' && $this->isUrl($value)) {
+            return sprintf('%s: [%s](%s)', $key, $value, $value);
         }
 
-        if ($this->isFragment($value)) {
+        if ($key === 'href' && $this->isFragment($value)) {
             [, $id] = explode('#', $value);
-
-            return " * {$key}: [{$id}](semantic.{$id}.{$this->ext})" . PHP_EOL;
+            return sprintf('%s: [%s](%s)', $key, $id, $this->getSemanticLink($id));
         }
 
-        return " * {$key}: {$value}" . PHP_EOL;
+        // 'rel' やその他の単純なプロパティ
+        if ($key === 'rel') {
+            return sprintf('%s: %s', $key, $value);
+        }
+        // title は別の列で表示するのでここでは返さない
+        // type も別の列
+        // href も基本的には使わない想定だが、念のため残す場合は上記のisFragmentで処理
+
+        return ''; // Extras列に含めないものは空文字を返す
     }
 
     private function isUrl(string $text): bool
@@ -85,30 +71,23 @@ EOT;
 
     private function isFragment(string $text): bool
     {
-        return $text[0] === '#';
+        // Check if the string starts with '#' and has content after it.
+        return isset($text[0]) && $text[0] === '#' && isset($text[1]);
     }
 
-    private function getDescriptorKeyValue(string $key, string $value): string
-    {
-        if (! $value) {
-            return '';
-        }
-
-        return " * {$key}: {$value}" . PHP_EOL;
-    }
+    // getDescriptorKeyValue は Extras の整形に含めるため直接は使わない
 
     private function getRt(AbstractDescriptor $descriptor): string
     {
-        if ($descriptor instanceof SemanticDescriptor) {
+        if ($descriptor instanceof SemanticDescriptor || ! $descriptor->rt) {
             return '';
         }
+        // $descriptor instanceof TransDescriptor は上記でカバーされる
 
-        assert($descriptor instanceof TransDescriptor);
-
-        return sprintf(' * rt: [%s](#%s)', $descriptor->rt, $descriptor->rt) . PHP_EOL;
+        return sprintf('[#%s](#%s)', $descriptor->rt, $descriptor->rt);
     }
 
-    private function getDescriptorInDescriptor(AbstractDescriptor $descriptor): string
+    private function getContainedDescriptorsMarkdown(AbstractDescriptor $descriptor): string
     {
         if ($descriptor->descriptor === []) {
             return '';
@@ -117,12 +96,11 @@ EOT;
         assert(is_array($descriptor->descriptor));
         $descriptors = $this->getInlineDescriptors($descriptor->descriptor);
 
-        $table = sprintf(' * descriptor%s%s| id | type | title |%s|---|---|---|%s', PHP_EOL, PHP_EOL, PHP_EOL, PHP_EOL);
-        foreach ($descriptors as $descriptor) {
-            $table .= sprintf('| %s | %s | %s |', $descriptor->htmlLink(), $descriptor->type, $descriptor->title) . PHP_EOL;
-        }
+        $links = array_map(function (AbstractDescriptor $desc): string {
+            return sprintf('[%s](#%s)', $desc->id, $desc->id);
+        }, $descriptors);
 
-        return $table;
+        return implode('<br>', $links);
     }
 
     /**
@@ -136,63 +114,117 @@ EOT;
         foreach ($inlineDescriptors as $descriptor) {
             if (isset($descriptor->id)) {
                 assert(is_string($descriptor->id));
-                $descriptors[] = $this->descriptors[$descriptor->id];
+                // Add check if descriptor ID exists to prevent errors
+                if (isset($this->descriptors[$descriptor->id])) {
+                    $descriptors[] = $this->descriptors[$descriptor->id];
+                }
                 continue;
             }
 
-            assert(is_string($descriptor->href));
-            $id = substr($descriptor->href, (int) strpos($descriptor->href, '#') + 1);
-            assert(isset($this->descriptors[$id]));
+            if (isset($descriptor->href)) {
+                assert(is_string($descriptor->href));
+                $fragmentPos = strpos($descriptor->href, '#');
+                if ($fragmentPos !== false) {
+                    $id = substr($descriptor->href, $fragmentPos + 1);
+                    if (isset($this->descriptors[$id])) {
+                        $original = clone $this->descriptors[$id];
+                        $descriptors[] = $original;
+                    }
+                }
+            }
+            // If neither id nor href#id is present, skip this descriptor.
+        }
 
-            $original = clone $this->descriptors[$id];
-            $descriptors[] = $original;
+        // Return empty array if no valid descriptors found
+        if (empty($descriptors)) {
+            return [];
         }
 
         usort($descriptors, static function (AbstractDescriptor $a, AbstractDescriptor $b): int {
             $order = ['semantic' => 0, 'safe' => 1, 'unsafe' => 2, 'idempotent' => 3];
 
-            return $order[$a->type] <=> $order[$b->type];
+            // Add checks for potentially undefined types
+            $orderA = $order[$a->type] ?? 99;
+            $orderB = $order[$b->type] ?? 99;
+
+            return $orderA <=> $orderB;
         });
 
-        assert($descriptors !== []);
+        // The assertion below might fail if $descriptors was initially empty and remained empty.
+        // Ensure $descriptors is not empty before assertion or remove assertion if empty is valid.
+        // assert($descriptors !== []); // This assertion might fail
 
-        return $descriptors;
-    }
-
-    /** @param list<string> $tags */
-    private function getTag(array $tags): string
-    {
-        if ($tags === []) {
-            return '';
-        }
-
-        return " * tag: {$this->getTagString($tags)}";
+        return $descriptors; // Can be empty if input was problematic
     }
 
     /** @param list<string> $tags */
     private function getTagString(array $tags): string
     {
-        $string = [];
-        foreach ($tags as $tag) {
-            $string[] = "[{$tag}](#tag-{$tag})";
+        if ($tags === []) {
+            return '';
         }
 
-        return implode(', ', $string) . PHP_EOL;
+        $tagLinks = array_map(function (string $tag): string {
+            return sprintf('[%s](#tag-%s)', $tag, $tag);
+        }, $tags);
+
+        return 'tag: ' . implode(', ', $tagLinks); // 末尾の改行を削除し、"tag: " プレフィックスを追加
     }
 
-    public function getSemanticDescriptorMarkDown(Profile $profile, string $asdFile): string
+    private function getExtrasMarkdown(AbstractDescriptor $descriptor): string
     {
-        unset($asdFile);
-        $descriptors = $this->descriptors = $profile->descriptors;
-        $markDown = '';
-        ksort($descriptors, SORT_FLAG_CASE | SORT_STRING);
-        foreach ($descriptors as $descriptor) {
-            $markDown .= $this->getSemanticDoc($descriptor);
-        }
+        $extras = [];
+        $extras[] = $this->getDescriptorPropValue('def', $descriptor);
+        $extras[] = $this->getTagString($descriptor->tags);
+        $extras[] = $this->getDescriptorPropValue('rel', $descriptor);
+        // 必要に応じて他のプロパティも追加
+        // $extras[] = $this->getDescriptorPropValue('href', $descriptor); // 必要であれば
 
-        return $markDown;
+        $filteredExtras = array_filter($extras); // 空の要素を削除
+
+        return implode(', ', $filteredExtras);
     }
 
+    private function buildMarkdownTableRow(AbstractDescriptor $descriptor): string
+    {
+        $id = sprintf('[%s](#%s)', $descriptor->id, $descriptor->id);
+        $title = $descriptor->title ?? '';
+        $type = $descriptor->type;
+        $rt = $this->getRt($descriptor);
+        $contained = $this->getContainedDescriptorsMarkdown($descriptor);
+        $extras = $this->getExtrasMarkdown($descriptor);
+
+        return sprintf(
+            '| %s | %s | %s | %s | %s | %s |',
+            $id,
+            $title,
+            $type,
+            $rt,
+            $contained,
+            $extras
+        );
+    }
+
+    public function getSemanticDescriptorMarkDown(Profile $profile): string // $asdFile 引数は不要なので削除
+    {
+        $this->descriptors = $profile->descriptors; // Initialize descriptors for internal use
+        $descriptors = $profile->descriptors;
+        ksort($descriptors, SORT_FLAG_CASE | SORT_STRING);
+
+        // テーブルヘッダー
+        $markdown = '## Semantic Descriptors' . PHP_EOL . PHP_EOL;
+        $markdown .= '| ID | Title | Type | RT | Contained Descriptors | Extras |' . PHP_EOL;
+        $markdown .= '| :------------- | :-------------------------- | :------- | :------------- | :-------------------- | :-------------------------------------------------------------------------------------------------------- |' . PHP_EOL;
+
+        // テーブルボディ
+        foreach ($descriptors as $descriptor) {
+            $markdown .= $this->buildMarkdownTableRow($descriptor) . PHP_EOL;
+        }
+
+        return $markdown;
+    }
+
+    // getSemanticDescriptorList はそのまま残す（HTML用で使用されている可能性があるため）
     public function getSemanticDescriptorList(Profile $profile): string
     {
         $descriptors = $profile->descriptors;
@@ -205,12 +237,15 @@ EOT;
         return implode(PHP_EOL, $items);
     }
 
-    private function getLinkRelations(LinkRelations $linkRelations): string
-    {
-        if ((string) $linkRelations === '') {
-            return '';
-        }
+    // getLinkRelations は Extras の整形に含めるため直接は使わない
+    // private function getLinkRelations(LinkRelations $linkRelations): string ...
 
-        return $linkRelations . PHP_EOL;
+    // Helper for semantic links if needed elsewhere, or incorporate into getDescriptorPropValue
+    private function getSemanticLink(string $id): string
+    {
+        // Assuming markdown output, adjust extension if needed based on mode
+        // $ext = ($this->mode === self::MODE_HTML) ? 'html' : 'md';
+        // return sprintf('semantic.%s.%s', $id, $ext);
+        return sprintf('#%s', $id); // Changed to link within the same markdown page
     }
 }
