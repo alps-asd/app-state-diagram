@@ -82,10 +82,10 @@ EOTJS;
 
 {$index->tags}
 
+{$index->semanticMd}
+{$legend}
 {$index->linkRelations}
 
-{$legend}
-{$index->semanticMd}
 
 ---
 

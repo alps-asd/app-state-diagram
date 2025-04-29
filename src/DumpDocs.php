@@ -97,6 +97,10 @@ final class DumpDocs
             return sprintf('doc: %s', htmlspecialchars($value));
         }
 
+        if ($key === 'linkRelations') {
+            return $descriptor->linkRelations->getLinksInExtras();
+        }
+
         // title は別の列で表示するのでここでは返さない
         // type も別の列
         // href も基本的には使わない想定だが、念のため残す場合は上記のisFragmentで処理
@@ -221,6 +225,7 @@ final class DumpDocs
         $extras[] = $this->getDescriptorPropValue('rel', $descriptor);
         $extras[] = $this->getDescriptorPropValue('rt', $descriptor);
         $extras[] = $this->getDescriptorPropValue('doc', $descriptor);
+        $extras[] = $this->getDescriptorPropValue('linkRelations', $descriptor);
         // 必要に応じて他のプロパティも追加
         // $extras[] = $this->getDescriptorPropValue('href', $descriptor); // 必要であれば
 

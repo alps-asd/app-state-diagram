@@ -25,6 +25,73 @@ final class MdToHtml
                 padding: 15px;
             }
         }
+        
+        /* テーブルレイアウトの改善 */
+        .markdown-body table {
+            table-layout: fixed;
+            width: 100%;
+        }
+        .markdown-body table th:nth-child(1) {
+            width: 5%;
+        }
+        .markdown-body table th:nth-child(2) {
+            width: 15%;
+        }
+        .markdown-body table th:nth-child(3) {
+            width: 50%;  /* タイトル列をさらに広く */
+        }
+        .markdown-body table th:nth-child(4) {
+            width: 15%;
+        }
+        .markdown-body table th:nth-child(5) {
+            width: 15%;  /* Extras列をさらに狭く（docが極端に短くなるため） */
+        }
+        .markdown-body table td {
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+        /* docツールチップのスタイル - データ表示のための実装 */
+        .doc-tooltip {
+            text-decoration: none;
+            border-bottom: 1px dotted #666;
+            cursor: pointer;
+            position: relative;
+            display: inline-block;
+        }
+        .doc-tooltip .tooltip-text {
+            visibility: hidden;
+            width: 300px;
+            background-color: #f8f8f8;
+            color: #333;
+            text-align: left;
+            border-radius: 3px;
+            padding: 8px 12px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -150px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            border: 1px solid #ddd;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            font-size: inherit; /* 通常のテキストサイズを維持 */
+            line-height: 1.5;
+            white-space: normal;
+            word-wrap: break-word;
+        }
+        .doc-tooltip:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
+        
+        /* 互換性のためのスタイル */
+        .markdown-body abbr {
+            text-decoration: none;
+            border-bottom: 1px dotted #666;
+            cursor: help;
+            position: relative;
+        }
         #svg-container {
             width: 100%;
             height: auto;

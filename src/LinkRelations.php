@@ -58,4 +58,15 @@ final class LinkRelations implements Stringable
     {
         return implode(PHP_EOL, $this->links);
     }
+
+    public function getLinksInExtras(): string
+    {
+        $links = [];
+        foreach ($this->links as $link) {
+            $label = $link->title !== '' ? $link->title : $link->rel;
+            $links[] = sprintf('link: [%s](%s)', $label, $link->href);
+        }
+
+        return implode(', ', $links);
+    }
 }
