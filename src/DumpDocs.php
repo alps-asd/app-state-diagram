@@ -37,6 +37,18 @@ final class DumpDocs
 
     // getSemanticDoc は不要になるため削除
 
+    /**
+     * 長い文字列を切り詰めて返す
+     */
+    private function truncateText(string $text, int $maxLength = 100): string
+    {
+        if (mb_strlen($text) <= $maxLength) {
+            return $text;
+        }
+
+        return mb_substr($text, 0, $maxLength - 3) . '...';
+    }
+
     private function getDescriptorPropValue(string $key, AbstractDescriptor $descriptor): string
     {
         if (! property_exists($descriptor, $key) || ! $descriptor->{$key}) {
@@ -67,6 +79,24 @@ final class DumpDocs
         if ($key === 'rt') {
             return sprintf('%s: [%s](#%s)', $key, $value, $value);
         }
+
+        // docプロパティの処理を追加（極端に短くしてカスタムツールチップ表示）
+        if ($key === 'doc') {
+            // 極端に短く（8文字程度に制限）
+            $truncatedValue = $this->truncateText($value, 8);
+
+            if (mb_strlen($value) > 8) {
+                // カスタムツールチップを実装（プロパティ名をハードコード）
+                return sprintf(
+                    '<span class="doc-tooltip">doc: %s…<span class="tooltip-text">%s</span></span>',
+                    htmlspecialchars($truncatedValue),
+                    htmlspecialchars($value, ENT_QUOTES)
+                );
+            }
+
+            return sprintf('doc: %s', htmlspecialchars($value));
+        }
+
         // title は別の列で表示するのでここでは返さない
         // type も別の列
         // href も基本的には使わない想定だが、念のため残す場合は上記のisFragmentで処理
@@ -190,6 +220,7 @@ final class DumpDocs
         $extras[] = $this->getTagString($descriptor->tags);
         $extras[] = $this->getDescriptorPropValue('rel', $descriptor);
         $extras[] = $this->getDescriptorPropValue('rt', $descriptor);
+        $extras[] = $this->getDescriptorPropValue('doc', $descriptor);
         // 必要に応じて他のプロパティも追加
         // $extras[] = $this->getDescriptorPropValue('href', $descriptor); // 必要であれば
 
@@ -202,13 +233,13 @@ final class DumpDocs
     {
         $id = sprintf('<a id="%s"></a>[%s](#%s)', $descriptor->id, $descriptor->id, $descriptor->id);
         $title = $descriptor->title ?? '';
-        $legendType = sprintf(' <span class="legend"><span class="legend-icon %s"></span></span>', $descriptor->type);
-        $rt = $this->getRt($descriptor);
+        $legendType = sprintf('<span class="legend"><span class="legend-icon %s"></span></span>', $descriptor->type);
         $contained = $this->getContainedDescriptorsMarkdown($descriptor);
         $extras = $this->getExtrasMarkdown($descriptor);
 
+        // HTMLの折り返しを防止するためにno-wrapクラスを追加
         return sprintf(
-            '| %s | %s | %s | %s | %s  |',
+            '| %s | %s | <span style="white-space: normal;">%s</span> | %s | <span style="white-space: normal;">%s</span> |',
             $legendType,
             $id,
             $title,
@@ -225,8 +256,10 @@ final class DumpDocs
 
         // テーブルヘッダー
         $markdown = '## Semantic Descriptors' . PHP_EOL . PHP_EOL;
-        $markdown .= '| Type | ID | Title | Contained Descriptors | Extras |' . PHP_EOL;
-        $markdown .= '| :-- | :------------- | :------------------------- | :-------------  | :-------------------------------------------------------------------------------------------------------- |' . PHP_EOL;
+        // テーブル幅の調整（列順序も変更）
+        $markdown .= '| Type | ID | Title | Contained | Extra Info |' . PHP_EOL;
+        // 列のアラインメントを調整（ハイフンの数は視覚的な目安のみ）
+        $markdown .= '| :--: | :-- | :---- | :-- | :-- |' . PHP_EOL;
 
         // テーブルボディ
         foreach ($descriptors as $descriptor) {
