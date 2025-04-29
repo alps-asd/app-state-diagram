@@ -200,7 +200,7 @@ final class DumpDocs
 
     private function buildMarkdownTableRow(AbstractDescriptor $descriptor): string
     {
-        $id = sprintf('[%s](#%s)', $descriptor->id, $descriptor->id);
+        $id = sprintf('<a id="%s"></a>[%s](#%s)', $descriptor->id, $descriptor->id, $descriptor->id);
         $title = $descriptor->title ?? '';
         $legendType = sprintf(' <span class="legend"><span class="legend-icon %s"></span></span>', $descriptor->type);
         $rt = $this->getRt($descriptor);
@@ -223,15 +223,8 @@ final class DumpDocs
         $descriptors = $profile->descriptors;
         ksort($descriptors, SORT_FLAG_CASE | SORT_STRING);
 
-        // アンカータグを先に生成
-        $anchors = '';
-        foreach ($descriptors as $descriptor) {
-            $anchors .= '<a id="' . $descriptor->id . '"></a>' . PHP_EOL;
-        }
-
         // テーブルヘッダー
-        $markdown = $anchors . PHP_EOL; // アンカータグをMarkdownに追加
-        $markdown .= '## Semantic Descriptors' . PHP_EOL . PHP_EOL;
+        $markdown = '## Semantic Descriptors' . PHP_EOL . PHP_EOL;
         $markdown .= '| Type | ID | Title | Contained Descriptors | Extras |' . PHP_EOL;
         $markdown .= '| :-- | :------------- | :------------------------- | :-------------  | :-------------------------------------------------------------------------------------------------------- |' . PHP_EOL;
 
