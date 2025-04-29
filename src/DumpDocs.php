@@ -63,6 +63,10 @@ final class DumpDocs
         if ($key === 'rel') {
             return sprintf('%s: %s', $key, $value);
         }
+
+        if ($key === 'rt') {
+            return sprintf('%s: [%s](#%s)', $key, $value, $value);
+        }
         // title は別の列で表示するのでここでは返さない
         // type も別の列
         // href も基本的には使わない想定だが、念のため残す場合は上記のisFragmentで処理
@@ -103,7 +107,9 @@ final class DumpDocs
         $descriptors = $this->getInlineDescriptors($descriptor->descriptor);
 
         $links = array_map(function (AbstractDescriptor $desc): string {
-            return sprintf('[%s](#%s)', $desc->id, $desc->id);
+//            $displayText = !empty($desc->title) ? $desc->title : $desc->id;
+            $displayText = $desc->id;
+            return sprintf('[%s](#%s)', $displayText, $desc->id);
         }, $descriptors);
 
         return implode('<br>', $links);
@@ -183,6 +189,7 @@ final class DumpDocs
         $extras[] = $this->getDescriptorPropValue('def', $descriptor);
         $extras[] = $this->getTagString($descriptor->tags);
         $extras[] = $this->getDescriptorPropValue('rel', $descriptor);
+        $extras[] = $this->getDescriptorPropValue('rt', $descriptor);
         // 必要に応じて他のプロパティも追加
         // $extras[] = $this->getDescriptorPropValue('href', $descriptor); // 必要であれば
 
@@ -201,11 +208,10 @@ final class DumpDocs
         $extras = $this->getExtrasMarkdown($descriptor);
 
         return sprintf(
-            '| %s | %s | %s | %s | %s | %s |',
+            '| %s | %s | %s | %s | %s  |',
             $legendType,
             $id,
             $title,
-            $rt,
             $contained,
             $extras
         );
@@ -217,10 +223,17 @@ final class DumpDocs
         $descriptors = $profile->descriptors;
         ksort($descriptors, SORT_FLAG_CASE | SORT_STRING);
 
+        // アンカータグを先に生成
+        $anchors = '';
+        foreach ($descriptors as $descriptor) {
+            $anchors .= '<a id="' . $descriptor->id . '"></a>' . PHP_EOL;
+        }
+
         // テーブルヘッダー
-        $markdown = '## Semantic Descriptors' . PHP_EOL . PHP_EOL;
-        $markdown .= '| ID | Title | Type | RT | Contained Descriptors | Extras |' . PHP_EOL;
-        $markdown .= '| :------------- | :-------------------------- | :------- | :------------- | :-------------------- | :-------------------------------------------------------------------------------------------------------- |' . PHP_EOL;
+        $markdown = $anchors . PHP_EOL; // アンカータグをMarkdownに追加
+        $markdown .= '## Semantic Descriptors' . PHP_EOL . PHP_EOL;
+        $markdown .= '| Type | ID | Title | Contained Descriptors | Extras |' . PHP_EOL;
+        $markdown .= '| :-- | :------------- | :------------------------- | :-------------  | :-------------------------------------------------------------------------------------------------------- |' . PHP_EOL;
 
         // テーブルボディ
         foreach ($descriptors as $descriptor) {
