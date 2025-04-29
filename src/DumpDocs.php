@@ -11,16 +11,22 @@ use function array_map;
 use function assert;
 use function explode;
 use function filter_var;
+use function htmlspecialchars;
 use function implode;
 use function is_array;
 use function is_string;
 use function ksort;
+use function mb_strlen;
+use function mb_substr;
+use function preg_replace;
 use function property_exists;
 use function sprintf;
+use function strlen;
 use function strpos;
 use function substr;
 use function usort;
 
+use const ENT_QUOTES;
 use const FILTER_VALIDATE_URL;
 use const PHP_EOL;
 use const SORT_FLAG_CASE;
@@ -63,11 +69,13 @@ final class DumpDocs
             if (strlen($displayValue) > 30) {
                 $displayValue = substr($displayValue, 0, 27) . '...';
             }
+
             return sprintf('%s: [%s](%s)', $key, $displayValue, $value);
         }
 
         if ($key === 'href' && $this->isFragment($value)) {
             [, $id] = explode('#', $value);
+
             return sprintf('%s: [%s](%s)', $key, $id, $this->getSemanticLink($id));
         }
 
@@ -126,6 +134,7 @@ final class DumpDocs
         if ($descriptor instanceof SemanticDescriptor || ! $descriptor->rt) {
             return '';
         }
+
         // $descriptor instanceof TransDescriptor は上記でカバーされる
 
         return sprintf('[#%s](#%s)', $descriptor->rt, $descriptor->rt);
@@ -140,9 +149,10 @@ final class DumpDocs
         assert(is_array($descriptor->descriptor));
         $descriptors = $this->getInlineDescriptors($descriptor->descriptor);
 
-        $links = array_map(function (AbstractDescriptor $desc): string {
+        $links = array_map(static function (AbstractDescriptor $desc): string {
 //            $displayText = !empty($desc->title) ? $desc->title : $desc->id;
             $displayText = $desc->id;
+
             return sprintf('[%s](#%s)', $displayText, $desc->id);
         }, $descriptors);
 
@@ -164,6 +174,7 @@ final class DumpDocs
                 if (isset($this->descriptors[$descriptor->id])) {
                     $descriptors[] = $this->descriptors[$descriptor->id];
                 }
+
                 continue;
             }
 
@@ -210,7 +221,7 @@ final class DumpDocs
             return '';
         }
 
-        $tagLinks = array_map(function (string $tag): string {
+        $tagLinks = array_map(static function (string $tag): string {
             return sprintf('[%s](#tag-%s)', $tag, $tag);
         }, $tags);
 

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Koriym\AppStateDiagram;
 
 use function sprintf;
+use function str_replace;
 
 /** @psalm-immutable */
 final class LabelNameTitle implements LabelNameInterface

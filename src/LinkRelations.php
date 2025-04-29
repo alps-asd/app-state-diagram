@@ -9,6 +9,7 @@ use Stringable;
 
 use function implode;
 use function is_array;
+use function sprintf;
 use function strtoupper;
 use function usort;
 
