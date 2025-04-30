@@ -51,7 +51,8 @@
             "bin/asd -c docs/blog/asd.md.xml docs/blog/profile.md.xml",
             "bin/asd docs/todomvc/profile.json",
             "bin/asd -c docs-md/blog/asd.xml docs-md/blog/profile.xml",
-            "bin/asd docs/bookstore/bookstore.xml"
+            "bin/asd docs/bookstore/bookstore.xml",
+            "bin/asd docs/lms/lms.xml"
         ],
         "md" : "bin/asd -c docs/blog/asd.md.xml docs/blog/profile.xml",
         "test": ["./vendor/bin/phpunit"],
