@@ -15,7 +15,7 @@ final class MdToHtml
         .markdown-body {
             box-sizing: border-box;
             min-width: 200px;
-            max-width: 980px;
+            max-width: 1100px;
             margin: 0 auto;
             padding: 25px;
         }
@@ -30,6 +30,7 @@ final class MdToHtml
         .markdown-body table {
             table-layout: fixed;
             width: 100%;
+            max-width: 1100px;
         }
         .markdown-body table th:nth-child(1) {
             width: 5%;
@@ -38,7 +39,7 @@ final class MdToHtml
             width: 15%;
         }
         .markdown-body table th:nth-child(3) {
-            width: 50%;  /* タイトル列をさらに広く */
+            width: 50%;
         }
         .markdown-body table th:nth-child(4) {
             width: 15%;
@@ -228,6 +229,40 @@ final class MdToHtml
                               radial-gradient(#FFB700 20%, transparent 20%);
             background-size: 8px 8px;
             background-position: 0 0, 4px 4px;
+        }
+        /* 小さいサイズのタイプインジケーター */
+        .type-indicator-small {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            margin-right: 4px;
+            border: 1px solid #000;
+            vertical-align: middle;
+        }
+        
+        .type-indicator-small.semantic {
+            background-color: #FFFFFF;
+        }
+        
+        .type-indicator-small.safe {
+            background-color: #00A86B;
+            background-image: linear-gradient(45deg, #008000 25%, transparent 25%, transparent 75%, #008000 75%, #008000),
+                               linear-gradient(45deg, #008000 25%, transparent 25%, transparent 75%, #008000 75%, #008000);
+            background-size: 6px 6px;
+            background-position: 0 0, 3px 3px;
+        }
+        
+        .type-indicator-small.unsafe {
+            background-color: #FF4136;
+            background-image: repeating-linear-gradient(45deg, #FF4136, #FF4136 3px, #FF725C 3px, #FF725C 6px);
+        }
+        
+        .type-indicator-small.idempotent {
+            background-color: #FFDC00;
+            background-image: radial-gradient(#FFB700 20%, transparent 20%),
+                              radial-gradient(#FFB700 20%, transparent 20%);
+            background-size: 6px 6px;
+            background-position: 0 0, 3px 3px;
         }
     </style>';
 
