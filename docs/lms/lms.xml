@@ -223,7 +223,7 @@
     <!-- Course Management States -->
     <descriptor id="CourseList" title="Course Listing Page" tag="course-management">
         <descriptor href="#course"/>
-        <descriptor href="#doFilterCourses"/>
+        <descriptor href="#goFilterCourses"/>
         <descriptor href="#goCourseDetail"/>
         <descriptor href="#goCreateCourse"/>
         <descriptor href="#goHome"/>
@@ -287,7 +287,7 @@
         <descriptor href="#contentAccessibility"/>
         <descriptor href="#doCreateContent"/>
         <descriptor href="#doSaveDraftContent"/>
-        <descriptor href="#doPreviewContent"/>
+        <descriptor href="#goPreviewContent"/>
         <descriptor href="#goModuleDetail"/>
     </descriptor>
 
@@ -295,7 +295,7 @@
         <descriptor href="#content"/>
         <descriptor href="#doUpdateContent"/>
         <descriptor href="#doDeleteContent"/>
-        <descriptor href="#doPreviewContent"/>
+        <descriptor href="#goPreviewContent"/>
         <descriptor href="#goModuleDetail"/>
     </descriptor>
 
@@ -320,7 +320,7 @@
         <descriptor href="#student"/>
         <descriptor href="#course"/>
         <descriptor href="#progress"/>
-        <descriptor href="#doFilterStudents"/>
+        <descriptor href="#goFilterStudents"/>
         <descriptor href="#goStudentProgress"/>
         <descriptor href="#goCourseDetail"/>
     </descriptor>
@@ -337,7 +337,7 @@
     <!-- Assessment States -->
     <descriptor id="AssignmentList" title="Course Assignments Page" tag="assessment">
         <descriptor href="#assignment"/>
-        <descriptor href="#doFilterAssignments"/>
+        <descriptor href="#goFilterAssignments"/>
         <descriptor href="#goAssignmentDetail"/>
         <descriptor href="#goCreateAssignment"/>
         <descriptor href="#goCourseDetail"/>
@@ -365,7 +365,7 @@
 
     <descriptor id="SubmissionList" title="Assignment Submissions Page" tag="assessment grading">
         <descriptor href="#submission"/>
-        <descriptor href="#doFilterSubmissions"/>
+        <descriptor href="#goFilterSubmissions"/>
         <descriptor href="#goSubmissionDetail"/>
         <descriptor href="#goAssignmentDetail"/>
     </descriptor>
@@ -393,7 +393,7 @@
     <!-- Communication States -->
     <descriptor id="DiscussionList" title="Course Discussions Page" tag="communication">
         <descriptor href="#discussion"/>
-        <descriptor href="#doFilterDiscussions"/>
+        <descriptor href="#goFilterDiscussions"/>
         <descriptor href="#goDiscussionDetail"/>
         <descriptor href="#goCreateDiscussion"/>
         <descriptor href="#goCourseDetail"/>
@@ -417,7 +417,7 @@
 
     <descriptor id="MessageCenter" title="Messaging Center" tag="communication">
         <descriptor href="#message"/>
-        <descriptor href="#doFilterMessages"/>
+        <descriptor href="#goFilterMessages"/>
         <descriptor href="#goCreateMessage"/>
         <descriptor href="#goMessageDetail"/>
         <descriptor href="#goHome"/>
@@ -460,7 +460,7 @@
         <descriptor href="#webinar"/>
         <descriptor href="#webinarRecording"/>
         <descriptor href="#doJoinWebinar"/>
-        <descriptor href="#doViewRecording"/>
+        <descriptor href="#goViewRecording"/>
         <descriptor href="#goWebinarSchedule"/>
     </descriptor>
 
@@ -469,7 +469,7 @@
         <descriptor href="#analytics"/>
         <descriptor href="#student"/>
         <descriptor href="#course"/>
-        <descriptor href="#doFilterAnalytics"/>
+        <descriptor href="#goFilterAnalytics"/>
         <descriptor href="#doExportAnalytics"/>
         <descriptor href="#goCourseDetail"/>
     </descriptor>
@@ -729,7 +729,7 @@
 
     <descriptor id="doSaveDraftContent" type="idempotent" title="Save Content as Draft" rt="#ContentCreation"/>
 
-    <descriptor id="doPreviewContent" type="safe" title="Preview Content" rt="#ContentDetail">
+    <descriptor id="goPreviewContent" type="safe" title="Preview Content" rt="#ContentDetail">
         <descriptor href="#contentId"/>
     </descriptor>
 
@@ -799,7 +799,7 @@
         <descriptor href="#feedback"/>
     </descriptor>
 
-    <descriptor id="doExportGrades" type="safe" title="Export Grades" rt="#Gradebook">
+    <descriptor id="doExportGrades" type="idempotent" title="Export Grades" rt="#Gradebook">
         <descriptor href="#courseId"/>
     </descriptor>
 
@@ -886,24 +886,24 @@
         <descriptor href="#webinarId"/>
     </descriptor>
 
-    <descriptor id="doJoinWebinar" type="safe" title="Join Webinar" rt="#WebinarView">
+    <descriptor id="doJoinWebinar" type="idempotent" title="Join Webinar" rt="#WebinarView">
         <descriptor href="#webinarId"/>
         <descriptor href="#webinarUrl"/>
     </descriptor>
 
-    <descriptor id="doViewRecording" type="safe" title="View Webinar Recording" rt="#RecordingView">
+    <descriptor id="goViewRecording" type="safe" title="View Webinar Recording" rt="#RecordingView">
         <descriptor href="#webinarId"/>
         <descriptor href="#webinarRecording"/>
     </descriptor>
 
     <!-- Analytics Transitions -->
-    <descriptor id="doFilterAnalytics" type="safe" title="Filter Analytics Data" rt="#AnalyticsDashboard">
+    <descriptor id="goFilterAnalytics" type="safe" title="Filter Analytics Data" rt="#AnalyticsDashboard">
         <descriptor href="#courseId"/>
         <descriptor href="#startDate"/>
         <descriptor href="#endDate"/>
     </descriptor>
 
-    <descriptor id="doExportAnalytics" type="safe" title="Export Analytics Data" rt="#AnalyticsDashboard">
+    <descriptor id="doExportAnalytics" type="idempotent" title="Export Analytics Data" rt="#AnalyticsDashboard">
         <descriptor href="#courseId"/>
     </descriptor>
 
@@ -914,36 +914,36 @@
         <descriptor href="#endDate"/>
     </descriptor>
 
-    <descriptor id="doExportReport" type="safe" title="Export Report Data" rt="#ReportDetail">
+    <descriptor id="doExportReport" type="idempotent" title="Export Report Data" rt="#ReportDetail">
         <descriptor href="#reportId"/>
     </descriptor>
 
     <!-- Filter Transitions -->
-    <descriptor id="doFilterCourses" type="safe" title="Filter Course List" rt="#CourseList">
+    <descriptor id="goFilterCourses" type="safe" title="Filter Course List" rt="#CourseList">
         <descriptor href="#courseCategory"/>
         <descriptor href="#instructor"/>
         <descriptor href="#courseStatus"/>
     </descriptor>
 
-    <descriptor id="doFilterStudents" type="safe" title="Filter Student List" rt="#ClassProgress">
+    <descriptor id="goFilterStudents" type="safe" title="Filter Student List" rt="#ClassProgress">
         <descriptor href="#courseId"/>
     </descriptor>
 
-    <descriptor id="doFilterAssignments" type="safe" title="Filter Assignment List" rt="#AssignmentList">
+    <descriptor id="goFilterAssignments" type="safe" title="Filter Assignment List" rt="#AssignmentList">
         <descriptor href="#courseId"/>
         <descriptor href="#dueDate"/>
     </descriptor>
 
-    <descriptor id="doFilterSubmissions" type="safe" title="Filter Submission List" rt="#SubmissionList">
+    <descriptor id="goFilterSubmissions" type="safe" title="Filter Submission List" rt="#SubmissionList">
         <descriptor href="#assignmentId"/>
         <descriptor href="#submissionStatus"/>
     </descriptor>
 
-    <descriptor id="doFilterDiscussions" type="safe" title="Filter Discussion List" rt="#DiscussionList">
+    <descriptor id="goFilterDiscussions" type="safe" title="Filter Discussion List" rt="#DiscussionList">
         <descriptor href="#courseId"/>
     </descriptor>
 
-    <descriptor id="doFilterMessages" type="safe" title="Filter Messages" rt="#MessageCenter">
+    <descriptor id="goFilterMessages" type="safe" title="Filter Messages" rt="#MessageCenter">
         <descriptor href="#messageSender"/>
         <descriptor href="#messageDate"/>
     </descriptor>
