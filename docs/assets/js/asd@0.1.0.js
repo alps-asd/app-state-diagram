@@ -106,3 +106,17 @@ const setupModeSwitch = (switchId, graphId, otherGraphId) => {
         document.getElementById(otherGraphId).style.display = e.target.checked ? 'none' : 'block';
     });
 };
+
+const setupTagClick = () => {
+    document.querySelectorAll('.meta-tag.tag-tag a').forEach(link => {
+        link.addEventListener('click', e => {
+            e.preventDefault();
+            const tagName = link.textContent.trim();
+            const checkbox = document.querySelector(`#tag-${tagName}`);
+            if (checkbox) {
+                checkbox.checked = true;
+                checkbox.dispatchEvent(new Event('change'));
+            }
+        });
+    });
+}
