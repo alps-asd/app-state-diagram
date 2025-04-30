@@ -15,6 +15,7 @@
         "ext-simplexml": "*",
         "ext-libxml": "*",
         "ext-dom": "*",
+        "ext-mbstring": "*",
         "michelf/php-markdown": "^1.9",
         "seld/jsonlint": "^1.8",
         "koriym/data-file": "^1.0"
