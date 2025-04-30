@@ -33,19 +33,19 @@ final class MdToHtml
             max-width: 1100px;
         }
         .markdown-body table th:nth-child(1) {
-            width: 5%;
+            width: 2%;
         }
         .markdown-body table th:nth-child(2) {
             width: 15%;
         }
         .markdown-body table th:nth-child(3) {
-            width: 50%;
+            width: 35%;
         }
         .markdown-body table th:nth-child(4) {
-            width: 15%;
+            width: 20%;
         }
         .markdown-body table th:nth-child(5) {
-            width: 15%;  /* Extras列をさらに狭く（docが極端に短くなるため） */
+            width: 28%;  /* Extras列をさらに狭く（docが極端に短くなるため） */
         }
         .markdown-body table td {
             word-wrap: break-word;
@@ -264,6 +264,77 @@ final class MdToHtml
             background-size: 6px 6px;
             background-position: 0 0, 3px 3px;
         }
+// CSS部分
+/* メタ情報のスタイリング - より洗練されたデザイン */
+/* メタ情報のスタイリング - 縦整列の改善 */
+.meta-container {
+  display: flex;
+  flex-direction: column;
+  gap: 4px; 
+}
+
+.meta-item {
+    display: flex;
+    align-items: center;
+    line-height: 1.0;
+}
+
+.meta-label {
+    font-size: 0.85em;
+    color: #777;
+    width: 45px;
+    text-align: right;
+    padding-right: 10px;
+    flex-shrink: 0;
+}
+
+.meta-values {
+  display: inline-flex;    /* 横並びに */
+  flex-wrap: wrap;         /* 多すぎると折り返し */
+}
+
+.meta-tag {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 4px;
+    font-size: 0.8em;
+    background-color: #f7f7f7;
+    border: 1px solid #e0e0e0;
+    color: #3b71ca;
+    margin: 0 8px 4px 0;
+}
+
+/* タグ種類別のカラー - より控えめに */
+.def-tag {
+  background-color: #EAF5FF; /* 薄いブルー */
+  border-color:     #B8DFFF; /* やや濃いめ */
+  color:            #0366D6; /* リンク色っぽいブルー */
+}
+
+.rt-tag {
+  background-color: #FFF5E6; /* 薄いオレンジ */
+  border-color:     #FFE1B3;
+  color:            #D97506; /* 濃いオレンジ */
+}
+
+.tag-tag {
+  background-color: #E6FFED; /* 薄いグリーン */
+  border-color:     #C6EFC7;
+  color:            #22863A; /* 濃いグリーン */
+}
+
+.doc-tag {
+    background-color: #f7f7f7;
+    color: grey;
+    border: 1px solid lightgray;
+    overflow: visible !important;
+}
+
+/* テーブルセル内でのメタ情報の折り返し */
+.markdown-body table td:nth-child(5) {
+    padding-left: 4px !important;
+    vertical-align: middle;
+}
     </style>';
 
     public function __invoke(string $title, string $markdown): string

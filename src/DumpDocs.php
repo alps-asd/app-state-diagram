@@ -9,7 +9,6 @@ use stdClass;
 use function array_filter;
 use function array_map;
 use function assert;
-use function explode;
 use function filter_var;
 use function htmlspecialchars;
 use function implode;
@@ -24,9 +23,9 @@ use function sprintf;
 use function strlen;
 use function strpos;
 use function substr;
+use function ucfirst;
 use function usort;
 
-use const ENT_QUOTES;
 use const FILTER_VALIDATE_URL;
 use const PHP_EOL;
 use const SORT_FLAG_CASE;
@@ -55,6 +54,7 @@ final class DumpDocs
         return mb_substr($text, 0, $maxLength - 3) . '...';
     }
 
+// getDescriptorPropValue メソッドを修正
     private function getDescriptorPropValue(string $key, AbstractDescriptor $descriptor): string
     {
         if (! property_exists($descriptor, $key) || ! $descriptor->{$key}) {
@@ -62,60 +62,81 @@ final class DumpDocs
         }
 
         $value = (string) $descriptor->{$key};
-        if ($key === 'def' && $this->isUrl($value)) {
-            // URLのプロトコル部分を削除してコンパクトに表示
-            $displayValue = preg_replace('#^https?://#', '', $value);
-            // 長いURLは省略表示する（30文字以上の場合）
-            if (strlen($displayValue) > 30) {
-                $displayValue = substr($displayValue, 0, 27) . '...';
-            }
 
-            return sprintf('%s: [%s](%s)', $key, $displayValue, $value);
-        }
+        // 各プロパティタイプごとに異なるスタイルを適用
+        switch ($key) {
+            case 'def':
+                if ($this->isUrl($value)) {
+                    $displayValue = preg_replace('#^https?://#', '', $value);
+                    if (strlen($displayValue) > 30) {
+                        $displayValue = substr($displayValue, 0, 27) . '...';
+                    }
 
-        if ($key === 'href' && $this->isFragment($value)) {
-            [, $id] = explode('#', $value);
+                    return sprintf(
+                        '<span class="meta-item"><span class="meta-label">def:</span><span class="meta-tag def-tag"><a href="%s" target="_blank">%s</a></span></span>',
+                        $value,
+                        $displayValue
+                    );
+                }
 
-            return sprintf('%s: [%s](%s)', $key, $id, $this->getSemanticLink($id));
-        }
-
-        // 'rel' やその他の単純なプロパティ
-        if ($key === 'rel') {
-            return sprintf('%s: %s', $key, $value);
-        }
-
-        if ($key === 'rt') {
-            return sprintf('%s: [%s](#%s)', $key, $value, $value);
-        }
-
-        // docプロパティの処理を追加（極端に短くしてカスタムツールチップ表示）
-        if ($key === 'doc') {
-            // 極端に短く（8文字程度に制限）
-            $truncatedValue = $this->truncateText($value, 8);
-
-            if (mb_strlen($value) > 8) {
-                // カスタムツールチップを実装（プロパティ名をハードコード）
                 return sprintf(
-                    '<span class="doc-tooltip">doc: %s…<span class="tooltip-text">%s</span></span>',
-                    htmlspecialchars($truncatedValue),
-                    htmlspecialchars($value, ENT_QUOTES)
+                    '<span class="meta-item"><span class="meta-label">def:</span><span class="meta-tag def-tag">%s</span></span>',
+                    htmlspecialchars($value)
                 );
-            }
 
-            return sprintf('doc: %s', htmlspecialchars($value));
+            case 'rel':
+                return sprintf(
+                    '<span class="meta-item"><span class="meta-label">rel:</span><span class="meta-tag rel-tag">%s</span></span>',
+                    htmlspecialchars($value)
+                );
+
+            case 'rt':
+                return sprintf(
+                    '<span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#%s">%s</a></span></span>',
+                    $value,
+                    $value
+                );
+
+            case 'doc':
+                // 短いドキュメントはそのまま表示、長いものはツールチップで
+                $truncatedValue = $this->truncateText($value, 30);
+                if (mb_strlen($value) > 30) {
+                    return sprintf(
+                        '<span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag" title="%s">%s...</span></span>',
+                        htmlspecialchars($value),
+                        htmlspecialchars($truncatedValue)
+                    );
+                }
+
+                return sprintf(
+                    '<span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">%s</span></span>',
+                    htmlspecialchars($value)
+                );
+
+            case 'linkRelations':
+                // linkRelationsは独自の実装があるようなので、それを活かす
+                if ($descriptor->linkRelations) {
+                    $links = $descriptor->linkRelations->getLinksInExtras();
+                    if ($links) {
+                        return sprintf(
+                            '<span class="meta-item"><span class="meta-label">link:</span><span class="meta-tag link-tag">%s</span></span>',
+                            $links
+                        );
+                    }
+                }
+
+                return '';
+
+            default:
+                return sprintf(
+                    '<span class="meta-item"><span class="meta-label">%s:</span><span class="meta-tag">%s</span></span>',
+                    $key,
+                    htmlspecialchars($value)
+                );
         }
-
-        if ($key === 'linkRelations') {
-            return $descriptor->linkRelations->getLinksInExtras();
-        }
-
-        // title は別の列で表示するのでここでは返さない
-        // type も別の列
-        // href も基本的には使わない想定だが、念のため残す場合は上記のisFragmentで処理
-
-        return ''; // Extras列に含めないものは空文字を返す
     }
 
+    /** @param AbstractDescriptor|SemanticDescriptor $descriptor */
     private function isUrl(string $text): bool
     {
         return filter_var($text, FILTER_VALIDATE_URL) !== false;
@@ -164,6 +185,7 @@ final class DumpDocs
 
         return implode('<br>', $links);
     }
+
     /**
      * @param non-empty-list<stdClass> $inlineDescriptors
      *
@@ -220,6 +242,7 @@ final class DumpDocs
     }
 
     /** @param list<string> $tags */
+// タグ文字列の生成メソッドも修正
     private function getTagString(array $tags): string
     {
         if ($tags === []) {
@@ -227,10 +250,17 @@ final class DumpDocs
         }
 
         $tagLinks = array_map(static function (string $tag): string {
-            return sprintf('[%s](#tag-%s)', $tag, $tag);
+            return sprintf(
+                '<span class="meta-tag tag-tag"><a href="#tag-%s">%s</a></span>',
+                $tag,
+                $tag
+            );
         }, $tags);
 
-        return 'tag: ' . implode(', ', $tagLinks); // 末尾の改行を削除し、"tag: " プレフィックスを追加
+        return sprintf(
+            '<span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values">%s</span></span>',
+            implode(' ', $tagLinks)
+        );
     }
 
     private function getExtrasMarkdown(AbstractDescriptor $descriptor): string
@@ -242,12 +272,15 @@ final class DumpDocs
         $extras[] = $this->getDescriptorPropValue('rt', $descriptor);
         $extras[] = $this->getDescriptorPropValue('doc', $descriptor);
         $extras[] = $this->getDescriptorPropValue('linkRelations', $descriptor);
-        // 必要に応じて他のプロパティも追加
-        // $extras[] = $this->getDescriptorPropValue('href', $descriptor); // 必要であれば
 
-        $filteredExtras = array_filter($extras); // 空の要素を削除
+        // 空の要素を削除
+        $filteredExtras = array_filter($extras);
 
-        return implode(', ', $filteredExtras);
+        if (empty($filteredExtras)) {
+            return '';
+        }
+
+        return '<span class="meta-container">' . implode('', $filteredExtras) . '</span>';
     }
 
     private function buildMarkdownTableRow(AbstractDescriptor $descriptor): string
