@@ -45,7 +45,7 @@ final class DumpDocs
     /**
      * 長い文字列を切り詰めて返す
      */
-    private function truncateText(string $text, int $maxLength = 100): string
+    private function truncateText(string $text, int $maxLength): string
     {
         if (mb_strlen($text) <= $maxLength) {
             return $text;
@@ -99,8 +99,9 @@ final class DumpDocs
 
             case 'doc':
                 // 短いドキュメントはそのまま表示、長いものはツールチップで
-                $truncatedValue = $this->truncateText($value, 30);
-                if (mb_strlen($value) > 30) {
+                $maxLength = 140;
+                $truncatedValue = $this->truncateText($value, $maxLength);
+                if (mb_strlen($value) > $maxLength) {
                     return sprintf(
                         '<span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag" title="%s">%s...</span></span>',
                         htmlspecialchars($value),
