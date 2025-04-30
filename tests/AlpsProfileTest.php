@@ -32,7 +32,7 @@ class AlpsProfileTest extends TestCase
     public function testProfile(): void
     {
         $profile = new Profile(__DIR__ . '/Fake/alps.json', new LabelName());
-        $this->assertSame('goBar (safe)', (string) $profile->links['Foo->Bar:goBar']);
+        $this->assertSame('goBar', (string) $profile->links['Foo->Bar:goBar']);
     }
 
     public function testIncludeExternalRemoteProfile(): void
@@ -49,7 +49,7 @@ class AlpsProfileTest extends TestCase
     public function testHttpProfile(): void
     {
         $profile = new Profile('https://raw.githubusercontent.com/alps-asd/app-state-diagram/master/docs/blog/profile.json', new LabelName());
-        $this->assertSame('goBlog, collection (safe)', (string) $profile->links['Index->Blog:goBlog']);
+        $this->assertSame('goBlog', (string) $profile->links['Index->Blog:goBlog']);
     }
 
     public function testReadPhpInput(): void
@@ -57,14 +57,14 @@ class AlpsProfileTest extends TestCase
         stream_wrapper_unregister('php');
         stream_wrapper_register('php', FakeAlpsJsonInputStreamWrapper::class);
         $profile = new Profile('php://input', new LabelName());
-        $this->assertSame('goAbout, about (safe)', (string) $profile->links['Blog->About:goAbout']);
+        $this->assertSame('goAbout', (string) $profile->links['Blog->About:goAbout']);
         stream_wrapper_restore('php');
     }
 
     public function testExternalRt(): void
     {
         $profile = new Profile(__DIR__ . '/Fake/alps.rt_external.json', new LabelName());
-        $this->assertSame('foo (safe)', (string) $profile->links['Index->Foo:foo']);
+        $this->assertSame('foo', (string) $profile->links['Index->Foo:foo']);
     }
 
     public function testFileNotReadable(): void
