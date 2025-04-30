@@ -148,17 +148,22 @@ final class DumpDocs
 
         assert(is_array($descriptor->descriptor));
         $descriptors = $this->getInlineDescriptors($descriptor->descriptor);
-
         $links = array_map(static function (AbstractDescriptor $desc): string {
-//            $displayText = !empty($desc->title) ? $desc->title : $desc->id;
             $displayText = $desc->id;
+            $typeClass = $desc->type; // semantic, safe, unsafe, idempotentのいずれか
 
-            return sprintf('[%s](#%s)', $displayText, $desc->id);
+            // タイプインジケーターを追加
+            $typeIndicator = sprintf(
+                '<span class="type-indicator-small %s" title="%s"></span>',
+                $typeClass,
+                ucfirst($typeClass)
+            );
+
+            return sprintf('%s<a href="#%s">%s</a>', $typeIndicator, $desc->id, $displayText);
         }, $descriptors);
 
         return implode('<br>', $links);
     }
-
     /**
      * @param non-empty-list<stdClass> $inlineDescriptors
      *
