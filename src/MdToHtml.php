@@ -13,16 +13,14 @@ final class MdToHtml
             background-color: white;
         }
         .markdown-body {
-            box-sizing: border-box;
-            min-width: 200px;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 25px;
+          margin: 0;
+          max-width: none;
+          padding: 0 24px; 
         }
     
         @media (max-width: 767px) {
             .markdown-body {
-                padding: 15px;
+                padding: 0 16px;
             }
         }
         
@@ -93,13 +91,41 @@ final class MdToHtml
             cursor: help;
             position: relative;
         }
-        #svg-container {
-            width: 100%;
+#svg-container {
+            /* 既存のスタイルも維持 */
             height: auto;
             display: flex;
+            justify-content: flex-start; /* SVGが小さい場合に左寄せ */
             align-items: center;
+            overflow-x: auto; /* SVGがコンテナ幅を超える場合に水平スクロールを表示 */
+
+            /* ↓↓↓ ここから追加・変更 ↓↓↓ */
+            width: 100vw; /* ビューポート（表示領域）の幅いっぱいに設定 */
+            max-width: none; /* 親要素(.markdown-body)のmax-width制限を解除 */
+            box-sizing: border-box; /* paddingやborderを幅計算に含める */
+
+            /*
+             * .markdown-body の margin: 0 auto による中央揃えを打ち消し、
+             * 左端に合わせるためのネガティブマージン。
+             * calc(50% - 50vw) は、中央からビューポート幅の半分だけ左にずらす計算。
+             */
+            margin-left: calc(50% - 50vw);
+            margin-right: calc(50% - 50vw); /* 同様に右マージンも設定（厳密には不要な場合も）*/
+
+            /* 必要に応じて左右に少しパディングを追加して、画面端にくっつきすぎないようにする */
+            /* padding-left: 15px; */
+            /* padding-right: 15px; */
+            /* ↑ 必要であればコメント解除してください */
         }
-        .asd-view-selector {
+
+        /* SVG要素自体が大きい場合に正しく表示されるように */
+        #svg-container svg {
+            max-width: none; /* SVG自体の最大幅制限も解除（必要に応じて） */
+            display: block; /* または inline-block */
+            margin: 0 auto; /* SVGをコンテナ内で中央に置きたい場合 */
+            /* justify-content: flex-start; を使う場合は margin: 0; の方が良いかも */
+            margin: 0;
+        }        .asd-view-selector {
             display: flex;
             align-items: center;
             margin-top: 40px;
@@ -113,7 +139,9 @@ final class MdToHtml
         }
         .selector-container {
             display: flex;
+            flex-wrap: wrap; 
             align-items: center;
+            gap: 8px 12px;
             margin-bottom: 10px;
         }
         .selector-label {
