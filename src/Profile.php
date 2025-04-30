@@ -52,7 +52,6 @@ final class Profile extends AbstractProfile
         $instances = new Instances();
         $this->storeDescriptors($descriptors, $instances, $hyperReference);
         $this->instances = $instances->get();
-        $this->labelName = $labelName;
         if ($doFinalize) {
             $this->finalize($hyperReference);
         }
