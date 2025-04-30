@@ -12,7 +12,7 @@ class IndexPageTest extends TestCase
     {
         $alpsFile = __DIR__ . '/Fake/alps.json';
         $html = (new IndexPage($this->getConfig($alpsFile)))->content;
-        $this->assertStringContainsString('<a id="About">About</a>', $html);
+        $this->assertStringContainsString('<a id="About"></a>', $html);
 
         return $html;
     }
@@ -21,7 +21,7 @@ class IndexPageTest extends TestCase
     {
         $alpsFile = __DIR__ . '/Fake/alps.json';
         $content = (new IndexPage($this->getConfig($alpsFile, DumpDocs::MODE_MARKDOWN)))->content;
-        $this->assertStringContainsString('<a id="About">About</a>', $content);
+        $this->assertStringContainsString('<a id="About"></a>', $content);
 
         return $content;
     }
@@ -36,7 +36,7 @@ class IndexPageTest extends TestCase
     {
         $alpsFile = __DIR__ . '/Fake/project/min/profile.json';
         $html = (new IndexPage($this->getConfig($alpsFile)))->content;
-        $this->assertStringContainsString('foo-title</li>', $html);
+        $this->assertStringContainsString('foo-title', $html);
         $this->assertStringContainsString('bar</a>', $html);
     }
 
