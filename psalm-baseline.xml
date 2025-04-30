@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<files psalm-version="4.30.0@d0bc6e25d89f649e4f36a534f330f8bb4643dd69">
+  <file src="src/DumpDocs.php">
+    <InvalidReturnStatement occurrences="1">
+      <code>[]</code>
+    </InvalidReturnStatement>
+    <InvalidReturnType occurrences="1">
+      <code>non-empty-list&lt;AbstractDescriptor&gt;</code>
+    </InvalidReturnType>
+    <RedundantCondition occurrences="3">
+      <code>$descriptor-&gt;linkRelations</code>
+      <code>$descriptor-&gt;linkRelations</code>
+      <code>$descriptor-&gt;title</code>
+    </RedundantCondition>
+    <TypeDoesNotContainType occurrences="1">
+      <code>''</code>
+    </TypeDoesNotContainType>
+    <UndefinedPropertyFetch occurrences="1">
+      <code>$descriptor-&gt;rt</code>
+    </UndefinedPropertyFetch>
+  </file>
+  <file src="src/IndexPage.php">
+    <TooManyArguments occurrences="1">
+      <code>getSemanticDescriptorMarkDown</code>
+    </TooManyArguments>
+  </file>
+</files>
