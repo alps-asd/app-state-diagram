@@ -54,7 +54,6 @@ final class DumpDocs
         return mb_substr($text, 0, $maxLength - 3) . '...';
     }
 
-// getDescriptorPropValue メソッドを修正
     private function getDescriptorPropValue(string $key, AbstractDescriptor $descriptor): string
     {
         if (! property_exists($descriptor, $key) || ! $descriptor->{$key}) {
@@ -149,8 +148,6 @@ final class DumpDocs
         return isset($text[0]) && $text[0] === '#' && isset($text[1]);
     }
 
-    // getDescriptorKeyValue は Extras の整形に含めるため直接は使わない
-
     private function getRt(AbstractDescriptor $descriptor): string
     {
         if ($descriptor instanceof SemanticDescriptor || ! $descriptor->rt) {
@@ -243,7 +240,6 @@ final class DumpDocs
     }
 
     /** @param list<string> $tags */
-// タグ文字列の生成メソッドも修正
     private function getTagString(array $tags): string
     {
         if ($tags === []) {
@@ -324,7 +320,6 @@ final class DumpDocs
         return $markdown;
     }
 
-    // getSemanticDescriptorList はそのまま残す（HTML用で使用されている可能性があるため）
     public function getSemanticDescriptorList(Profile $profile): string
     {
         $descriptors = $profile->descriptors;
@@ -337,10 +332,6 @@ final class DumpDocs
         return implode(PHP_EOL, $items);
     }
 
-    // getLinkRelations は Extras の整形に含めるため直接は使わない
-    // private function getLinkRelations(LinkRelations $linkRelations): string ...
-
-    // Helper for semantic links if needed elsewhere, or incorporate into getDescriptorPropValue
     private function getSemanticLink(string $id): string
     {
         // Assuming markdown output, adjust extension if needed based on mode

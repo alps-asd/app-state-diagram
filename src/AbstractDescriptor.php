@@ -46,7 +46,7 @@ abstract class AbstractDescriptor
         /** @psalm-suppress MixedAssignment */
         $this->def = $descriptor->def ?? $descriptor->ref ?? $descriptor->src ?? null;
         /** @psalm-suppress MixedAssignment */
-        $this->doc = $descriptor->doc ?? null;
+        $this->doc = $descriptor->doc->value ?? null;
         /** @psalm-suppress MixedAssignment */
         $this->descriptor = $descriptor->descriptor ?? [];
         $this->parent = $parentDescriptor;
