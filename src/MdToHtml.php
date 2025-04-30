@@ -15,7 +15,7 @@ final class MdToHtml
         .markdown-body {
             box-sizing: border-box;
             min-width: 200px;
-            max-width: 1100px;
+            max-width: 1200px;
             margin: 0 auto;
             padding: 25px;
         }
@@ -30,7 +30,7 @@ final class MdToHtml
         .markdown-body table {
             table-layout: fixed;
             width: 100%;
-            max-width: 1100px;
+            max-width: 1200px;
         }
         .markdown-body table th:nth-child(1) {
             width: 2%;
@@ -39,10 +39,10 @@ final class MdToHtml
             width: 15%;
         }
         .markdown-body table th:nth-child(3) {
-            width: 35%;
+            width: 30%;
         }
         .markdown-body table th:nth-child(4) {
-            width: 20%;
+            width: 25%;
         }
         .markdown-body table th:nth-child(5) {
             width: 28%;  /* Extras列をさらに狭く（docが極端に短くなるため） */
