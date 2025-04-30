@@ -15,9 +15,6 @@
     <TypeDoesNotContainType occurrences="1">
       <code>''</code>
     </TypeDoesNotContainType>
-    <UndefinedPropertyFetch occurrences="1">
-      <code>$descriptor-&gt;rt</code>
-    </UndefinedPropertyFetch>
   </file>
   <file src="src/IndexPage.php">
     <TooManyArguments occurrences="1">

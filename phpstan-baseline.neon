@@ -85,12 +85,6 @@ parameters:
 			path: src/DrawDiagram.php
 
 		-
-			message: '#^Access to an undefined property Koriym\\AppStateDiagram\\AbstractDescriptor\:\:\$rt\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/DumpDocs.php
-
-		-
 			message: '#^Cannot cast mixed to string\.$#'
 			identifier: cast.string
 			count: 1
@@ -109,24 +103,6 @@ parameters:
 			path: src/DumpDocs.php
 
 		-
-			message: '#^Method Koriym\\AppStateDiagram\\DumpDocs\:\:getRt\(\) is unused\.$#'
-			identifier: method.unused
-			count: 1
-			path: src/DumpDocs.php
-
-		-
-			message: '#^Method Koriym\\AppStateDiagram\\DumpDocs\:\:getSemanticLink\(\) is unused\.$#'
-			identifier: method.unused
-			count: 1
-			path: src/DumpDocs.php
-
-		-
-			message: '#^Method Koriym\\AppStateDiagram\\DumpDocs\:\:isFragment\(\) is unused\.$#'
-			identifier: method.unused
-			count: 1
-			path: src/DumpDocs.php
-
-		-
 			message: '#^PHPDoc tag @param references unknown parameter\: \$descriptor$#'
 			identifier: parameter.notFound
 			count: 1
@@ -140,18 +116,6 @@ parameters:
 
 		-
 			message: '#^Parameter \#1 \$string of function substr expects string, string\|null given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/DumpDocs.php
-
-		-
-			message: '#^Parameter \#2 \.\.\.\$values of function sprintf expects bool\|float\|int\|string\|null, mixed given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/DumpDocs.php
-
-		-
-			message: '#^Parameter \#3 \.\.\.\$values of function sprintf expects bool\|float\|int\|string\|null, mixed given\.$#'
 			identifier: argument.type
 			count: 1
 			path: src/DumpDocs.php

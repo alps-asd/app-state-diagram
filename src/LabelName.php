@@ -16,8 +16,6 @@ final class LabelName implements LabelNameInterface
 
     public function getLinkLabel(TransDescriptor $trans): string
     {
-        $extras = $trans->rel ? sprintf(', %s ', $trans->rel) : ' ';
-
         return sprintf('%s', $trans->id);
     }
 }

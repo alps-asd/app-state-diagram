@@ -142,23 +142,6 @@ final class DumpDocs
         return filter_var($text, FILTER_VALIDATE_URL) !== false;
     }
 
-    private function isFragment(string $text): bool
-    {
-        // Check if the string starts with '#' and has content after it.
-        return isset($text[0]) && $text[0] === '#' && isset($text[1]);
-    }
-
-    private function getRt(AbstractDescriptor $descriptor): string
-    {
-        if ($descriptor instanceof SemanticDescriptor || ! $descriptor->rt) {
-            return '';
-        }
-
-        // $descriptor instanceof TransDescriptor は上記でカバーされる
-
-        return sprintf('[#%s](#%s)', $descriptor->rt, $descriptor->rt);
-    }
-
     private function getContainedDescriptorsMarkdown(AbstractDescriptor $descriptor): string
     {
         if ($descriptor->descriptor === []) {
@@ -330,13 +313,5 @@ final class DumpDocs
         }
 
         return implode(PHP_EOL, $items);
-    }
-
-    private function getSemanticLink(string $id): string
-    {
-        // Assuming markdown output, adjust extension if needed based on mode
-        // $ext = ($this->mode === self::MODE_HTML) ? 'html' : 'md';
-        // return sprintf('semantic.%s.%s', $id, $ext);
-        return sprintf('#%s', $id); // Changed to link within the same markdown page
     }
 }
