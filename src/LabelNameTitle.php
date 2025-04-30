@@ -20,14 +20,6 @@ final class LabelNameTitle implements LabelNameInterface
         $title = $trans->title ?: $trans->id;
         $title = str_replace(' ', '&nbsp;', $title);
 
-        if ($trans->type === 'idempotent') {
-            return sprintf('<u>%s</u>', $title);
-        }
-
-        if ($trans->type === 'unsafe') {
-            return sprintf('<b><u>%s</u></b>', $title);
-        }
-
         return $title;
     }
 }

@@ -32,6 +32,7 @@ final class MdToHtml
         }
         .markdown-body table th:nth-child(1) {
             width: 2%;
+            width: 2%;
         }
         .markdown-body table th:nth-child(2) {
             width: 15%;
@@ -112,10 +113,8 @@ final class MdToHtml
             margin-left: calc(50% - 50vw);
             margin-right: calc(50% - 50vw); /* 同様に右マージンも設定（厳密には不要な場合も）*/
 
-            /* 必要に応じて左右に少しパディングを追加して、画面端にくっつきすぎないようにする */
-            /* padding-left: 15px; */
-            /* padding-right: 15px; */
-            /* ↑ 必要であればコメント解除してください */
+            padding-left: 24px;
+            padding-right: 24px;
         }
 
         /* SVG要素自体が大きい場合に正しく表示されるように */
