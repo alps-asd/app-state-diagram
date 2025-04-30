@@ -9,7 +9,7 @@ jobs:
   release:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       - name: Set up PHP
         uses: shivammathur/setup-php@v2
@@ -18,7 +18,7 @@ jobs:
           tools: box
 
       - name: Set up Node.js
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v4
         with:
           node-version: 14
 
@@ -33,7 +33,7 @@ jobs:
         run: box compile
 
       - name: Upload PHAR
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: asd.phar
           path: bin/asd.phar
