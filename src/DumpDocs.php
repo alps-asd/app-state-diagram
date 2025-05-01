@@ -52,7 +52,8 @@ final class DumpDocs
             return $text;
         }
 
-        return mb_substr($text, 0, $maxLength - 3) . '...';
+        // 省略する場合は短く表示
+        return mb_substr($text, 0, $maxLength - 3 - 100) . '...';
     }
 
     private function getDescriptorPropValue(string $key, AbstractDescriptor $descriptor): string

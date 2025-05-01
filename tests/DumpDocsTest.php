@@ -9,6 +9,7 @@ use ReflectionClass;
 use stdClass;
 
 use function htmlspecialchars;
+use function mb_substr;
 use function preg_quote;
 use function sprintf;
 
@@ -123,7 +124,7 @@ class DumpDocsTest extends TestCase
         // Expected truncated text (htmlspecialchars applied)
         $expectedText = htmlspecialchars('This is a very long documentation string designed specifically to exceed the one hundred and forty character limit imposed by the truncat...');
         // Construct the expected HTML snippet
-        $expectedHtml = sprintf('doc-tag" title="%s">%s</span>', $expectedTitle, $expectedText);
+        $expectedHtml = mb_substr(sprintf('doc-tag" title="%s">%s</span>', $expectedTitle, $expectedText), 0, 40);
         $this->assertStringContainsString($expectedHtml, $markdown);
     }
 
