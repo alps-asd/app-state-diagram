@@ -80,11 +80,10 @@ EOTJS;
 <!-- Container for the ASDs -->
 
 {$asd}
-
 {$index->tags}
+{$legend}
 
 {$index->semanticMd}
-{$legend}
 {$index->linkRelations}
 
 
