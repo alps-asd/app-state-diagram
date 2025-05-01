@@ -104,12 +104,11 @@ final class DumpDocs
                 if (mb_strlen($value) > $maxLength) {
                     // Use truncated value which already has '...'
                     return sprintf(
-                        '<span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag" title="%s">%s...</span></span>',
+                        '<span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag" title="%s">%s</span></span>',
                         htmlspecialchars($value),
                         htmlspecialchars($truncatedValue)
                     );
                 }
-
                 return sprintf(
                     '<span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">%s</span></span>',
                     htmlspecialchars($value)
