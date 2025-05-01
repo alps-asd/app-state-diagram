@@ -605,7 +605,7 @@ const setupTagClick = () => {
   <td align="left"><a id="doAddToCart"></a><a href="#doAddToCart">doAddToCart</a></td>
   <td align="left"><span style="white-space: normal;">カートに追加</span></td>
   <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#id">id</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#quantity">quantity</a></td>
-  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rel:</span><span class="meta-tag rel-tag">collection</span></span><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#ShoppingCart">ShoppingCart</a></span></span></span></span></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rel:</span><span class="meta-tag rel-tag">collection</span></span><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#ShoppingCart">ShoppingCart</a></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">指定された書籍をショッピングカートに追加する。</span></span></span></span></td>
 </tr>
 <tr>
   <td align="center"><span class="legend"><span class="legend-icon unsafe"></span></span></td>
@@ -619,7 +619,7 @@ const setupTagClick = () => {
   <td align="left"><a id="doPlaceOrder"></a><a href="#doPlaceOrder">doPlaceOrder</a></td>
   <td align="left"><span style="white-space: normal;">注文の確定</span></td>
   <td align="left"></td>
-  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#OrderConfirmation">OrderConfirmation</a></span></span></span></span></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#OrderConfirmation">OrderConfirmation</a></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">ユーザーの入力情報を基に注文を確定し、注文確認画面に遷移する。</span></span></span></span></td>
 </tr>
 <tr>
   <td align="center"><span class="legend"><span class="legend-icon idempotent"></span></span></td>
@@ -654,21 +654,21 @@ const setupTagClick = () => {
   <td align="left"><a id="goGetBookDetails"></a><a href="#goGetBookDetails">goGetBookDetails</a></td>
   <td align="left"><span style="white-space: normal;">書籍詳細の取得</span></td>
   <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#id">id</a></td>
-  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rel:</span><span class="meta-tag rel-tag">item</span></span><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#Book">Book</a></span></span></span></span></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rel:</span><span class="meta-tag rel-tag">item</span></span><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#Book">Book</a></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">指定された書籍IDに基づいて、特定の書籍の詳細情報を取得する。</span></span></span></span></td>
 </tr>
 <tr>
   <td align="center"><span class="legend"><span class="legend-icon safe"></span></span></td>
   <td align="left"><a id="goGetCategories"></a><a href="#goGetCategories">goGetCategories</a></td>
   <td align="left"><span style="white-space: normal;">カテゴリー一覧の取得</span></td>
   <td align="left"></td>
-  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rel:</span><span class="meta-tag rel-tag">collection</span></span><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#Catalog">Catalog</a></span></span></span></span></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rel:</span><span class="meta-tag rel-tag">collection</span></span><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#Catalog">Catalog</a></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">利用可能なすべての書籍カテゴリーの一覧を取得する。</span></span></span></span></td>
 </tr>
 <tr>
   <td align="center"><span class="legend"><span class="legend-icon safe"></span></span></td>
   <td align="left"><a id="goListBooks"></a><a href="#goListBooks">goListBooks</a></td>
   <td align="left"><span style="white-space: normal;">書籍一覧の取得</span></td>
   <td align="left"></td>
-  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rel:</span><span class="meta-tag rel-tag">collection</span></span><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#Catalog">Catalog</a></span></span></span></span></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rel:</span><span class="meta-tag rel-tag">collection</span></span><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#Catalog">Catalog</a></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">カタログ内のすべての書籍一覧を取得する。ページネーションやソート順の指定が可能。</span></span></span></span></td>
 </tr>
 <tr>
   <td align="center"><span class="legend"><span class="legend-icon safe"></span></span></td>
@@ -682,14 +682,14 @@ const setupTagClick = () => {
   <td align="left"><a id="goOrderDetails"></a><a href="#goOrderDetails">goOrderDetails</a></td>
   <td align="left"><span style="white-space: normal;">注文詳細の表示</span></td>
   <td align="left"></td>
-  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#OrderConfirmation">OrderConfirmation</a></span></span></span></span></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#OrderConfirmation">OrderConfirmation</a></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">確定した注文の詳細情報を表示する。</span></span></span></span></td>
 </tr>
 <tr>
   <td align="center"><span class="legend"><span class="legend-icon safe"></span></span></td>
   <td align="left"><a id="goSearchBooks"></a><a href="#goSearchBooks">goSearchBooks</a></td>
   <td align="left"><span style="white-space: normal;">書籍の検索</span></td>
   <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#query">query</a></td>
-  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rel:</span><span class="meta-tag rel-tag">collection</span></span><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#Catalog">Catalog</a></span></span></span></span></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rel:</span><span class="meta-tag rel-tag">collection</span></span><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#Catalog">Catalog</a></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">指定された検索クエリに基づいて書籍を検索する。</span></span></span></span></td>
 </tr>
 <tr>
   <td align="center"><span class="legend"><span class="legend-icon safe"></span></span></td>
@@ -780,7 +780,7 @@ const setupTagClick = () => {
   <td align="left"><a id="query"></a><a href="#query">query</a></td>
   <td align="left"><span style="white-space: normal;">検索クエリ</span></td>
   <td align="left"></td>
-  <td align="left"><span style="white-space: normal;"></span></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">検索に使用するキーワードや条件。</span></span></span></span></td>
 </tr>
 <tr>
   <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
