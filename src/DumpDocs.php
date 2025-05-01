@@ -26,6 +26,7 @@ use function substr;
 use function ucfirst;
 use function usort;
 
+use const ENT_QUOTES;
 use const FILTER_VALIDATE_URL;
 use const PHP_EOL;
 use const SORT_FLAG_CASE;
