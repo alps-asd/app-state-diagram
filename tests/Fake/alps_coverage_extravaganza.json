@@ -1,0 +1,83 @@
+{
+  "alps": {
+    "version": "1.0",
+    "descriptor": [
+      {
+        "id": "DescWithNonUrlDef",
+        "type": "semantic",
+        "def": "This is just a string definition, not a URL."
+      },
+      {
+        "id": "DescWithRel",
+        "type": "safe",
+        "rel": "alternate",
+        "rt": "#TargetDesc"
+      },
+      {
+        "id": "DescWithRt",
+        "type": "unsafe",
+        "rt": "#TargetDesc"
+      },
+      {
+        "id": "TargetDesc",
+        "type": "semantic"
+      },
+      {
+        "id": "DescWithLongDoc",
+        "type": "idempotent",
+        "rt": "#TargetDesc",
+        "doc": {
+          "value": "This is a very long documentation string designed specifically to exceed the one hundred and forty character limit imposed by the truncation logic within the DumpDocs class to ensure that the tooltip functionality is correctly triggered and tested."
+        }
+      },
+      {
+        "id": "DescWithShortDoc",
+        "type": "semantic",
+        "doc": {
+          "value": "Short doc."
+        }
+      },
+      {
+        "id": "DescWithLinkRelations",
+        "type": "safe",
+        "rt": "#TargetDesc",
+        "link": [
+          { "rel": "external", "href": "http://example.com/external" },
+          { "rel": "via", "href": "http://example.com/via" }
+        ]
+      },
+      {
+        "id": "DescWithMultipleTags",
+        "type": "unsafe",
+        "rt": "#TargetDesc",
+        "tag": "tag1 tag2 special-tag"
+      },
+      {
+        "id": "DescWithMixedInlineTypes",
+        "type": "semantic",
+        "descriptor": [
+          { "id": "InlineUnsafe" },
+          { "id": "InlineSemantic" },
+          { "id": "InlineIdempotent" },
+          { "id": "InlineSafe" }
+        ]
+      },
+      { "id": "InlineSafe", "type": "safe", "rt": "#TargetDesc" },
+      { "id": "InlineUnsafe", "type": "unsafe", "rt": "#TargetDesc" },
+      { "id": "InlineIdempotent", "type": "idempotent", "rt": "#TargetDesc" },
+      { "id": "InlineSemantic", "type": "semantic" },
+      {
+        "id": "DescMinimal",
+        "type": "semantic"
+      },
+      {
+        "id": "DescWithOnlyInvalidInlineRefs",
+        "type": "semantic",
+        "descriptor": [
+          { "id": "DefinitelyDoesNotExist" },
+          { "href": "#DoesNotExistInternally" }
+        ]
+      }
+    ]
+  }
+}

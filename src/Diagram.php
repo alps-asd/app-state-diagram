@@ -48,9 +48,6 @@ final class Diagram
         $indexConfig->outputMode = DumpDocs::MODE_HTML;
 
         return new IndexPage($indexConfig);
-
-//        file_put_contents($indexPage->file, $indexPage->content);
-//        echo "ASD generated. {$indexPage->file}" . PHP_EOL;
     }
 
     private function draw(string $fileId, LabelNameInterface $labelName, AbstractProfile $profile): void

@@ -6,6 +6,27 @@ An ALPS profile example for ASD
 
 [<img src="profile.svg" alt="application state diagram">](profile.title.svg)
 
+<div class="legend">
+    <div class="legend-item" title="A state element (e.g.  HTML.SPAN, HTML.INPUT, etc.).">
+        <span class="legend-icon semantic"></span>
+        Semantic
+    </div>
+    <div class="legend-item" title="A hypermedia control that triggers a safe, idempotent state
+      transition (e.g.  HTTP.GET or HTTP.HEAD).">
+        <span class="legend-icon safe"></span>
+        Safe
+    </div>
+    <div class="legend-item" title="A hypermedia control that triggers an unsafe, non-
+      idempotent state transition (e.g.  HTTP.POST).">
+        <span class="legend-icon unsafe"></span>
+        Unsafe
+    </div>
+    <div class="legend-item" title="A hypermedia control that triggers an unsafe,
+      idempotent state transition (e.g.  HTTP.PUT or HTTP.DELETE).">
+        <span class="legend-icon idempotent"></span>
+        Idempotent
+    </div>
+</div>
 
 
 
@@ -25,25 +46,6 @@ An ALPS profile example for ASD
 | <span class="legend"><span class="legend-icon safe"></span></span> | <a id="goStart"></a>[goStart](#goStart) | <span style="white-space: normal;">to start</span> |  | <span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#Blog">Blog</a></span></span></span></span> |
 | <span class="legend"><span class="legend-icon semantic"></span></span> | <a id="id"></a>[id](#id) | <span style="white-space: normal;"></span> |  | <span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">def:</span><span class="meta-tag def-tag"><a href="https://schema.org/identifier" target="_blank">schema.org/identifier</a></span></span></span></span> |
 | <span class="legend"><span class="legend-icon semantic"></span></span> | <a id="Index"></a>[Index](#Index) | <span style="white-space: normal;">Index Page</span> | <span class="type-indicator-small safe" title="Safe"></span><a href="#goBlog">goBlog</a> | <span style="white-space: normal;"></span> |
-
-<div class="legend">
-    <div class="legend-item">
-        <span class="legend-icon semantic"></span>
-        Semantic
-    </div>
-    <div class="legend-item">
-        <span class="legend-icon safe"></span>
-        Safe
-    </div>
-    <div class="legend-item">
-        <span class="legend-icon unsafe"></span>
-        Unsafe
-    </div>
-    <div class="legend-item">
-        <span class="legend-icon idempotent"></span>
-        Idempotent
-    </div>
-</div>
 
 ## Links
 * <a rel="issue" href="https://github.com/alps-asd/app-state-diagram/issues">issue</a>

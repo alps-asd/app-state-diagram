@@ -9,6 +9,7 @@ use Koriym\AppStateDiagram\Exception\DescriptorNotFoundException;
 use Koriym\AppStateDiagram\Exception\InvalidLinkRelationException;
 use Koriym\AppStateDiagram\Exception\MissingHashSignInHrefException;
 use PHPUnit\Framework\TestCase;
+use stdClass;
 
 use function stream_wrapper_register;
 use function stream_wrapper_restore;
@@ -101,5 +102,13 @@ class AlpsProfileTest extends TestCase
     {
         $this->expectException(MissingHashSignInHrefException::class);
         new Profile(__DIR__ . '/Fake/invalid_rt_descriptor.json', new LabelName());
+    }
+
+    public function testHtmlLink(): void
+    {
+        $descriptor = new stdClass();
+        $descriptor->id = 'testId';
+        $semanticDescriptor = new SemanticDescriptor($descriptor);
+        $this->assertSame('[testId](#testId)', $semanticDescriptor->htmlLink());
     }
 }

@@ -76,12 +76,12 @@
             "def": "https://schema.org/BlogPosting#dateCreated"
           },
           {
-            "id": "blog",
-            "type": "safe",
-            "rt": "#Blog",
-            "rel": "colletion"
-          },
-          {
+      "id": "blog",
+      "type": "safe",
+      "rt": "#Blog",
+      "rel": "collection"
+    },
+    {
             "href": "#about"
           }
         ]
