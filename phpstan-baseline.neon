@@ -24,3 +24,13 @@ parameters:
 			message: "#^Parameter \\#1 \\$string of function substr expects string, string\\|null given\\.$#"
 			count: 1
 			path: src/DumpDocs.php
+
+		-
+			message: "#^Variable \\$inlineDescriptors in empty\\(\\) always exists and is not falsy\\.$#"
+			count: 1
+			path: src/DumpDocs.php
+
+		-
+			message: "#^Parameter \\#2 \\$haystack of method PHPUnit\\\\Framework\\\\Assert\\:\\:assertStringContainsString\\(\\) expects string, mixed given\\.$#"
+			count: 1
+			path: tests/DumpDocsTest.php

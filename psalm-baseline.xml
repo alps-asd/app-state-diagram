@@ -73,6 +73,8 @@
     </RedundantCondition>
     <TypeDoesNotContainType>
       <code><![CDATA['']]></code>
+      <code><![CDATA[empty($inlineDescriptors)]]></code>
+      <code><![CDATA[empty($inlineDescriptors)]]></code>
     </TypeDoesNotContainType>
     <UnusedDocblockParam>
       <code><![CDATA[$descriptor]]></code>
