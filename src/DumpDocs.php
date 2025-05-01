@@ -92,8 +92,8 @@ final class DumpDocs
             case 'rt':
                 return sprintf(
                     '<span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#%s">%s</a></span></span>',
-                    $value,
-                    $value
+                    htmlspecialchars($value, ENT_QUOTES),
+                    htmlspecialchars($value, ENT_QUOTES)
                 );
 
             case 'doc':
