@@ -124,7 +124,8 @@ final class MdToHtml
             margin: 0 auto; /* SVGをコンテナ内で中央に置きたい場合 */
             /* justify-content: flex-start; を使う場合は margin: 0; の方が良いかも */
             margin: 0;
-        }        .asd-view-selector {
+        }        
+        .asd-view-selector {
             display: flex;
             align-items: center;
             margin-top: 40px;
