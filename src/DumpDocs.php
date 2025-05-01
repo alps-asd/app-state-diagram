@@ -129,11 +129,6 @@ final class DumpDocs
 
                 return '';
 
-            case 'key':
-                // Return raw value for 'title' to match test expectation
-                // Escape the value to prevent XSS, while maintaining test compatibility
-                return htmlspecialchars($value, ENT_QUOTES);
-
             default:
                 // @CoverageIgnoreStart
                 // Otherwise, wrap in standard meta tags
