@@ -109,6 +109,7 @@ final class DumpDocs
                         htmlspecialchars($truncatedValue)
                     );
                 }
+
                 return sprintf(
                     '<span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">%s</span></span>',
                     htmlspecialchars($value)
