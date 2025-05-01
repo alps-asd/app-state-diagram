@@ -535,6 +535,28 @@ const setupTagClick = () => {
 <span class="selector-option"><input type="checkbox" id="tag-progress-tracking" class="tag-trigger-checkbox" data-tag="progress-tracking" name="tag-progress-tracking"><label for="tag-progress-tracking"> progress-tracking</label></span>
 <span class="selector-option"><input type="checkbox" id="tag-user-management" class="tag-trigger-checkbox" data-tag="user-management" name="tag-user-management"><label for="tag-user-management"> user-management</label></span></div>
 
+<div class="legend">
+    <div class="legend-item" title="A state element (e.g.  HTML.SPAN, HTML.INPUT, etc.).">
+        <span class="legend-icon semantic"></span>
+        Semantic
+    </div>
+    <div class="legend-item" title="A hypermedia control that triggers a safe, idempotent state
+      transition (e.g.  HTTP.GET or HTTP.HEAD).">
+        <span class="legend-icon safe"></span>
+        Safe
+    </div>
+    <div class="legend-item" title="A hypermedia control that triggers an unsafe, non-
+      idempotent state transition (e.g.  HTTP.POST).">
+        <span class="legend-icon unsafe"></span>
+        Unsafe
+    </div>
+    <div class="legend-item" title="A hypermedia control that triggers an unsafe,
+      idempotent state transition (e.g.  HTTP.PUT or HTTP.DELETE).">
+        <span class="legend-icon idempotent"></span>
+        Idempotent
+    </div>
+</div>
+
 <h2>Semantic Descriptors</h2>
 
 <table>
@@ -2342,25 +2364,6 @@ const setupTagClick = () => {
 </tr>
 </tbody>
 </table>
-
-<div class="legend">
-    <div class="legend-item">
-        <span class="legend-icon semantic"></span>
-        Semantic
-    </div>
-    <div class="legend-item">
-        <span class="legend-icon safe"></span>
-        Safe
-    </div>
-    <div class="legend-item">
-        <span class="legend-icon unsafe"></span>
-        Unsafe
-    </div>
-    <div class="legend-item">
-        <span class="legend-icon idempotent"></span>
-        Idempotent
-    </div>
-</div>
 
 <hr />
 
