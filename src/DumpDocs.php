@@ -20,7 +20,6 @@ use function mb_substr;
 use function preg_replace;
 use function property_exists;
 use function sprintf;
-use function strlen;
 use function strpos;
 use function substr;
 use function ucfirst;

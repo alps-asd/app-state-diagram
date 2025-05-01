@@ -16,12 +16,12 @@ parameters:
 			path: src/DumpDocs.php
 
 		-
-			message: "#^Parameter \\#1 \\$string of function strlen expects string, string\\|null given\\.$#"
+			message: "#^Parameter \\#1 \\$string of function mb_strlen expects string, string\\|null given\\.$#"
 			count: 1
 			path: src/DumpDocs.php
 
 		-
-			message: "#^Parameter \\#1 \\$string of function substr expects string, string\\|null given\\.$#"
+			message: "#^Parameter \\#1 \\$string of function mb_substr expects string, string\\|null given\\.$#"
 			count: 1
 			path: src/DumpDocs.php
 

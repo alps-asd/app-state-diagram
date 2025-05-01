@@ -9,6 +9,7 @@ use stdClass;
 
 use function assert;
 use function explode;
+use function is_object;
 use function is_string;
 use function json_encode;
 use function property_exists;
@@ -46,7 +47,7 @@ abstract class AbstractDescriptor
         /** @psalm-suppress MixedAssignment */
         $this->def = $descriptor->def ?? $descriptor->ref ?? $descriptor->src ?? null;
         /** @psalm-suppress MixedAssignment */
-        $this->doc = (isset($descriptor->doc) && is_object($descriptor->doc) && property_exists($descriptor->doc, 'value'))
+        $this->doc = isset($descriptor->doc) && is_object($descriptor->doc) && property_exists($descriptor->doc, 'value')
             ? $descriptor->doc->value
             : (property_exists($descriptor, 'doc') ? $descriptor->doc : null);
         /** @psalm-suppress MixedAssignment */
