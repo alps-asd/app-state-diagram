@@ -132,8 +132,8 @@ final class DumpDocs
 
             case 'key':
                 // Return raw value for 'title' to match test expectation
-                // Return raw value, let buildMarkdownTableRow handle escaping if needed there
-                return $value;
+                // Escape the value to prevent XSS, while maintaining test compatibility
+                return htmlspecialchars($value, ENT_QUOTES);
 
             default:
                 // @CoverageIgnoreStart
