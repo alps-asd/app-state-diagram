@@ -69,8 +69,8 @@ final class DumpDocs
             case 'def':
                 if ($this->isUrl($value)) {
                     $displayValue = preg_replace('#^https?://#', '', $value);
-                    if (strlen($displayValue) > 30) {
-                        $displayValue = substr($displayValue, 0, 27) . '...';
+                    if (mb_strlen($displayValue) > 30) {
+                        $displayValue = mb_substr($displayValue, 0, 27) . '...';
                     }
 
                     return sprintf(
