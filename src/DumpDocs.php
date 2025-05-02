@@ -177,7 +177,8 @@ final class DumpDocs
     /**
      * @param non-empty-list<stdClass> $inlineDescriptors
      *
-     * @return non-empty-list<AbstractDescriptor>
+     * @return AbstractDescriptor[]
+     * @psalm-return list<Koriym\AppStateDiagram\AbstractDescriptor>
      */
     private function getInlineDescriptors(array $inlineDescriptors): array
     {

@@ -14,7 +14,7 @@ use function property_exists;
 /**
  * Descriptor instance (raw object) container
  */
-class Instances
+final class Instances
 {
     /** @var array<string, stdClass> */
     private $insntances = [];

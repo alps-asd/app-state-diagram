@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Koriym\AppStateDiagram;
 
+use Override;
 use Stringable;
 
 use function array_key_exists;
@@ -54,6 +55,7 @@ final class AppState implements Stringable
         $this->states = $states->descriptors;
     }
 
+    #[Override]
     public function __toString(): string
     {
         $base = '    %s [label = <%s> URL="#%s" target="_parent"';

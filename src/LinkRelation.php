@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Koriym\AppStateDiagram;
 
 use Koriym\AppStateDiagram\Exception\InvalidLinkRelationException;
+use Override;
 use stdClass;
 use Stringable;
 
@@ -40,6 +41,7 @@ final class LinkRelation implements Stringable
         $this->title = $link->title ?? '';
     }
 
+    #[Override]
     public function __toString(): string
     {
         return $this->toLink();

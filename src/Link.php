@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Koriym\AppStateDiagram;
 
+use Override;
 use Stringable;
 
 final class Link implements Stringable
@@ -31,6 +32,7 @@ final class Link implements Stringable
         $this->transDescriptor = $trans;
     }
 
+    #[Override]
     public function __toString(): string
     {
         return $this->label;

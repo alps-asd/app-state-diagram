@@ -6,6 +6,6 @@ namespace Koriym\AppStateDiagram\Exception;
 
 use RuntimeException;
 
-class MissingHashSignInHrefException extends RuntimeException
+final class MissingHashSignInHrefException extends RuntimeException
 {
 }

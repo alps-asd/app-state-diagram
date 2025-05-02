@@ -6,6 +6,6 @@ namespace Koriym\AppStateDiagram\Exception;
 
 use RuntimeException;
 
-class InvalidDescriptorMissingIdOrHrefException extends RuntimeException
+final class InvalidDescriptorMissingIdOrHrefException extends RuntimeException
 {
 }

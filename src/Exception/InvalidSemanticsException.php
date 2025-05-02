@@ -6,6 +6,6 @@ namespace Koriym\AppStateDiagram\Exception;
 
 use RuntimeException;
 
-class InvalidSemanticsException extends RuntimeException
+final class InvalidSemanticsException extends RuntimeException
 {
 }

@@ -6,6 +6,6 @@ namespace Koriym\AppStateDiagram\Exception;
 
 use RuntimeException;
 
-class InvalidHrefException extends RuntimeException
+final class InvalidHrefException extends RuntimeException
 {
 }
