@@ -40,19 +40,15 @@ final class DumpDocs
     /** @var array<string, AbstractDescriptor> */
     private $descriptors = [];
 
-    // getSemanticDoc は不要になるため削除
-
-    /**
-     * 長い文字列を切り詰めて返す
-     */
     private function truncateText(string $text, int $maxLength): string
     {
         if (mb_strlen($text) <= $maxLength) {
             return $text;
         }
 
-        // 省略する場合は短く表示
-        return mb_substr($text, 0, $maxLength - 3 - 100) . '...';
+        $decreaseLength = 100;
+
+        return mb_substr($text, 0, $maxLength - 3 - $decreaseLength) . '...';
     }
 
     private function getDescriptorPropValue(string $key, AbstractDescriptor $descriptor): string

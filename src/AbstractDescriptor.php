@@ -9,7 +9,6 @@ use stdClass;
 
 use function assert;
 use function explode;
-use function is_object;
 use function is_string;
 use function json_encode;
 use function property_exists;
