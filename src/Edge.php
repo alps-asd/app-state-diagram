@@ -103,10 +103,9 @@ final class Edge implements Stringable
             );
         }
 
-        // fontsize=13 はそのまま
-        $base = '    %s -> %s [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0">%s</table>> fontsize=13];' . PHP_EOL;
+        $base = '    %s -> %s [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0">%s</table>> URL="#%s" target="_parent" fontsize=13 class="%s" penwidth=1.5];' . PHP_EOL;
 
-        return sprintf($base, $links[0]->from, $links[0]->to, $trs);
+        return sprintf($base, $links[0]->from, $links[0]->to, $trs, $links[0]->transDescriptor->id, $links[0]->transDescriptor->id);
     }
 
     /**
