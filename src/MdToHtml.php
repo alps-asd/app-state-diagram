@@ -321,31 +321,31 @@ final class MdToHtml
         margin: 0 8px 4px 0;
     }
 
-    .def-tag {
-      background-color: #EAF5FF; /* 薄いブルー */
-      border-color:     #B8DFFF; /* やや濃いめ */
-      color:            #0366D6; /* リンク色っぽいブルー */
-    }
+    .def-tag { 
+      background-color: #EAF5FF; /* 薄いブルー */ 
+      border-color: #B8DFFF; /* やや濃いめ */ 
+      color: #0366D6; /* リンク色っぽいブルー */ 
+    } 
     
-    .rt-tag {
-      background-color: #FFF5E6; /* 薄いオレンジ */
-      border-color:     #FFE1B3;
-      color:            #D97506; /* 濃いオレンジ */
-    }
+    .rt-tag { 
+      background-color: #FFF5E6; /* 薄いオレンジ */ 
+      border-color: #FFE1B3; 
+      color: #D97506; /* 濃いオレンジ */ 
+    } 
     
-    .tag-tag {
-      background-color: #E6FFED; /* 薄いグリーン */
-      border-color:     #C6EFC7;
-      color:            #22863A; /* 濃いグリーン */
-    }
+    .tag-tag { 
+      background-color: #E6FFED; /* 薄いグリーン */ 
+      border-color: #C6EFC7; 
+      color: #22863A; /* 濃いグリーン */ 
+    } 
     
-    .doc-tag {
-        background-color: #f7f7f7;
-        color: grey;
-        border: 1px solid lightgray;
-        overflow: visible !important;
+    .doc-tag { 
+      background-color: #E6FFFA; /* 薄いティール */
+      border-color: #B2F5EA; /* やや濃いめのティール */
+      color: #319795; /* 濃いティール */
+      border: 1px solid #B2F5EA;
+      overflow: visible !important; 
     }
-    
     /* テーブルセル内でのメタ情報の折り返し */
     .markdown-body table td:nth-child(5) {
         padding-left: 4px !important;
