@@ -26,9 +26,7 @@
             max-width: 1200px;
         }
         .markdown-body table th:nth-child(1) {
-        .markdown-body table th:nth-child(1) {
             width: 2%;
-        }
         }
         .markdown-body table th:nth-child(2) {
             width: 15%;
@@ -40,13 +38,12 @@
             width: 25%;
         }
         .markdown-body table th:nth-child(5) {
-            width: 28%;  /* Extras列をさらに狭く（docが極端に短くなるため） */
+            width: 28%;
         }
         .markdown-body table td {
             word-wrap: break-word;
             overflow-wrap: break-word;
         }
-        /* docツールチップのスタイル - データ表示のための実装 */
         .doc-tooltip {
             text-decoration: none;
             border-bottom: 1px dotted #666;
@@ -96,8 +93,7 @@
             align-items: center;
             overflow-x: auto; /* SVGがコンテナ幅を超える場合に水平スクロールを表示 */
 
-            /* ↓↓↓ ここから追加・変更 ↓↓↓ */
-            width: 100vw; /* ビューポート（表示領域）の幅いっぱいに設定 */
+            width: 100vw;
             max-width: none; /* 親要素(.markdown-body)のmax-width制限を解除 */
             box-sizing: border-box; /* paddingやborderを幅計算に含める */
 
@@ -112,15 +108,12 @@
             padding-left: 24px;
             padding-right: 24px;
         }
-
-        /* SVG要素自体が大きい場合に正しく表示されるように */
         #svg-container svg {
-            max-width: none; /* SVG自体の最大幅制限も解除（必要に応じて） */
-            display: block; /* または inline-block */
-            margin: 0 auto; /* SVGをコンテナ内で中央に置きたい場合 */
-            /* justify-content: flex-start; を使う場合は margin: 0; の方が良いかも */
+            max-width: none;
+            display: block;
             margin: 0;
-        }        .asd-view-selector {
+        }        
+        .asd-view-selector {
             display: flex;
             align-items: center;
             margin-top: 40px;
@@ -323,31 +316,31 @@
         margin: 0 8px 4px 0;
     }
 
-    .def-tag {
-      background-color: #EAF5FF; /* 薄いブルー */
-      border-color:     #B8DFFF; /* やや濃いめ */
-      color:            #0366D6; /* リンク色っぽいブルー */
-    }
+    .def-tag { 
+      background-color: #EAF5FF; /* 薄いブルー */ 
+      border-color: #B8DFFF; /* やや濃いめ */ 
+      color: #0366D6; /* リンク色っぽいブルー */ 
+    } 
     
-    .rt-tag {
-      background-color: #FFF5E6; /* 薄いオレンジ */
-      border-color:     #FFE1B3;
-      color:            #D97506; /* 濃いオレンジ */
-    }
+    .rt-tag { 
+      background-color: #FFF5E6; /* 薄いオレンジ */ 
+      border-color: #FFE1B3; 
+      color: #D97506; /* 濃いオレンジ */ 
+    } 
     
-    .tag-tag {
-      background-color: #E6FFED; /* 薄いグリーン */
-      border-color:     #C6EFC7;
-      color:            #22863A; /* 濃いグリーン */
-    }
+    .tag-tag { 
+      background-color: #E6FFED; /* 薄いグリーン */ 
+      border-color: #C6EFC7; 
+      color: #22863A; /* 濃いグリーン */ 
+    } 
     
-    .doc-tag {
-        background-color: #f7f7f7;
-        color: grey;
-        border: 1px solid lightgray;
-        overflow: visible !important;
+    .doc-tag { 
+      background-color: #E6FFFA; /* 薄いティール */
+      border-color: #B2F5EA; /* やや濃いめのティール */
+      color: #319795; /* 濃いティール */
+      border: 1px solid #B2F5EA;
+      overflow: visible !important; 
     }
-    
     /* テーブルセル内でのメタ情報の折り返し */
     .markdown-body table td:nth-child(5) {
         padding-left: 4px !important;
