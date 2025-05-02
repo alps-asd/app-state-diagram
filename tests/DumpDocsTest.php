@@ -52,32 +52,11 @@ class DumpDocsTest extends TestCase
         $this->assertStringContainsString('doc-tag">Blog entry item page', $markdown); // Extra info: doc - Corrected assertion
     }
 
-    public function testGetSemanticDescriptorList(): void // Uses alps.json
-    {
-        $profile = new Profile(__DIR__ . '/Fake/alps.json', new LabelName());
-        $list = $this->dumpDocs->getSemanticDescriptorList($profile);
-
-        // Basic assertions
-        $this->assertStringContainsString('<span class="indicator semantic" data-tooltip="semantic"> </span> [About](#About)', $list);
-        $this->assertStringContainsString('<span class="indicator semantic" data-tooltip="semantic"> </span> [BlogPosting](#BlogPosting)', $list); // Corrected assertion
-        // These IDs don't exist in alps.json, remove or adjust based on actual content
-        // $this->assertStringContainsString('<span class="indicator idempotent" data-tooltip="idempotent"> </span> [BlogPostingSubmit](#BlogPostingSubmit)', $list);
-        // $this->assertStringContainsString('<span class="indicator unsafe" data-tooltip="unsafe"> </span> [BlogPostingDelete](#BlogPostingDelete)', $list);
-        $this->assertStringContainsString('<span class="indicator safe" data-tooltip="safe"> </span> [blogPosting](#blogPosting)', $list); // Check existing safe descriptor
-    }
-
     public function testGetSemanticDescriptorMarkDownWithEmptyProfile(): void // Uses empty_descriptor_profile.json
     {
         $profile = new Profile(__DIR__ . '/Fake/empty_descriptor_profile.json', new LabelName());
         $markdown = $this->dumpDocs->getSemanticDescriptorMarkDown($profile);
         $this->assertSame('## Semantic Descriptors' . PHP_EOL . PHP_EOL . '| Type | ID | Title | Contained | Extra Info |' . PHP_EOL . '| :--: | :-- | :---- | :-- | :-- |' . PHP_EOL, $markdown);
-    }
-
-    public function testGetSemanticDescriptorListWithEmptyProfile(): void // Uses empty_descriptor_profile.json
-    {
-        $profile = new Profile(__DIR__ . '/Fake/empty_descriptor_profile.json', new LabelName());
-        $list = $this->dumpDocs->getSemanticDescriptorList($profile);
-        $this->assertSame('', $list);
     }
 
     public function testEmptyTagsInMarkdown(): void // Uses min.json

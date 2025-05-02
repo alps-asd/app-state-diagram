@@ -306,16 +306,4 @@ final class DumpDocs
 
         return $markdown;
     }
-
-    public function getSemanticDescriptorList(Profile $profile): string
-    {
-        $descriptors = $profile->descriptors;
-        ksort($descriptors, SORT_FLAG_CASE | SORT_STRING);
-        $items = [];
-        foreach ($descriptors as $descriptor) {
-            $items[] = sprintf(' * <span class="indicator %s" data-tooltip="%s"> </span> [%s](#%s)', $descriptor->type, $descriptor->type, $descriptor->id, $descriptor->id);
-        }
-
-        return implode(PHP_EOL, $items);
-    }
 }

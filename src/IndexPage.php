@@ -176,7 +176,6 @@ EOT;
             'UTF-8'
         );
 
-        $semanticDescriptorList = (new DumpDocs())->getSemanticDescriptorList($profile);
         $semanticMd = PHP_EOL . (new DumpDocs())->getSemanticDescriptorMarkDown($profile);
         $descriptors = $profile->descriptors;
         uasort($descriptors, static function (AbstractDescriptor $a, AbstractDescriptor $b): int {
@@ -208,8 +207,7 @@ EOT;
             $tags,
             $htmlTitle,
             $htmlDoc,
-            $setUpTagEvents,
-            $semanticDescriptorList
+            $setUpTagEvents
         );
     }
 }
