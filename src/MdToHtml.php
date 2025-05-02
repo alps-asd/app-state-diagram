@@ -32,7 +32,6 @@ final class MdToHtml
         }
         .markdown-body table th:nth-child(1) {
             width: 2%;
-            width: 2%;
         }
         .markdown-body table th:nth-child(2) {
             width: 15%;
@@ -114,13 +113,9 @@ final class MdToHtml
             padding-left: 24px;
             padding-right: 24px;
         }
-
-        /* SVG要素自体が大きい場合に正しく表示されるように */
         #svg-container svg {
-            max-width: none; /* SVG自体の最大幅制限も解除（必要に応じて） */
-            display: block; /* または inline-block */
-            margin: 0 auto; /* SVGをコンテナ内で中央に置きたい場合 */
-            /* justify-content: flex-start; を使う場合は margin: 0; の方が良いかも */
+            max-width: none;
+            display: block;
             margin: 0;
         }        
         .asd-view-selector {

@@ -93,7 +93,6 @@ final class Edge implements Stringable
             $labelHtml = $link->label;
             $tooltip = $trans->title ?: $trans->id;
 
-            // valign="middle" を各行のセルに追加
             $trs .= sprintf(
                 '<tr><td valign="middle" align="left" href="#%s" tooltip="%s (%s)">%s %s</td></tr>',
                 $trans->id,
