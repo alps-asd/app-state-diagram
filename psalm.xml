@@ -15,6 +15,5 @@
     <issueHandlers>
         <UnusedClass errorLevel="suppress" />
         <UnusedMethod errorLevel="suppress" />
-        <UnusedProperty errorLevel="suppress" />
     </issueHandlers>
 </psalm>
