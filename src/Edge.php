@@ -33,7 +33,7 @@ final class Edge implements Stringable
     }
 
     /**
-     * 遷移タイプに応じた色付きのUnicode四角文字を生成します。
+     * Generates colored Unicode square characters according to transition type.
      */
     private function getTypeSymbolUnicode(string $type): string
     {
@@ -72,7 +72,6 @@ final class Edge implements Stringable
             $labelHtml
         );
 
-        // fontsize=13 はそのまま（もしずれが改善しない場合、12や14などに変更して試す価値はあるかもしれません）
         $base = '    %s -> %s [label=<%s> URL="#%s" target="_parent" fontsize=13 class="%s" penwidth=1.5];' . PHP_EOL;
 
         return sprintf($base, $link->from, $link->to, $labelContent, $trans->id, $trans->id);

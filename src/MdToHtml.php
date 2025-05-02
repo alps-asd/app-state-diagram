@@ -44,13 +44,12 @@ final class MdToHtml
             width: 25%;
         }
         .markdown-body table th:nth-child(5) {
-            width: 28%;  /* Extras列をさらに狭く（docが極端に短くなるため） */
+            width: 28%;
         }
         .markdown-body table td {
             word-wrap: break-word;
             overflow-wrap: break-word;
         }
-        /* docツールチップのスタイル - データ表示のための実装 */
         .doc-tooltip {
             text-decoration: none;
             border-bottom: 1px dotted #666;
@@ -100,8 +99,7 @@ final class MdToHtml
             align-items: center;
             overflow-x: auto; /* SVGがコンテナ幅を超える場合に水平スクロールを表示 */
 
-            /* ↓↓↓ ここから追加・変更 ↓↓↓ */
-            width: 100vw; /* ビューポート（表示領域）の幅いっぱいに設定 */
+            width: 100vw;
             max-width: none; /* 親要素(.markdown-body)のmax-width制限を解除 */
             box-sizing: border-box; /* paddingやborderを幅計算に含める */
 

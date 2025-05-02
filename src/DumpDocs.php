@@ -289,7 +289,7 @@ final class DumpDocs
         );
     }
 
-    public function getSemanticDescriptorMarkDown(Profile $profile): string // $asdFile 引数は不要なので削除
+    public function getSemanticDescriptorMarkDown(Profile $profile): string
     {
         $this->descriptors = $profile->descriptors; // Initialize descriptors for internal use
         $descriptors = $profile->descriptors;
