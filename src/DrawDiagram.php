@@ -69,7 +69,7 @@ EOT;
 
             [$id, $deltaDot] = $this->getNode($descriptor, $labelName, $descriptors);
             $dot .= $deltaDot;
-            if ($id) {
+            if (is_string($id) && $id !== '') {
                 $ids[] = $id;
             }
         }

@@ -64,14 +64,14 @@ final class DumpDocs
             case 'def':
                 if ($this->isUrl($value)) {
                     $displayValue = preg_replace('#^https?://#', '', $value);
-                    if (mb_strlen($displayValue) > 30) {
+                    if (is_string($displayValue) && mb_strlen($displayValue) > 30) {
                         $displayValue = mb_substr($displayValue, 0, 27) . '...';
                     }
 
                     return sprintf(
                         '<span class="meta-item"><span class="meta-label">def:</span><span class="meta-tag def-tag"><a href="%s" target="_blank">%s</a></span></span>',
                         $value,
-                        $displayValue
+                        (string) $displayValue
                     );
                 }
 
@@ -112,15 +112,12 @@ final class DumpDocs
                 );
 
             case 'linkRelations':
-                // linkRelationsは独自の実装があるようなので、それを活かす
-                if ($descriptor->linkRelations) {
-                    $links = $descriptor->linkRelations->getLinksInExtras();
-                    if ($links) {
-                        return sprintf(
-                            '<span class="meta-item"><span class="meta-label">link:</span><span class="meta-tag link-tag">%s</span></span>',
-                            $links
-                        );
-                    }
+                $links = $descriptor->linkRelations->getLinksInExtras();
+                if ($links) {
+                    return sprintf(
+                        '<span class="meta-item"><span class="meta-label">link:</span><span class="meta-tag link-tag">%s</span></span>',
+                        $links
+                    );
                 }
 
                 return '';
@@ -137,7 +134,6 @@ final class DumpDocs
         }
     }
 
-    /** @param AbstractDescriptor|SemanticDescriptor $descriptor */
     private function isUrl(string $text): bool
     {
         return filter_var($text, FILTER_VALIDATE_URL) !== false;
@@ -178,7 +174,7 @@ final class DumpDocs
      * @param non-empty-list<stdClass> $inlineDescriptors
      *
      * @return AbstractDescriptor[]
-     * @psalm-return list<Koriym\AppStateDiagram\AbstractDescriptor>
+     * @psalm-return list<AbstractDescriptor>
      */
     private function getInlineDescriptors(array $inlineDescriptors): array
     {
@@ -274,7 +270,7 @@ final class DumpDocs
     private function buildMarkdownTableRow(AbstractDescriptor $descriptor): string
     {
         $id = sprintf('<a id="%s"></a>[%s](#%s)', $descriptor->id, $descriptor->id, $descriptor->id);
-        $title = $descriptor->title ?? '';
+        $title = $descriptor->title;
         $legendType = sprintf('<span class="legend"><span class="legend-icon %s"></span></span>', $descriptor->type);
         $contained = $this->getContainedDescriptorsMarkdown($descriptor);
         $extras = $this->getExtrasMarkdown($descriptor);

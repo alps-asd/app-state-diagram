@@ -67,7 +67,6 @@ final class HyperReference
 
             $alps = new Profile($file, $this->labelName, false);
             [$importInstances, $hyperReference] = $alps->export($id, $file);
-            /** @var array<string, stdClass> $importInstances */
             $this->merge($hyperReference);
             $instances += $importInstances;
         }

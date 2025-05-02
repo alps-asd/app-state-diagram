@@ -8,7 +8,9 @@ use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 use stdClass;
 
+use function assert;
 use function htmlspecialchars;
+use function is_string;
 use function mb_substr;
 use function preg_quote;
 use function sprintf;
@@ -295,6 +297,7 @@ class DumpDocsTest extends TestCase
         $descriptor->title = 'Test Title';
         $semanticDescriptorWithValue = new SemanticDescriptor($descriptor);
         $resultValue = $method->invokeArgs($dumpDocs, ['title', $semanticDescriptorWithValue]);
+        assert(is_string($resultValue));
         $this->assertStringContainsString('Test Title', $resultValue);
     }
 
