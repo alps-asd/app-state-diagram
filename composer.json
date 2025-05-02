@@ -67,7 +67,7 @@
         "sa": ["psalm --show-info=true", "./vendor/bin/phpstan analyse -c phpstan.neon"],
         "metrics": ["./vendor/bin/phpmetrics --report-html=build/metrics --exclude=Exception --log-junit=build/junit.xml --junit=build/junit.xml src"],
         "phpmd": ["./vendor/bin/phpmd src text ./phpmd.xml"],
-        "compile": ["composer update --no-dev", "rm -rf asd-sync/node_modules" ,"./vendor-bin/box/vendor/bin/box compile"],
+        "compile": ["composer update --no-dev", "rm -rf asd-sync/node_modules" ,"box compile"],
         "build": ["@cs", "@sa", "@pcov", "@metrics", "@compile"],
         "baseline": "./vendor/bin/phpstan analyse -configuration -c phpstan.neon --generate-baseline --memory-limit=-1 && ./vendor/bin/psalm --set-baseline=psalm-baseline.xml"
     },
