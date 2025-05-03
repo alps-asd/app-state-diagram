@@ -1,14 +1,15 @@
 name: Release PHAR
 
 on:
-  push:
-    tags:
-      - '*'
+  workflow_dispatch:
+  release:
+    types: [published]
 
 jobs:
   release:
     runs-on: ubuntu-latest
-
+    permissions:
+      contents: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -18,7 +19,6 @@ jobs:
         with:
           php-version: 8.3
           tools: box
-          ini-file: production
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -27,20 +27,29 @@ jobs:
 
       - name: Install Dependencies
         run: |
-          composer install --no-dev
-          cd asd-sync
-          npm ci
-          cd ..
+          composer install --no-dev --prefer-dist --optimize-autoloader
+          if [ -d "asd-sync" ]; then
+            echo "Installing Node.js dependencies in asd-sync..."
+            cd asd-sync
+            npm ci --production
+            cd ..
+          else
+            echo "asd-sync directory not found, skipping npm install."
+          fi
 
       - name: Build PHAR
         run: box compile
 
-      # GitHub CLI を使って Release 作成＆PHAR を添付
+      - name: Upload PHAR artifact (Optional for debugging/sharing)
+        uses: actions/upload-artifact@v4
+        with:
+          name: asd.phar
+          path: bin/asd.phar
+
       - name: Create GitHub Release and Upload PHAR
+        uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: bin/asd.phar
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          gh release create "${GITHUB_REF_NAME}" \
-            --title "Release ${GITHUB_REF_NAME}" \
-            --notes "PHAR release for tag ${GITHUB_REF_NAME}" \
-            ./bin/asd.phar#asd.phar

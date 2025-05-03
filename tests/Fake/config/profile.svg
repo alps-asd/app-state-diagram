@@ -31,7 +31,7 @@
 </a>
 </g>
 <g id="a_edge3&#45;label"><a xlink:href="#doPost" xlink:title="&lt;TABLE&gt;" target="_parent">
-<g id="a_edge3_0"><a xlink:href="#doPost" xlink:title="Post the article (unsafe)" target="_parent">
+<g id="a_edge3_0"><a xlink:href="#doPost" xlink:title="post article (unsafe)" target="_parent">
 <text text-anchor="start" x="204.0426" y="-101.3" font-family="Times,serif" font-size="13.00" fill="#ff4136">■</text>
 <text text-anchor="start" x="213.7926" y="-101.3" font-family="Times,serif" font-size="13.00" fill="#000000"> doPost</text>
 </a>
@@ -57,7 +57,7 @@
 </a>
 </g>
 <g id="a_edge4&#45;label"><a xlink:href="#goBlogPosting" xlink:title="&lt;TABLE&gt;" target="_parent">
-<g id="a_edge4_1"><a xlink:href="#goBlogPosting" xlink:title="See the blog post (safe)" target="_parent">
+<g id="a_edge4_1"><a xlink:href="#goBlogPosting" xlink:title="to blog posting (safe)" target="_parent">
 <text text-anchor="start" x="4.0951" y="-57.8" font-family="Times,serif" font-size="13.00" fill="#00a86b">■</text>
 <text text-anchor="start" x="13.8451" y="-57.8" font-family="Times,serif" font-size="13.00" fill="#000000"> goBlogPosting</text>
 </a>
@@ -83,7 +83,7 @@
 </a>
 </g>
 <g id="a_edge2&#45;label"><a xlink:href="#goAbout" xlink:title="&lt;TABLE&gt;" target="_parent">
-<g id="a_edge2_2"><a xlink:href="#goAbout" xlink:title="Go to About (safe)" target="_parent">
+<g id="a_edge2_2"><a xlink:href="#goAbout" xlink:title="to about (safe)" target="_parent">
 <text text-anchor="start" x="194.9915" y="-57.8" font-family="Times,serif" font-size="13.00" fill="#00a86b">■</text>
 <text text-anchor="start" x="204.7415" y="-57.8" font-family="Times,serif" font-size="13.00" fill="#000000"> goAbout</text>
 </a>
@@ -100,7 +100,7 @@
 </a>
 </g>
 <g id="a_edge5&#45;label"><a xlink:href="#goBlog" xlink:title="&lt;TABLE&gt;" target="_parent">
-<g id="a_edge5_3"><a xlink:href="#goBlog" xlink:title="See the blog post list (safe)" target="_parent">
+<g id="a_edge5_3"><a xlink:href="#goBlog" xlink:title="to blog (safe)" target="_parent">
 <text text-anchor="start" x="124.599" y="-57.8" font-family="Times,serif" font-size="13.00" fill="#00a86b">■</text>
 <text text-anchor="start" x="134.349" y="-57.8" font-family="Times,serif" font-size="13.00" fill="#000000"> goBlog</text>
 </a>
@@ -117,7 +117,7 @@
 </a>
 </g>
 <g id="a_edge1&#45;label"><a xlink:href="#goBlog" xlink:title="&lt;TABLE&gt;" target="_parent">
-<g id="a_edge1_4"><a xlink:href="#goBlog" xlink:title="See the blog post list (safe)" target="_parent">
+<g id="a_edge1_4"><a xlink:href="#goBlog" xlink:title="to blog (safe)" target="_parent">
 <text text-anchor="start" x="264.599" y="-57.8" font-family="Times,serif" font-size="13.00" fill="#00a86b">■</text>
 <text text-anchor="start" x="274.349" y="-57.8" font-family="Times,serif" font-size="13.00" fill="#000000"> goBlog</text>
 </a>
@@ -143,7 +143,7 @@
 </a>
 </g>
 <g id="a_edge6&#45;label"><a xlink:href="#goBlog" xlink:title="&lt;TABLE&gt;" target="_parent">
-<g id="a_edge6_5"><a xlink:href="#goBlog" xlink:title="See the blog post list (safe)" target="_parent">
+<g id="a_edge6_5"><a xlink:href="#goBlog" xlink:title="to blog (safe)" target="_parent">
 <text text-anchor="start" x="159.599" y="-144.8" font-family="Times,serif" font-size="13.00" fill="#00a86b">■</text>
 <text text-anchor="start" x="169.349" y="-144.8" font-family="Times,serif" font-size="13.00" fill="#000000"> goBlog</text>
 </a>

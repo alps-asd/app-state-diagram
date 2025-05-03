@@ -1,0 +1,22 @@
+{
+  "alps": {
+    "version": "1.0",
+    "descriptor": [
+      {
+        "id": "ValidDescriptor",
+        "type": "semantic",
+        "doc": { "value": "This is a valid descriptor." }
+      },
+      {
+        "id": "DescriptorWithInvalidRef",
+        "type": "semantic",
+        "doc": { "value": "This descriptor references invalid inline descriptors." },
+        "descriptor": [
+          { "id": "NonExistentId" },
+          { "href": "#ValidDescriptor" },
+          { "id": "ValidDescriptor" }
+        ]
+      }
+    ]
+  }
+}

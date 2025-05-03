@@ -15,6 +15,7 @@
         "ext-simplexml": "*",
         "ext-libxml": "*",
         "ext-dom": "*",
+        "ext-mbstring": "*",
         "michelf/php-markdown": "^1.9",
         "seld/jsonlint": "^1.8",
         "koriym/data-file": "^1.0"
@@ -52,6 +53,7 @@
             "bin/asd docs/todomvc/profile.json",
             "bin/asd -c docs-md/blog/asd.xml docs-md/blog/profile.xml",
             "bin/asd docs/bookstore/bookstore.xml",
+            "bin/asd docs/ecommerce/amazon.json",
             "bin/asd docs/lms/lms.xml"
         ],
         "md" : "bin/asd -c docs/blog/asd.md.xml docs/blog/profile.xml",
@@ -65,8 +67,9 @@
         "sa": ["psalm --show-info=true", "./vendor/bin/phpstan analyse -c phpstan.neon"],
         "metrics": ["./vendor/bin/phpmetrics --report-html=build/metrics --exclude=Exception --log-junit=build/junit.xml --junit=build/junit.xml src"],
         "phpmd": ["./vendor/bin/phpmd src text ./phpmd.xml"],
-        "compile": ["./vendor-bin/box/vendor/bin/box compile"],
-        "build": ["@cs", "@sa", "@pcov", "@metrics", "@compile"]
+        "compile": ["composer update --no-dev", "rm -rf asd-sync/node_modules" ,"box compile"],
+        "build": ["@cs", "@sa", "@pcov", "@metrics", "@compile"],
+        "baseline": "./vendor/bin/phpstan analyse -configuration -c phpstan.neon --generate-baseline --memory-limit=-1 && ./vendor/bin/psalm --set-baseline=psalm-baseline.xml"
     },
     "config": {
         "allow-plugins": {

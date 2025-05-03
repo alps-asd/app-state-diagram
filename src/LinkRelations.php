@@ -9,6 +9,7 @@ use Stringable;
 
 use function implode;
 use function is_array;
+use function sprintf;
 use function strtoupper;
 use function usort;
 
@@ -57,5 +58,16 @@ final class LinkRelations implements Stringable
     public function __toString(): string
     {
         return implode(PHP_EOL, $this->links);
+    }
+
+    public function getLinksInExtras(): string
+    {
+        $links = [];
+        foreach ($this->links as $link) {
+            $label = $link->title !== '' ? $link->title : $link->rel;
+            $links[] = sprintf('link: [%s](%s)', $label, $link->href);
+        }
+
+        return implode(', ', $links);
     }
 }

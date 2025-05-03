@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<files psalm-version="6.10.1@f9fd6bc117e9ce1e854c2ed6777e7135aaa4966b">
+  <file src="src/AbstractDescriptor.php">
+    <PossiblyUnusedMethod>
+      <code><![CDATA[htmlLink]]></code>
+    </PossiblyUnusedMethod>
+    <PossiblyUnusedProperty>
+      <code><![CDATA[$def]]></code>
+      <code><![CDATA[$doc]]></code>
+      <code><![CDATA[$href]]></code>
+      <code><![CDATA[$parent]]></code>
+      <code><![CDATA[$rel]]></code>
+      <code><![CDATA[$source]]></code>
+    </PossiblyUnusedProperty>
+  </file>
+  <file src="src/AbstractProfile.php">
+    <PossiblyUnusedProperty>
+      <code><![CDATA[$schema]]></code>
+    </PossiblyUnusedProperty>
+  </file>
+  <file src="src/AppState.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function __toString(): string]]></code>
+    </MissingOverrideAttribute>
+    <UnusedProperty>
+      <code><![CDATA[$taggedStates]]></code>
+    </UnusedProperty>
+  </file>
+  <file src="src/Asd.php">
+    <UnusedClass>
+      <code><![CDATA[Asd]]></code>
+    </UnusedClass>
+  </file>
+  <file src="src/Config.php">
+    <PossiblyUnusedProperty>
+      <code><![CDATA[$port]]></code>
+      <code><![CDATA[$watch]]></code>
+    </PossiblyUnusedProperty>
+  </file>
+  <file src="src/ConfigFactory.php">
+    <UnusedClass>
+      <code><![CDATA[ConfigFactory]]></code>
+    </UnusedClass>
+  </file>
+  <file src="src/Descriptors.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[Descriptors]]></code>
+    </ClassMustBeFinal>
+  </file>
+  <file src="src/Diagram.php">
+    <UnusedClass>
+      <code><![CDATA[Diagram]]></code>
+    </UnusedClass>
+  </file>
+  <file src="src/DrawDiagram.php">
+    <RiskyTruthyFalsyComparison>
+      <code><![CDATA[$id]]></code>
+    </RiskyTruthyFalsyComparison>
+  </file>
+  <file src="src/DumpDocs.php">
+    <InvalidReturnType>
+      <code><![CDATA[non-empty-list<AbstractDescriptor>]]></code>
+    </InvalidReturnType>
+    <LessSpecificReturnStatement>
+      <code><![CDATA[[]]]></code>
+    </LessSpecificReturnStatement>
+    <PossiblyNullArgument>
+      <code><![CDATA[$displayValue]]></code>
+    </PossiblyNullArgument>
+    <RedundantCondition>
+      <code><![CDATA[$descriptor->linkRelations]]></code>
+      <code><![CDATA[$descriptor->title]]></code>
+    </RedundantCondition>
+    <TypeDoesNotContainType>
+      <code><![CDATA['']]></code>
+      <code><![CDATA[empty($inlineDescriptors)]]></code>
+      <code><![CDATA[empty($inlineDescriptors)]]></code>
+    </TypeDoesNotContainType>
+    <UnusedDocblockParam>
+      <code><![CDATA[$descriptor]]></code>
+    </UnusedDocblockParam>
+  </file>
+  <file src="src/Edge.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function __toString(): string]]></code>
+    </MissingOverrideAttribute>
+  </file>
+  <file src="src/Exception/AlpsFileNotReadableException.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[AlpsFileNotReadableException]]></code>
+    </ClassMustBeFinal>
+  </file>
+  <file src="src/Exception/DescriptorIsNotArrayException.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[DescriptorIsNotArrayException]]></code>
+    </ClassMustBeFinal>
+  </file>
+  <file src="src/Exception/DescriptorNotFoundException.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[DescriptorNotFoundException]]></code>
+    </ClassMustBeFinal>
+  </file>
+  <file src="src/Exception/InvalidAlpsException.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[InvalidAlpsException]]></code>
+    </ClassMustBeFinal>
+  </file>
+  <file src="src/Exception/InvalidDescriptorMissingIdOrHrefException.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[InvalidDescriptorMissingIdOrHrefException]]></code>
+    </ClassMustBeFinal>
+    <UnusedClass>
+      <code><![CDATA[InvalidDescriptorMissingIdOrHrefException]]></code>
+    </UnusedClass>
+  </file>
+  <file src="src/Exception/InvalidHrefException.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[InvalidHrefException]]></code>
+    </ClassMustBeFinal>
+  </file>
+  <file src="src/Exception/InvalidLabelOptionException.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[InvalidLabelOptionException]]></code>
+    </ClassMustBeFinal>
+    <UnusedClass>
+      <code><![CDATA[InvalidLabelOptionException]]></code>
+    </UnusedClass>
+  </file>
+  <file src="src/Exception/InvalidLinkRelationException.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[InvalidLinkRelationException]]></code>
+    </ClassMustBeFinal>
+  </file>
+  <file src="src/Exception/InvalidSemanticsException.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[InvalidSemanticsException]]></code>
+    </ClassMustBeFinal>
+  </file>
+  <file src="src/Exception/InvalidTypeException.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[InvalidTypeException]]></code>
+    </ClassMustBeFinal>
+  </file>
+  <file src="src/Exception/MissingHashSignInHrefException.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[MissingHashSignInHrefException]]></code>
+    </ClassMustBeFinal>
+  </file>
+  <file src="src/Exception/MissingRtException.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[MissingRtException]]></code>
+    </ClassMustBeFinal>
+  </file>
+  <file src="src/HyperReference.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[HyperReference]]></code>
+    </ClassMustBeFinal>
+    <UnnecessaryVarAnnotation>
+      <code><![CDATA[array<string, stdClass>]]></code>
+    </UnnecessaryVarAnnotation>
+  </file>
+  <file src="src/IndexPage.php">
+    <ImplicitToStringCast>
+      <code><![CDATA[$linkRelations]]></code>
+    </ImplicitToStringCast>
+    <PossiblyFalseArgument>
+      <code><![CDATA[file_get_contents($indexJsFile)]]></code>
+    </PossiblyFalseArgument>
+    <TooManyArguments>
+      <code><![CDATA[getSemanticDescriptorMarkDown]]></code>
+    </TooManyArguments>
+  </file>
+  <file src="src/IndexPageElements.php">
+    <PossiblyUnusedProperty>
+      <code><![CDATA[$semanticDescriptorList]]></code>
+    </PossiblyUnusedProperty>
+  </file>
+  <file src="src/Instances.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[Instances]]></code>
+    </ClassMustBeFinal>
+  </file>
+  <file src="src/LabelName.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function getLinkLabel(TransDescriptor $trans): string]]></code>
+      <code><![CDATA[public function getNodeLabel(SemanticDescriptor $descriptor): string]]></code>
+    </MissingOverrideAttribute>
+  </file>
+  <file src="src/LabelNameFactory.php">
+    <UnusedClass>
+      <code><![CDATA[LabelNameFactory]]></code>
+    </UnusedClass>
+  </file>
+  <file src="src/LabelNameTitle.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function getLinkLabel(TransDescriptor $trans): string]]></code>
+      <code><![CDATA[public function getNodeLabel(SemanticDescriptor $descriptor): string]]></code>
+    </MissingOverrideAttribute>
+  </file>
+  <file src="src/Link.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function __toString(): string]]></code>
+    </MissingOverrideAttribute>
+  </file>
+  <file src="src/LinkRelation.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function __toString(): string]]></code>
+    </MissingOverrideAttribute>
+  </file>
+  <file src="src/LinkRelations.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[public function __toString(): string]]></code>
+    </MissingOverrideAttribute>
+  </file>
+  <file src="src/Links.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[Links]]></code>
+    </ClassMustBeFinal>
+    <UnusedClass>
+      <code><![CDATA[Links]]></code>
+    </UnusedClass>
+  </file>
+  <file src="src/NullDescriptor.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[NullDescriptor]]></code>
+    </ClassMustBeFinal>
+  </file>
+  <file src="src/Profile.php">
+    <PossiblyUnusedProperty>
+      <code><![CDATA[$doFinalize]]></code>
+    </PossiblyUnusedProperty>
+  </file>
+  <file src="src/PutDiagram.php">
+    <UnusedClass>
+      <code><![CDATA[PutDiagram]]></code>
+    </UnusedClass>
+  </file>
+</files>

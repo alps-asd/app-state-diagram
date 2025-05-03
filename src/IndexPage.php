@@ -57,6 +57,7 @@ EOT;
             setupModeSwitch('asd-show-id', 'asd-graph-id', 'asd-graph-name');
             setupModeSwitch('asd-show-name', 'asd-graph-name', 'asd-graph-id');
             applySmoothScrollToLinks(document.querySelectorAll('a[href^="#"]'));
+            setupTagClick();
             {$index->setUpTagEvents}
         } catch (error) {
                console.error("Error in main process:", error);
@@ -79,19 +80,12 @@ EOTJS;
 <!-- Container for the ASDs -->
 
 {$asd}
-
 {$index->tags}
+{$legend}
 
+{$index->semanticMd}
 {$index->linkRelations}
 
-## Semantic Descriptors
-
-<div class="descriptor-list" markdown="1">
-{$index->semanticDescriptorList}
-</div>
-
-{$legend}
-{$index->semanticMd}
 
 ---
 

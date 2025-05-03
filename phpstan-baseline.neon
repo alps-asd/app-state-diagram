@@ -1,0 +1,36 @@
+parameters:
+	ignoreErrors:
+		-
+			message: "#^If condition is always true\\.$#"
+			count: 1
+			path: src/DumpDocs.php
+
+		-
+			message: "#^Method Koriym\\\\AppStateDiagram\\\\DumpDocs\\:\\:getInlineDescriptors\\(\\) should return non\\-empty\\-array\\<int, Koriym\\\\AppStateDiagram\\\\AbstractDescriptor\\> but returns array\\{\\}\\.$#"
+			count: 1
+			path: src/DumpDocs.php
+
+		-
+			message: "#^PHPDoc tag @param references unknown parameter\\: \\$descriptor$#"
+			count: 1
+			path: src/DumpDocs.php
+
+		-
+			message: "#^Parameter \\#1 \\$string of function mb_strlen expects string, string\\|null given\\.$#"
+			count: 1
+			path: src/DumpDocs.php
+
+		-
+			message: "#^Parameter \\#1 \\$string of function mb_substr expects string, string\\|null given\\.$#"
+			count: 1
+			path: src/DumpDocs.php
+
+		-
+			message: "#^Variable \\$inlineDescriptors in empty\\(\\) always exists and is not falsy\\.$#"
+			count: 1
+			path: src/DumpDocs.php
+
+		-
+			message: "#^Parameter \\#2 \\$haystack of method PHPUnit\\\\Framework\\\\Assert\\:\\:assertStringContainsString\\(\\) expects string, mixed given\\.$#"
+			count: 1
+			path: tests/DumpDocsTest.php

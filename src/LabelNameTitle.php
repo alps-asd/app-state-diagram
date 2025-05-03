@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Koriym\AppStateDiagram;
 
-use function sprintf;
+use function str_replace;
 
 /** @psalm-immutable */
 final class LabelNameTitle implements LabelNameInterface
@@ -17,13 +17,7 @@ final class LabelNameTitle implements LabelNameInterface
     public function getLinkLabel(TransDescriptor $trans): string
     {
         $title = $trans->title ?: $trans->id;
-        if ($trans->type === 'idempotent') {
-            return sprintf('<u>%s</u>', $title);
-        }
-
-        if ($trans->type === 'unsafe') {
-            return sprintf('<b><u>%s</u></b>', $title);
-        }
+        $title = str_replace(' ', '&nbsp;', $title);
 
         return $title;
     }

@@ -8,24 +8,111 @@
             background-color: white;
         }
         .markdown-body {
-            box-sizing: border-box;
-            min-width: 200px;
-            max-width: 980px;
-            margin: 0 auto;
-            padding: 25px;
+          margin: 0;
+          max-width: none;
+          padding: 0 24px; 
         }
     
         @media (max-width: 767px) {
             .markdown-body {
-                padding: 15px;
+                padding: 0 16px;
             }
         }
-        #svg-container {
+        
+        /* テーブルレイアウトの改善 */
+        .markdown-body table {
+            table-layout: fixed;
             width: 100%;
+            max-width: 1200px;
+        }
+        .markdown-body table th:nth-child(1) {
+            width: 2%;
+        }
+        .markdown-body table th:nth-child(2) {
+            width: 15%;
+        }
+        .markdown-body table th:nth-child(3) {
+            width: 30%;
+        }
+        .markdown-body table th:nth-child(4) {
+            width: 25%;
+        }
+        .markdown-body table th:nth-child(5) {
+            width: 28%;
+        }
+        .markdown-body table td {
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+        .doc-tooltip {
+            text-decoration: none;
+            border-bottom: 1px dotted #666;
+            cursor: pointer;
+            position: relative;
+            display: inline-block;
+        }
+        .doc-tooltip .tooltip-text {
+            visibility: hidden;
+            width: 300px;
+            background-color: #f8f8f8;
+            color: #333;
+            text-align: left;
+            border-radius: 3px;
+            padding: 8px 12px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -150px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            border: 1px solid #ddd;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            font-size: inherit;
+            line-height: 1.5;
+            white-space: normal;
+            word-wrap: break-word;
+        }
+        .doc-tooltip:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
+        
+        /* 互換性のためのスタイル */
+        .markdown-body abbr {
+            text-decoration: none;
+            border-bottom: 1px dotted #666;
+            cursor: help;
+            position: relative;
+        }
+#svg-container {
+            /* 既存のスタイルも維持 */
             height: auto;
             display: flex;
+            justify-content: flex-start; /* SVGが小さい場合に左寄せ */
             align-items: center;
+            overflow-x: auto; /* SVGがコンテナ幅を超える場合に水平スクロールを表示 */
+
+            width: 100vw;
+            max-width: none; /* 親要素(.markdown-body)のmax-width制限を解除 */
+            box-sizing: border-box; /* paddingやborderを幅計算に含める */
+
+            /*
+             * .markdown-body の margin: 0 auto による中央揃えを打ち消し、
+             * 左端に合わせるためのネガティブマージン。
+             * calc(50% - 50vw) は、中央からビューポート幅の半分だけ左にずらす計算。
+             */
+            margin-left: calc(50% - 50vw);
+            margin-right: calc(50% - 50vw); /* 同様に右マージンも設定（厳密には不要な場合も）*/
+
+            padding-left: 24px;
+            padding-right: 24px;
         }
+        #svg-container svg {
+            max-width: none;
+            display: block;
+            margin: 0;
+        }        
         .asd-view-selector {
             display: flex;
             align-items: center;
@@ -40,7 +127,9 @@
         }
         .selector-container {
             display: flex;
+            flex-wrap: wrap; 
             align-items: center;
+            gap: 8px 12px;
             margin-bottom: 10px;
         }
         .selector-label {
@@ -118,6 +207,13 @@
             flex-wrap: wrap;
             gap: 10px;
             margin-bottom: 20px;
+        }        
+        table .legend {
+            background-color: transparent;
+            padding: 0;
+            margin: 0;
+            display: inline-flex;
+            align-items: center;
         }
         .legend-item {
             display: flex;
@@ -150,6 +246,106 @@
             background-size: 8px 8px;
             background-position: 0 0, 4px 4px;
         }
+        .type-indicator-small {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            margin-right: 4px;
+            border: 1px solid #000;
+            vertical-align: middle;
+        }
+        
+        .type-indicator-small.semantic {
+            background-color: #FFFFFF;
+        }
+        
+        .type-indicator-small.safe {
+            background-color: #00A86B;
+            background-image: linear-gradient(45deg, #008000 25%, transparent 25%, transparent 75%, #008000 75%, #008000),
+                               linear-gradient(45deg, #008000 25%, transparent 25%, transparent 75%, #008000 75%, #008000);
+            background-size: 6px 6px;
+            background-position: 0 0, 3px 3px;
+        }
+        
+        .type-indicator-small.unsafe {
+            background-color: #FF4136;
+            background-image: repeating-linear-gradient(45deg, #FF4136, #FF4136 3px, #FF725C 3px, #FF725C 6px);
+        }
+        
+        .type-indicator-small.idempotent {
+            background-color: #FFDC00;
+            background-image: radial-gradient(#FFB700 20%, transparent 20%),
+                              radial-gradient(#FFB700 20%, transparent 20%);
+            background-size: 6px 6px;
+            background-position: 0 0, 3px 3px;
+        }
+    .meta-container {
+      display: flex;
+      flex-direction: column;
+      gap: 4px; 
+    }
+    
+    .meta-item {
+        display: flex;
+        align-items: center;
+        line-height: 1.0;
+    }
+    
+    .meta-label {
+        font-size: 0.85em;
+        color: #777;
+        width: 45px;
+        text-align: right;
+        padding-right: 10px;
+        flex-shrink: 0;
+    }
+    
+    .meta-values {
+      display: inline-flex;
+      flex-wrap: wrap;
+    }
+    
+    .meta-tag {
+        display: inline-block;
+        padding: 3px 10px;
+        border-radius: 4px;
+        font-size: 0.8em;
+        background-color: #f7f7f7;
+        border: 1px solid #e0e0e0;
+        color: #3b71ca;
+        margin: 0 8px 4px 0;
+    }
+
+    .def-tag {
+      background-color: #EAF5FF; /* 薄いブルー */
+      border-color:     #B8DFFF; /* やや濃いめ */
+      color:            #0366D6; /* リンク色っぽいブルー */
+    }
+    
+    .rt-tag {
+      background-color: #FFF5E6; /* 薄いオレンジ */
+      border-color:     #FFE1B3;
+      color:            #D97506; /* 濃いオレンジ */
+    }
+    
+    .tag-tag {
+      background-color: #E6FFED; /* 薄いグリーン */
+      border-color:     #C6EFC7;
+      color:            #22863A; /* 濃いグリーン */
+    }
+    
+    .doc-tag {
+        background-color: #f7f7f7;
+        color: grey;
+        border: 1px solid lightgray;
+        overflow: visible !important;
+    }
+    
+    /* テーブルセル内でのメタ情報の折り返し */
+    .markdown-body table td:nth-child(5) {
+        padding-left: 4px !important;
+        vertical-align: middle;
+    }
     </style>
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="https://unpkg.com/@hpcc-js/wasm/dist/graphviz.umd.js" type="javascript/worker"></script>
@@ -263,6 +459,20 @@ const setupModeSwitch = (switchId, graphId, otherGraphId) => {
         document.getElementById(otherGraphId).style.display = e.target.checked ? 'none' : 'block';
     });
 };
+
+const setupTagClick = () => {
+    document.querySelectorAll('.meta-tag.tag-tag a').forEach(link => {
+        link.addEventListener('click', e => {
+            e.preventDefault();
+            const tagName = link.textContent.trim();
+            const checkbox = document.querySelector(`#tag-${tagName}`);
+            if (checkbox) {
+                checkbox.checked = true;
+                checkbox.dispatchEvent(new Event('change'));
+            }
+        });
+    });
+}
 </script></head>
 <body>
     <div class="markdown-body">
@@ -281,13 +491,14 @@ const setupModeSwitch = (switchId, graphId, otherGraphId) => {
     document.addEventListener('DOMContentLoaded', async function() {
         try {
             await Promise.all([
-                    renderGraph("#asd-graph-id", 'digraph application_state_diagram {  graph [    labelloc="t";    fontname="Helvetica"    label="ALPS Blog";    URL="index.html" target="_parent"  ];  node [shape = box, style = "bold,filled" fillcolor="lightgray"];    Blog [margin=0.02, label=<<table cellspacing="0" cellpadding="5" border="0"><tr><td>Blog<br />(BlogPosting)<br /></td></tr></table>>,shape=box URL="#Blog" target="_parent"]    BlogPosting [margin=0.02, label=<<table cellspacing="0" cellpadding="5" border="0"><tr><td>BlogPosting<br />(id)<br />(dateCreated)<br />(articleBody)<br /></td></tr></table>>,shape=box URL="#BlogPosting" target="_parent"]    About -> Blog [label = <goBlog (safe)> URL="#goBlog" target="_parent" fontsize=13 class="goBlog" penwidth=1.5];    Blog -> About [label = <goAbout (safe)> URL="#goAbout" target="_parent" fontsize=13 class="goAbout" penwidth=1.5];    Blog -> Blog [label = <doPost (unsafe)> URL="#doPost" target="_parent" fontsize=13 class="doPost" penwidth=1.5];    Blog -> BlogPosting [label = <goBlogPosting (safe)> URL="#goBlogPosting" target="_parent" fontsize=13 class="goBlogPosting" penwidth=1.5];    BlogPosting -> Blog [label = <goBlog (safe)> URL="#goBlog" target="_parent" fontsize=13 class="goBlog" penwidth=1.5];    Index -> Blog [label = <goBlog (safe)> URL="#goBlog" target="_parent" fontsize=13 class="goBlog" penwidth=1.5];    About [label = <About> URL="#About" target="_parent"]    Blog [label = <Blog> URL="#Blog" target="_parent"]    BlogPosting [label = <BlogPosting> URL="#BlogPosting" target="_parent"]    Index [label = <Index> URL="#Index" target="_parent"]}'),
-                    renderGraph("#asd-graph-name", 'digraph application_state_diagram {  graph [    labelloc="t";    fontname="Helvetica"    label="ALPS Blog";    URL="index.html" target="_parent"  ];  node [shape = box, style = "bold,filled" fillcolor="lightgray"];    Blog [margin=0.02, label=<<table cellspacing="0" cellpadding="5" border="0"><tr><td>Blog post list<br />(Blog post item)<br /></td></tr></table>>,shape=box URL="#Blog" target="_parent"]    BlogPosting [margin=0.02, label=<<table cellspacing="0" cellpadding="5" border="0"><tr><td>Blog post item<br />(id)<br />(dateCreated)<br />(articleBody)<br /></td></tr></table>>,shape=box URL="#BlogPosting" target="_parent"]    About -> Blog [label = <to blog> URL="#goBlog" target="_parent" fontsize=13 class="goBlog" penwidth=1.5];    Blog -> About [label = <to about> URL="#goAbout" target="_parent" fontsize=13 class="goAbout" penwidth=1.5];    Blog -> Blog [label = <<b><u>post article</u></b>> URL="#doPost" target="_parent" fontsize=13 class="doPost" penwidth=1.5];    Blog -> BlogPosting [label = <to blog posting> URL="#goBlogPosting" target="_parent" fontsize=13 class="goBlogPosting" penwidth=1.5];    BlogPosting -> Blog [label = <to blog> URL="#goBlog" target="_parent" fontsize=13 class="goBlog" penwidth=1.5];    Index -> Blog [label = <to blog> URL="#goBlog" target="_parent" fontsize=13 class="goBlog" penwidth=1.5];    About [label = <About> URL="#About" target="_parent"]    Blog [label = <Blog post list> URL="#Blog" target="_parent"]    BlogPosting [label = <Blog post item> URL="#BlogPosting" target="_parent"]    Index [label = <Index Page> URL="#Index" target="_parent"]}')
+                    renderGraph("#asd-graph-id", 'digraph application_state_diagram {  graph [    labelloc="t";    fontname="Helvetica"    label="ALPS Blog";    URL="index.html" target="_parent"  ];  node [shape = box, style = "bold,filled" fillcolor="lightgray", margin="0.3,0.1"];    Blog [margin=0.02, label=<<table cellspacing="0" cellpadding="5" border="0"><tr><td>Blog<br />(BlogPosting)<br /></td></tr></table>>,shape=box URL="#Blog" target="_parent"]    BlogPosting [margin=0.02, label=<<table cellspacing="0" cellpadding="5" border="0"><tr><td>BlogPosting<br />(id)<br />(dateCreated)<br />(articleBody)<br /></td></tr></table>>,shape=box URL="#BlogPosting" target="_parent"]    About -> Blog [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goBlog" tooltip="to blog (safe)"><font color="#00A86B">■</font> goBlog</td></tr></table>> URL="#goBlog" target="_parent" fontsize=13 class="goBlog" penwidth=1.5];    Blog -> About [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goAbout" tooltip="to about (safe)"><font color="#00A86B">■</font> goAbout</td></tr></table>> URL="#goAbout" target="_parent" fontsize=13 class="goAbout" penwidth=1.5];    Blog -> Blog [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#doPost" tooltip="post article (unsafe)"><font color="#FF4136">■</font> doPost</td></tr></table>> URL="#doPost" target="_parent" fontsize=13 class="doPost" penwidth=1.5];    Blog -> BlogPosting [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goBlogPosting" tooltip="to blog posting (safe)"><font color="#00A86B">■</font> goBlogPosting</td></tr></table>> URL="#goBlogPosting" target="_parent" fontsize=13 class="goBlogPosting" penwidth=1.5];    BlogPosting -> Blog [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goBlog" tooltip="to blog (safe)"><font color="#00A86B">■</font> goBlog</td></tr></table>> URL="#goBlog" target="_parent" fontsize=13 class="goBlog" penwidth=1.5];    Index -> Blog [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goBlog" tooltip="to blog (safe)"><font color="#00A86B">■</font> goBlog</td></tr></table>> URL="#goBlog" target="_parent" fontsize=13 class="goBlog" penwidth=1.5];    About [label = <About> URL="#About" target="_parent"]    Blog [label = <Blog> URL="#Blog" target="_parent"]    BlogPosting [label = <BlogPosting> URL="#BlogPosting" target="_parent"]    Index [label = <Index> URL="#Index" target="_parent"]}'),
+                    renderGraph("#asd-graph-name", 'digraph application_state_diagram {  graph [    labelloc="t";    fontname="Helvetica"    label="ALPS Blog";    URL="index.html" target="_parent"  ];  node [shape = box, style = "bold,filled" fillcolor="lightgray", margin="0.3,0.1"];    Blog [margin=0.02, label=<<table cellspacing="0" cellpadding="5" border="0"><tr><td>Blog post list<br />(Blog post item)<br /></td></tr></table>>,shape=box URL="#Blog" target="_parent"]    BlogPosting [margin=0.02, label=<<table cellspacing="0" cellpadding="5" border="0"><tr><td>Blog post item<br />(id)<br />(dateCreated)<br />(articleBody)<br /></td></tr></table>>,shape=box URL="#BlogPosting" target="_parent"]    About -> Blog [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goBlog" tooltip="to blog (safe)"><font color="#00A86B">■</font> to&nbsp;blog</td></tr></table>> URL="#goBlog" target="_parent" fontsize=13 class="goBlog" penwidth=1.5];    Blog -> About [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goAbout" tooltip="to about (safe)"><font color="#00A86B">■</font> to&nbsp;about</td></tr></table>> URL="#goAbout" target="_parent" fontsize=13 class="goAbout" penwidth=1.5];    Blog -> Blog [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#doPost" tooltip="post article (unsafe)"><font color="#FF4136">■</font> post&nbsp;article</td></tr></table>> URL="#doPost" target="_parent" fontsize=13 class="doPost" penwidth=1.5];    Blog -> BlogPosting [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goBlogPosting" tooltip="to blog posting (safe)"><font color="#00A86B">■</font> to&nbsp;blog&nbsp;posting</td></tr></table>> URL="#goBlogPosting" target="_parent" fontsize=13 class="goBlogPosting" penwidth=1.5];    BlogPosting -> Blog [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goBlog" tooltip="to blog (safe)"><font color="#00A86B">■</font> to&nbsp;blog</td></tr></table>> URL="#goBlog" target="_parent" fontsize=13 class="goBlog" penwidth=1.5];    Index -> Blog [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goBlog" tooltip="to blog (safe)"><font color="#00A86B">■</font> to&nbsp;blog</td></tr></table>> URL="#goBlog" target="_parent" fontsize=13 class="goBlog" penwidth=1.5];    About [label = <About> URL="#About" target="_parent"]    Blog [label = <Blog post list> URL="#Blog" target="_parent"]    BlogPosting [label = <Blog post item> URL="#BlogPosting" target="_parent"]    Index [label = <Index Page> URL="#Index" target="_parent"]}')
             ]);
             setupTagTrigger();
             setupModeSwitch('asd-show-id', 'asd-graph-id', 'asd-graph-name');
             setupModeSwitch('asd-show-name', 'asd-graph-name', 'asd-graph-id');
             applySmoothScrollToLinks(document.querySelectorAll('a[href^="#"]'));
+            setupTagClick();
             
         } catch (error) {
                console.error("Error in main process:", error);
@@ -302,281 +513,133 @@ const setupModeSwitch = (switchId, graphId, otherGraphId) => {
     <label for="asd-show-name">title</label>
 </div>
 
-<h2>Links</h2>
-
-<ul>
-<li><a rel="issue" href="https://github.com/alps-asd/app-state-diagram/issues">issue</a></li>
-</ul>
-
-<h2>Semantic Descriptors</h2>
-
-<div class="descriptor-list">
-
-<ul>
-<li><span class="indicator semantic" data-tooltip="semantic"> </span> <a href="#About">About</a></li>
-<li><span class="indicator semantic" data-tooltip="semantic"> </span> <a href="#articleBody">articleBody</a></li>
-<li><span class="indicator semantic" data-tooltip="semantic"> </span> <a href="#Blog">Blog</a></li>
-<li><span class="indicator semantic" data-tooltip="semantic"> </span> <a href="#BlogPosting">BlogPosting</a></li>
-<li><span class="indicator semantic" data-tooltip="semantic"> </span> <a href="#dateCreated">dateCreated</a></li>
-<li><span class="indicator unsafe" data-tooltip="unsafe"> </span> <a href="#doPost">doPost</a></li>
-<li><span class="indicator safe" data-tooltip="safe"> </span> <a href="#goAbout">goAbout</a></li>
-<li><span class="indicator safe" data-tooltip="safe"> </span> <a href="#goBlog">goBlog</a></li>
-<li><span class="indicator safe" data-tooltip="safe"> </span> <a href="#goBlogPosting">goBlogPosting</a></li>
-<li><span class="indicator safe" data-tooltip="safe"> </span> <a href="#goStart">goStart</a></li>
-<li><span class="indicator semantic" data-tooltip="semantic"> </span> <a href="#id">id</a></li>
-<li><span class="indicator semantic" data-tooltip="semantic"> </span> <a href="#Index">Index</a></li>
-</ul>
-
-</div>
-
 <div class="legend">
-    <div class="legend-item">
+    <div class="legend-item" title="A state element (e.g.  HTML.SPAN, HTML.INPUT, etc.).">
         <span class="legend-icon semantic"></span>
         Semantic
     </div>
-    <div class="legend-item">
+    <div class="legend-item" title="A hypermedia control that triggers a safe, idempotent state
+      transition (e.g.  HTTP.GET or HTTP.HEAD).">
         <span class="legend-icon safe"></span>
         Safe
     </div>
-    <div class="legend-item">
+    <div class="legend-item" title="A hypermedia control that triggers an unsafe, non-
+      idempotent state transition (e.g.  HTTP.POST).">
         <span class="legend-icon unsafe"></span>
         Unsafe
     </div>
-    <div class="legend-item">
+    <div class="legend-item" title="A hypermedia control that triggers an unsafe,
+      idempotent state transition (e.g.  HTTP.PUT or HTTP.DELETE).">
         <span class="legend-icon idempotent"></span>
         Idempotent
     </div>
 </div>
 
-<h3><a id="About">About</a></h3>
-
-<ul>
-<li>type: semantic</li>
-<li>descriptor</li>
-</ul>
+<h2>Semantic Descriptors</h2>
 
 <table>
 <thead>
 <tr>
-  <th>id</th>
-  <th>type</th>
-  <th>title</th>
+  <th align="center">Type</th>
+  <th align="left">ID</th>
+  <th align="left">Title</th>
+  <th align="left">Contained</th>
+  <th align="left">Extra Info</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-  <td><a href="#goBlog">goBlog</a></td>
-  <td>safe</td>
-  <td>to blog</td>
+  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="left"><a id="About"></a><a href="#About">About</a></td>
+  <td align="left"><span style="white-space: normal;"></span></td>
+  <td align="left"><span class="type-indicator-small safe" title="Safe"></span><a href="#goBlog">goBlog</a></td>
+  <td align="left"><span style="white-space: normal;"></span></td>
+</tr>
+<tr>
+  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="left"><a id="articleBody"></a><a href="#articleBody">articleBody</a></td>
+  <td align="left"><span style="white-space: normal;"></span></td>
+  <td align="left"></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">def:</span><span class="meta-tag def-tag"><a href="https://schema.org/articleBody" target="_blank">schema.org/articleBody</a></span></span></span></span></td>
+</tr>
+<tr>
+  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="left"><a id="Blog"></a><a href="#Blog">Blog</a></td>
+  <td align="left"><span style="white-space: normal;">Blog post list</span></td>
+  <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#BlogPosting">BlogPosting</a><br><span class="type-indicator-small safe" title="Safe"></span><a href="#goAbout">goAbout</a><br><span class="type-indicator-small safe" title="Safe"></span><a href="#goBlogPosting">goBlogPosting</a><br><span class="type-indicator-small unsafe" title="Unsafe"></span><a href="#doPost">doPost</a></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rel:</span><span class="meta-tag rel-tag">collection</span></span></span></span></td>
+</tr>
+<tr>
+  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="left"><a id="BlogPosting"></a><a href="#BlogPosting">BlogPosting</a></td>
+  <td align="left"><span style="white-space: normal;">Blog post item</span></td>
+  <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#id">id</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#dateCreated">dateCreated</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#articleBody">articleBody</a><br><span class="type-indicator-small safe" title="Safe"></span><a href="#goBlog">goBlog</a></td>
+  <td align="left"><span style="white-space: normal;"></span></td>
+</tr>
+<tr>
+  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="left"><a id="dateCreated"></a><a href="#dateCreated">dateCreated</a></td>
+  <td align="left"><span style="white-space: normal;"></span></td>
+  <td align="left"></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">def:</span><span class="meta-tag def-tag"><a href="https://schema.org/dateCreated" target="_blank">schema.org/dateCreated</a></span></span></span></span></td>
+</tr>
+<tr>
+  <td align="center"><span class="legend"><span class="legend-icon unsafe"></span></span></td>
+  <td align="left"><a id="doPost"></a><a href="#doPost">doPost</a></td>
+  <td align="left"><span style="white-space: normal;">post article</span></td>
+  <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#articleBody">articleBody</a></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">def:</span><span class="meta-tag def-tag"><a href="https://activitystrea.ms/specs/json/1.0/#post-verb" target="_blank">activitystrea.ms/specs/json...</a></span></span><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#Blog">Blog</a></span></span></span></span></td>
+</tr>
+<tr>
+  <td align="center"><span class="legend"><span class="legend-icon safe"></span></span></td>
+  <td align="left"><a id="goAbout"></a><a href="#goAbout">goAbout</a></td>
+  <td align="left"><span style="white-space: normal;">to about</span></td>
+  <td align="left"></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#About">About</a></span></span></span></span></td>
+</tr>
+<tr>
+  <td align="center"><span class="legend"><span class="legend-icon safe"></span></span></td>
+  <td align="left"><a id="goBlog"></a><a href="#goBlog">goBlog</a></td>
+  <td align="left"><span style="white-space: normal;">to blog</span></td>
+  <td align="left"></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#Blog">Blog</a></span></span></span></span></td>
+</tr>
+<tr>
+  <td align="center"><span class="legend"><span class="legend-icon safe"></span></span></td>
+  <td align="left"><a id="goBlogPosting"></a><a href="#goBlogPosting">goBlogPosting</a></td>
+  <td align="left"><span style="white-space: normal;">to blog posting</span></td>
+  <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#id">id</a></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#BlogPosting">BlogPosting</a></span></span></span></span></td>
+</tr>
+<tr>
+  <td align="center"><span class="legend"><span class="legend-icon safe"></span></span></td>
+  <td align="left"><a id="goStart"></a><a href="#goStart">goStart</a></td>
+  <td align="left"><span style="white-space: normal;">to start</span></td>
+  <td align="left"></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#Blog">Blog</a></span></span></span></span></td>
+</tr>
+<tr>
+  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="left"><a id="id"></a><a href="#id">id</a></td>
+  <td align="left"><span style="white-space: normal;"></span></td>
+  <td align="left"></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">def:</span><span class="meta-tag def-tag"><a href="https://schema.org/identifier" target="_blank">schema.org/identifier</a></span></span></span></span></td>
+</tr>
+<tr>
+  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="left"><a id="Index"></a><a href="#Index">Index</a></td>
+  <td align="left"><span style="white-space: normal;">Index Page</span></td>
+  <td align="left"><span class="type-indicator-small safe" title="Safe"></span><a href="#goBlog">goBlog</a></td>
+  <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 </tbody>
 </table>
 
-<h3><a id="articleBody">articleBody</a></h3>
+<h2>Links</h2>
 
 <ul>
-<li>type: semantic</li>
-<li>def: <a href="https://schema.org/articleBody">https://schema.org/articleBody</a></li>
+<li><a rel="issue" href="https://github.com/alps-asd/app-state-diagram/issues">issue</a></li>
 </ul>
-
-<h3><a id="Blog">Blog</a></h3>
-
-<ul>
-<li>type: semantic</li>
-<li>title: Blog post list</li>
-<li>href: <a href="https://schema.org/Blog">https://schema.org/Blog</a></li>
-<li>rel: collection</li>
-<li>descriptor</li>
-</ul>
-
-<table>
-<thead>
-<tr>
-  <th>id</th>
-  <th>type</th>
-  <th>title</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td><a href="#BlogPosting">BlogPosting</a></td>
-  <td>semantic</td>
-  <td>Blog post item</td>
-</tr>
-<tr>
-  <td><a href="#goAbout">goAbout</a></td>
-  <td>safe</td>
-  <td>to about</td>
-</tr>
-<tr>
-  <td><a href="#goBlogPosting">goBlogPosting</a></td>
-  <td>safe</td>
-  <td>to blog posting</td>
-</tr>
-<tr>
-  <td><a href="#doPost">doPost</a></td>
-  <td>unsafe</td>
-  <td>post article</td>
-</tr>
-</tbody>
-</table>
-
-<h3><a id="BlogPosting">BlogPosting</a></h3>
-
-<ul>
-<li>type: semantic</li>
-<li>title: Blog post item</li>
-<li>href: <a href="https://schema.org/BlogPosting">https://schema.org/BlogPosting</a></li>
-<li>descriptor</li>
-</ul>
-
-<table>
-<thead>
-<tr>
-  <th>id</th>
-  <th>type</th>
-  <th>title</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td><a href="#id">id</a></td>
-  <td>semantic</td>
-  <td></td>
-</tr>
-<tr>
-  <td><a href="#dateCreated">dateCreated</a></td>
-  <td>semantic</td>
-  <td></td>
-</tr>
-<tr>
-  <td><a href="#articleBody">articleBody</a></td>
-  <td>semantic</td>
-  <td></td>
-</tr>
-<tr>
-  <td><a href="#goBlog">goBlog</a></td>
-  <td>safe</td>
-  <td>to blog</td>
-</tr>
-</tbody>
-</table>
-
-<h3><a id="dateCreated">dateCreated</a></h3>
-
-<ul>
-<li>type: semantic</li>
-<li>def: <a href="https://schema.org/dateCreated">https://schema.org/dateCreated</a></li>
-</ul>
-
-<h3><a id="doPost">doPost</a></h3>
-
-<ul>
-<li>type: unsafe</li>
-<li>title: post article</li>
-<li>def: <a href="https://activitystrea.ms/specs/json/1.0/#post-verb">https://activitystrea.ms/specs/json/1.0/#post-verb</a></li>
-<li>rt: <a href="#Blog">Blog</a></li>
-<li>descriptor</li>
-</ul>
-
-<table>
-<thead>
-<tr>
-  <th>id</th>
-  <th>type</th>
-  <th>title</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td><a href="#articleBody">articleBody</a></td>
-  <td>semantic</td>
-  <td></td>
-</tr>
-</tbody>
-</table>
-
-<h3><a id="goAbout">goAbout</a></h3>
-
-<ul>
-<li>type: safe</li>
-<li>title: to about</li>
-<li>rt: <a href="#About">About</a></li>
-</ul>
-
-<h3><a id="goBlog">goBlog</a></h3>
-
-<ul>
-<li>type: safe</li>
-<li>title: to blog</li>
-<li>rt: <a href="#Blog">Blog</a></li>
-</ul>
-
-<h3><a id="goBlogPosting">goBlogPosting</a></h3>
-
-<ul>
-<li>type: safe</li>
-<li>title: to blog posting</li>
-<li>rt: <a href="#BlogPosting">BlogPosting</a></li>
-<li>descriptor</li>
-</ul>
-
-<table>
-<thead>
-<tr>
-  <th>id</th>
-  <th>type</th>
-  <th>title</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td><a href="#id">id</a></td>
-  <td>semantic</td>
-  <td></td>
-</tr>
-</tbody>
-</table>
-
-<h3><a id="goStart">goStart</a></h3>
-
-<ul>
-<li>type: safe</li>
-<li>title: to start</li>
-<li>rt: <a href="#Blog">Blog</a></li>
-</ul>
-
-<h3><a id="id">id</a></h3>
-
-<ul>
-<li>type: semantic</li>
-<li>def: <a href="https://schema.org/identifier">https://schema.org/identifier</a></li>
-</ul>
-
-<h3><a id="Index">Index</a></h3>
-
-<ul>
-<li>type: semantic</li>
-<li>title: Index Page</li>
-<li>descriptor</li>
-</ul>
-
-<table>
-<thead>
-<tr>
-  <th>id</th>
-  <th>type</th>
-  <th>title</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td><a href="#goBlog">goBlog</a></td>
-  <td>safe</td>
-  <td>to blog</td>
-</tr>
-</tbody>
-</table>
 
 <hr />
 

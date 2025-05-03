@@ -40,7 +40,7 @@ digraph application_state_diagram {
     label="%s";
     URL="index.html" target="_parent"
   ];
-  node [shape = box, style = "bold,filled" fillcolor="lightgray"];
+  node [shape = box, style = "bold,filled" fillcolor="lightgray", margin="0.3,0.1"];
 
 %s
 %s

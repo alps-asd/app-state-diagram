@@ -2,11 +2,11 @@
     "require": {
         "doctrine/coding-standard": "^12.0",
         "phpmd/phpmd": "^2.9",
-        "phpmetrics/phpmetrics": "^2.7",
-        "phpstan/phpstan": "^1.1",
-        "psalm/plugin-phpunit": "^0.13",
+        "phpmetrics/phpmetrics": "^v3.0.0rc8",
+        "phpstan/phpstan": "^2.1",
+        "psalm/plugin-phpunit": "^0.19.5",
         "squizlabs/php_codesniffer": "^3.5",
-        "vimeo/psalm": "^4.2"
+        "vimeo/psalm": "^6.10"
     },
     "require-dev": {
         "jetbrains/phpstorm-attributes": "^1.0"
