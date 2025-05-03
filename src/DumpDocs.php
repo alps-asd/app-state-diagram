@@ -25,7 +25,6 @@ use function substr;
 use function ucfirst;
 use function usort;
 
-use const ENT_QUOTES;
 use const FILTER_VALIDATE_URL;
 use const PHP_EOL;
 use const SORT_FLAG_CASE;
@@ -59,79 +58,76 @@ final class DumpDocs
 
         $value = (string) $descriptor->{$key};
 
-        // 各プロパティタイプごとに異なるスタイルを適用
         switch ($key) {
             case 'def':
                 if ($this->isUrl($value)) {
-                    $displayValue = preg_replace('#^https?://#', '', $value);
-                    if (is_string($displayValue) && mb_strlen($displayValue) > 30) {
-                        $displayValue = mb_substr($displayValue, 0, 27) . '...';
-                    }
-
-                    return sprintf(
-                        '<span class="meta-item"><span class="meta-label">def:</span><span class="meta-tag def-tag"><a href="%s" target="_blank">%s</a></span></span>',
-                        $value,
-                        (string) $displayValue
-                    );
+                    return $this->createMetaItem('def', $value, 'def-tag', $value);
                 }
 
-                return sprintf(
-                    '<span class="meta-item"><span class="meta-label">def:</span><span class="meta-tag def-tag">%s</span></span>',
-                    htmlspecialchars($value)
-                );
+                return $this->createMetaItem('def', $value, 'def-tag');
 
             case 'rel':
-                return sprintf(
-                    '<span class="meta-item"><span class="meta-label">rel:</span><span class="meta-tag rel-tag">%s</span></span>',
-                    htmlspecialchars($value)
-                );
+                return $this->createMetaItem('rel', $value, 'rel-tag');
 
             case 'rt':
-                return sprintf(
-                    '<span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#%s">%s</a></span></span>',
-                    htmlspecialchars($value, ENT_QUOTES),
-                    htmlspecialchars($value, ENT_QUOTES)
-                );
+                return $this->createMetaItem('rt', $value, 'rt-tag', "#$value");
 
             case 'doc':
-                // 短いドキュメントはそのまま表示、長いものはツールチップで
                 $maxLength = 140;
-                $truncatedValue = $this->truncateText($value, $maxLength);
                 if (mb_strlen($value) > $maxLength) {
-                    // Use truncated value which already has '...'
-                    return sprintf(
-                        '<span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag" title="%s">%s</span></span>',
-                        htmlspecialchars($value),
-                        htmlspecialchars($truncatedValue)
-                    );
+                    $truncatedValue = $this->truncateText($value, $maxLength);
+
+                    return $this->createMetaItem('doc', $truncatedValue, 'doc-tag', '', $value);
                 }
 
-                return sprintf(
-                    '<span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">%s</span></span>',
-                    htmlspecialchars($value)
-                );
+                return $this->createMetaItem('doc', $value, 'doc-tag');
 
             case 'linkRelations':
                 $links = $descriptor->linkRelations->getLinksInExtras();
                 if ($links) {
-                    return sprintf(
-                        '<span class="meta-item"><span class="meta-label">link:</span><span class="meta-tag link-tag">%s</span></span>',
-                        $links
-                    );
+                    return $this->createMetaItem('link', $links, 'link-tag');
                 }
 
                 return '';
 
             default:
-                // @CoverageIgnoreStart
-                // Otherwise, wrap in standard meta tags
-                return sprintf(
-                    '<span class="meta-item"><span class="meta-label">%s:</span><span class="meta-tag">%s</span></span>',
-                    $key,
-                    htmlspecialchars($value)
-                );
-            // @CoverageIgnoreEnd
+                return $this->createMetaItem($key, $value);
         }
+    }
+
+    private function createMetaItem(string $label, string $value, string $cssClass = '', string $url = '', string $title = ''): string
+    {
+        $valueHtml = htmlspecialchars($value);
+
+        // Handle URL links
+        if ($url !== '') {
+            $displayValue = $value;
+            $targetBlank = '';
+
+            // Only add target="_blank" for external URLs, not for internal fragment links
+            if ($this->isUrl($url)) {
+                $displayValue = preg_replace('#^https?://#', '', $displayValue);
+                $targetBlank = ' target="_blank"';
+            }
+
+            // Truncate if too long
+            if (mb_strlen($displayValue) > 30) {
+                $displayValue = mb_substr($displayValue, 0, 27) . '...';
+            }
+
+            $valueHtml = sprintf('<a href="%s"%s>%s</a>', $url, $targetBlank, htmlspecialchars($displayValue));
+        }
+
+        // Handle tooltip for long text
+        $titleAttr = $title !== '' ? sprintf(' title="%s"', htmlspecialchars($title)) : '';
+
+        return sprintf(
+            '<span class="meta-item"><span class="meta-label">%s:</span><span class="meta-tag %s"%s>%s</span></span>',
+            $label,
+            $cssClass,
+            $titleAttr,
+            $valueHtml
+        );
     }
 
     private function isUrl(string $text): bool
