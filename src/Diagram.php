@@ -45,7 +45,7 @@ final class Diagram
         $this->draw('', new LabelName(), $profile);
         $this->draw('.title', new LabelNameTitle(), $titleProfile);
         $indexConfig = clone $config;
-        $indexConfig->outputMode = DumpDocs::MODE_HTML;
+        $indexConfig->outputMode = DumpDocs::MODE_MARKDOWN;
 
         return new IndexPage($indexConfig);
     }
