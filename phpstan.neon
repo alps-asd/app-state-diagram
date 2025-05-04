@@ -1,10 +1,10 @@
-includes:
-  - phpstan-baseline.neon
 parameters:
-  level: max
+  level: 9
   paths:
     - src
     - tests
   excludePaths:
     analyseAndScan:
       - src/IndexPage.php
+  ignoreErrors:
+      - '#PHPDoc tag @SuppressWarnings has invalid value#'
