@@ -8,10 +8,7 @@ use function array_key_exists;
 
 final class Descriptors
 {
-    /**
-     * @var array<string, AbstractDescriptor>
-     * @psalm-readonly
-     */
+    /** @var array<string, AbstractDescriptor> */
     public $descriptors = [];
 
     public function add(AbstractDescriptor $descriptor): void

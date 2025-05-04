@@ -34,7 +34,7 @@ final class FakeAlpsJsonInputStreamWrapper
     }
 
     /**
-     * @return array<int|string, mixed>;
+     * @return array<int|string, mixed>
      */
     public function stream_stat(): array
     {
@@ -47,7 +47,7 @@ final class FakeAlpsJsonInputStreamWrapper
     }
 
     /**
-     * @return array<int|string, mixed>;
+     * @return array<int|string, mixed>
      */
     public function url_stat(): array
     {
