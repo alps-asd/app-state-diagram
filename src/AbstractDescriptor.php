@@ -7,23 +7,29 @@ namespace Koriym\AppStateDiagram;
 use Koriym\AppStateDiagram\Exception\InvalidSemanticsException;
 use stdClass;
 
-use function assert;
 use function explode;
 use function is_string;
 use function json_encode;
-use function property_exists;
 use function sprintf;
 
 abstract class AbstractDescriptor
 {
     public string $id;
+
+    /** @psalm-suppress PossiblyUnusedProperty */
     public ?string $def;
+
+    /** @psalm-suppress PossiblyUnusedProperty */
     public stdClass|null|string $doc;
 
     /** @var list<stdClass>|stdClass */
     public array|stdClass $descriptor = [];
     public string $type = 'semantic';
+
+    /** @psalm-suppress PossiblyUnusedProperty */
     public ?string $rel = null;
+
+    /** @psalm-suppress PossiblyUnusedProperty */
     public stdClass|SemanticDescriptor|null $parent;
 
     /** @var list<string> */

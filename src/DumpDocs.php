@@ -106,7 +106,7 @@ final class DumpDocs
 
             // Only add target="_blank" for external URLs, not for internal fragment links
             if ($this->isUrl($url)) {
-                $displayValue = preg_replace('#^https?://#', '', $displayValue);
+                $displayValue = (string) preg_replace('#^https?://#', '', $displayValue);
                 $targetBlank = ' target="_blank"';
             }
 

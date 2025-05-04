@@ -11,6 +11,7 @@ use const FILTER_VALIDATE_INT;
 /** @psalm-immutable */
 final class Option
 {
+    /** @psalm-suppress PossiblyUnusedProperty */
     public bool $watch;
     public int $port;
     public string $mode;

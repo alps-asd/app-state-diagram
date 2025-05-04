@@ -11,6 +11,8 @@ abstract class AbstractProfile
 
     /** @var array<Link> */
     public array $links = [];
+
+    /** @psalm-suppress PossiblyUnusedProperty */
     public string $schema = '';
     public string $title = '';
     public string $doc = '';
