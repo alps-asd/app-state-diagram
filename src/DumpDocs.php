@@ -72,9 +72,7 @@ final class DumpDocs
             case 'doc':
                 $maxLength = 140;
                 if (mb_strlen($value) > $maxLength) {
-                    $truncatedValue = $this->truncateText($value, $maxLength);
-
-                    return $this->createMetaItem('doc', $truncatedValue, 'doc-tag', '', $value);
+                    return $this->createMetaItem('doc', $value, 'doc-tag clickable', '', $value); // 表示も data-full も full text
                 }
 
                 return $this->createMetaItem('doc', $value, 'doc-tag');
@@ -95,19 +93,17 @@ final class DumpDocs
     private function createMetaItem(string $label, string $value, string $cssClass = '', string $url = '', string $title = ''): string
     {
         $valueHtml = htmlspecialchars($value);
+        $attrs = [];
 
-        // Handle URL links
         if ($url !== '') {
             $displayValue = $value;
             $targetBlank = '';
 
-            // Only add target="_blank" for external URLs, not for internal fragment links
             if ($this->isUrl($url)) {
                 $displayValue = (string) preg_replace('#^https?://#', '', $displayValue);
                 $targetBlank = ' target="_blank"';
             }
 
-            // Truncate if too long
             if (mb_strlen($displayValue) > 30) {
                 $displayValue = mb_substr($displayValue, 0, 27) . '...';
             }
@@ -115,15 +111,22 @@ final class DumpDocs
             $valueHtml = sprintf('<a href="%s"%s>%s</a>', $url, $targetBlank, htmlspecialchars($displayValue));
         }
 
-        // Handle tooltip for long text
-        $titleAttr = $title !== '' ? sprintf(' title="%s"', htmlspecialchars($title)) : '';
+        if (mb_strlen($value) > 140) {
+            $attrs[] = sprintf('data-full="%s"', htmlspecialchars($value));
+        }
+
+        if ($title !== '') {
+            $attrs[] = sprintf('title="%s"', htmlspecialchars($title));
+        }
+
+        $attrString = $attrs ? ' ' . implode(' ', $attrs) : '';
 
         return sprintf(
             '<span class="meta-item"><span class="meta-label">%s:</span><span class="meta-tag %s"%s>%s</span></span>',
             $label,
             $cssClass,
-            $titleAttr,
-            $valueHtml
+            $attrString,
+            htmlspecialchars(mb_strlen($value) > 140 ? mb_substr($value, 0, 70) . '...' : $value)
         );
     }
 

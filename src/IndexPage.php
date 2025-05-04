@@ -58,6 +58,7 @@ EOT;
             setupModeSwitch('asd-show-name', 'asd-graph-name', 'asd-graph-id');
             applySmoothScrollToLinks(document.querySelectorAll('a[href^="#"]'));
             setupTagClick();
+            setupDocClick(); 
             {$index->setUpTagEvents}
         } catch (error) {
                console.error("Error in main process:", error);

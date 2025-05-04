@@ -120,3 +120,20 @@ const setupTagClick = () => {
         });
     });
 }
+const setupDocClick = () => {
+    document.querySelectorAll('.doc-tag').forEach(el => {
+        const full = el.dataset.full;
+        if (!full || full.length <= 140) return;
+
+        const short = full.slice(0, 70) + '...';
+        el.innerText = short;
+        el.classList.add('expandable');
+
+        el.addEventListener('click', () => {
+            const expanded = el.classList.toggle('expanded');
+            el.innerText = expanded ? full : short;
+        });
+    });
+};
+
+
