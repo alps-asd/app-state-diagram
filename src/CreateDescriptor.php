@@ -88,8 +88,9 @@ final class CreateDescriptor
             throw new DescriptorIsNotArrayException((string) $msg);
         }
 
-        /** @psalm-suppress MixedArgumentTypeCoercion */
-        $inLineSemantics = ($this)($descriptor->descriptor, $descriptor);
+        /** @var array<string, stdClass> $childDescriptor */
+        $childDescriptor = $descriptor->descriptor;
+        $inLineSemantics = ($this)($childDescriptor, $descriptor);
         /** @psalm-suppress MixedArgumentTypeCoercion */
         if ($inLineSemantics !== []) {
             $descriptors = $this->addInlineSemantics($descriptors, $inLineSemantics);

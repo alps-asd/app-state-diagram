@@ -4,6 +4,6 @@ declare(strict_types=1);
 
 namespace Koriym\AppStateDiagram\Exception;
 
-class DescriptorIsNotArrayException extends InvalidDescriptorException
+final class DescriptorIsNotArrayException extends InvalidDescriptorException
 {
 }

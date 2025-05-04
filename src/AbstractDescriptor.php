@@ -7,30 +7,34 @@ namespace Koriym\AppStateDiagram;
 use Koriym\AppStateDiagram\Exception\InvalidSemanticsException;
 use stdClass;
 
-use function assert;
 use function explode;
 use function is_string;
 use function json_encode;
-use function property_exists;
 use function sprintf;
 
 abstract class AbstractDescriptor
 {
     public string $id;
+
+    /** @psalm-suppress PossiblyUnusedProperty */
     public ?string $def;
+
+    /** @psalm-suppress PossiblyUnusedProperty */
     public stdClass|null|string $doc;
 
     /** @var list<stdClass>|stdClass */
     public array|stdClass $descriptor = [];
     public string $type = 'semantic';
+
+    /** @psalm-suppress PossiblyUnusedProperty */
     public ?string $rel = null;
+
+    /** @psalm-suppress PossiblyUnusedProperty */
     public stdClass|SemanticDescriptor|null $parent;
 
     /** @var list<string> */
     public array $tags;
     public string $title;
-    public object $source;
-    public ?string $href = null;
     public LinkRelations $linkRelations;
 
     public function __construct(
@@ -41,7 +45,6 @@ abstract class AbstractDescriptor
             throw new InvalidSemanticsException((string) json_encode($descriptor));
         }
 
-        $this->source = $descriptor;
         $this->id = (string) $descriptor->id;
         /** @psalm-suppress MixedAssignment */
         $this->def = $descriptor->def ?? $descriptor->ref ?? $descriptor->src ?? null;
@@ -57,11 +60,6 @@ abstract class AbstractDescriptor
         $this->title = $descriptor->title ?? '';
         if (isset($descriptor->rel)) {
             $this->rel = (string) $descriptor->rel;
-        }
-
-        if (property_exists($descriptor, 'href')) {
-            assert(is_string($descriptor->href) || $descriptor->href === null);
-            $this->href = $descriptor->href;
         }
 
         /** @psalm-suppress all */

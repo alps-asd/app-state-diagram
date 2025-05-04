@@ -6,12 +6,9 @@ namespace Koriym\AppStateDiagram;
 
 use function array_key_exists;
 
-class Descriptors
+final class Descriptors
 {
-    /**
-     * @var array<string, AbstractDescriptor>
-     * @psalm-readonly
-     */
+    /** @var array<string, AbstractDescriptor> */
     public $descriptors = [];
 
     public function add(AbstractDescriptor $descriptor): void

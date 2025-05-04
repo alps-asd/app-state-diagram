@@ -14,7 +14,7 @@ use function in_array;
 use function is_int;
 use function strpos;
 
-class HyperReference
+final class HyperReference
 {
     /** @var array<string, string> */
     private $hrefs = [];
@@ -67,7 +67,6 @@ class HyperReference
 
             $alps = new Profile($file, $this->labelName, false);
             [$importInstances, $hyperReference] = $alps->export($id, $file);
-            /** @var array<string, stdClass> $importInstances */
             $this->merge($hyperReference);
             $instances += $importInstances;
         }

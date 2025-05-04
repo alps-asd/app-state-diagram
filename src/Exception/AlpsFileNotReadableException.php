@@ -6,6 +6,6 @@ namespace Koriym\AppStateDiagram\Exception;
 
 use RuntimeException;
 
-class AlpsFileNotReadableException extends RuntimeException
+final class AlpsFileNotReadableException extends RuntimeException
 {
 }

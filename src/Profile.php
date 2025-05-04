@@ -41,7 +41,7 @@ final class Profile extends AbstractProfile
     public function __construct(
         public string $alpsFile,
         public LabelNameInterface $labelName,
-        public bool $doFinalize = true
+        bool $doFinalize = true
     ) {
         $hyperReference = new HyperReference($labelName);
         [$profile, $descriptors] = (new SplitProfile())($this->alpsFile);

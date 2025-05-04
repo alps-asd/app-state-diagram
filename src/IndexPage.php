@@ -32,7 +32,7 @@ final class IndexPage
     {
         $index = $this->getElements($config);
         $indexJsFile = dirname(__DIR__, 1) . '/docs/assets/js/asd@0.1.0.js';
-        $indexJs = sprintf('<script>%s</script>', file_get_contents($indexJsFile));
+        $indexJs = sprintf('<script>%s</script>', (string) file_get_contents($indexJsFile));
         $header = <<<EOT
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="https://unpkg.com/@hpcc-js/wasm/dist/graphviz.umd.js" type="javascript/worker"></script>
@@ -132,7 +132,7 @@ EOT;
             return '';
         }
 
-        return '## Links' . PHP_EOL . $linkRelations;
+        return '## Links' . PHP_EOL . (string) $linkRelations;
     }
 
     private function getSetupTagEvents(Config $config): string
@@ -176,8 +176,7 @@ EOT;
             'UTF-8'
         );
 
-        $semanticDescriptorList = (new DumpDocs())->getSemanticDescriptorList($profile);
-        $semanticMd = PHP_EOL . (new DumpDocs())->getSemanticDescriptorMarkDown($profile, $profile->alpsFile);
+        $semanticMd = PHP_EOL . (new DumpDocs())->getSemanticDescriptorMarkDown($profile);
         $descriptors = $profile->descriptors;
         uasort($descriptors, static function (AbstractDescriptor $a, AbstractDescriptor $b): int {
             $compareId = strtoupper($a->id) <=> strtoupper($b->id);
@@ -208,8 +207,7 @@ EOT;
             $tags,
             $htmlTitle,
             $htmlDoc,
-            $setUpTagEvents,
-            $semanticDescriptorList
+            $setUpTagEvents
         );
     }
 }

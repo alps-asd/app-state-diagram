@@ -7,12 +7,9 @@ namespace Koriym\AppStateDiagram;
 use function sprintf;
 
 /** @codeCoverageIgnore  */
-class Links
+final class Links
 {
-    /**
-     * @var array<string, Link>
-     * @psalm-readonly
-     */
+    /** @var array<string, Link> */
     public $links = [];
 
     public function add(Link $link): void

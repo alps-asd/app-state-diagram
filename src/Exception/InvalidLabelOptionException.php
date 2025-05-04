@@ -6,6 +6,6 @@ namespace Koriym\AppStateDiagram\Exception;
 
 use RuntimeException;
 
-class InvalidLabelOptionException extends RuntimeException
+final class InvalidLabelOptionException extends RuntimeException
 {
 }

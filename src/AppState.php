@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Koriym\AppStateDiagram;
 
+use Override;
 use Stringable;
 
 use function array_key_exists;
@@ -18,9 +19,6 @@ final class AppState implements Stringable
     /** @var array<string, AbstractDescriptor> */
     private $states;
 
-    /** @var array<string, AbstractDescriptor> */
-    private $taggedStates;
-
     /**
      * @param Link[]                    $links
      * @param array<AbstractDescriptor> $descriptors
@@ -34,15 +32,15 @@ final class AppState implements Stringable
     ) {
         $taggedStates = new Descriptors();
 
-        $this->taggedStates = $taggedStates->descriptors;
+        $taggedStates = $taggedStates->descriptors;
 
         $states = new Descriptors();
         foreach ($links as $link) {
-            if (! array_key_exists($link->from, $this->taggedStates)) {
+            if (! array_key_exists($link->from, $taggedStates)) {
                 $states->add($descriptors[$link->from]);
             }
 
-            if (! array_key_exists($link->to, $this->taggedStates)) {
+            if (! array_key_exists($link->to, $taggedStates)) {
                 if (! isset($descriptors[$link->to])) {
                     continue; // @codeCoverageIgnore
                 }
@@ -54,6 +52,7 @@ final class AppState implements Stringable
         $this->states = $states->descriptors;
     }
 
+    #[Override]
     public function __toString(): string
     {
         $base = '    %s [label = <%s> URL="#%s" target="_parent"';

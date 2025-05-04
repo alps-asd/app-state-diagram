@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Koriym\AppStateDiagram;
 
+use Override;
 use stdClass;
 use Stringable;
 
@@ -55,6 +56,7 @@ final class LinkRelations implements Stringable
         return $linkRelations;
     }
 
+    #[Override]
     public function __toString(): string
     {
         return implode(PHP_EOL, $this->links);

@@ -6,6 +6,6 @@ namespace Koriym\AppStateDiagram\Exception;
 
 use RuntimeException;
 
-class InvalidAlpsException extends RuntimeException
+final class InvalidAlpsException extends RuntimeException
 {
 }

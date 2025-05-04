@@ -6,6 +6,6 @@ namespace Koriym\AppStateDiagram\Exception;
 
 use RuntimeException;
 
-class DescriptorNotFoundException extends RuntimeException
+final class DescriptorNotFoundException extends RuntimeException
 {
 }

@@ -6,6 +6,6 @@ namespace Koriym\AppStateDiagram\Exception;
 
 use RuntimeException;
 
-class InvalidLinkRelationException extends RuntimeException
+final class InvalidLinkRelationException extends RuntimeException
 {
 }

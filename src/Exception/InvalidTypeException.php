@@ -6,6 +6,6 @@ namespace Koriym\AppStateDiagram\Exception;
 
 use RuntimeException;
 
-class InvalidTypeException extends RuntimeException
+final class InvalidTypeException extends RuntimeException
 {
 }
