@@ -26,7 +26,7 @@
     </descriptor>
 
     <descriptor id="ProductDetail" def="https://schema.org/Product" title="Product Detail" tag="item">
-        <doc>MAX:Shows detailed information about a single product, such as description and price.Shows detailed information about a single product, such as description and price.Shows detailed information about a single product, such as description and price.Shows detailed information about a single product, such as description and price.Shows detailed information about a single product, such as description and price.Shows detailed information about a single product, such as description and price.Shows detailed information about a single product, such as description and price.</doc>
+        <doc>Shows detailed information about a single product, such as description and price.Shows detailed information about a single product, such as description and price.</doc>
         <descriptor href="#id"/>
         <descriptor href="#name"/>
         <descriptor href="#description"/>
