@@ -105,7 +105,7 @@ class DumpDocsTest extends TestCase
         // Expected truncated text (htmlspecialchars applied)
         $expectedText = htmlspecialchars('This is a very long documentation string designed specifically to exceed the one hundred and forty character limit imposed by the truncat...');
         // Construct the expected HTML snippet
-        $expectedHtml = mb_substr(sprintf('doc-tag" title="%s">%s</span>', $expectedTitle, $expectedText), 0, 40);
+        $expectedHtml = mb_substr(sprintf('doc-tag clickable" data-full="%s">%s</span>', $expectedTitle, $expectedText), 0, 40);
         $this->assertStringContainsString($expectedHtml, $markdown);
     }
 
