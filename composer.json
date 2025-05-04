@@ -55,7 +55,8 @@
             "bin/asd -c docs-md/blog/asd.xml docs-md/blog/profile.xml",
             "bin/asd docs/bookstore/bookstore.xml",
             "bin/asd docs/ecommerce/amazon.json",
-            "bin/asd docs/lms/lms.xml"
+            "bin/asd docs/lms/lms.xml",
+            "bin/asd -c docs/mini-commerce/config-md.xml"
         ],
         "md" : "bin/asd -c docs/blog/asd.md.xml docs/blog/profile.xml",
         "test": ["./vendor/bin/phpunit"],
