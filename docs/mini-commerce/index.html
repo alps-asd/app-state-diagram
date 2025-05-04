@@ -1,0 +1,815 @@
+<html lang="en">
+<head>
+    <title>app-state-diagram</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/3.0.1/github-markdown.min.css">
+    <style>
+        body {
+            background-color: white;
+        }
+        .markdown-body {
+          margin: 0;
+          max-width: none;
+          padding: 0 24px; 
+        }
+    
+        @media (max-width: 767px) {
+            .markdown-body {
+                padding: 0 16px;
+            }
+        }
+        
+        /* テーブルレイアウトの改善 */
+        .markdown-body table {
+            table-layout: fixed;
+            width: 100%;
+            max-width: 1200px;
+        }
+        .markdown-body table th:nth-child(1) {
+            width: 2%;
+        }
+        .markdown-body table th:nth-child(2) {
+            width: 15%;
+        }
+        .markdown-body table th:nth-child(3) {
+            width: 30%;
+        }
+        .markdown-body table th:nth-child(4) {
+            width: 25%;
+        }
+        .markdown-body table th:nth-child(5) {
+            width: 28%;
+        }
+        .markdown-body table td {
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+        .doc-tooltip {
+            text-decoration: none;
+            border-bottom: 1px dotted #666;
+            cursor: pointer;
+            position: relative;
+            display: inline-block;
+        }
+        .doc-tooltip .tooltip-text {
+            visibility: hidden;
+            width: 300px;
+            background-color: #f8f8f8;
+            color: #333;
+            text-align: left;
+            border-radius: 3px;
+            padding: 8px 12px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -150px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            border: 1px solid #ddd;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            font-size: inherit;
+            line-height: 1.5;
+            white-space: normal;
+            word-wrap: break-word;
+        }
+        .doc-tooltip:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
+        
+        /* 互換性のためのスタイル */
+        .markdown-body abbr {
+            text-decoration: none;
+            border-bottom: 1px dotted #666;
+            cursor: help;
+            position: relative;
+        }
+#svg-container {
+            /* 既存のスタイルも維持 */
+            height: auto;
+            display: flex;
+            justify-content: flex-start; /* SVGが小さい場合に左寄せ */
+            align-items: center;
+            overflow-x: auto; /* SVGがコンテナ幅を超える場合に水平スクロールを表示 */
+
+            width: 100vw;
+            max-width: none; /* 親要素(.markdown-body)のmax-width制限を解除 */
+            box-sizing: border-box; /* paddingやborderを幅計算に含める */
+
+            /*
+             * .markdown-body の margin: 0 auto による中央揃えを打ち消し、
+             * 左端に合わせるためのネガティブマージン。
+             * calc(50% - 50vw) は、中央からビューポート幅の半分だけ左にずらす計算。
+             */
+            margin-left: calc(50% - 50vw);
+            margin-right: calc(50% - 50vw); /* 同様に右マージンも設定（厳密には不要な場合も）*/
+
+            padding-left: 24px;
+            padding-right: 24px;
+        }
+        #svg-container svg {
+            max-width: none;
+            display: block;
+            margin: 0;
+        }        
+        .asd-view-selector {
+            display: flex;
+            align-items: center;
+            margin-top: 40px;
+            margin-bottom: 10px;
+        }
+        .asd-view-selector label {
+            margin-right: 10px;
+        }
+        .asd-view-selector input[type="radio"] {
+            margin-right: 5px;
+        }
+        .selector-container {
+            display: flex;
+            flex-wrap: wrap; 
+            align-items: center;
+            gap: 8px 12px;
+            margin-bottom: 10px;
+        }
+        .selector-label {
+            min-width: 40px;
+            margin-right: 10px;
+        }
+        .selector-options {
+            display: flex;
+        }
+        .selector-option {
+            margin-right: 15px;
+        }
+        input[type="radio"],
+        input[type="checkbox"] {
+            margin-right: 2px;
+            vertical-align: middle;
+        }
+        
+        /* Sematic Descriptor List */
+        .descriptor-list {
+            max-width: 100%;
+            margin: 0;
+            padding: 20px;
+        }
+        .descriptor-list ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+            width: 100%;
+        }
+        .descriptor-list li {
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+        }
+        .descriptor-list .indicator {
+            width: 16px;
+            height: 16px;
+            display: inline-block;
+            margin-right: 8px;
+            border: 1px solid #000;
+        }
+        .descriptor-list .semantic { 
+            background-color: #FFFFFF; 
+        }
+        .descriptor-list .safe { 
+            background-color: #00A86B;
+            background-image: linear-gradient(45deg, #008000 25%, transparent 25%, transparent 75%, #008000 75%, #008000), 
+                              linear-gradient(45deg, #008000 25%, transparent 25%, transparent 75%, #008000 75%, #008000);
+            background-size: 8px 8px;
+            background-position: 0 0, 4px 4px;
+        }
+        .descriptor-list .unsafe { 
+            background-color: #FF4136;
+            background-image: repeating-linear-gradient(45deg, #FF4136, #FF4136 4px, #FF725C 4px, #FF725C 8px);
+        }
+        
+        .descriptor-list .idempotent { 
+            background-color: #FFDC00;
+            background-image: radial-gradient(#FFB700 20%, transparent 20%),
+                              radial-gradient(#FFB700 20%, transparent 20%);
+            background-size: 8px 8px;
+            background-position: 0 0, 4px 4px;
+        }
+        .descriptor-list .item-name {
+            color: #000;
+            text-decoration: none;
+        }
+        
+        .legend {
+            background-color: #ffffff;
+            border-radius: 8px;
+            padding: 10px;
+            display: inline-flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }        
+        table .legend {
+            background-color: transparent;
+            padding: 0;
+            margin: 0;
+            display: inline-flex;
+            align-items: center;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+            color: #333;
+        }
+        .legend-icon {
+            width: 16px;
+            height: 16px;
+            border: 1px solid #000;
+            margin-right: 8px;
+        }
+        .legend .semantic { background-color: #FFFFFF; }
+        .legend .safe { 
+            background-color: #00A86B;
+            background-image: linear-gradient(45deg, #008000 25%, transparent 25%, transparent 75%, #008000 75%, #008000), 
+                              linear-gradient(45deg, #008000 25%, transparent 25%, transparent 75%, #008000 75%, #008000);
+            background-size: 8px 8px;
+            background-position: 0 0, 4px 4px;
+        }
+        .legend .unsafe { 
+            background-color: #FF4136;
+            background-image: repeating-linear-gradient(45deg, #FF4136, #FF4136 4px, #FF725C 4px, #FF725C 8px);
+        }
+        .legend .idempotent { 
+            background-color: #FFDC00;
+            background-image: radial-gradient(#FFB700 20%, transparent 20%),
+                              radial-gradient(#FFB700 20%, transparent 20%);
+            background-size: 8px 8px;
+            background-position: 0 0, 4px 4px;
+        }
+        .type-indicator-small {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            margin-right: 4px;
+            border: 1px solid #000;
+            vertical-align: middle;
+        }
+        
+        .type-indicator-small.semantic {
+            background-color: #FFFFFF;
+        }
+        
+        .type-indicator-small.safe {
+            background-color: #00A86B;
+            background-image: linear-gradient(45deg, #008000 25%, transparent 25%, transparent 75%, #008000 75%, #008000),
+                               linear-gradient(45deg, #008000 25%, transparent 25%, transparent 75%, #008000 75%, #008000);
+            background-size: 6px 6px;
+            background-position: 0 0, 3px 3px;
+        }
+        
+        .type-indicator-small.unsafe {
+            background-color: #FF4136;
+            background-image: repeating-linear-gradient(45deg, #FF4136, #FF4136 3px, #FF725C 3px, #FF725C 6px);
+        }
+        
+        .type-indicator-small.idempotent {
+            background-color: #FFDC00;
+            background-image: radial-gradient(#FFB700 20%, transparent 20%),
+                              radial-gradient(#FFB700 20%, transparent 20%);
+            background-size: 6px 6px;
+            background-position: 0 0, 3px 3px;
+        }
+    .meta-container {
+      display: flex;
+      flex-direction: column;
+      gap: 4px; 
+    }
+    
+    .meta-item {
+        display: flex;
+        align-items: center;
+        line-height: 1.0;
+    }
+    
+    .meta-label {
+        font-size: 0.85em;
+        color: #777;
+        width: 45px;
+        text-align: right;
+        padding-right: 10px;
+        flex-shrink: 0;
+    }
+    
+    .meta-values {
+      display: inline-flex;
+      flex-wrap: wrap;
+    }
+    
+    .meta-tag {
+        display: inline-block;
+        padding: 3px 10px;
+        border-radius: 4px;
+        font-size: 0.8em;
+        background-color: #f7f7f7;
+        border: 1px solid #e0e0e0;
+        color: #3b71ca;
+        margin: 0 8px 4px 0;
+    }
+
+    .def-tag { 
+      background-color: #EAF5FF; /* 薄いブルー */ 
+      border-color: #B8DFFF; /* やや濃いめ */ 
+      color: #0366D6; /* リンク色っぽいブルー */ 
+    } 
+    
+    .rt-tag { 
+      background-color: #FFF5E6; /* 薄いオレンジ */ 
+      border-color: #FFE1B3; 
+      color: #D97506; /* 濃いオレンジ */ 
+    } 
+    
+    .tag-tag { 
+      background-color: #E6FFED; /* 薄いグリーン */ 
+      border-color: #C6EFC7; 
+      color: #22863A; /* 濃いグリーン */ 
+    } 
+    
+    .doc-tag { 
+      background-color: #E6FFFA; /* 薄いティール */
+      border-color: #B2F5EA; /* やや濃いめのティール */
+      color: #319795; /* 濃いティール */
+      border: 1px solid #B2F5EA;
+      overflow: visible !important; 
+    }
+    /* テーブルセル内でのメタ情報の折り返し */
+    .markdown-body table td:nth-child(5) {
+        padding-left: 4px !important;
+        vertical-align: middle;
+    }
+    </style>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://unpkg.com/@hpcc-js/wasm/dist/graphviz.umd.js" type="javascript/worker"></script>
+    <script src="https://unpkg.com/d3-graphviz@5.6.0/build/d3-graphviz.min.js"></script>
+<script src="https://alps-asd.github.io/app-state-diagram/assets/js/table.js"></script>
+<script>// Applies smooth scroll to links
+const ease = (t, b, c, d) => {
+    t /= d / 2;
+    if (t < 1) return (c / 2) * t * t + b;
+    t--;
+    return (-c / 2) * (t * (t - 2) - 1) + b;
+};
+
+// Smoothly scrolls to the target element
+const smoothScrollTo = (targetElement) => {
+    const targetPosition = targetElement.getBoundingClientRect().top + window.pageYOffset;
+    const startPosition = window.pageYOffset;
+    const distance = targetPosition - startPosition;
+    const duration = 1000;
+    let startTime = null;
+
+    const animate = (currentTime) => {
+        if (!startTime) startTime = currentTime;
+        const timeElapsed = currentTime - startTime;
+        const run = ease(timeElapsed, startPosition, distance, duration);
+        window.scrollTo(0, run);
+        if (timeElapsed < duration) requestAnimationFrame(animate);
+    };
+
+    requestAnimationFrame(animate);
+    history.pushState(null, null, '#' + targetElement.getAttribute('name'));
+};
+
+const applySmoothScrollToLinks = (links) => {
+    links.forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetName = link.getAttribute('href').slice(1);
+            const targetElement = document.querySelector(`[id="${targetName}"]`);
+            if (!targetElement) {
+                console.error("Target element not found for link:", link.getAttribute('href'));
+                return;
+            }
+            smoothScrollTo(targetElement);
+        });
+    });
+};
+
+
+// Renders the graph and applies smooth scroll to links
+const renderGraph = (graphId, dotString) => {
+    d3.select(graphId).graphviz()
+        .zoom(false)
+        .fit(true)
+        .renderDot(dotString).on('end', () => {
+            applySmoothScrollToLinks(document.querySelectorAll('svg a[*|href^="#"]'));
+    });
+};
+
+// Sets up event listeners for tags
+const setupTagEventListener = (eventName, titles, color, defaultColor = 'lightgrey', defaultEdgeColor = 'black') => {
+    const changeColor = (useDefault) => {
+        titles.forEach(title => {
+            changeColorByTitle(title, useDefault ? defaultColor : color, useDefault ? defaultEdgeColor : color);
+        });
+    };
+
+    document.addEventListener(`tagon-${eventName}`, () => changeColor(false));
+    document.addEventListener(`tagoff-${eventName}`, () => changeColor(true));
+};
+
+// Sets up triggers for tags
+const setupTagTrigger = () => {
+    const checkboxes = document.querySelectorAll('.tag-trigger-checkbox');
+    checkboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', function () {
+            this.checked ?
+                document.dispatchEvent(new CustomEvent('tagon-' + this.getAttribute('data-tag'))) :
+                document.dispatchEvent(new CustomEvent('tagoff-' + this.getAttribute('data-tag')));
+        });
+    });
+};
+
+// Changes color of elements by title or class
+const changeColorByTitle = (titleOrClass, newNodeColor, newEdgeColor) => {
+    const elements = Array.from(document.getElementsByTagName('g'));
+
+    elements.forEach(element => {
+        const titleElement = element.getElementsByTagName('title')[0];
+        const title = titleElement ? titleElement.textContent : '';
+
+        if (title === titleOrClass || element.classList.contains(titleOrClass)) {
+            const polygons = Array.from(element.getElementsByTagName('polygon'));
+            const paths = Array.from(element.getElementsByTagName('path'));
+
+            polygons.forEach(polygon => {
+                polygon.setAttribute('fill', newNodeColor);
+            });
+
+            paths.forEach(path => {
+                path.setAttribute('stroke', newEdgeColor);
+            });
+        }
+    });
+};
+
+// Sets up mode switch for graph display
+const setupModeSwitch = (switchId, graphId, otherGraphId) => {
+    document.getElementById(switchId).addEventListener('change', (e) => {
+        document.getElementById(graphId).style.display = e.target.checked ? 'block' : 'none';
+        document.getElementById(otherGraphId).style.display = e.target.checked ? 'none' : 'block';
+    });
+};
+
+const setupTagClick = () => {
+    document.querySelectorAll('.meta-tag.tag-tag a').forEach(link => {
+        link.addEventListener('click', e => {
+            e.preventDefault();
+            const tagName = link.textContent.trim();
+            const checkbox = document.querySelector(`#tag-${tagName}`);
+            if (checkbox) {
+                checkbox.checked = true;
+                checkbox.dispatchEvent(new Event('change'));
+            }
+        });
+    });
+}
+</script></head>
+<body>
+    <div class="markdown-body">
+        <h1>app-state-diagram</h1>
+
+<p>This is a sample ALPS profile demonstrating the semantic descriptors and operations for a basic e-commerce system. It includes product listing, shopping cart management, and checkout process, serving as an educational example for ALPS implementation in online shopping contexts.</p>
+
+<!-- Container for the ASDs -->
+
+<div id="svg-container">
+    <div id="asd-graph-id" style="text-align: center; "></div>
+    <div id="asd-graph-name" style="text-align: center; display: none;"></div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', async function() {
+        try {
+            await Promise.all([
+                    renderGraph("#asd-graph-id", 'digraph application_state_diagram {  graph [    labelloc="t";    fontname="Helvetica"    label="app-state-diagram";    URL="index.html" target="_parent"  ];  node [shape = box, style = "bold,filled" fillcolor="lightgray", margin="0.3,0.1"];    Cart [margin=0.02, label=<<table cellspacing="0" cellpadding="5" border="0"><tr><td>Cart<br />(id)<br /></td></tr></table>>,shape=box URL="#Cart" target="_parent"]    Checkout [margin=0.02, label=<<table cellspacing="0" cellpadding="5" border="0"><tr><td>Checkout<br />(email)<br />(address)<br /></td></tr></table>>,shape=box URL="#Checkout" target="_parent"]    ProductDetail [margin=0.02, label=<<table cellspacing="0" cellpadding="5" border="0"><tr><td>ProductDetail<br />(id)<br />(name)<br />(description)<br />(price)<br /></td></tr></table>>,shape=box URL="#ProductDetail" target="_parent"]    ProductList [margin=0.02, label=<<table cellspacing="0" cellpadding="5" border="0"><tr><td>ProductList<br />(id)<br />(name)<br />(description)<br /></td></tr></table>>,shape=box URL="#ProductList" target="_parent"]    Cart -> Cart [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" align="left" href="#doRemoveItem" tooltip="Remove item from cart (idempotent)"><font color="#FFDC00">■</font> doRemoveItem</td></tr><tr><td valign="middle" align="left" href="#doUpdateQuantity" tooltip="Update item quantity (idempotent)"><font color="#FFDC00">■</font> doUpdateQuantity</td></tr></table>> URL="#doRemoveItem" target="_parent" fontsize=13 class="doRemoveItem" penwidth=1.5];    Cart -> Checkout [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goCheckout" tooltip="Proceed to checkout (safe)"><font color="#00A86B">■</font> goCheckout</td></tr></table>> URL="#goCheckout" target="_parent" fontsize=13 class="goCheckout" penwidth=1.5];    Cart -> ProductList [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goProductList" tooltip="View product list (safe)"><font color="#00A86B">■</font> goProductList</td></tr></table>> URL="#goProductList" target="_parent" fontsize=13 class="goProductList" penwidth=1.5];    Checkout -> Payment [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goPayment" tooltip="Proceed to payment (safe)"><font color="#00A86B">■</font> goPayment</td></tr></table>> URL="#goPayment" target="_parent" fontsize=13 class="goPayment" penwidth=1.5];    Payment -> ProductList [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#doPayment" tooltip="Complete payment (idempotent)"><font color="#FFDC00">■</font> doPayment</td></tr></table>> URL="#doPayment" target="_parent" fontsize=13 class="doPayment" penwidth=1.5];    ProductDetail -> Cart [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#doAddToCart" tooltip="Add product to cart (unsafe)"><font color="#FF4136">■</font> doAddToCart</td></tr></table>> URL="#doAddToCart" target="_parent" fontsize=13 class="doAddToCart" penwidth=1.5];    ProductDetail -> ProductList [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goProductList" tooltip="View product list (safe)"><font color="#00A86B">■</font> goProductList</td></tr></table>> URL="#goProductList" target="_parent" fontsize=13 class="goProductList" penwidth=1.5];    ProductList -> Cart [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goCart" tooltip="View shopping cart (safe)"><font color="#00A86B">■</font> goCart</td></tr></table>> URL="#goCart" target="_parent" fontsize=13 class="goCart" penwidth=1.5];    ProductList -> ProductDetail [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goProductDetail" tooltip="View product details (safe)"><font color="#00A86B">■</font> goProductDetail</td></tr></table>> URL="#goProductDetail" target="_parent" fontsize=13 class="goProductDetail" penwidth=1.5];    ProductList -> ProductList [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goProductList" tooltip="View product list (safe)"><font color="#00A86B">■</font> goProductList</td></tr></table>> URL="#goProductList" target="_parent" fontsize=13 class="goProductList" penwidth=1.5];    Cart [label = <Cart> URL="#Cart" target="_parent"]    Checkout [label = <Checkout> URL="#Checkout" target="_parent"]    ProductList [label = <ProductList> URL="#ProductList" target="_parent"]    Payment [label = <Payment> URL="#Payment" target="_parent"]    ProductDetail [label = <ProductDetail> URL="#ProductDetail" target="_parent"]}'),
+                    renderGraph("#asd-graph-name", 'digraph application_state_diagram {  graph [    labelloc="t";    fontname="Helvetica"    label="app-state-diagram";    URL="index.html" target="_parent"  ];  node [shape = box, style = "bold,filled" fillcolor="lightgray", margin="0.3,0.1"];    Cart [margin=0.02, label=<<table cellspacing="0" cellpadding="5" border="0"><tr><td>Shopping Cart<br />(identifier)<br /></td></tr></table>>,shape=box URL="#Cart" target="_parent"]    Checkout [margin=0.02, label=<<table cellspacing="0" cellpadding="5" border="0"><tr><td>Checkout<br />(email)<br />(address)<br /></td></tr></table>>,shape=box URL="#Checkout" target="_parent"]    ProductDetail [margin=0.02, label=<<table cellspacing="0" cellpadding="5" border="0"><tr><td>Product Detail<br />(identifier)<br />(name)<br />(description)<br />(price)<br /></td></tr></table>>,shape=box URL="#ProductDetail" target="_parent"]    ProductList [margin=0.02, label=<<table cellspacing="0" cellpadding="5" border="0"><tr><td>Product List<br />(identifier)<br />(name)<br />(description)<br /></td></tr></table>>,shape=box URL="#ProductList" target="_parent"]    Cart -> Cart [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" align="left" href="#doRemoveItem" tooltip="Remove item from cart (idempotent)"><font color="#FFDC00">■</font> Remove&nbsp;item&nbsp;from&nbsp;cart</td></tr><tr><td valign="middle" align="left" href="#doUpdateQuantity" tooltip="Update item quantity (idempotent)"><font color="#FFDC00">■</font> Update&nbsp;item&nbsp;quantity</td></tr></table>> URL="#doRemoveItem" target="_parent" fontsize=13 class="doRemoveItem" penwidth=1.5];    Cart -> Checkout [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goCheckout" tooltip="Proceed to checkout (safe)"><font color="#00A86B">■</font> Proceed&nbsp;to&nbsp;checkout</td></tr></table>> URL="#goCheckout" target="_parent" fontsize=13 class="goCheckout" penwidth=1.5];    Cart -> ProductList [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goProductList" tooltip="View product list (safe)"><font color="#00A86B">■</font> View&nbsp;product&nbsp;list</td></tr></table>> URL="#goProductList" target="_parent" fontsize=13 class="goProductList" penwidth=1.5];    Checkout -> Payment [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goPayment" tooltip="Proceed to payment (safe)"><font color="#00A86B">■</font> Proceed&nbsp;to&nbsp;payment</td></tr></table>> URL="#goPayment" target="_parent" fontsize=13 class="goPayment" penwidth=1.5];    Payment -> ProductList [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#doPayment" tooltip="Complete payment (idempotent)"><font color="#FFDC00">■</font> Complete&nbsp;payment</td></tr></table>> URL="#doPayment" target="_parent" fontsize=13 class="doPayment" penwidth=1.5];    ProductDetail -> Cart [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#doAddToCart" tooltip="Add product to cart (unsafe)"><font color="#FF4136">■</font> Add&nbsp;product&nbsp;to&nbsp;cart</td></tr></table>> URL="#doAddToCart" target="_parent" fontsize=13 class="doAddToCart" penwidth=1.5];    ProductDetail -> ProductList [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goProductList" tooltip="View product list (safe)"><font color="#00A86B">■</font> View&nbsp;product&nbsp;list</td></tr></table>> URL="#goProductList" target="_parent" fontsize=13 class="goProductList" penwidth=1.5];    ProductList -> Cart [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goCart" tooltip="View shopping cart (safe)"><font color="#00A86B">■</font> View&nbsp;shopping&nbsp;cart</td></tr></table>> URL="#goCart" target="_parent" fontsize=13 class="goCart" penwidth=1.5];    ProductList -> ProductDetail [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goProductDetail" tooltip="View product details (safe)"><font color="#00A86B">■</font> View&nbsp;product&nbsp;details</td></tr></table>> URL="#goProductDetail" target="_parent" fontsize=13 class="goProductDetail" penwidth=1.5];    ProductList -> ProductList [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goProductList" tooltip="View product list (safe)"><font color="#00A86B">■</font> View&nbsp;product&nbsp;list</td></tr></table>> URL="#goProductList" target="_parent" fontsize=13 class="goProductList" penwidth=1.5];    Cart [label = <Shopping Cart> URL="#Cart" target="_parent"]    Checkout [label = <Checkout> URL="#Checkout" target="_parent"]    ProductList [label = <Product List> URL="#ProductList" target="_parent"]    Payment [label = <Payment> URL="#Payment" target="_parent"]    ProductDetail [label = <Product Detail> URL="#ProductDetail" target="_parent"]}')
+            ]);
+            setupTagTrigger();
+            setupModeSwitch('asd-show-id', 'asd-graph-id', 'asd-graph-name');
+            setupModeSwitch('asd-show-name', 'asd-graph-name', 'asd-graph-id');
+            applySmoothScrollToLinks(document.querySelectorAll('a[href^="#"]'));
+            setupTagClick();
+            setupTagEventListener('collection', ['Cart', 'Checkout', 'ProductList'], 'LightGreen'); setupTagEventListener('item', ['Payment', 'ProductDetail'], 'SkyBlue'); 
+        } catch (error) {
+               console.error("Error in main process:", error);
+        }});
+</script>
+
+<div class="asd-view-selector">
+    <span class="selector-label">View:</span>
+    <input type="radio" id="asd-show-id" checked name="asd-view-selector">
+    <label for="asd-show-id">id</label>
+    <input type="radio" id="asd-show-name" name="asd-view-selector">
+    <label for="asd-show-name">title</label>
+</div>
+
+<div class="selector-container"><span class="selector-label">Tags:</span>
+<span class="selector-option"><input type="checkbox" id="tag-collection" class="tag-trigger-checkbox" data-tag="collection" name="tag-collection"><label for="tag-collection"> collection</label></span>
+<span class="selector-option"><input type="checkbox" id="tag-item" class="tag-trigger-checkbox" data-tag="item" name="tag-item"><label for="tag-item"> item</label></span></div>
+
+<div class="legend">
+    <div class="legend-item" title="A state element (e.g.  HTML.SPAN, HTML.INPUT, etc.).">
+        <span class="legend-icon semantic"></span>
+        Semantic
+    </div>
+    <div class="legend-item" title="A hypermedia control that triggers a safe, idempotent state
+      transition (e.g.  HTTP.GET or HTTP.HEAD).">
+        <span class="legend-icon safe"></span>
+        Safe
+    </div>
+    <div class="legend-item" title="A hypermedia control that triggers an unsafe, non-
+      idempotent state transition (e.g.  HTTP.POST).">
+        <span class="legend-icon unsafe"></span>
+        Unsafe
+    </div>
+    <div class="legend-item" title="A hypermedia control that triggers an unsafe,
+      idempotent state transition (e.g.  HTTP.PUT or HTTP.DELETE).">
+        <span class="legend-icon idempotent"></span>
+        Idempotent
+    </div>
+</div>
+
+<h2>Semantic Descriptors</h2>
+
+<table>
+<thead>
+<tr>
+  <th align="center">Type</th>
+  <th align="left">ID</th>
+  <th align="left">Title</th>
+  <th align="left">Contained</th>
+  <th align="left">Extra Info</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="left"><a id="address"></a><a href="#address">address</a></td>
+  <td align="left"><span style="white-space: normal;">address</span></td>
+  <td align="left"></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">def:</span><span class="meta-tag def-tag"><a href="https://schema.org/address" target="_blank">schema.org/address</a></span></span></span></span></td>
+</tr>
+<tr>
+  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="left"><a id="Cart"></a><a href="#Cart">Cart</a></td>
+  <td align="left"><span style="white-space: normal;">Shopping Cart</span></td>
+  <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#id">id</a><br><span class="type-indicator-small safe" title="Safe"></span><a href="#goProductList">goProductList</a><br><span class="type-indicator-small safe" title="Safe"></span><a href="#goCheckout">goCheckout</a><br><span class="type-indicator-small idempotent" title="Idempotent"></span><a href="#doUpdateQuantity">doUpdateQuantity</a><br><span class="type-indicator-small idempotent" title="Idempotent"></span><a href="#doRemoveItem">doRemoveItem</a></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">def:</span><span class="meta-tag def-tag"><a href="https://schema.org/Cart" target="_blank">schema.org/Cart</a></span></span><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-collection">collection</a></span></span></span></span></span></td>
+</tr>
+<tr>
+  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="left"><a id="Checkout"></a><a href="#Checkout">Checkout</a></td>
+  <td align="left"><span style="white-space: normal;">Checkout</span></td>
+  <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#email">email</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#address">address</a><br><span class="type-indicator-small safe" title="Safe"></span><a href="#goPayment">goPayment</a></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-collection">collection</a></span></span></span></span></span></td>
+</tr>
+<tr>
+  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="left"><a id="description"></a><a href="#description">description</a></td>
+  <td align="left"><span style="white-space: normal;">description</span></td>
+  <td align="left"></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">def:</span><span class="meta-tag def-tag"><a href="https://schema.org/description" target="_blank">schema.org/description</a></span></span></span></span></td>
+</tr>
+<tr>
+  <td align="center"><span class="legend"><span class="legend-icon unsafe"></span></span></td>
+  <td align="left"><a id="doAddToCart"></a><a href="#doAddToCart">doAddToCart</a></td>
+  <td align="left"><span style="white-space: normal;">Add product to cart</span></td>
+  <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#id">id</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#quantity">quantity</a></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#Cart">Cart</a></span></span></span></span></td>
+</tr>
+<tr>
+  <td align="center"><span class="legend"><span class="legend-icon idempotent"></span></span></td>
+  <td align="left"><a id="doPayment"></a><a href="#doPayment">doPayment</a></td>
+  <td align="left"><span style="white-space: normal;">Complete payment</span></td>
+  <td align="left"></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#ProductList">ProductList</a></span></span></span></span></td>
+</tr>
+<tr>
+  <td align="center"><span class="legend"><span class="legend-icon idempotent"></span></span></td>
+  <td align="left"><a id="doRemoveItem"></a><a href="#doRemoveItem">doRemoveItem</a></td>
+  <td align="left"><span style="white-space: normal;">Remove item from cart</span></td>
+  <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#id">id</a></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#Cart">Cart</a></span></span></span></span></td>
+</tr>
+<tr>
+  <td align="center"><span class="legend"><span class="legend-icon idempotent"></span></span></td>
+  <td align="left"><a id="doUpdateQuantity"></a><a href="#doUpdateQuantity">doUpdateQuantity</a></td>
+  <td align="left"><span style="white-space: normal;">Update item quantity</span></td>
+  <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#id">id</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#quantity">quantity</a></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#Cart">Cart</a></span></span></span></span></td>
+</tr>
+<tr>
+  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="left"><a id="email"></a><a href="#email">email</a></td>
+  <td align="left"><span style="white-space: normal;">email</span></td>
+  <td align="left"></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">def:</span><span class="meta-tag def-tag"><a href="https://schema.org/email" target="_blank">schema.org/email</a></span></span></span></span></td>
+</tr>
+<tr>
+  <td align="center"><span class="legend"><span class="legend-icon safe"></span></span></td>
+  <td align="left"><a id="goCart"></a><a href="#goCart">goCart</a></td>
+  <td align="left"><span style="white-space: normal;">View shopping cart</span></td>
+  <td align="left"></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#Cart">Cart</a></span></span></span></span></td>
+</tr>
+<tr>
+  <td align="center"><span class="legend"><span class="legend-icon safe"></span></span></td>
+  <td align="left"><a id="goCheckout"></a><a href="#goCheckout">goCheckout</a></td>
+  <td align="left"><span style="white-space: normal;">Proceed to checkout</span></td>
+  <td align="left"></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#Checkout">Checkout</a></span></span></span></span></td>
+</tr>
+<tr>
+  <td align="center"><span class="legend"><span class="legend-icon safe"></span></span></td>
+  <td align="left"><a id="goPayment"></a><a href="#goPayment">goPayment</a></td>
+  <td align="left"><span style="white-space: normal;">Proceed to payment</span></td>
+  <td align="left"></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#Payment">Payment</a></span></span></span></span></td>
+</tr>
+<tr>
+  <td align="center"><span class="legend"><span class="legend-icon safe"></span></span></td>
+  <td align="left"><a id="goProductDetail"></a><a href="#goProductDetail">goProductDetail</a></td>
+  <td align="left"><span style="white-space: normal;">View product details</span></td>
+  <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#id">id</a></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#ProductDetail">ProductDetail</a></span></span></span></span></td>
+</tr>
+<tr>
+  <td align="center"><span class="legend"><span class="legend-icon safe"></span></span></td>
+  <td align="left"><a id="goProductList"></a><a href="#goProductList">goProductList</a></td>
+  <td align="left"><span style="white-space: normal;">View product list</span></td>
+  <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#id">id</a></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#ProductList">ProductList</a></span></span></span></span></td>
+</tr>
+<tr>
+  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="left"><a id="id"></a><a href="#id">id</a></td>
+  <td align="left"><span style="white-space: normal;">identifier</span></td>
+  <td align="left"></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">def:</span><span class="meta-tag def-tag"><a href="https://schema.org/identifier" target="_blank">schema.org/identifier</a></span></span></span></span></td>
+</tr>
+<tr>
+  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="left"><a id="name"></a><a href="#name">name</a></td>
+  <td align="left"><span style="white-space: normal;">name</span></td>
+  <td align="left"></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">def:</span><span class="meta-tag def-tag"><a href="https://schema.org/name" target="_blank">schema.org/name</a></span></span></span></span></td>
+</tr>
+<tr>
+  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="left"><a id="Payment"></a><a href="#Payment">Payment</a></td>
+  <td align="left"><span style="white-space: normal;">Payment</span></td>
+  <td align="left"><span class="type-indicator-small idempotent" title="Idempotent"></span><a href="#doPayment">doPayment</a></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">def:</span><span class="meta-tag def-tag"><a href="https://schema.org/PayAction" target="_blank">schema.org/PayAction</a></span></span><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-item">item</a></span></span></span></span></span></td>
+</tr>
+<tr>
+  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="left"><a id="price"></a><a href="#price">price</a></td>
+  <td align="left"><span style="white-space: normal;">price</span></td>
+  <td align="left"></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">def:</span><span class="meta-tag def-tag"><a href="https://schema.org/price" target="_blank">schema.org/price</a></span></span></span></span></td>
+</tr>
+<tr>
+  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="left"><a id="ProductDetail"></a><a href="#ProductDetail">ProductDetail</a></td>
+  <td align="left"><span style="white-space: normal;">Product Detail</span></td>
+  <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#id">id</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#name">name</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#description">description</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#price">price</a><br><span class="type-indicator-small safe" title="Safe"></span><a href="#goProductList">goProductList</a><br><span class="type-indicator-small unsafe" title="Unsafe"></span><a href="#doAddToCart">doAddToCart</a></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">def:</span><span class="meta-tag def-tag"><a href="https://schema.org/Product" target="_blank">schema.org/Product</a></span></span><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-item">item</a></span></span></span></span></span></td>
+</tr>
+<tr>
+  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="left"><a id="ProductList"></a><a href="#ProductList">ProductList</a></td>
+  <td align="left"><span style="white-space: normal;">Product List</span></td>
+  <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#id">id</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#name">name</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#description">description</a><br><span class="type-indicator-small safe" title="Safe"></span><a href="#goProductDetail">goProductDetail</a><br><span class="type-indicator-small safe" title="Safe"></span><a href="#goCart">goCart</a><br><span class="type-indicator-small safe" title="Safe"></span><a href="#goProductList">goProductList</a></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">def:</span><span class="meta-tag def-tag"><a href="https://schema.org/ItemList" target="_blank">schema.org/ItemList</a></span></span><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-collection">collection</a></span></span></span></span></span></td>
+</tr>
+<tr>
+  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="left"><a id="quantity"></a><a href="#quantity">quantity</a></td>
+  <td align="left"><span style="white-space: normal;">quantity</span></td>
+  <td align="left"></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">def:</span><span class="meta-tag def-tag"><a href="https://schema.org/Quantity" target="_blank">schema.org/Quantity</a></span></span></span></span></td>
+</tr>
+</tbody>
+</table>
+
+<hr />
+
+<h2>Profile</h2>
+
+<pre><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;alps
+        xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+        xsi:noNamespaceSchemaLocation=&quot;https://alps-io.github.io/schemas/alps.xsd&quot;&gt;
+    &lt;title&gt;app-state-diagram&lt;/title&gt;
+    &lt;doc&gt;This is a sample ALPS profile demonstrating the semantic descriptors and operations for a basic e-commerce system. It includes product listing, shopping cart management, and checkout process, serving as an educational example for ALPS implementation in online shopping contexts.&lt;/doc&gt;
+
+    &lt;!-- Ontology --&gt;
+    &lt;descriptor id=&quot;id&quot; def=&quot;https://schema.org/identifier&quot; title=&quot;identifier&quot;/&gt;
+    &lt;descriptor id=&quot;name&quot; def=&quot;https://schema.org/name&quot; title=&quot;name&quot;/&gt;
+    &lt;descriptor id=&quot;description&quot; def=&quot;https://schema.org/description&quot; title=&quot;description&quot;/&gt;
+    &lt;descriptor id=&quot;price&quot; def=&quot;https://schema.org/price&quot; title=&quot;price&quot;/&gt;
+    &lt;descriptor id=&quot;quantity&quot; def=&quot;https://schema.org/Quantity&quot; title=&quot;quantity&quot;/&gt;
+    &lt;descriptor id=&quot;email&quot; def=&quot;https://schema.org/email&quot; title=&quot;email&quot;/&gt;
+    &lt;descriptor id=&quot;address&quot; def=&quot;https://schema.org/address&quot; title=&quot;address&quot;/&gt;
+
+    &lt;!-- Taxonomy --&gt;
+    &lt;descriptor id=&quot;ProductList&quot; def=&quot;https://schema.org/ItemList&quot; title=&quot;Product List&quot; tag=&quot;collection&quot;&gt;
+        &lt;doc&gt;Displays a list of available products that the user can browse or select from.&lt;/doc&gt;
+        &lt;descriptor href=&quot;#id&quot;/&gt;
+        &lt;descriptor href=&quot;#name&quot;/&gt;
+        &lt;descriptor href=&quot;#description&quot;/&gt;
+        &lt;descriptor href=&quot;#goProductDetail&quot;/&gt;
+        &lt;descriptor href=&quot;#goCart&quot;/&gt;
+        &lt;descriptor href=&quot;#goProductList&quot;/&gt;
+    &lt;/descriptor&gt;
+
+    &lt;descriptor id=&quot;ProductDetail&quot; def=&quot;https://schema.org/Product&quot; title=&quot;Product Detail&quot; tag=&quot;item&quot;&gt;
+        &lt;doc&gt;Shows detailed information about a single product, such as description and price.&lt;/doc&gt;
+        &lt;descriptor href=&quot;#id&quot;/&gt;
+        &lt;descriptor href=&quot;#name&quot;/&gt;
+        &lt;descriptor href=&quot;#description&quot;/&gt;
+        &lt;descriptor href=&quot;#price&quot;/&gt;
+        &lt;descriptor href=&quot;#goProductList&quot;/&gt;
+        &lt;descriptor href=&quot;#doAddToCart&quot;/&gt;
+    &lt;/descriptor&gt;
+
+    &lt;descriptor id=&quot;Cart&quot; def=&quot;https://schema.org/Cart&quot; title=&quot;Shopping Cart&quot; tag=&quot;collection&quot;&gt;
+        &lt;doc&gt;Displays the user&#039;s shopping cart, allowing updates or checkout initiation.&lt;/doc&gt;
+        &lt;descriptor href=&quot;#id&quot;/&gt;
+        &lt;descriptor href=&quot;#goProductList&quot;/&gt;
+        &lt;descriptor href=&quot;#goCheckout&quot;/&gt;
+        &lt;descriptor href=&quot;#doUpdateQuantity&quot;/&gt;
+        &lt;descriptor href=&quot;#doRemoveItem&quot;/&gt;
+    &lt;/descriptor&gt;
+
+    &lt;descriptor id=&quot;Checkout&quot; title=&quot;Checkout&quot; tag=&quot;collection&quot;&gt;
+        &lt;doc&gt;Captures user information and prepares for payment after shopping is complete.&lt;/doc&gt;
+        &lt;descriptor href=&quot;#email&quot;/&gt;
+        &lt;descriptor href=&quot;#address&quot;/&gt;
+        &lt;descriptor href=&quot;#goPayment&quot;/&gt;
+    &lt;/descriptor&gt;
+
+    &lt;descriptor id=&quot;Payment&quot; def=&quot;https://schema.org/PayAction&quot; title=&quot;Payment&quot; tag=&quot;item&quot;&gt;
+        &lt;doc&gt;Handles the final payment process for the placed order.&lt;/doc&gt;
+        &lt;descriptor href=&quot;#doPayment&quot;/&gt;
+    &lt;/descriptor&gt;
+
+    &lt;!-- Choreography --&gt;
+    &lt;descriptor id=&quot;goProductList&quot; type=&quot;safe&quot; rt=&quot;#ProductList&quot; title=&quot;View product list&quot;&gt;
+        &lt;doc&gt;Returns the list of all available products.&lt;/doc&gt;
+        &lt;descriptor href=&quot;#id&quot;/&gt;
+    &lt;/descriptor&gt;
+
+    &lt;descriptor id=&quot;goProductDetail&quot; type=&quot;safe&quot; rt=&quot;#ProductDetail&quot; title=&quot;View product details&quot;&gt;
+        &lt;doc&gt;Returns detailed view of a selected product.&lt;/doc&gt;
+        &lt;descriptor href=&quot;#id&quot;/&gt;
+    &lt;/descriptor&gt;
+
+    &lt;descriptor id=&quot;goCart&quot; type=&quot;safe&quot; rt=&quot;#Cart&quot; title=&quot;View shopping cart&quot;&gt;
+        &lt;doc&gt;Displays the current items in the user&#039;s shopping cart.&lt;/doc&gt;
+    &lt;/descriptor&gt;
+
+    &lt;descriptor id=&quot;goCheckout&quot; type=&quot;safe&quot; rt=&quot;#Checkout&quot; title=&quot;Proceed to checkout&quot;&gt;
+        &lt;doc&gt;Initiates the checkout process after confirming cart items.&lt;/doc&gt;
+    &lt;/descriptor&gt;
+
+    &lt;descriptor id=&quot;goPayment&quot; type=&quot;safe&quot; rt=&quot;#Payment&quot; title=&quot;Proceed to payment&quot;&gt;
+        &lt;doc&gt;Redirects user to the payment screen after entering delivery details.&lt;/doc&gt;
+    &lt;/descriptor&gt;
+
+    &lt;descriptor id=&quot;doAddToCart&quot; type=&quot;unsafe&quot; rt=&quot;#Cart&quot; title=&quot;Add product to cart&quot;&gt;
+        &lt;doc&gt;Adds selected product and quantity to the shopping cart.&lt;/doc&gt;
+        &lt;descriptor href=&quot;#id&quot;/&gt;
+        &lt;descriptor href=&quot;#quantity&quot;/&gt;
+    &lt;/descriptor&gt;
+
+    &lt;descriptor id=&quot;doUpdateQuantity&quot; type=&quot;idempotent&quot; rt=&quot;#Cart&quot; title=&quot;Update item quantity&quot;&gt;
+        &lt;doc&gt;Updates the quantity of a product already in the cart.&lt;/doc&gt;
+        &lt;descriptor href=&quot;#id&quot;/&gt;
+        &lt;descriptor href=&quot;#quantity&quot;/&gt;
+    &lt;/descriptor&gt;
+
+    &lt;descriptor id=&quot;doRemoveItem&quot; type=&quot;idempotent&quot; rt=&quot;#Cart&quot; title=&quot;Remove item from cart&quot;&gt;
+        &lt;doc&gt;Removes a specific product from the shopping cart.&lt;/doc&gt;
+        &lt;descriptor href=&quot;#id&quot;/&gt;
+    &lt;/descriptor&gt;
+
+    &lt;descriptor id=&quot;doPayment&quot; type=&quot;idempotent&quot; rt=&quot;#ProductList&quot; title=&quot;Complete payment&quot;&gt;
+        &lt;doc&gt;Processes the final payment and returns user to the product list.&lt;/doc&gt;
+    &lt;/descriptor&gt;
+&lt;/alps&gt;
+</code></pre>
+
+    </div>
+</body>
+</html>
