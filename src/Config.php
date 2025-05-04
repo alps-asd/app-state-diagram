@@ -8,6 +8,7 @@ use Koriym\AppStateDiagram\Exception\AlpsFileNotReadableException;
 
 use function is_file;
 
+/** @psalm-api */
 final class Config
 {
     /** @var string  */
