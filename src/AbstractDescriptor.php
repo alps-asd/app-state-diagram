@@ -66,6 +66,15 @@ abstract class AbstractDescriptor
         $this->linkRelations = new LinkRelations($descriptor->link ?? null);
     }
 
+    /**
+     * Retrieves the documentation string from the given descriptor object.
+     *
+     * XML has doc as a string, while JSON has doc as an object with a value property.
+     *
+     * @param object $descriptor The object containing a potential doc property.
+     *
+     * @return string|null The documentation string if available, or null if not present.
+     */
     private function getDoc(object $descriptor): string|null
     {
         if (isset($descriptor->doc)) {
