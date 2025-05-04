@@ -1,0 +1,277 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Cannot access property \$value on mixed\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: src/AbstractDescriptor.php
+
+		-
+			message: '#^Cannot cast mixed to string\.$#'
+			identifier: cast.string
+			count: 2
+			path: src/AbstractDescriptor.php
+
+		-
+			message: '#^Parameter \#1 \$link of class Koriym\\AppStateDiagram\\LinkRelations constructor expects list\<stdClass\>\|stdClass\|null, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/AbstractDescriptor.php
+
+		-
+			message: '#^Property Koriym\\AppStateDiagram\\AbstractDescriptor\:\:\$def \(string\|null\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/AbstractDescriptor.php
+
+		-
+			message: '#^Property Koriym\\AppStateDiagram\\AbstractDescriptor\:\:\$descriptor \(list\<stdClass\>\|stdClass\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/AbstractDescriptor.php
+
+		-
+			message: '#^Property Koriym\\AppStateDiagram\\AbstractDescriptor\:\:\$doc \(stdClass\|string\|null\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/AbstractDescriptor.php
+
+		-
+			message: '#^Property Koriym\\AppStateDiagram\\AbstractDescriptor\:\:\$title \(string\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/AbstractDescriptor.php
+
+		-
+			message: '#^Cannot cast mixed to string\.$#'
+			identifier: cast.string
+			count: 1
+			path: src/CreateDescriptor.php
+
+		-
+			message: '#^Parameter \#1 \$descriptors of method Koriym\\AppStateDiagram\\CreateDescriptor\:\:addInlineSemantics\(\) expects array\<string, Koriym\\AppStateDiagram\\AbstractDescriptor\>, array\<Koriym\\AppStateDiagram\\AbstractDescriptor\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/CreateDescriptor.php
+
+		-
+			message: '#^Parameter \#1 \$descriptorsArray of callable \$this\(Koriym\\AppStateDiagram\\CreateDescriptor\) expects array\<string, stdClass\>, array\<mixed, mixed\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/CreateDescriptor.php
+
+		-
+			message: '#^Parameter \#2 \$string of function explode expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 2
+			path: src/CreateLinks.php
+
+		-
+			message: '#^@readonly property Koriym\\AppStateDiagram\\Descriptors\:\:\$descriptors is assigned outside of the constructor\.$#'
+			identifier: property.readOnlyByPhpDocAssignNotInConstructor
+			count: 1
+			path: src/Descriptors.php
+
+		-
+			message: '#^@readonly property cannot have a default value\.$#'
+			identifier: property.readOnlyByPhpDocDefaultValue
+			count: 1
+			path: src/Descriptors.php
+
+		-
+			message: '#^Cannot cast mixed to string\.$#'
+			identifier: cast.string
+			count: 1
+			path: src/DrawDiagram.php
+
+		-
+			message: '#^Cannot cast mixed to string\.$#'
+			identifier: cast.string
+			count: 1
+			path: src/DumpDocs.php
+
+		-
+			message: '#^Parameter \#1 \$links of method Koriym\\AppStateDiagram\\Edge\:\:groupEdges\(\) expects array\<string, Koriym\\AppStateDiagram\\Link\>, array\<Koriym\\AppStateDiagram\\Link\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Edge.php
+
+		-
+			message: '#^PHPDoc tag @SuppressWarnings has invalid value \(\(PHPMD\.ExcessiveParameterList\)\)\: Unexpected token "\.ExcessiveParameterList\)", expected ''\)'' at offset 27 on line 1$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: src/IndexPageElements.php
+
+		-
+			message: '#^Property Koriym\\AppStateDiagram\\LinkRelation\:\:\$href \(string\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/LinkRelation.php
+
+		-
+			message: '#^Property Koriym\\AppStateDiagram\\LinkRelation\:\:\$rel \(string\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/LinkRelation.php
+
+		-
+			message: '#^Property Koriym\\AppStateDiagram\\LinkRelation\:\:\$title \(string\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/LinkRelation.php
+
+		-
+			message: '#^@readonly property Koriym\\AppStateDiagram\\Links\:\:\$links is assigned outside of the constructor\.$#'
+			identifier: property.readOnlyByPhpDocAssignNotInConstructor
+			count: 1
+			path: src/Links.php
+
+		-
+			message: '#^@readonly property cannot have a default value\.$#'
+			identifier: property.readOnlyByPhpDocDefaultValue
+			count: 1
+			path: src/Links.php
+
+		-
+			message: '#^PHPDoc tag @SuppressWarnings has invalid value \(\(PHPMD\.UnusedLocalVariable\)\)\: Unexpected token "\.UnusedLocalVariable\)", expected ''\)'' at offset 27 on line 1$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: src/NullDescriptor.php
+
+		-
+			message: '#^Cannot access property \$doc on mixed\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: src/Profile.php
+
+		-
+			message: '#^Cannot access property \$link on mixed\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: src/Profile.php
+
+		-
+			message: '#^Cannot access property \$title on mixed\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: src/Profile.php
+
+		-
+			message: '#^Cannot access property \$value on mixed\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: src/Profile.php
+
+		-
+			message: '#^PHPDoc tag @SuppressWarnings has invalid value \(\(PHPMD\.BooleanArgumentFlag\)\)\: Unexpected token "\.BooleanArgumentFlag\)", expected ''\)'' at offset 73 on line 4$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: src/Profile.php
+
+		-
+			message: '#^Parameter \#1 \$link of class Koriym\\AppStateDiagram\\LinkRelations constructor expects list\<stdClass\>\|stdClass\|null, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Profile.php
+
+		-
+			message: '#^Parameter \#1 \$message of class Koriym\\AppStateDiagram\\Exception\\DescriptorIsNotArrayException constructor expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Profile.php
+
+		-
+			message: '#^Property Koriym\\AppStateDiagram\\AbstractProfile\:\:\$doc \(string\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Profile.php
+
+		-
+			message: '#^Property Koriym\\AppStateDiagram\\AbstractProfile\:\:\$schema \(string\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Profile.php
+
+		-
+			message: '#^Property Koriym\\AppStateDiagram\\AbstractProfile\:\:\$title \(string\) does not accept mixed\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Profile.php
+
+		-
+			message: '#^Cannot access offset ''descriptor'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/SplitProfile.php
+
+		-
+			message: '#^Cannot access offset ''doc'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: src/SplitProfile.php
+
+		-
+			message: '#^Cannot access property \$descriptor on mixed\.$#'
+			identifier: property.nonObject
+			count: 3
+			path: tests/DescriptorScannerTest.php
+
+		-
+			message: '#^Parameter \#1 \$descriptorsArray of callable Koriym\\AppStateDiagram\\CreateDescriptor expects array\<string, stdClass\>, mixed given\.$#'
+			identifier: argument.type
+			count: 3
+			path: tests/DescriptorScannerTest.php
+
+		-
+			message: '#^Method Koriym\\AppStateDiagram\\FakeAlpsJsonInputStreamWrapper\:\:stream_stat\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: tests/Fake/FakeAlpsJsonInputStreamWrapper.php
+
+		-
+			message: '#^Method Koriym\\AppStateDiagram\\FakeAlpsJsonInputStreamWrapper\:\:url_stat\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: tests/Fake/FakeAlpsJsonInputStreamWrapper.php
+
+		-
+			message: '#^PHPDoc tag @return has invalid value \(array\<int\|string, mixed\>;\)\: Unexpected token ";", expected TOKEN_HORIZONTAL_WS at offset 43 on line 2$#'
+			identifier: phpDoc.parseError
+			count: 2
+			path: tests/Fake/FakeAlpsJsonInputStreamWrapper.php
+
+		-
+			message: '#^Cannot access property \$doc on mixed\.$#'
+			identifier: property.nonObject
+			count: 2
+			path: tests/SplitProfileTest.php
+
+		-
+			message: '#^Cannot access property \$href on mixed\.$#'
+			identifier: property.nonObject
+			count: 2
+			path: tests/SplitProfileTest.php
+
+		-
+			message: '#^Cannot access property \$link on mixed\.$#'
+			identifier: property.nonObject
+			count: 4
+			path: tests/SplitProfileTest.php
+
+		-
+			message: '#^Cannot access property \$rel on mixed\.$#'
+			identifier: property.nonObject
+			count: 2
+			path: tests/SplitProfileTest.php
+
+		-
+			message: '#^Cannot access property \$title on mixed\.$#'
+			identifier: property.nonObject
+			count: 2
+			path: tests/SplitProfileTest.php
+
+		-
+			message: '#^Cannot access property \$value on mixed\.$#'
+			identifier: property.nonObject
+			count: 2
+			path: tests/SplitProfileTest.php
