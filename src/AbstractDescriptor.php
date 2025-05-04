@@ -29,7 +29,6 @@ abstract class AbstractDescriptor
     /** @var list<string> */
     public array $tags;
     public string $title;
-    public ?string $href = null;
     public LinkRelations $linkRelations;
 
     public function __construct(
@@ -55,11 +54,6 @@ abstract class AbstractDescriptor
         $this->title = $descriptor->title ?? '';
         if (isset($descriptor->rel)) {
             $this->rel = (string) $descriptor->rel;
-        }
-
-        if (property_exists($descriptor, 'href')) {
-            assert(is_string($descriptor->href) || $descriptor->href === null);
-            $this->href = $descriptor->href;
         }
 
         /** @psalm-suppress all */
