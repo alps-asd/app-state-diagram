@@ -126,7 +126,7 @@ final class DumpDocs
             $label,
             $cssClass,
             $attrString,
-            htmlspecialchars(mb_strlen($value) > 140 ? mb_substr($value, 0, 70) . '...' : $value)
+            $valueHtml ?? htmlspecialchars(mb_strlen($value) > 140 ? mb_substr($value, 0, 70) . '...' : $value)
         );
     }
 
