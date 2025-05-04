@@ -335,11 +335,16 @@
     } 
     
     .doc-tag { 
-      background-color: #E6FFFA; /* 薄いティール */
-      border-color: #B2F5EA; /* やや濃いめのティール */
-      color: #319795; /* 濃いティール */
-      border: 1px solid #B2F5EA;
-      overflow: visible !important; 
+      background-color: #FFFBEA;  /* やや控えめなクリーム色 */
+      border-color: #FFE8A1;      /* 柔らかい縁取りの黄色 */
+      color: #8A6D1B;             /* 落ち着いた茶系 */
+      border: 1px solid #FFE8A1;
+      padding: 3px 8px;
+      font-size: 0.8em;
+      border-radius: 4px;
+    }
+    .doc-tag.clickable {
+      cursor: pointer;
     }
     /* テーブルセル内でのメタ情報の折り返し */
     .markdown-body table td:nth-child(5) {
@@ -473,6 +478,23 @@ const setupTagClick = () => {
         });
     });
 }
+const setupDocClick = () => {
+    document.querySelectorAll('.doc-tag').forEach(el => {
+        const full = el.dataset.full;
+        if (!full || full.length <= 140) return;
+
+        const short = full.slice(0, 70) + '...';
+        el.innerText = short;
+        el.classList.add('expandable');
+
+        el.addEventListener('click', () => {
+            const expanded = el.classList.toggle('expanded');
+            el.innerText = expanded ? full : short;
+        });
+    });
+};
+
+
 </script></head>
 <body>
     <div class="markdown-body">
@@ -510,6 +532,7 @@ const setupTagClick = () => {
             setupModeSwitch('asd-show-name', 'asd-graph-name', 'asd-graph-id');
             applySmoothScrollToLinks(document.querySelectorAll('a[href^="#"]'));
             setupTagClick();
+            setupDocClick(); 
             
         } catch (error) {
                console.error("Error in main process:", error);
@@ -809,7 +832,7 @@ const setupTagClick = () => {
   <td align="left"><a id="doAddToCart"></a><a href="#doAddToCart">doAddToCart</a></td>
   <td align="left"><span style="white-space: normal;">カートに追加</span></td>
   <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#productId">productId</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#quantity">quantity</a></td>
-  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#UserCartPage">UserCartPage</a></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag" title="指定された製品を指定された数量だけユーザーのショッピングカートに追加します。この操作は、Eコマースプラットフォームの中核的な機能の一つであり、ユーザーの購買意図を捕捉する重要なポイントです。実行時には、リアルタイムの在庫確認、価格の再計算、関連商品の推奨などの処理が行われます。また、ユーザーの過去の行動に基づいて、クロスセリングやアップセリングの機会を識別します。カートの状態変化は、在庫管理システムに即時に反映され、他の顧客の購買体験に影響を与えないようにします。パフォーマンスとユーザーエクスペリエンスの観点から、この操作は高速で信頼性が高く、ユーザーに明確なフィードバックを提供する必要があります。">指定された製品を指定された数量だけユーザーのショッピングカートに追加します...</span></span></span></span></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#UserCartPage">UserCartPage</a></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag clickable" data-full="指定された製品を指定された数量だけユーザーのショッピングカートに追加します。この操作は、Eコマースプラットフォームの中核的な機能の一つであり、ユーザーの購買意図を捕捉する重要なポイントです。実行時には、リアルタイムの在庫確認、価格の再計算、関連商品の推奨などの処理が行われます。また、ユーザーの過去の行動に基づいて、クロスセリングやアップセリングの機会を識別します。カートの状態変化は、在庫管理システムに即時に反映され、他の顧客の購買体験に影響を与えないようにします。パフォーマンスとユーザーエクスペリエンスの観点から、この操作は高速で信頼性が高く、ユーザーに明確なフィードバックを提供する必要があります。" title="指定された製品を指定された数量だけユーザーのショッピングカートに追加します。この操作は、Eコマースプラットフォームの中核的な機能の一つであり、ユーザーの購買意図を捕捉する重要なポイントです。実行時には、リアルタイムの在庫確認、価格の再計算、関連商品の推奨などの処理が行われます。また、ユーザーの過去の行動に基づいて、クロスセリングやアップセリングの機会を識別します。カートの状態変化は、在庫管理システムに即時に反映され、他の顧客の購買体験に影響を与えないようにします。パフォーマンスとユーザーエクスペリエンスの観点から、この操作は高速で信頼性が高く、ユーザーに明確なフィードバックを提供する必要があります。">指定された製品を指定された数量だけユーザーのショッピングカートに追加します。この操作は、Eコマースプラットフォームの中核的な機能の一つであり、ユーザーの購買意図を捕捉する重要なポイントです。実行時には、リアルタイムの在庫確認、価格の再計算、関連商品の推奨などの処理が行われます。また、ユーザーの過去の行動に基づいて、クロスセリングやアップセリングの機会を識別します。カートの状態変化は、在庫管理システムに即時に反映され、他の顧客の購買体験に影響を与えないようにします。パフォーマンスとユーザーエクスペリエンスの観点から、この操作は高速で信頼性が高く、ユーザーに明確なフィードバックを提供する必要があります。</span></span></span></span></td>
 </tr>
 <tr>
   <td align="center"><span class="legend"><span class="legend-icon idempotent"></span></span></td>
@@ -984,7 +1007,7 @@ const setupTagClick = () => {
   <td align="left"><a id="goToRegister"></a><a href="#goToRegister">goToRegister</a></td>
   <td align="left"><span style="white-space: normal;">登録ページへ移動</span></td>
   <td align="left"></td>
-  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#RegisterPage">RegisterPage</a></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag" title="ユーザーを新規アカウント作成ページにナビゲートします。このトランジションは、新規ユーザー獲得プロセスの開始点であり、コンバージョンファネルの重要なステップです。ユーザーエクスペリエンスを最適化し、登録の完了率を高めるために、このページへの遷移はスムーズで直感的である必要があります。また、ユーザーの現在のコンテキスト（例：閲覧していた製品ページ）を保持し、登録後にシームレスに元のコンテキストに戻れるようにすることが重要です。">ユーザーを新規アカウント作成ページにナビゲートします。このトランジションは...</span></span></span></span></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#RegisterPage">RegisterPage</a></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag clickable" data-full="ユーザーを新規アカウント作成ページにナビゲートします。このトランジションは、新規ユーザー獲得プロセスの開始点であり、コンバージョンファネルの重要なステップです。ユーザーエクスペリエンスを最適化し、登録の完了率を高めるために、このページへの遷移はスムーズで直感的である必要があります。また、ユーザーの現在のコンテキスト（例：閲覧していた製品ページ）を保持し、登録後にシームレスに元のコンテキストに戻れるようにすることが重要です。" title="ユーザーを新規アカウント作成ページにナビゲートします。このトランジションは、新規ユーザー獲得プロセスの開始点であり、コンバージョンファネルの重要なステップです。ユーザーエクスペリエンスを最適化し、登録の完了率を高めるために、このページへの遷移はスムーズで直感的である必要があります。また、ユーザーの現在のコンテキスト（例：閲覧していた製品ページ）を保持し、登録後にシームレスに元のコンテキストに戻れるようにすることが重要です。">ユーザーを新規アカウント作成ページにナビゲートします。このトランジションは、新規ユーザー獲得プロセスの開始点であり、コンバージョンファネルの重要なステップです。ユーザーエクスペリエンスを最適化し、登録の完了率を高めるために、このページへの遷移はスムーズで直感的である必要があります。また、ユーザーの現在のコンテキスト（例：閲覧していた製品ページ）を保持し、登録後にシームレスに元のコンテキストに戻れるようにすることが重要です。</span></span></span></span></td>
 </tr>
 <tr>
   <td align="center"><span class="legend"><span class="legend-icon safe"></span></span></td>
@@ -1320,21 +1343,21 @@ const setupTagClick = () => {
   <td align="left"><a id="price"></a><a href="#price">price</a></td>
   <td align="left"><span style="white-space: normal;">価格</span></td>
   <td align="left"></td>
-  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag" title="製品の現在の価格。動的価格設定アルゴリズム、プロモーション、税金計算と連携します。異なる通貨と価格帯をサポートする必要があります。顧客の購買決定に直接影響を与え、競争力と収益性のバランスを取るための重要な要素です。価格履歴の追跡や、マーケットプレイス全体の価格動向分析にも使用されます。">製品の現在の価格。動的価格設定アルゴリズム、プロモーション、税金計算と連携...</span></span></span></span></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag clickable" data-full="製品の現在の価格。動的価格設定アルゴリズム、プロモーション、税金計算と連携します。異なる通貨と価格帯をサポートする必要があります。顧客の購買決定に直接影響を与え、競争力と収益性のバランスを取るための重要な要素です。価格履歴の追跡や、マーケットプレイス全体の価格動向分析にも使用されます。" title="製品の現在の価格。動的価格設定アルゴリズム、プロモーション、税金計算と連携します。異なる通貨と価格帯をサポートする必要があります。顧客の購買決定に直接影響を与え、競争力と収益性のバランスを取るための重要な要素です。価格履歴の追跡や、マーケットプレイス全体の価格動向分析にも使用されます。">製品の現在の価格。動的価格設定アルゴリズム、プロモーション、税金計算と連携します。異なる通貨と価格帯をサポートする必要があります。顧客の購買決定に直接影響を与え、競争力と収益性のバランスを取るための重要な要素です。価格履歴の追跡や、マーケットプレイス全体の価格動向分析にも使用されます。</span></span></span></span></td>
 </tr>
 <tr>
   <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
   <td align="left"><a id="Product"></a><a href="#Product">Product</a></td>
   <td align="left"><span style="white-space: normal;">製品情報</span></td>
   <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#productId">productId</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#name">name</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#description">description</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#price">price</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#category">category</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#subcategory">subcategory</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#inventory">inventory</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#weight">weight</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#dimensions">dimensions</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#isCustomizable">isCustomizable</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#createdAt">createdAt</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#updatedAt">updatedAt</a></td>
-  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag" title="プラットフォーム上で販売される個々の商品やサービスを表します。物理的な商品、デジタル製品、サービスなど、多様な製品タイプをサポートします。製品情報の正確性と完全性は、顧客の購買決定とプラットフォームの信頼性に直接影響します。検索エンジン、推奨システム、在庫管理システムなど、多くのコンポーネントと相互作用する中心的なエンティティです。">プラットフォーム上で販売される個々の商品やサービスを表します。物理的な商品...</span></span></span></span></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag clickable" data-full="プラットフォーム上で販売される個々の商品やサービスを表します。物理的な商品、デジタル製品、サービスなど、多様な製品タイプをサポートします。製品情報の正確性と完全性は、顧客の購買決定とプラットフォームの信頼性に直接影響します。検索エンジン、推奨システム、在庫管理システムなど、多くのコンポーネントと相互作用する中心的なエンティティです。" title="プラットフォーム上で販売される個々の商品やサービスを表します。物理的な商品、デジタル製品、サービスなど、多様な製品タイプをサポートします。製品情報の正確性と完全性は、顧客の購買決定とプラットフォームの信頼性に直接影響します。検索エンジン、推奨システム、在庫管理システムなど、多くのコンポーネントと相互作用する中心的なエンティティです。">プラットフォーム上で販売される個々の商品やサービスを表します。物理的な商品、デジタル製品、サービスなど、多様な製品タイプをサポートします。製品情報の正確性と完全性は、顧客の購買決定とプラットフォームの信頼性に直接影響します。検索エンジン、推奨システム、在庫管理システムなど、多くのコンポーネントと相互作用する中心的なエンティティです。</span></span></span></span></td>
 </tr>
 <tr>
   <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
   <td align="left"><a id="productId"></a><a href="#productId">productId</a></td>
   <td align="left"><span style="white-space: normal;">製品の一意の識別子</span></td>
   <td align="left"></td>
-  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag" title="製品の一意の識別子。SKU（Stock Keeping Unit）と連携し、在庫管理システムとの整合性を保ちます。注文処理、在庫追跡、製品検索など、多くのシステム機能で使用される重要な参照ポイントです。グローバルユニークである必要があり、マルチベンダー環境での製品の一意性を保証します。">製品の一意の識別子。SKU（Stock Keeping Unit）と連携し...</span></span></span></span></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag clickable" data-full="製品の一意の識別子。SKU（Stock Keeping Unit）と連携し、在庫管理システムとの整合性を保ちます。注文処理、在庫追跡、製品検索など、多くのシステム機能で使用される重要な参照ポイントです。グローバルユニークである必要があり、マルチベンダー環境での製品の一意性を保証します。" title="製品の一意の識別子。SKU（Stock Keeping Unit）と連携し、在庫管理システムとの整合性を保ちます。注文処理、在庫追跡、製品検索など、多くのシステム機能で使用される重要な参照ポイントです。グローバルユニークである必要があり、マルチベンダー環境での製品の一意性を保証します。">製品の一意の識別子。SKU（Stock Keeping Unit）と連携し、在庫管理システムとの整合性を保ちます。注文処理、在庫追跡、製品検索など、多くのシステム機能で使用される重要な参照ポイントです。グローバルユニークである必要があり、マルチベンダー環境での製品の一意性を保証します。</span></span></span></span></td>
 </tr>
 <tr>
   <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
@@ -1432,7 +1455,7 @@ const setupTagClick = () => {
   <td align="left"><a id="role"></a><a href="#role">role</a></td>
   <td align="left"><span style="white-space: normal;">システムにおけるユーザーの役割</span></td>
   <td align="left"></td>
-  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag" title="システム内でのユーザーの権限レベルを定義します。例：CUSTOMER, SELLER, AFFILIATE, ADMIN。役割ベースのアクセス制御（RBAC）システムと連携し、ユーザーが実行できる操作と表示できる情報を決定します。プラットフォームのセキュリティとユーザー体験のカスタマイズに不可欠です。">システム内でのユーザーの権限レベルを定義します。例：CUSTOMER, S...</span></span></span></span></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag clickable" data-full="システム内でのユーザーの権限レベルを定義します。例：CUSTOMER, SELLER, AFFILIATE, ADMIN。役割ベースのアクセス制御（RBAC）システムと連携し、ユーザーが実行できる操作と表示できる情報を決定します。プラットフォームのセキュリティとユーザー体験のカスタマイズに不可欠です。" title="システム内でのユーザーの権限レベルを定義します。例：CUSTOMER, SELLER, AFFILIATE, ADMIN。役割ベースのアクセス制御（RBAC）システムと連携し、ユーザーが実行できる操作と表示できる情報を決定します。プラットフォームのセキュリティとユーザー体験のカスタマイズに不可欠です。">システム内でのユーザーの権限レベルを定義します。例：CUSTOMER, SELLER, AFFILIATE, ADMIN。役割ベースのアクセス制御（RBAC）システムと連携し、ユーザーが実行できる操作と表示できる情報を決定します。プラットフォームのセキュリティとユーザー体験のカスタマイズに不可欠です。</span></span></span></span></td>
 </tr>
 <tr>
   <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>

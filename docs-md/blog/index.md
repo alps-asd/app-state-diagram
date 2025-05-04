@@ -3,120 +3,54 @@
 An ALPS profile example for ASD
 
 <!-- Container for the ASDs -->
+
 [<img src="profile.svg" alt="application state diagram">](profile.title.svg)
+<div class="selector-container"><span class="selector-label">Tags:</span>
+<span class="selector-option"><input type="checkbox" id="tag-collection" class="tag-trigger-checkbox" data-tag="collection" name="tag-collection"><label for="tag-collection"> collection</label></span>
+<span class="selector-option"><input type="checkbox" id="tag-item" class="tag-trigger-checkbox" data-tag="item" name="tag-item"><label for="tag-item"> item</label></span></div>
+<div class="legend">
+    <div class="legend-item" title="A state element (e.g.  HTML.SPAN, HTML.INPUT, etc.).">
+        <span class="legend-icon semantic"></span>
+        Semantic
+    </div>
+    <div class="legend-item" title="A hypermedia control that triggers a safe, idempotent state
+      transition (e.g.  HTTP.GET or HTTP.HEAD).">
+        <span class="legend-icon safe"></span>
+        Safe
+    </div>
+    <div class="legend-item" title="A hypermedia control that triggers an unsafe, non-
+      idempotent state transition (e.g.  HTTP.POST).">
+        <span class="legend-icon unsafe"></span>
+        Unsafe
+    </div>
+    <div class="legend-item" title="A hypermedia control that triggers an unsafe,
+      idempotent state transition (e.g.  HTTP.PUT or HTTP.DELETE).">
+        <span class="legend-icon idempotent"></span>
+        Idempotent
+    </div>
+</div>
 
 
-## Tags
-* <input type="checkbox" id="tag-collection" class="tag-trigger-checkbox" data-tag="collection" name="tag-collection"><label for="tag-collection"> collection</label>
-* <input type="checkbox" id="tag-item" class="tag-trigger-checkbox" data-tag="item" name="tag-item"><label for="tag-item"> item</label>
-
-## Links
-* <a rel="issue" href="https://github.com/alps-asd/app-state-diagram/issues">issue</a>
 
 ## Semantic Descriptors
 
- 
-### <a id="About">About</a>
- * type: semantic
- * title: About Us
- * descriptor
+| Type | ID | Title | Contained | Extra Info |
+| :--: | :-- | :---- | :-- | :-- |
+| <span class="legend"><span class="legend-icon semantic"></span></span> | <a id="About"></a>[About](#About) | <span style="white-space: normal;">About Us</span> | <span class="type-indicator-small safe" title="Safe"></span><a href="#goBlog">goBlog</a> | <span style="white-space: normal;"></span> |
+| <span class="legend"><span class="legend-icon semantic"></span></span> | <a id="articleBody"></a>[articleBody](#articleBody) | <span style="white-space: normal;">article body</span> |  | <span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">def:</span><span class="meta-tag def-tag"><a href="https://schema.org/articleBody" target="_blank">schema.org/articleBody</a></span></span></span></span> |
+| <span class="legend"><span class="legend-icon semantic"></span></span> | <a id="Blog"></a>[Blog](#Blog) | <span style="white-space: normal;">Blog Post List</span> | <span class="type-indicator-small semantic" title="Semantic"></span><a href="#BlogPosting">BlogPosting</a><br><span class="type-indicator-small safe" title="Safe"></span><a href="#goAbout">goAbout</a><br><span class="type-indicator-small safe" title="Safe"></span><a href="#goBlogPosting">goBlogPosting</a><br><span class="type-indicator-small unsafe" title="Unsafe"></span><a href="#doPost">doPost</a> | <span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">def:</span><span class="meta-tag def-tag"><a href="https://schema.org/Blog" target="_blank">schema.org/Blog</a></span></span><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-collection">collection</a></span></span></span></span></span> |
+| <span class="legend"><span class="legend-icon semantic"></span></span> | <a id="BlogPosting"></a>[BlogPosting](#BlogPosting) | <span style="white-space: normal;">Blog Post</span> | <span class="type-indicator-small semantic" title="Semantic"></span><a href="#id">id</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#dateCreated">dateCreated</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#articleBody">articleBody</a><br><span class="type-indicator-small safe" title="Safe"></span><a href="#goBlog">goBlog</a> | <span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">def:</span><span class="meta-tag def-tag"><a href="https://schema.org/BlogPosting" target="_blank">schema.org/BlogPosting</a></span></span><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-item">item</a></span></span></span></span></span> |
+| <span class="legend"><span class="legend-icon semantic"></span></span> | <a id="dateCreated"></a>[dateCreated](#dateCreated) | <span style="white-space: normal;">create date</span> |  | <span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">def:</span><span class="meta-tag def-tag"><a href="https://schema.org/dateCreated" target="_blank">schema.org/dateCreated</a></span></span></span></span> |
+| <span class="legend"><span class="legend-icon unsafe"></span></span> | <a id="doPost"></a>[doPost](#doPost) | <span style="white-space: normal;">Post the article</span> | <span class="type-indicator-small semantic" title="Semantic"></span><a href="#articleBody">articleBody</a> | <span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">def:</span><span class="meta-tag def-tag"><a href="https://activitystrea.ms/specs/json/1.0/#post-verb" target="_blank">activitystrea.ms/specs/json...</a></span></span><span class="meta-item"><span class="meta-label">rel:</span><span class="meta-tag rel-tag">collection</span></span><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#Blog">Blog</a></span></span></span></span> |
+| <span class="legend"><span class="legend-icon safe"></span></span> | <a id="goAbout"></a>[goAbout](#goAbout) | <span style="white-space: normal;">Go to About</span> |  | <span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#About">About</a></span></span></span></span> |
+| <span class="legend"><span class="legend-icon safe"></span></span> | <a id="goBlog"></a>[goBlog](#goBlog) | <span style="white-space: normal;">See the blog post list</span> |  | <span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rel:</span><span class="meta-tag rel-tag">collection</span></span><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#Blog">Blog</a></span></span></span></span> |
+| <span class="legend"><span class="legend-icon safe"></span></span> | <a id="goBlogPosting"></a>[goBlogPosting](#goBlogPosting) | <span style="white-space: normal;">See the blog post</span> | <span class="type-indicator-small semantic" title="Semantic"></span><a href="#id">id</a> | <span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rel:</span><span class="meta-tag rel-tag">item</span></span><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#BlogPosting">BlogPosting</a></span></span></span></span> |
+| <span class="legend"><span class="legend-icon safe"></span></span> | <a id="goStart"></a>[goStart](#goStart) | <span style="white-space: normal;">Go to Home</span> |  | <span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rel:</span><span class="meta-tag rel-tag">collection</span></span><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#Blog">Blog</a></span></span></span></span> |
+| <span class="legend"><span class="legend-icon semantic"></span></span> | <a id="id"></a>[id](#id) | <span style="white-space: normal;">identifier</span> |  | <span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">def:</span><span class="meta-tag def-tag"><a href="https://schema.org/identifier" target="_blank">schema.org/identifier</a></span></span></span></span> |
+| <span class="legend"><span class="legend-icon semantic"></span></span> | <a id="Index"></a>[Index](#Index) | <span style="white-space: normal;">Home</span> | <span class="type-indicator-small safe" title="Safe"></span><a href="#goBlog">goBlog</a> | <span style="white-space: normal;"></span> |
 
-| id | type | title |
-|---|---|---|
-| [goBlog](#goBlog) | safe | See the blog post list |
-
-### <a id="articleBody">articleBody</a>
- * type: semantic
- * title: article body
- * def: [https://schema.org/articleBody](https://schema.org/articleBody)
-
-### <a id="Blog">Blog</a>
- * type: semantic
- * title: Blog Post List
- * def: [https://schema.org/Blog](https://schema.org/Blog)
- * tag: [collection](#tag-collection)
- * descriptor
-
-| id | type | title |
-|---|---|---|
-| [BlogPosting](#BlogPosting) | semantic | Blog Post |
-| [goAbout](#goAbout) | safe | Go to About |
-| [goBlogPosting](#goBlogPosting) | safe | See the blog post |
-| [doPost](#doPost) | unsafe | Post the article |
-
-### <a id="BlogPosting">BlogPosting</a>
- * type: semantic
- * title: Blog Post
- * def: [https://schema.org/BlogPosting](https://schema.org/BlogPosting)
- * tag: [item](#tag-item)
- * descriptor
-
-| id | type | title |
-|---|---|---|
-| [id](#id) | semantic | identifier |
-| [dateCreated](#dateCreated) | semantic | create date |
-| [articleBody](#articleBody) | semantic | article body |
-| [goBlog](#goBlog) | safe | See the blog post list |
-
-### <a id="dateCreated">dateCreated</a>
- * type: semantic
- * title: create date
- * def: [https://schema.org/dateCreated](https://schema.org/dateCreated)
-
-### <a id="doPost">doPost</a>
- * type: unsafe
- * title: Post the article
- * def: [https://activitystrea.ms/specs/json/1.0/#post-verb](https://activitystrea.ms/specs/json/1.0/#post-verb)
- * rel: collection
- * rt: [Blog](#Blog)
- * descriptor
-
-| id | type | title |
-|---|---|---|
-| [articleBody](#articleBody) | semantic | article body |
-
-### <a id="goAbout">goAbout</a>
- * type: safe
- * title: Go to About
- * rt: [About](#About)
-
-### <a id="goBlog">goBlog</a>
- * type: safe
- * title: See the blog post list
- * rel: collection
- * rt: [Blog](#Blog)
-
-### <a id="goBlogPosting">goBlogPosting</a>
- * type: safe
- * title: See the blog post
- * rel: item
- * rt: [BlogPosting](#BlogPosting)
- * descriptor
-
-| id | type | title |
-|---|---|---|
-| [id](#id) | semantic | identifier |
-
-### <a id="goStart">goStart</a>
- * type: safe
- * title: Go to Home
- * rel: collection
- * rt: [Blog](#Blog)
-
-### <a id="id">id</a>
- * type: semantic
- * title: identifier
- * def: [https://schema.org/identifier](https://schema.org/identifier)
-
-### <a id="Index">Index</a>
- * type: semantic
- * title: Home
- * descriptor
-
-| id | type | title |
-|---|---|---|
-| [goBlog](#goBlog) | safe | See the blog post list |
-
+## Links
+* <a rel="issue" href="https://github.com/alps-asd/app-state-diagram/issues">issue</a>
 
 
 ---
