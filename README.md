@@ -14,7 +14,7 @@ Produces a full application state diagram and hyperlinked documentation from [AL
 
 The diagram is hypermedia in SVG format with application states and state transitions linked to the respective semantic descriptor document HTML. The semantic descriptor document HTML is also linked to each other to represent the structure of the REST application.
 
-<a href="https://alps-asd.github.io/app-state-diagram/blog/profile.svg"><img src="https://alps-asd.github.io/app-state-diagram/blog/profile.svg"></a>
+<a href="https://www.app-state-diagram.com/app-state-diagram/mini-commerce/index.html"><img src="https://www.app-state-diagram.com/app-state-diagram/mini-commerce/alps.svg"></a>
 
 ## Documentation
 
