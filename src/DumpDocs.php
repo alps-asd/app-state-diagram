@@ -41,10 +41,7 @@ final class DumpDocs
 
     private function truncateText(string $text, int $maxLength): string
     {
-        if (mb_strlen($text) <= $maxLength) {
-            return $text;
-        }
-
+        assert((mb_strlen($text) > $maxLength));
         $decreaseLength = 100;
 
         return mb_substr($text, 0, $maxLength - 3 - $decreaseLength) . '...';
