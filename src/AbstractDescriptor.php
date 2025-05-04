@@ -29,7 +29,6 @@ abstract class AbstractDescriptor
     /** @var list<string> */
     public array $tags;
     public string $title;
-    public object $source;
     public ?string $href = null;
     public LinkRelations $linkRelations;
 
@@ -41,7 +40,6 @@ abstract class AbstractDescriptor
             throw new InvalidSemanticsException((string) json_encode($descriptor));
         }
 
-        $this->source = $descriptor;
         $this->id = (string) $descriptor->id;
         /** @psalm-suppress MixedAssignment */
         $this->def = $descriptor->def ?? $descriptor->ref ?? $descriptor->src ?? null;
