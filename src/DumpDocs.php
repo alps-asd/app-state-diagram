@@ -126,7 +126,7 @@ final class DumpDocs
             $label,
             $cssClass,
             $attrString,
-            $valueHtml ?? htmlspecialchars($value)
+            $valueHtml
         );
     }
 
