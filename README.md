@@ -15,7 +15,7 @@
 
 ## Key Benefits
 
-- **Application Overview**: Visually grasp complex applications and understand the big picture
+- **Application Overview**: Visually grasp complex RESTful applications and understand the big picture
 - **Clear Information Semantics**: See how data flows and what each element means
 - **Enhanced Team Communication**: Both technical and business teams can discuss using the same visual representation
 - **Design Consistency**: Represent application structures uniformly and discover design issues early
