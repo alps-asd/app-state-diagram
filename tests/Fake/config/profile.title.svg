@@ -5,20 +5,20 @@
  -->
 <!-- Title: application_state_diagram Pages: 1 -->
 <svg width="344pt" height="243pt"
- viewBox="0.00 0.00 343.64 242.80" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+ viewBox="0.00 0.00 343.65 242.80" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 <g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 238.8)">
 <title>application_state_diagram</title>
 <g id="a_graph0"><a xlink:href="index.html" xlink:title="ALPS Blog" target="_parent">
-<polygon fill="#ffffff" stroke="transparent" points="-4,4 -4,-238.8 339.6423,-238.8 339.6423,4 -4,4"/>
-<text text-anchor="middle" x="167.8212" y="-218.2" font-family="Helvetica,sans-Serif" font-size="14.00" fill="#000000">ALPS Blog</text>
+<polygon fill="#ffffff" stroke="transparent" points="-4,4 -4,-238.8 339.6525,-238.8 339.6525,4 -4,4"/>
+<text text-anchor="middle" x="167.8262" y="-218.2" font-family="Helvetica,sans-Serif" font-size="14.00" fill="#000000">ALPS Blog</text>
 </a>
 </g>
 <!-- Blog -->
 <g id="node1" class="node">
 <title>Blog</title>
 <g id="a_node1"><a xlink:href="#Blog" xlink:title="Blog post list" target="_parent">
-<polygon fill="#d3d3d3" stroke="#000000" stroke-width="2" points="207.8218,-123 131.4628,-123 131.4628,-87 207.8218,-87 207.8218,-123"/>
-<text text-anchor="start" x="132.3029" y="-100.8" font-family="Times,serif" font-size="14.00" fill="#000000">Blog post list</text>
+<polygon fill="#d3d3d3" stroke="#000000" stroke-width="2" points="213.8318,-123 125.4731,-123 125.4731,-87 213.8318,-87 213.8318,-123"/>
+<text text-anchor="middle" x="169.6525" y="-100.8" font-family="Times,serif" font-size="14.00" fill="#000000">Blog post list</text>
 </a>
 </g>
 </g>
@@ -26,14 +26,14 @@
 <g id="edge3" class="edge doPost">
 <title>Blog&#45;&gt;Blog</title>
 <g id="a_edge3"><a xlink:href="#doPost" xlink:title="&lt;TABLE&gt;" target="_parent">
-<path fill="none" stroke="#000000" stroke-width="1.5" d="M207.824,-112.8168C218.1364,-112.4044 225.9817,-109.7988 225.9817,-105 225.9817,-102.0007 222.9171,-99.8582 218.101,-98.5724"/>
-<polygon fill="#000000" stroke="#000000" stroke-width="1.5" points="218.2028,-95.0544 207.824,-97.1832 217.265,-101.9913 218.2028,-95.0544"/>
+<path fill="none" stroke="#000000" stroke-width="1.5" d="M213.9179,-112.7193C224.3186,-112.0848 231.9919,-109.5117 231.9919,-105 231.9919,-102.1097 228.8428,-100.015 223.8449,-98.7159"/>
+<polygon fill="#000000" stroke="#000000" stroke-width="1.5" points="224.3158,-95.2477 213.9179,-97.2807 223.3141,-102.1756 224.3158,-95.2477"/>
 </a>
 </g>
 <g id="a_edge3&#45;label"><a xlink:href="#doPost" xlink:title="&lt;TABLE&gt;" target="_parent">
 <g id="a_edge3_0"><a xlink:href="#doPost" xlink:title="post article (unsafe)" target="_parent">
-<text text-anchor="start" x="226.4559" y="-101.3" font-family="Times,serif" font-size="13.00" fill="#ff4136">■</text>
-<text text-anchor="start" x="236.2059" y="-101.3" font-family="Times,serif" font-size="13.00" fill="#000000"> post article</text>
+<text text-anchor="start" x="232.466" y="-101.3" font-family="Times,serif" font-size="13.00" fill="#ff4136">■</text>
+<text text-anchor="start" x="242.216" y="-101.3" font-family="Times,serif" font-size="13.00" fill="#000000"> post article</text>
 </a>
 </g>
 </a>
@@ -43,8 +43,8 @@
 <g id="node2" class="node">
 <title>BlogPosting</title>
 <g id="a_node2"><a xlink:href="#BlogPosting" xlink:title="Blog post item" target="_parent">
-<polygon fill="#d3d3d3" stroke="#000000" stroke-width="2" points="136.0923,-36 51.1923,-36 51.1923,0 136.0923,0 136.0923,-36"/>
-<text text-anchor="start" x="52.4179" y="-13.8" font-family="Times,serif" font-size="14.00" fill="#000000">Blog post item</text>
+<polygon fill="#d3d3d3" stroke="#000000" stroke-width="2" points="140.1023,-36 43.2026,-36 43.2026,0 140.1023,0 140.1023,-36"/>
+<text text-anchor="middle" x="91.6525" y="-13.8" font-family="Times,serif" font-size="14.00" fill="#000000">Blog post item</text>
 </a>
 </g>
 </g>
@@ -52,14 +52,14 @@
 <g id="edge4" class="edge goBlogPosting">
 <title>Blog&#45;&gt;BlogPosting</title>
 <g id="a_edge4"><a xlink:href="#goBlogPosting" xlink:title="&lt;TABLE&gt;" target="_parent">
-<path fill="none" stroke="#000000" stroke-width="1.5" d="M131.1968,-102.0757C87.509,-97.8603 20.228,-88.3528 4.6423,-69 -10.2456,-50.5135 14.4944,-37.4522 41.634,-29.178"/>
-<polygon fill="#000000" stroke="#000000" stroke-width="1.5" points="42.6038,-32.5411 51.2726,-26.4499 40.6974,-25.8057 42.6038,-32.5411"/>
+<path fill="none" stroke="#000000" stroke-width="1.5" d="M125.2756,-101.4847C81.6663,-96.9996 19.5485,-87.4965 4.6525,-69 -8.6777,-52.4478 10.1942,-40.1261 33.7268,-31.7444"/>
+<polygon fill="#000000" stroke="#000000" stroke-width="1.5" points="34.8671,-35.054 43.2802,-28.6142 32.6875,-28.402 34.8671,-35.054"/>
 </a>
 </g>
 <g id="a_edge4&#45;label"><a xlink:href="#goBlogPosting" xlink:title="&lt;TABLE&gt;" target="_parent">
 <g id="a_edge4_1"><a xlink:href="#goBlogPosting" xlink:title="to blog posting (safe)" target="_parent">
-<text text-anchor="start" x="4.6475" y="-57.8" font-family="Times,serif" font-size="13.00" fill="#00a86b">■</text>
-<text text-anchor="start" x="14.3975" y="-57.8" font-family="Times,serif" font-size="13.00" fill="#000000"> to blog posting</text>
+<text text-anchor="start" x="4.6577" y="-57.8" font-family="Times,serif" font-size="13.00" fill="#00a86b">■</text>
+<text text-anchor="start" x="14.4077" y="-57.8" font-family="Times,serif" font-size="13.00" fill="#000000"> to blog posting</text>
 </a>
 </g>
 </a>
@@ -69,8 +69,8 @@
 <g id="node3" class="node">
 <title>About</title>
 <g id="a_node3"><a xlink:href="#About" xlink:title="About" target="_parent">
-<polygon fill="#d3d3d3" stroke="#000000" stroke-width="2" points="286.1395,-36 207.1451,-36 207.1451,0 286.1395,0 286.1395,-36"/>
-<text text-anchor="middle" x="246.6423" y="-13.8" font-family="Times,serif" font-size="14.00" fill="#000000">About</text>
+<polygon fill="#d3d3d3" stroke="#000000" stroke-width="2" points="287.1497,-36 208.1553,-36 208.1553,0 287.1497,0 287.1497,-36"/>
+<text text-anchor="middle" x="247.6525" y="-13.8" font-family="Times,serif" font-size="14.00" fill="#000000">About</text>
 </a>
 </g>
 </g>
@@ -78,14 +78,14 @@
 <g id="edge2" class="edge goAbout">
 <title>Blog&#45;&gt;About</title>
 <g id="a_edge2"><a xlink:href="#goAbout" xlink:title="&lt;TABLE&gt;" target="_parent">
-<path fill="none" stroke="#000000" stroke-width="1.5" d="M181.8871,-86.9021C188.9839,-76.8569 198.3348,-64.3407 207.6423,-54 210.9365,-50.3402 214.5547,-46.6397 218.2182,-43.0749"/>
-<polygon fill="#000000" stroke="#000000" stroke-width="1.5" points="220.8401,-45.4131 225.7122,-36.0049 216.0365,-40.3214 220.8401,-45.4131"/>
+<path fill="none" stroke="#000000" stroke-width="1.5" d="M181.8469,-86.8566C188.928,-76.7971 198.2799,-64.2818 207.6525,-54 210.9411,-50.3923 214.5536,-46.7577 218.2207,-43.2573"/>
+<polygon fill="#000000" stroke="#000000" stroke-width="1.5" points="220.768,-45.6691 225.7386,-36.3126 216.0181,-40.5272 220.768,-45.6691"/>
 </a>
 </g>
 <g id="a_edge2&#45;label"><a xlink:href="#goAbout" xlink:title="&lt;TABLE&gt;" target="_parent">
 <g id="a_edge2_2"><a xlink:href="#goAbout" xlink:title="to about (safe)" target="_parent">
-<text text-anchor="start" x="207.6916" y="-57.8" font-family="Times,serif" font-size="13.00" fill="#00a86b">■</text>
-<text text-anchor="start" x="217.4416" y="-57.8" font-family="Times,serif" font-size="13.00" fill="#000000"> to about</text>
+<text text-anchor="start" x="207.7017" y="-57.8" font-family="Times,serif" font-size="13.00" fill="#00a86b">■</text>
+<text text-anchor="start" x="217.4517" y="-57.8" font-family="Times,serif" font-size="13.00" fill="#000000"> to about</text>
 </a>
 </g>
 </a>
@@ -95,14 +95,14 @@
 <g id="edge5" class="edge goBlog">
 <title>BlogPosting&#45;&gt;Blog</title>
 <g id="a_edge5"><a xlink:href="#goBlog" xlink:title="&lt;TABLE&gt;" target="_parent">
-<path fill="none" stroke="#000000" stroke-width="1.5" d="M105.493,-36.1271C112.3806,-46.1815 121.4868,-58.6972 130.6423,-69 133.8404,-72.5989 137.3577,-76.2284 140.9306,-79.726"/>
-<polygon fill="#000000" stroke="#000000" stroke-width="1.5" points="138.5917,-82.3315 148.2583,-86.6683 143.4061,-77.2499 138.5917,-82.3315"/>
+<path fill="none" stroke="#000000" stroke-width="1.5" d="M106.0109,-36.2958C113.9391,-46.1749 124.0919,-58.4696 133.6525,-69 136.7438,-72.405 140.0657,-75.913 143.3967,-79.3415"/>
+<polygon fill="#000000" stroke="#000000" stroke-width="1.5" points="141.0991,-81.9959 150.6174,-86.6492 146.0784,-77.0759 141.0991,-81.9959"/>
 </a>
 </g>
 <g id="a_edge5&#45;label"><a xlink:href="#goBlog" xlink:title="&lt;TABLE&gt;" target="_parent">
 <g id="a_edge5_3"><a xlink:href="#goBlog" xlink:title="to blog (safe)" target="_parent">
-<text text-anchor="start" x="130.5769" y="-57.8" font-family="Times,serif" font-size="13.00" fill="#00a86b">■</text>
-<text text-anchor="start" x="140.3269" y="-57.8" font-family="Times,serif" font-size="13.00" fill="#000000"> to blog</text>
+<text text-anchor="start" x="133.5871" y="-57.8" font-family="Times,serif" font-size="13.00" fill="#00a86b">■</text>
+<text text-anchor="start" x="143.3371" y="-57.8" font-family="Times,serif" font-size="13.00" fill="#000000"> to blog</text>
 </a>
 </g>
 </a>
@@ -112,14 +112,14 @@
 <g id="edge1" class="edge goBlog">
 <title>About&#45;&gt;Blog</title>
 <g id="a_edge1"><a xlink:href="#goBlog" xlink:title="&lt;TABLE&gt;" target="_parent">
-<path fill="none" stroke="#000000" stroke-width="1.5" d="M266.6932,-36.0857C275.3724,-46.1271 282.0398,-58.6436 274.6423,-69 267.5788,-78.8889 241.9894,-87.7719 217.8429,-94.2399"/>
-<polygon fill="#000000" stroke="#000000" stroke-width="1.5" points="216.8098,-90.8916 207.9967,-96.7721 218.5533,-97.671 216.8098,-90.8916"/>
+<path fill="none" stroke="#000000" stroke-width="1.5" d="M267.145,-36.151C275.5635,-46.2129 281.9896,-58.7281 274.6525,-69 268.164,-78.0838 246.0432,-86.3189 223.7682,-92.613"/>
+<polygon fill="#000000" stroke="#000000" stroke-width="1.5" points="222.659,-89.2871 213.9193,-95.2761 224.4862,-96.0444 222.659,-89.2871"/>
 </a>
 </g>
 <g id="a_edge1&#45;label"><a xlink:href="#goBlog" xlink:title="&lt;TABLE&gt;" target="_parent">
 <g id="a_edge1_4"><a xlink:href="#goBlog" xlink:title="to blog (safe)" target="_parent">
-<text text-anchor="start" x="277.5769" y="-57.8" font-family="Times,serif" font-size="13.00" fill="#00a86b">■</text>
-<text text-anchor="start" x="287.3269" y="-57.8" font-family="Times,serif" font-size="13.00" fill="#000000"> to blog</text>
+<text text-anchor="start" x="277.5871" y="-57.8" font-family="Times,serif" font-size="13.00" fill="#00a86b">■</text>
+<text text-anchor="start" x="287.3371" y="-57.8" font-family="Times,serif" font-size="13.00" fill="#000000"> to blog</text>
 </a>
 </g>
 </a>
@@ -129,8 +129,8 @@
 <g id="node4" class="node">
 <title>Index</title>
 <g id="a_node4"><a xlink:href="#Index" xlink:title="Index Page" target="_parent">
-<polygon fill="#d3d3d3" stroke="#000000" stroke-width="2" points="222.7301,-210 116.5545,-210 116.5545,-174 222.7301,-174 222.7301,-210"/>
-<text text-anchor="start" x="138.3488" y="-187.8" font-family="Times,serif" font-size="14.00" fill="#000000">Index Page</text>
+<polygon fill="#d3d3d3" stroke="#000000" stroke-width="2" points="222.7403,-210 116.5647,-210 116.5647,-174 222.7403,-174 222.7403,-210"/>
+<text text-anchor="start" x="138.359" y="-187.8" font-family="Times,serif" font-size="14.00" fill="#000000">Index Page</text>
 </a>
 </g>
 </g>
@@ -138,14 +138,14 @@
 <g id="edge6" class="edge goBlog">
 <title>Index&#45;&gt;Blog</title>
 <g id="a_edge6"><a xlink:href="#goBlog" xlink:title="&lt;TABLE&gt;" target="_parent">
-<path fill="none" stroke="#000000" stroke-width="1.5" d="M169.6423,-173.9735C169.6423,-162.1918 169.6423,-146.5607 169.6423,-133.1581"/>
-<polygon fill="#000000" stroke="#000000" stroke-width="1.5" points="173.1424,-133.0033 169.6423,-123.0034 166.1424,-133.0034 173.1424,-133.0033"/>
+<path fill="none" stroke="#000000" stroke-width="1.5" d="M169.6525,-173.9735C169.6525,-162.1918 169.6525,-146.5607 169.6525,-133.1581"/>
+<polygon fill="#000000" stroke="#000000" stroke-width="1.5" points="173.1526,-133.0033 169.6525,-123.0034 166.1526,-133.0034 173.1526,-133.0033"/>
 </a>
 </g>
 <g id="a_edge6&#45;label"><a xlink:href="#goBlog" xlink:title="&lt;TABLE&gt;" target="_parent">
 <g id="a_edge6_5"><a xlink:href="#goBlog" xlink:title="to blog (safe)" target="_parent">
-<text text-anchor="start" x="169.5769" y="-144.8" font-family="Times,serif" font-size="13.00" fill="#00a86b">■</text>
-<text text-anchor="start" x="179.3269" y="-144.8" font-family="Times,serif" font-size="13.00" fill="#000000"> to blog</text>
+<text text-anchor="start" x="169.5871" y="-144.8" font-family="Times,serif" font-size="13.00" fill="#00a86b">■</text>
+<text text-anchor="start" x="179.3371" y="-144.8" font-family="Times,serif" font-size="13.00" fill="#000000"> to blog</text>
 </a>
 </g>
 </a>

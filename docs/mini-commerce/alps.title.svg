@@ -9,16 +9,16 @@
 <g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 412.8)">
 <title>application_state_diagram</title>
 <g id="a_graph0"><a xlink:href="index.html" xlink:title="app&#45;state&#45;diagram" target="_parent">
-<polygon fill="#ffffff" stroke="transparent" points="-4,4 -4,-412.8 553.8321,-412.8 553.8321,4 -4,4"/>
-<text text-anchor="middle" x="274.9161" y="-392.2" font-family="Helvetica,sans-Serif" font-size="14.00" fill="#000000">app&#45;state&#45;diagram</text>
+<polygon fill="#ffffff" stroke="transparent" points="-4,4 -4,-412.8 553.8285,-412.8 553.8285,4 -4,4"/>
+<text text-anchor="middle" x="274.9143" y="-392.2" font-family="Helvetica,sans-Serif" font-size="14.00" fill="#000000">app&#45;state&#45;diagram</text>
 </a>
 </g>
 <!-- Cart -->
 <g id="node1" class="node">
 <title>Cart</title>
 <g id="a_node1"><a xlink:href="#Cart" xlink:title="Shopping Cart" target="_parent">
-<polygon fill="#d3d3d3" stroke="#000000" stroke-width="2" points="246.6082,-384 163.0561,-384 163.0561,-348 246.6082,-348 246.6082,-384"/>
-<text text-anchor="start" x="164.1943" y="-361.8" font-family="Times,serif" font-size="14.00" fill="#000000">Shopping Cart</text>
+<polygon fill="#d3d3d3" stroke="#000000" stroke-width="2" points="252.6045,-384 157.0525,-384 157.0525,-348 252.6045,-348 252.6045,-384"/>
+<text text-anchor="middle" x="204.8285" y="-361.8" font-family="Times,serif" font-size="14.00" fill="#000000">Shopping Cart</text>
 </a>
 </g>
 </g>
@@ -26,19 +26,19 @@
 <g id="edge1" class="edge doRemoveItem">
 <title>Cart&#45;&gt;Cart</title>
 <g id="a_edge1"><a xlink:href="#doRemoveItem" xlink:title="&lt;TABLE&gt;" target="_parent">
-<path fill="none" stroke="#000000" stroke-width="1.5" d="M246.6339,-373.752C256.8599,-373.1777 264.4699,-370.5938 264.4699,-366 264.4699,-363.1289 261.4973,-361.0429 256.7712,-359.7419"/>
-<polygon fill="#000000" stroke="#000000" stroke-width="1.5" points="257.0374,-356.2434 246.6339,-358.248 256.0168,-363.1686 257.0374,-356.2434"/>
+<path fill="none" stroke="#000000" stroke-width="1.5" d="M252.6191,-373.6424C262.964,-372.8951 270.4663,-370.3477 270.4663,-366 270.4663,-363.2827 267.5358,-361.2686 262.8122,-359.9578"/>
+<polygon fill="#000000" stroke="#000000" stroke-width="1.5" points="263.0409,-356.4509 252.6191,-358.3576 261.9553,-363.3662 263.0409,-356.4509"/>
 </a>
 </g>
 <g id="a_edge1&#45;label"><a xlink:href="#doRemoveItem" xlink:title="&lt;TABLE&gt;" target="_parent">
 <g id="a_edge1_0"><a xlink:href="#doRemoveItem" xlink:title="Remove item from cart (idempotent)" target="_parent">
-<text text-anchor="start" x="264.8483" y="-370.3" font-family="Times,serif" font-size="13.00" fill="#ffdc00">■</text>
-<text text-anchor="start" x="274.5983" y="-370.3" font-family="Times,serif" font-size="13.00" fill="#000000"> Remove item from cart</text>
+<text text-anchor="start" x="270.8447" y="-370.3" font-family="Times,serif" font-size="13.00" fill="#ffdc00">■</text>
+<text text-anchor="start" x="280.5947" y="-370.3" font-family="Times,serif" font-size="13.00" fill="#000000"> Remove item from cart</text>
 </a>
 </g>
 <g id="a_edge1_1"><a xlink:href="#doUpdateQuantity" xlink:title="Update item quantity (idempotent)" target="_parent">
-<text text-anchor="start" x="264.9699" y="-355.3" font-family="Times,serif" font-size="13.00" fill="#ffdc00">■</text>
-<text text-anchor="start" x="274.7199" y="-355.3" font-family="Times,serif" font-size="13.00" fill="#000000"> Update item quantity</text>
+<text text-anchor="start" x="270.9663" y="-355.3" font-family="Times,serif" font-size="13.00" fill="#ffdc00">■</text>
+<text text-anchor="start" x="280.7163" y="-355.3" font-family="Times,serif" font-size="13.00" fill="#000000"> Update item quantity</text>
 </a>
 </g>
 </a>
@@ -48,8 +48,8 @@
 <g id="node2" class="node">
 <title>Checkout</title>
 <g id="a_node2"><a xlink:href="#Checkout" xlink:title="Checkout" target="_parent">
-<polygon fill="#d3d3d3" stroke="#000000" stroke-width="2" points="153.4896,-297 98.1747,-297 98.1747,-261 153.4896,-261 153.4896,-297"/>
-<text text-anchor="middle" x="125.8321" y="-274.8" font-family="Times,serif" font-size="14.00" fill="#000000">Checkout</text>
+<polygon fill="#d3d3d3" stroke="#000000" stroke-width="2" points="159.4858,-297 92.1713,-297 92.1713,-261 159.4858,-261 159.4858,-297"/>
+<text text-anchor="middle" x="125.8285" y="-274.8" font-family="Times,serif" font-size="14.00" fill="#000000">Checkout</text>
 </a>
 </g>
 </g>
@@ -57,14 +57,14 @@
 <g id="edge2" class="edge goCheckout">
 <title>Cart&#45;&gt;Checkout</title>
 <g id="a_edge2"><a xlink:href="#goCheckout" xlink:title="&lt;TABLE&gt;" target="_parent">
-<path fill="none" stroke="#000000" stroke-width="1.5" d="M162.9547,-353.8572C151.12,-348.4211 139.4131,-340.7348 131.8321,-330 127.1835,-323.4174 125.0696,-315.1251 124.28,-307.151"/>
-<polygon fill="#000000" stroke="#000000" stroke-width="1.5" points="127.7727,-306.8851 123.9031,-297.0222 120.7775,-307.1455 127.7727,-306.8851"/>
+<path fill="none" stroke="#000000" stroke-width="1.5" d="M156.8746,-350.8476C147.2103,-345.6861 138.1052,-338.8879 131.8285,-330 127.1799,-323.4174 125.066,-315.1251 124.2764,-307.151"/>
+<polygon fill="#000000" stroke="#000000" stroke-width="1.5" points="127.7691,-306.8851 123.8995,-297.0222 120.7739,-307.1455 127.7691,-306.8851"/>
 </a>
 </g>
 <g id="a_edge2&#45;label"><a xlink:href="#goCheckout" xlink:title="&lt;TABLE&gt;" target="_parent">
 <g id="a_edge2_2"><a xlink:href="#goCheckout" xlink:title="Proceed to checkout (safe)" target="_parent">
-<text text-anchor="start" x="132.1386" y="-318.8" font-family="Times,serif" font-size="13.00" fill="#00a86b">■</text>
-<text text-anchor="start" x="141.8886" y="-318.8" font-family="Times,serif" font-size="13.00" fill="#000000"> Proceed to checkout</text>
+<text text-anchor="start" x="132.135" y="-318.8" font-family="Times,serif" font-size="13.00" fill="#00a86b">■</text>
+<text text-anchor="start" x="141.885" y="-318.8" font-family="Times,serif" font-size="13.00" fill="#000000"> Proceed to checkout</text>
 </a>
 </g>
 </a>
@@ -74,8 +74,8 @@
 <g id="node4" class="node">
 <title>ProductList</title>
 <g id="a_node4"><a xlink:href="#ProductList" xlink:title="Product List" target="_parent">
-<polygon fill="#d3d3d3" stroke="#000000" stroke-width="2" points="163.1592,-123 92.5051,-123 92.5051,-87 163.1592,-87 163.1592,-123"/>
-<text text-anchor="start" x="93.4187" y="-100.8" font-family="Times,serif" font-size="14.00" fill="#000000">Product List</text>
+<polygon fill="#d3d3d3" stroke="#000000" stroke-width="2" points="169.1555,-123 86.5016,-123 86.5016,-87 169.1555,-87 169.1555,-123"/>
+<text text-anchor="middle" x="127.8285" y="-100.8" font-family="Times,serif" font-size="14.00" fill="#000000">Product List</text>
 </a>
 </g>
 </g>
@@ -83,14 +83,14 @@
 <g id="edge3" class="edge goProductList">
 <title>Cart&#45;&gt;ProductList</title>
 <g id="a_edge3"><a xlink:href="#goProductList" xlink:title="&lt;TABLE&gt;" target="_parent">
-<path fill="none" stroke="#000000" stroke-width="1.5" d="M163.0015,-354.5917C114.3334,-338.7332 36.7105,-304.7567 5.8321,-243 -17.7156,-195.9045 39.4983,-152.3021 83.3254,-127.1824"/>
-<polygon fill="#000000" stroke="#000000" stroke-width="1.5" points="85.1302,-130.1835 92.1622,-122.2588 81.7231,-124.0686 85.1302,-130.1835"/>
+<path fill="none" stroke="#000000" stroke-width="1.5" d="M156.8439,-352.5399C108.0165,-335.888 35.4354,-302.2138 5.8285,-243 -17.4516,-196.4396 38.2048,-153.2935 81.8226,-128.0459"/>
+<polygon fill="#000000" stroke="#000000" stroke-width="1.5" points="83.6372,-131.041 90.6364,-123.0873 80.2049,-124.9402 83.6372,-131.041"/>
 </a>
 </g>
 <g id="a_edge3&#45;label"><a xlink:href="#goProductList" xlink:title="&lt;TABLE&gt;" target="_parent">
 <g id="a_edge3_3"><a xlink:href="#goProductList" xlink:title="View product list (safe)" target="_parent">
-<text text-anchor="start" x="5.7117" y="-231.8" font-family="Times,serif" font-size="13.00" fill="#00a86b">■</text>
-<text text-anchor="start" x="15.4617" y="-231.8" font-family="Times,serif" font-size="13.00" fill="#000000"> View product list</text>
+<text text-anchor="start" x="5.7081" y="-231.8" font-family="Times,serif" font-size="13.00" fill="#00a86b">■</text>
+<text text-anchor="start" x="15.4581" y="-231.8" font-family="Times,serif" font-size="13.00" fill="#000000"> View product list</text>
 </a>
 </g>
 </a>
@@ -100,8 +100,8 @@
 <g id="node5" class="node">
 <title>Payment</title>
 <g id="a_node5"><a xlink:href="#Payment" xlink:title="Payment" target="_parent">
-<polygon fill="#d3d3d3" stroke="#000000" stroke-width="2" points="172.3251,-210 79.3391,-210 79.3391,-174 172.3251,-174 172.3251,-210"/>
-<text text-anchor="middle" x="125.8321" y="-187.8" font-family="Times,serif" font-size="14.00" fill="#000000">Payment</text>
+<polygon fill="#d3d3d3" stroke="#000000" stroke-width="2" points="172.3215,-210 79.3355,-210 79.3355,-174 172.3215,-174 172.3215,-210"/>
+<text text-anchor="middle" x="125.8285" y="-187.8" font-family="Times,serif" font-size="14.00" fill="#000000">Payment</text>
 </a>
 </g>
 </g>
@@ -109,14 +109,14 @@
 <g id="edge4" class="edge goPayment">
 <title>Checkout&#45;&gt;Payment</title>
 <g id="a_edge4"><a xlink:href="#goPayment" xlink:title="&lt;TABLE&gt;" target="_parent">
-<path fill="none" stroke="#000000" stroke-width="1.5" d="M125.8321,-260.9735C125.8321,-249.1918 125.8321,-233.5607 125.8321,-220.1581"/>
-<polygon fill="#000000" stroke="#000000" stroke-width="1.5" points="129.3322,-220.0033 125.8321,-210.0034 122.3322,-220.0034 129.3322,-220.0033"/>
+<path fill="none" stroke="#000000" stroke-width="1.5" d="M125.8285,-260.9735C125.8285,-249.1918 125.8285,-233.5607 125.8285,-220.1581"/>
+<polygon fill="#000000" stroke="#000000" stroke-width="1.5" points="129.3286,-220.0033 125.8285,-210.0034 122.3286,-220.0034 129.3286,-220.0033"/>
 </a>
 </g>
 <g id="a_edge4&#45;label"><a xlink:href="#goPayment" xlink:title="&lt;TABLE&gt;" target="_parent">
 <g id="a_edge4_4"><a xlink:href="#goPayment" xlink:title="Proceed to payment (safe)" target="_parent">
-<text text-anchor="start" x="126.2176" y="-231.8" font-family="Times,serif" font-size="13.00" fill="#00a86b">■</text>
-<text text-anchor="start" x="135.9676" y="-231.8" font-family="Times,serif" font-size="13.00" fill="#000000"> Proceed to payment</text>
+<text text-anchor="start" x="126.214" y="-231.8" font-family="Times,serif" font-size="13.00" fill="#00a86b">■</text>
+<text text-anchor="start" x="135.964" y="-231.8" font-family="Times,serif" font-size="13.00" fill="#000000"> Proceed to payment</text>
 </a>
 </g>
 </a>
@@ -126,8 +126,8 @@
 <g id="node3" class="node">
 <title>ProductDetail</title>
 <g id="a_node3"><a xlink:href="#ProductDetail" xlink:title="Product Detail" target="_parent">
-<polygon fill="#d3d3d3" stroke="#000000" stroke-width="2" points="308.5885,-36 225.0758,-36 225.0758,0 308.5885,0 308.5885,-36"/>
-<text text-anchor="start" x="226.2041" y="-13.8" font-family="Times,serif" font-size="14.00" fill="#000000">Product Detail</text>
+<polygon fill="#d3d3d3" stroke="#000000" stroke-width="2" points="314.5849,-36 219.0722,-36 219.0722,0 314.5849,0 314.5849,-36"/>
+<text text-anchor="middle" x="266.8285" y="-13.8" font-family="Times,serif" font-size="14.00" fill="#000000">Product Detail</text>
 </a>
 </g>
 </g>
@@ -135,14 +135,14 @@
 <g id="edge6" class="edge doAddToCart">
 <title>ProductDetail&#45;&gt;Cart</title>
 <g id="a_edge6"><a xlink:href="#doAddToCart" xlink:title="&lt;TABLE&gt;" target="_parent">
-<path fill="none" stroke="#000000" stroke-width="1.5" d="M308.6194,-26.0126C340.4007,-32.7977 380.8136,-43.1317 393.8321,-54 413.2105,-70.1776 418.8321,-79.7565 418.8321,-105 418.8321,-279 418.8321,-279 418.8321,-279 418.8321,-313.9284 319.763,-341.6022 256.4374,-355.7237"/>
-<polygon fill="#000000" stroke="#000000" stroke-width="1.5" points="255.6239,-352.3188 246.6015,-357.8728 257.1182,-359.1574 255.6239,-352.3188"/>
+<path fill="none" stroke="#000000" stroke-width="1.5" d="M314.5014,-27.2891C345.2109,-34.0565 381.6017,-43.7926 393.8285,-54 413.2069,-70.1776 418.8285,-79.7565 418.8285,-105 418.8285,-279 418.8285,-279 418.8285,-279 418.8285,-312.8339 325.8708,-339.8608 262.4878,-354.3565"/>
+<polygon fill="#000000" stroke="#000000" stroke-width="1.5" points="261.5808,-350.9728 252.588,-356.5745 263.1113,-357.8035 261.5808,-350.9728"/>
 </a>
 </g>
 <g id="a_edge6&#45;label"><a xlink:href="#doAddToCart" xlink:title="&lt;TABLE&gt;" target="_parent">
 <g id="a_edge6_5"><a xlink:href="#doAddToCart" xlink:title="Add product to cart (unsafe)" target="_parent">
-<text text-anchor="start" x="418.9566" y="-188.3" font-family="Times,serif" font-size="13.00" fill="#ff4136">■</text>
-<text text-anchor="start" x="428.7066" y="-188.3" font-family="Times,serif" font-size="13.00" fill="#000000"> Add product to cart</text>
+<text text-anchor="start" x="418.953" y="-188.3" font-family="Times,serif" font-size="13.00" fill="#ff4136">■</text>
+<text text-anchor="start" x="428.703" y="-188.3" font-family="Times,serif" font-size="13.00" fill="#000000"> Add product to cart</text>
 </a>
 </g>
 </a>
@@ -152,14 +152,14 @@
 <g id="edge7" class="edge goProductList">
 <title>ProductDetail&#45;&gt;ProductList</title>
 <g id="a_edge7"><a xlink:href="#goProductList" xlink:title="&lt;TABLE&gt;" target="_parent">
-<path fill="none" stroke="#000000" stroke-width="1.5" d="M224.888,-23.3523C188.7961,-28.9121 140.7123,-38.9307 128.8321,-54 123.8762,-60.2863 122.2954,-68.4915 122.3241,-76.477"/>
-<polygon fill="#000000" stroke="#000000" stroke-width="1.5" points="118.8531,-76.9795 123.1405,-86.6681 125.8307,-76.4205 118.8531,-76.9795"/>
+<path fill="none" stroke="#000000" stroke-width="1.5" d="M218.8465,-24.3073C183.6277,-30.0261 140.0572,-39.7571 128.8285,-54 123.8726,-60.2863 122.2918,-68.4915 122.3205,-76.477"/>
+<polygon fill="#000000" stroke="#000000" stroke-width="1.5" points="118.8495,-76.9795 123.1369,-86.6681 125.8271,-76.4205 118.8495,-76.9795"/>
 </a>
 </g>
 <g id="a_edge7&#45;label"><a xlink:href="#goProductList" xlink:title="&lt;TABLE&gt;" target="_parent">
 <g id="a_edge7_6"><a xlink:href="#goProductList" xlink:title="View product list (safe)" target="_parent">
-<text text-anchor="start" x="128.7117" y="-57.8" font-family="Times,serif" font-size="13.00" fill="#00a86b">■</text>
-<text text-anchor="start" x="138.4617" y="-57.8" font-family="Times,serif" font-size="13.00" fill="#000000"> View product list</text>
+<text text-anchor="start" x="128.7081" y="-57.8" font-family="Times,serif" font-size="13.00" fill="#00a86b">■</text>
+<text text-anchor="start" x="138.4581" y="-57.8" font-family="Times,serif" font-size="13.00" fill="#000000"> View product list</text>
 </a>
 </g>
 </a>
@@ -169,14 +169,14 @@
 <g id="edge8" class="edge goCart">
 <title>ProductList&#45;&gt;Cart</title>
 <g id="a_edge8"><a xlink:href="#goCart" xlink:title="&lt;TABLE&gt;" target="_parent">
-<path fill="none" stroke="#000000" stroke-width="1.5" d="M163.2563,-110.656C195.8352,-116.6411 240.7212,-127.1382 251.8321,-141 287.4345,-185.4166 266.0575,-324.202 262.8321,-330 260.4718,-334.2431 257.3815,-338.05 253.8554,-341.4519"/>
-<polygon fill="#000000" stroke="#000000" stroke-width="1.5" points="251.5685,-338.8013 246.0995,-347.8754 256.0336,-344.1924 251.5685,-338.8013"/>
+<path fill="none" stroke="#000000" stroke-width="1.5" d="M169.2335,-111.7806C201.0909,-117.9116 241.3835,-127.969 251.8285,-141 287.4309,-185.4166 266.0538,-324.202 262.8285,-330 260.4682,-334.2431 257.3779,-338.05 253.8517,-341.4519"/>
+<polygon fill="#000000" stroke="#000000" stroke-width="1.5" points="251.5649,-338.8013 246.0958,-347.8754 256.0299,-344.1924 251.5649,-338.8013"/>
 </a>
 </g>
 <g id="a_edge8&#45;label"><a xlink:href="#goCart" xlink:title="&lt;TABLE&gt;" target="_parent">
 <g id="a_edge8_7"><a xlink:href="#goCart" xlink:title="View shopping cart (safe)" target="_parent">
-<text text-anchor="start" x="272.9391" y="-231.8" font-family="Times,serif" font-size="13.00" fill="#00a86b">■</text>
-<text text-anchor="start" x="282.6891" y="-231.8" font-family="Times,serif" font-size="13.00" fill="#000000"> View shopping cart</text>
+<text text-anchor="start" x="272.9355" y="-231.8" font-family="Times,serif" font-size="13.00" fill="#00a86b">■</text>
+<text text-anchor="start" x="282.6855" y="-231.8" font-family="Times,serif" font-size="13.00" fill="#000000"> View shopping cart</text>
 </a>
 </g>
 </a>
@@ -186,14 +186,14 @@
 <g id="edge9" class="edge goProductDetail">
 <title>ProductList&#45;&gt;ProductDetail</title>
 <g id="a_edge9"><a xlink:href="#goProductDetail" xlink:title="&lt;TABLE&gt;" target="_parent">
-<path fill="none" stroke="#000000" stroke-width="1.5" d="M163.2417,-97.5451C193.0427,-90.6635 232.6886,-79.8898 244.8321,-69 251.6433,-62.8921 256.4276,-54.3067 259.7519,-45.919"/>
-<polygon fill="#000000" stroke="#000000" stroke-width="1.5" points="263.1089,-46.9182 263.0176,-36.3237 256.4822,-44.6627 263.1089,-46.9182"/>
+<path fill="none" stroke="#000000" stroke-width="1.5" d="M169.1774,-96.1516C198.0879,-89.2592 233.4761,-79.1804 244.8285,-69 251.6397,-62.8921 256.424,-54.3067 259.7483,-45.919"/>
+<polygon fill="#000000" stroke="#000000" stroke-width="1.5" points="263.1053,-46.9182 263.014,-36.3237 256.4786,-44.6627 263.1053,-46.9182"/>
 </a>
 </g>
 <g id="a_edge9&#45;label"><a xlink:href="#goProductDetail" xlink:title="&lt;TABLE&gt;" target="_parent">
 <g id="a_edge9_8"><a xlink:href="#goProductDetail" xlink:title="View product details (safe)" target="_parent">
-<text text-anchor="start" x="255.691" y="-57.8" font-family="Times,serif" font-size="13.00" fill="#00a86b">■</text>
-<text text-anchor="start" x="265.441" y="-57.8" font-family="Times,serif" font-size="13.00" fill="#000000"> View product details</text>
+<text text-anchor="start" x="255.6874" y="-57.8" font-family="Times,serif" font-size="13.00" fill="#00a86b">■</text>
+<text text-anchor="start" x="265.4374" y="-57.8" font-family="Times,serif" font-size="13.00" fill="#000000"> View product details</text>
 </a>
 </g>
 </a>
@@ -203,14 +203,14 @@
 <g id="edge10" class="edge goProductList">
 <title>ProductList&#45;&gt;ProductList</title>
 <g id="a_edge10"><a xlink:href="#goProductList" xlink:title="&lt;TABLE&gt;" target="_parent">
-<path fill="none" stroke="#000000" stroke-width="1.5" d="M163.2743,-112.8442C173.4213,-112.5366 181.2455,-109.9219 181.2455,-105 181.2455,-101.9238 178.1892,-99.7489 173.4196,-98.4752"/>
-<polygon fill="#000000" stroke="#000000" stroke-width="1.5" points="173.6422,-94.9747 163.2743,-97.1558 172.7394,-101.9162 173.6422,-94.9747"/>
+<path fill="none" stroke="#000000" stroke-width="1.5" d="M169.1995,-112.7669C179.5246,-112.2237 187.2419,-109.6348 187.2419,-105 187.2419,-102.1033 184.2273,-100.0057 179.4456,-98.7073"/>
+<polygon fill="#000000" stroke="#000000" stroke-width="1.5" points="179.5961,-95.1929 169.1995,-97.2331 178.5992,-102.1216 179.5961,-95.1929"/>
 </a>
 </g>
 <g id="a_edge10&#45;label"><a xlink:href="#goProductList" xlink:title="&lt;TABLE&gt;" target="_parent">
 <g id="a_edge10_9"><a xlink:href="#goProductList" xlink:title="View product list (safe)" target="_parent">
-<text text-anchor="start" x="181.1251" y="-101.3" font-family="Times,serif" font-size="13.00" fill="#00a86b">■</text>
-<text text-anchor="start" x="190.8751" y="-101.3" font-family="Times,serif" font-size="13.00" fill="#000000"> View product list</text>
+<text text-anchor="start" x="187.1215" y="-101.3" font-family="Times,serif" font-size="13.00" fill="#00a86b">■</text>
+<text text-anchor="start" x="196.8715" y="-101.3" font-family="Times,serif" font-size="13.00" fill="#000000"> View product list</text>
 </a>
 </g>
 </a>
@@ -220,14 +220,14 @@
 <g id="edge5" class="edge doPayment">
 <title>Payment&#45;&gt;ProductList</title>
 <g id="a_edge5"><a xlink:href="#doPayment" xlink:title="&lt;TABLE&gt;" target="_parent">
-<path fill="none" stroke="#000000" stroke-width="1.5" d="M126.2466,-173.9735C126.5174,-162.1918 126.8767,-146.5607 127.1848,-133.1581"/>
-<polygon fill="#000000" stroke="#000000" stroke-width="1.5" points="130.6874,-133.0812 127.4183,-123.0034 123.6893,-132.9202 130.6874,-133.0812"/>
+<path fill="none" stroke="#000000" stroke-width="1.5" d="M126.2429,-173.9735C126.5138,-162.1918 126.8731,-146.5607 127.1812,-133.1581"/>
+<polygon fill="#000000" stroke="#000000" stroke-width="1.5" points="130.6838,-133.0812 127.4147,-123.0034 123.6857,-132.9202 130.6838,-133.0812"/>
 </a>
 </g>
 <g id="a_edge5&#45;label"><a xlink:href="#doPayment" xlink:title="&lt;TABLE&gt;" target="_parent">
 <g id="a_edge5_10"><a xlink:href="#doPayment" xlink:title="Complete payment (idempotent)" target="_parent">
-<text text-anchor="start" x="127.7214" y="-144.8" font-family="Times,serif" font-size="13.00" fill="#ffdc00">■</text>
-<text text-anchor="start" x="137.4714" y="-144.8" font-family="Times,serif" font-size="13.00" fill="#000000"> Complete payment</text>
+<text text-anchor="start" x="127.7178" y="-144.8" font-family="Times,serif" font-size="13.00" fill="#ffdc00">■</text>
+<text text-anchor="start" x="137.4678" y="-144.8" font-family="Times,serif" font-size="13.00" fill="#000000"> Complete payment</text>
 </a>
 </g>
 </a>

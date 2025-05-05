@@ -111,12 +111,7 @@ EOT;
             return [null, ''];
         }
 
-        $inlineDescriptors = '';
-        foreach ($props as $prop) {
-            $inlineDescriptors .= sprintf('(%s)<br />', $prop);
-        }
-
-        return [$descriptor->id, $this->template($descriptor, $inlineDescriptors, $labelName)];
+        return [$descriptor->id, $this->template($descriptor, $labelName)];
     }
 
     /**
@@ -131,9 +126,10 @@ EOT;
         foreach ($descriptor->descriptor as $item) {
             if ($this->isSemanticHref($item, $descriptors)) {
                 assert(is_string($item->href));
-                $descriptor =  $this->getHref($item->href, $descriptors);
-                assert($descriptor instanceof SemanticDescriptor);
-                $props[] = $labelName->getNodeLabel($descriptor);
+                $descriptor = $this->getHref($item->href, $descriptors);
+                if ($descriptor instanceof SemanticDescriptor) {
+                    $props[] = $labelName->getNodeLabel($descriptor);
+                }
             }
 
             $isSemantic = isset($item->type) && $item->type === 'semantic';
@@ -179,15 +175,16 @@ EOT;
         return $descriptor instanceof SemanticDescriptor;
     }
 
-    private function template(AbstractDescriptor $descriptor, string $props, LabelNameInterface $labelName): string
+    private function template(AbstractDescriptor $descriptor, LabelNameInterface $labelName): string
     {
         $base = <<<'EOT'
-    %s [margin=0.02, label=<<table cellspacing="0" cellpadding="5" border="0"><tr><td>%s<br />%s</td></tr></table>>,shape=box URL="%s" target="_parent"
+    %s [margin=0.1, label="%s", shape=box, URL="%s" target="_parent"
 EOT;
 
         $url = sprintf('#%s', $descriptor->id);
         assert($descriptor instanceof SemanticDescriptor);
 
-        return sprintf($base . ']' . PHP_EOL, $descriptor->id, $labelName->getNodeLabel($descriptor), $props, $url);
+    // Pass node ID, label, and URL to sprintf.
+        return sprintf($base . ']' . PHP_EOL, $descriptor->id, $labelName->getNodeLabel($descriptor), $url);
     }
 }
