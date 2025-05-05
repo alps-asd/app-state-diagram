@@ -33,7 +33,8 @@ By focusing on these IA principles, app-state-diagram helps create a shared unde
 ## Quick Start
 
 ### Online Editor (No Installation)
-* [https://editor.app-state-diagram.com/](https://editor.app-state-diagram.com/)
+
+- [https://editor.app-state-diagram.com/](https://editor.app-state-diagram.com/)
 
 ### Install with Homebrew
 ```bash
