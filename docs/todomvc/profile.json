@@ -8,7 +8,7 @@
     "descriptor":[
       {"id":"id", "type":"semantic", "def":"http://schema.org/identifier"},
       {"id":"title", "type":"semantic", "def":"http://schema.org/title"},
-      {"id":"completed", "type":"semantic", "def":"http://mamund.site44.com/alps/def/completed.txt"},
+      {"id":"completed", "type":"semantic", "def":"https://mamund.site44.com/alps/def/completed.txt"},
 
       {"id":"Home", "type":"semantic", "descriptor": [
         {"href":"#listAll"},
@@ -31,13 +31,13 @@
         {"href":"#read"},
         {"href":"#add"},
         {"href":"#listAll"},
-        {"href":"#listActive"}, 
+        {"href":"#listActive"},
         {"href":"#listCompleted"},
         {"href":"#goFirst"},
-        {"href":"#goNext"}, 
+        {"href":"#goNext"},
         {"href":"#goPrevious"},
         {"href":"#goLast"},
-        {"href":"#goHome"}, 
+        {"href":"#goHome"},
         {"href":"#goRelated"}
       ]
       },
@@ -49,7 +49,7 @@
         {"href":"#edit"},
         {"href":"#remove"},
         {"href":"#markCompleted"},
-        {"href":"#clearCompleted"}, 
+        {"href":"#clearCompleted"},
         {"href":"#goRelated"}
       ]},
 
@@ -64,12 +64,12 @@
       {"id":"listCompleted", "type":"safe", "rt":"#TodoList"},
       {"id":"read", "type":"safe", "rt":"#TodoItem", "descriptor": [{"href":"#id"}]},
       {"id":"add", "type":"unsafe", "rt":"#TodoItem", "descriptor": [
-        {"href":"#title"}, 
+        {"href":"#title"},
         {"href":"#completed"}
       ]},
       {"id":"edit", "type":"idempotent", "rt":"#TodoItem", "descriptor": [
         {"href":"#id"},
-        {"href":"#title"}, 
+        {"href":"#title"},
         {"href":"#completed"}
       ]},
       {"id":"remove", "type":"idempotent", "rt":"#TodoList", "descriptor": [
