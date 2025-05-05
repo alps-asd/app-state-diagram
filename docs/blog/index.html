@@ -288,7 +288,7 @@
     .meta-item {
         display: flex;
         align-items: center;
-        line-height: 1.0;
+        line-height: normal;
     }
     
     .meta-label {
@@ -479,23 +479,36 @@ const setupTagClick = () => {
     });
 }
 const setupDocClick = () => {
+    // Define constants for better maintainability
+    const MAX_LENGTH = 140;
+    const TRUNCATE_LENGTH = 70;
     document.querySelectorAll('.doc-tag').forEach(el => {
         const full = el.dataset.full;
-        if (!full || full.length <= 140) {
-            return;
-        }
-
-        const short = full.slice(0, 70) + '...';
+        if (!full || full.length <= MAX_LENGTH) return;
+        const short = full.slice(0, TRUNCATE_LENGTH) + '...';
         el.innerText = short;
         el.classList.add('expandable');
-
-        el.addEventListener('click', () => {
+        el.classList.add('clickable');
+        // Make element keyboard accessible
+        el.setAttribute('tabindex', '0');
+        el.setAttribute('role', 'button');
+        el.setAttribute('aria-expanded', 'false');
+        el.setAttribute('aria-label', 'Expand to read more');
+        const toggleExpansion = () => {
             const expanded = el.classList.toggle('expanded');
             el.innerText = expanded ? full : short;
+            el.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+            el.setAttribute('aria-label', expanded ? 'Collapse text' : 'Expand to read more');
+        };
+        el.addEventListener('click', toggleExpansion);
+        el.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                toggleExpansion();
+            }
         });
     });
 };
-
 
 </script></head>
 <body>
@@ -596,14 +609,14 @@ const setupDocClick = () => {
   <td align="left"><a id="Blog"></a><a href="#Blog">Blog</a></td>
   <td align="left"><span style="white-space: normal;">Blog Post List</span></td>
   <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#BlogPosting">BlogPosting</a><br><span class="type-indicator-small safe" title="Safe"></span><a href="#goAbout">goAbout</a><br><span class="type-indicator-small safe" title="Safe"></span><a href="#goBlogPosting">goBlogPosting</a><br><span class="type-indicator-small unsafe" title="Unsafe"></span><a href="#doPost">doPost</a></td>
-  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">def:</span><span class="meta-tag def-tag"><a href="https://schema.org/Blog" target="_blank">schema.org/Blog</a></span></span><br><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-collection">collection</a></span></span></span></span></span></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">def:</span><span class="meta-tag def-tag"><a href="https://schema.org/Blog" target="_blank">schema.org/Blog</a></span></span><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-collection">collection</a></span></span></span></span></span></td>
 </tr>
 <tr>
   <td align="center">semantic</td>
   <td align="left"><a id="BlogPosting"></a><a href="#BlogPosting">BlogPosting</a></td>
   <td align="left"><span style="white-space: normal;">Blog Post</span></td>
   <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#id">id</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#dateCreated">dateCreated</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#articleBody">articleBody</a><br><span class="type-indicator-small safe" title="Safe"></span><a href="#goBlog">goBlog</a></td>
-  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">def:</span><span class="meta-tag def-tag"><a href="https://schema.org/BlogPosting" target="_blank">schema.org/BlogPosting</a></span></span><br><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-item">item</a></span></span></span></span></span></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">def:</span><span class="meta-tag def-tag"><a href="https://schema.org/BlogPosting" target="_blank">schema.org/BlogPosting</a></span></span><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-item">item</a></span></span></span></span></span></td>
 </tr>
 <tr>
   <td align="center">semantic</td>
@@ -617,7 +630,7 @@ const setupDocClick = () => {
   <td align="left"><a id="doPost"></a><a href="#doPost">doPost</a></td>
   <td align="left"><span style="white-space: normal;">Post the article</span></td>
   <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#articleBody">articleBody</a></td>
-  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">def:</span><span class="meta-tag def-tag"><a href="https://activitystrea.ms/specs/json/1.0/#post-verb" target="_blank">activitystrea.ms/specs/json...</a></span></span><br><span class="meta-item"><span class="meta-label">rel:</span><span class="meta-tag rel-tag">collection</span></span><br><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#Blog">Blog</a></span></span></span></span></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">def:</span><span class="meta-tag def-tag"><a href="https://activitystrea.ms/specs/json/1.0/#post-verb" target="_blank">activitystrea.ms/specs/json...</a></span></span><span class="meta-item"><span class="meta-label">rel:</span><span class="meta-tag rel-tag">collection</span></span><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#Blog">Blog</a></span></span></span></span></td>
 </tr>
 <tr>
   <td align="center">safe</td>
@@ -631,21 +644,21 @@ const setupDocClick = () => {
   <td align="left"><a id="goBlog"></a><a href="#goBlog">goBlog</a></td>
   <td align="left"><span style="white-space: normal;">See the blog post list</span></td>
   <td align="left"></td>
-  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rel:</span><span class="meta-tag rel-tag">collection</span></span><br><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#Blog">Blog</a></span></span></span></span></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rel:</span><span class="meta-tag rel-tag">collection</span></span><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#Blog">Blog</a></span></span></span></span></td>
 </tr>
 <tr>
   <td align="center">safe</td>
   <td align="left"><a id="goBlogPosting"></a><a href="#goBlogPosting">goBlogPosting</a></td>
   <td align="left"><span style="white-space: normal;">See the blog post</span></td>
   <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#id">id</a></td>
-  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rel:</span><span class="meta-tag rel-tag">item</span></span><br><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#BlogPosting">BlogPosting</a></span></span></span></span></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rel:</span><span class="meta-tag rel-tag">item</span></span><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#BlogPosting">BlogPosting</a></span></span></span></span></td>
 </tr>
 <tr>
   <td align="center">safe</td>
   <td align="left"><a id="goStart"></a><a href="#goStart">goStart</a></td>
   <td align="left"><span style="white-space: normal;">Go to Home</span></td>
   <td align="left"></td>
-  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rel:</span><span class="meta-tag rel-tag">collection</span></span><br><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#Blog">Blog</a></span></span></span></span></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rel:</span><span class="meta-tag rel-tag">collection</span></span><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#Blog">Blog</a></span></span></span></span></td>
 </tr>
 <tr>
   <td align="center">semantic</td>

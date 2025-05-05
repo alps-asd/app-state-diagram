@@ -288,7 +288,7 @@
     .meta-item {
         display: flex;
         align-items: center;
-        line-height: 1.0;
+        line-height: normal;
     }
     
     .meta-label {
@@ -479,23 +479,36 @@ const setupTagClick = () => {
     });
 }
 const setupDocClick = () => {
+    // Define constants for better maintainability
+    const MAX_LENGTH = 140;
+    const TRUNCATE_LENGTH = 70;
     document.querySelectorAll('.doc-tag').forEach(el => {
         const full = el.dataset.full;
-        if (!full || full.length <= 140) {
-            return;
-        }
-
-        const short = full.slice(0, 70) + '...';
+        if (!full || full.length <= MAX_LENGTH) return;
+        const short = full.slice(0, TRUNCATE_LENGTH) + '...';
         el.innerText = short;
         el.classList.add('expandable');
-
-        el.addEventListener('click', () => {
+        el.classList.add('clickable');
+        // Make element keyboard accessible
+        el.setAttribute('tabindex', '0');
+        el.setAttribute('role', 'button');
+        el.setAttribute('aria-expanded', 'false');
+        el.setAttribute('aria-label', 'Expand to read more');
+        const toggleExpansion = () => {
             const expanded = el.classList.toggle('expanded');
             el.innerText = expanded ? full : short;
+            el.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+            el.setAttribute('aria-label', expanded ? 'Collapse text' : 'Expand to read more');
+        };
+        el.addEventListener('click', toggleExpansion);
+        el.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                toggleExpansion();
+            }
         });
     });
 };
-
 
 </script></head>
 <body>
@@ -589,14 +602,14 @@ const setupDocClick = () => {
   <td align="left"><a id="Cart"></a><a href="#Cart">Cart</a></td>
   <td align="left"><span style="white-space: normal;">Shopping Cart</span></td>
   <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#id">id</a><br><span class="type-indicator-small safe" title="Safe"></span><a href="#goProductList">goProductList</a><br><span class="type-indicator-small safe" title="Safe"></span><a href="#goCheckout">goCheckout</a><br><span class="type-indicator-small idempotent" title="Idempotent"></span><a href="#doUpdateQuantity">doUpdateQuantity</a><br><span class="type-indicator-small idempotent" title="Idempotent"></span><a href="#doRemoveItem">doRemoveItem</a></td>
-  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">def:</span><span class="meta-tag def-tag"><a href="https://schema.org/Cart" target="_blank">schema.org/Cart</a></span></span><br><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-collection">collection</a></span></span></span><br><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">Displays the user&#039;s shopping cart, allowing updates or checkout initiation.</span></span></span></span></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">def:</span><span class="meta-tag def-tag"><a href="https://schema.org/Cart" target="_blank">schema.org/Cart</a></span></span><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-collection">collection</a></span></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">Displays the user&#039;s shopping cart, allowing updates or checkout initiation.</span></span></span></span></td>
 </tr>
 <tr>
   <td align="center">semantic</td>
   <td align="left"><a id="Checkout"></a><a href="#Checkout">Checkout</a></td>
   <td align="left"><span style="white-space: normal;">Checkout</span></td>
   <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#email">email</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#address">address</a><br><span class="type-indicator-small safe" title="Safe"></span><a href="#goPayment">goPayment</a></td>
-  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-collection">collection</a></span></span></span><br><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">Captures user information and prepares for payment after shopping is complete.</span></span></span></span></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-collection">collection</a></span></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">Captures user information and prepares for payment after shopping is complete.</span></span></span></span></td>
 </tr>
 <tr>
   <td align="center">semantic</td>
@@ -610,28 +623,28 @@ const setupDocClick = () => {
   <td align="left"><a id="doAddToCart"></a><a href="#doAddToCart">doAddToCart</a></td>
   <td align="left"><span style="white-space: normal;">Add product to cart</span></td>
   <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#id">id</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#quantity">quantity</a></td>
-  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#Cart">Cart</a></span></span><br><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">Adds selected product and quantity to the shopping cart.</span></span></span></span></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#Cart">Cart</a></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">Adds selected product and quantity to the shopping cart.</span></span></span></span></td>
 </tr>
 <tr>
   <td align="center">idempotent</td>
   <td align="left"><a id="doPayment"></a><a href="#doPayment">doPayment</a></td>
   <td align="left"><span style="white-space: normal;">Complete payment</span></td>
   <td align="left"></td>
-  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#ProductList">ProductList</a></span></span><br><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">Processes the final payment and returns user to the product list.</span></span></span></span></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#ProductList">ProductList</a></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">Processes the final payment and returns user to the product list.</span></span></span></span></td>
 </tr>
 <tr>
   <td align="center">idempotent</td>
   <td align="left"><a id="doRemoveItem"></a><a href="#doRemoveItem">doRemoveItem</a></td>
   <td align="left"><span style="white-space: normal;">Remove item from cart</span></td>
   <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#id">id</a></td>
-  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#Cart">Cart</a></span></span><br><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">Removes a specific product from the shopping cart.</span></span></span></span></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#Cart">Cart</a></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">Removes a specific product from the shopping cart.</span></span></span></span></td>
 </tr>
 <tr>
   <td align="center">idempotent</td>
   <td align="left"><a id="doUpdateQuantity"></a><a href="#doUpdateQuantity">doUpdateQuantity</a></td>
   <td align="left"><span style="white-space: normal;">Update item quantity</span></td>
   <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#id">id</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#quantity">quantity</a></td>
-  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#Cart">Cart</a></span></span><br><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">Updates the quantity of a product already in the cart.</span></span></span></span></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#Cart">Cart</a></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">Updates the quantity of a product already in the cart.</span></span></span></span></td>
 </tr>
 <tr>
   <td align="center">semantic</td>
@@ -645,35 +658,35 @@ const setupDocClick = () => {
   <td align="left"><a id="goCart"></a><a href="#goCart">goCart</a></td>
   <td align="left"><span style="white-space: normal;">View shopping cart</span></td>
   <td align="left"></td>
-  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#Cart">Cart</a></span></span><br><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">Displays the current items in the user&#039;s shopping cart.</span></span></span></span></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#Cart">Cart</a></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">Displays the current items in the user&#039;s shopping cart.</span></span></span></span></td>
 </tr>
 <tr>
   <td align="center">safe</td>
   <td align="left"><a id="goCheckout"></a><a href="#goCheckout">goCheckout</a></td>
   <td align="left"><span style="white-space: normal;">Proceed to checkout</span></td>
   <td align="left"></td>
-  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#Checkout">Checkout</a></span></span><br><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">Initiates the checkout process after confirming cart items.</span></span></span></span></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#Checkout">Checkout</a></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">Initiates the checkout process after confirming cart items.</span></span></span></span></td>
 </tr>
 <tr>
   <td align="center">safe</td>
   <td align="left"><a id="goPayment"></a><a href="#goPayment">goPayment</a></td>
   <td align="left"><span style="white-space: normal;">Proceed to payment</span></td>
   <td align="left"></td>
-  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#Payment">Payment</a></span></span><br><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">Redirects user to the payment screen after entering delivery details.</span></span></span></span></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#Payment">Payment</a></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">Redirects user to the payment screen after entering delivery details.</span></span></span></span></td>
 </tr>
 <tr>
   <td align="center">safe</td>
   <td align="left"><a id="goProductDetail"></a><a href="#goProductDetail">goProductDetail</a></td>
   <td align="left"><span style="white-space: normal;">View product details</span></td>
   <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#id">id</a></td>
-  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#ProductDetail">ProductDetail</a></span></span><br><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">Returns detailed view of a selected product.</span></span></span></span></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#ProductDetail">ProductDetail</a></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">Returns detailed view of a selected product.</span></span></span></span></td>
 </tr>
 <tr>
   <td align="center">safe</td>
   <td align="left"><a id="goProductList"></a><a href="#goProductList">goProductList</a></td>
   <td align="left"><span style="white-space: normal;">View product list</span></td>
   <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#id">id</a></td>
-  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#ProductList">ProductList</a></span></span><br><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">Returns the list of all available products.</span></span></span></span></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#ProductList">ProductList</a></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">Returns the list of all available products.</span></span></span></span></td>
 </tr>
 <tr>
   <td align="center">semantic</td>
@@ -694,7 +707,7 @@ const setupDocClick = () => {
   <td align="left"><a id="Payment"></a><a href="#Payment">Payment</a></td>
   <td align="left"><span style="white-space: normal;">Payment</span></td>
   <td align="left"><span class="type-indicator-small idempotent" title="Idempotent"></span><a href="#doPayment">doPayment</a></td>
-  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">def:</span><span class="meta-tag def-tag"><a href="https://schema.org/PayAction" target="_blank">schema.org/PayAction</a></span></span><br><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-item">item</a></span></span></span><br><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">Handles the final payment process for the placed order.</span></span></span></span></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">def:</span><span class="meta-tag def-tag"><a href="https://schema.org/PayAction" target="_blank">schema.org/PayAction</a></span></span><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-item">item</a></span></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">Handles the final payment process for the placed order.</span></span></span></span></td>
 </tr>
 <tr>
   <td align="center">semantic</td>
@@ -708,14 +721,14 @@ const setupDocClick = () => {
   <td align="left"><a id="ProductDetail"></a><a href="#ProductDetail">ProductDetail</a></td>
   <td align="left"><span style="white-space: normal;">Product Detail</span></td>
   <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#id">id</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#name">name</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#description">description</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#price">price</a><br><span class="type-indicator-small safe" title="Safe"></span><a href="#goProductList">goProductList</a><br><span class="type-indicator-small unsafe" title="Unsafe"></span><a href="#doAddToCart">doAddToCart</a></td>
-  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">def:</span><span class="meta-tag def-tag"><a href="https://schema.org/Product" target="_blank">schema.org/Product</a></span></span><br><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-item">item</a></span></span></span><br><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">Shows detailed information about a single product, such as description and price.</span></span></span></span></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">def:</span><span class="meta-tag def-tag"><a href="https://schema.org/Product" target="_blank">schema.org/Product</a></span></span><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-item">item</a></span></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">Shows detailed information about a single product, such as description and price.</span></span></span></span></td>
 </tr>
 <tr>
   <td align="center">semantic</td>
   <td align="left"><a id="ProductList"></a><a href="#ProductList">ProductList</a></td>
   <td align="left"><span style="white-space: normal;">Product List</span></td>
   <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#id">id</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#name">name</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#description">description</a><br><span class="type-indicator-small safe" title="Safe"></span><a href="#goProductDetail">goProductDetail</a><br><span class="type-indicator-small safe" title="Safe"></span><a href="#goCart">goCart</a><br><span class="type-indicator-small safe" title="Safe"></span><a href="#goProductList">goProductList</a></td>
-  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">def:</span><span class="meta-tag def-tag"><a href="https://schema.org/ItemList" target="_blank">schema.org/ItemList</a></span></span><br><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-collection">collection</a></span></span></span><br><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">Displays a list of available products that the user can browse or select from.</span></span></span></span></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">def:</span><span class="meta-tag def-tag"><a href="https://schema.org/ItemList" target="_blank">schema.org/ItemList</a></span></span><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-collection">collection</a></span></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">Displays a list of available products that the user can browse or select from.</span></span></span></span></td>
 </tr>
 <tr>
   <td align="center">semantic</td>
