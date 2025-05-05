@@ -50,7 +50,7 @@ asd --watch path/to/your/profile.json
 
 See these live demos:
 
-- [Mini-Commerce](https://www.app-state-diagram.com/app-state-diagram/mini-commerce/)
+- [Book Store](https://www.app-state-diagram.com/app-state-diagram/bookstore/)
 - [LMS](https://www.app-state-diagram.com/app-state-diagram/lms/)
 
 ## Documentation

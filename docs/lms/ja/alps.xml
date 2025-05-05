@@ -1,0 +1,1350 @@
+<alps version="1.0"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="https://alps-io.github.io/schemas/alps.xsd">
+    <title>学習管理システム (LMS)</title>
+    <doc>エンタープライズ級の学習管理システムの完全なセマンティック語彙とインタラクションモデルを定義する包括的なALPS（Application-Level Profile Semantics）プロファイルです。この仕様は、ユーザー管理（学生、講師、管理者）、コース作成と配信、コンテンツ管理、評価、採点、コミュニケーションツール、コラボレーション機能、分析、アクセシビリティを含むオンライン教育のあらゆる側面をカバーしています。プロファイルは、教育技術プラットフォーム間での標準化された実装と相互運用性をサポートするために、セマンティック記述子、状態遷移、ナビゲーションパターンに整理されています。</doc>
+    <!-- セクション 1: セマンティック定義 (オントロジー) -->
+
+    <!-- コアユーザータイプ -->
+    <descriptor id="user" title="ユーザー" def="https://schema.org/Person" tag="コアユーザー">
+        <doc>学習管理システムと対話する人物を表します。ユーザーは学生、講師、管理者などの異なる役割を持つことができます。各ユーザーは一意の識別子、個人情報、システム設定を持ちます。</doc>
+        <descriptor id="userId" title="ユーザー識別子" def="https://schema.org/identifier" tag="コアユーザー">
+            <doc>ユーザーの一意な識別子で、通常はデータベースの主キーとして機能する英数字の文字列です。</doc>
+        </descriptor>
+        <descriptor id="userName" title="ユーザー名" def="https://schema.org/name" tag="コアユーザー">
+            <doc>ユーザーの氏名で、通常は名と姓で構成されます。システム全体で表示目的に使用されます。</doc>
+        </descriptor>
+        <descriptor id="userEmail" title="ユーザーメールアドレス" def="https://schema.org/email" tag="コアユーザー 連絡先">
+            <doc>ユーザーアカウントに関連付けられたメールアドレスです。システム通知、パスワード回復、およびログイン時のユーザー名として使用されます。</doc>
+        </descriptor>
+        <descriptor id="userPassword" title="ユーザーパスワード" tag="コアユーザー セキュリティ">
+            <doc>ユーザー認証用のパスワードです。強力な暗号化アルゴリズムを使用して保存し、複雑性の要件を満たす必要があります。</doc>
+        </descriptor>
+        <descriptor id="userRole" title="ユーザー役割" tag="コアユーザー 認可">
+            <doc>システム内でのユーザーの権限とアクセスレベルを定義します。一般的な役割には、学生、講師、管理者が含まれます。</doc>
+        </descriptor>
+        <descriptor id="userPreferences" title="ユーザー設定" tag="コアユーザー パーソナライズ">
+            <doc>インターフェース設定、通知設定、アクセシビリティオプションなど、ユーザーエクスペリエンスをカスタマイズするユーザー固有の設定です。</doc>
+        </descriptor>
+    </descriptor>
+
+    <descriptor id="student" title="学生" tag="ユーザー 教育" doc="コースに登録し、コンテンツにアクセスし、課題を提出する個人。コースに登録し、課題を完了し、ディスカッションに参加し、成績を受け取る教育コンテンツの主要な消費者。">
+        <descriptor id="enrolledCourses" title="登録済みコース" tag="教育 登録">
+            <doc>学生が現在登録しているコースのコレクションです。アクティブ、完了、および今後のコースが含まれます。</doc>
+        </descriptor>
+        <descriptor id="progress" title="学習進捗" tag="教育 追跡">
+            <doc>コンテンツ項目、モジュール、評価の完了状況を含む、学生の教材の進捗を追跡する指標とインジケーターです。</doc>
+        </descriptor>
+        <descriptor id="grades" title="学生の成績" tag="教育 評価">
+            <doc>登録されているすべてのコースにわたる課題、クイズ、試験、参加に対して学生が受け取った評価スコアのコレクションです。</doc>
+        </descriptor>
+    </descriptor>
+
+    <descriptor id="instructor" title="講師" tag="ユーザー 教育 指導" doc="コースを作成および管理し、学生の進捗を評価する教育者。コースコンテンツの開発、評価の設計、ディスカッションの促進、学生のパフォーマンス評価を担当します。">
+        <descriptor id="taughtCourses" title="担当コース" tag="教育 指導">
+            <doc>講師が作成または担当したコースのコレクションで、現在、過去、および計画中のコースが含まれます。</doc>
+        </descriptor>
+        <descriptor id="instructorExpertise" title="専門分野" tag="教育 指導">
+            <doc>講師が専門とする主題分野および学問分野で、講師の検索やコースの分類に使用されます。</doc>
+        </descriptor>
+    </descriptor>
+
+    <descriptor id="administrator" title="管理者" tag="ユーザー 管理者" doc="システム全体を監督し、ユーザーアカウントとコースカタログを管理する人物。システム設定の構成、ユーザー管理、および機関レポートの生成のための昇格された権限を持ちます。">
+        <descriptor id="adminPermissions" title="管理権限" tag="管理者 セキュリティ">
+            <doc>管理者に割り当てられた特定のシステム機能で、ユーザー管理、コース承認、分析アクセス、およびシステム構成オプションが含まれる場合があります。</doc>
+        </descriptor>
+    </descriptor>
+
+    <!-- コース関連 -->
+    <descriptor id="course" title="コース" def="https://schema.org/Course" tag="教育 コンテンツ">
+        <doc>LMS内の主要な教育単位。定義された学習目標、コンテンツモジュール、評価、およびタイムラインを持つ構造化された教育体験です。コースは講師によって作成され、学生によって受講されます。</doc>
+        <descriptor id="courseId" title="コース識別子" def="https://schema.org/identifier" tag="教育 コア">
+            <doc>コースの一意な識別子で、システム全体で参照キーとして使用されます。</doc>
+        </descriptor>
+        <descriptor id="courseTitle" title="コースタイトル" def="https://schema.org/name" tag="教育 コンテンツ">
+            <doc>カタログや登録ユーザーに表示されるコースの名前です。説明的で具体的である必要があります。</doc>
+        </descriptor>
+        <descriptor id="courseDescription" title="コース説明" def="https://schema.org/description" tag="教育 コンテンツ">
+            <doc>コースの内容、学習目標、および期待される成果の詳細な説明です。コースの発見および選択中に潜在的な学生に表示されます。</doc>
+        </descriptor>
+        <descriptor id="courseCategory" title="コースカテゴリ" def="https://schema.org/courseCategory" tag="教育 分類">
+            <doc>コースが属する主題カテゴリまたは学問分野で、コースカタログ内の整理と発見に使用されます。</doc>
+        </descriptor>
+        <descriptor id="startDate" title="開始日" def="https://schema.org/startDate" tag="教育 スケジュール">
+            <doc>登録済みの学生がコースを利用可能になる日付で、学習期間の始まりを示します。</doc>
+        </descriptor>
+        <descriptor id="endDate" title="終了日" def="https://schema.org/endDate" tag="教育 スケジュール">
+            <doc>コースが閉鎖される日付で、これ以降は新しい提出が受け付けられなかったり、コースコンテンツがアクセス不能になる場合があります。</doc>
+        </descriptor>
+        <descriptor id="enrollmentCapacity" title="登録定員" def="https://schema.org/maximumEnrollment" tag="教育 管理">
+            <doc>コースに登録できる学生の最大数です。クラスサイズとリソース割り当ての管理に使用されます。</doc>
+        </descriptor>
+        <descriptor id="difficultyLevel" title="難易度" tag="教育 コンテンツ">
+            <doc>コースの複雑さと必要な事前知識を示す指標で、入門、中級、上級、専門家などがあります。</doc>
+        </descriptor>
+        <descriptor id="courseStatus" title="コースステータス" tag="教育 管理">
+            <doc>ライフサイクルにおけるコースの現在の状態。下書き、公開済み、進行中、完了、アーカイブなどが含まれる場合があります。</doc>
+        </descriptor>
+        <descriptor id="prerequisites" title="前提条件" tag="教育 コンテンツ">
+            <doc>このコースに登録する前に学生が完了すべき他のコースや資格で、適切な準備を保証します。</doc>
+        </descriptor>
+    </descriptor>
+
+    <descriptor id="module" title="コースモジュール" tag="教育 コンテンツ 構造" doc="コンテンツを論理的な順序で整理するためのコースのセクション。関連するコンテンツ項目、アクティビティ、評価をまとまりのある学習シーケンスにグループ化するコース内のテーマ別ユニット。">
+        <descriptor id="moduleId" title="モジュール識別子" tag="教育 コア">
+            <doc>モジュールの一意な識別子で、システム内での参照や完了状況の追跡に使用されます。</doc>
+        </descriptor>
+        <descriptor id="moduleTitle" title="モジュールタイトル" def="https://schema.org/name" tag="教育 コンテンツ">
+            <doc>ユーザーに表示されるモジュールの名前で、カバーされる主題やテーマを示します。</doc>
+        </descriptor>
+        <descriptor id="moduleDescription" title="モジュール説明" def="https://schema.org/description" tag="教育 コンテンツ">
+            <doc>モジュールの学習目標、内容、アクティビティの概要で、学生がその目的と構造を理解するのに役立ちます。</doc>
+        </descriptor>
+        <descriptor id="moduleOrder" title="モジュール順序" tag="教育 構造">
+            <doc>コース構造内でのモジュールの位置を決定するシーケンス番号で、推奨される学習パスを定義します。</doc>
+        </descriptor>
+    </descriptor>
+
+    <descriptor id="content" title="コースコンテンツ" tag="教育 コンテンツ メディア" doc="様々な形式の教材。テキスト、マルチメディア、インタラクティブなアクティビティ、ダウンロード可能なファイルなど、指導に使用される教育リソース。">
+        <descriptor id="contentId" title="コンテンツ識別子" tag="教育 コア">
+            <doc>コンテンツ項目の一意な識別子で、システム内での参照と追跡に使用されます。</doc>
+        </descriptor>
+        <descriptor id="contentTitle" title="コンテンツタイトル" def="https://schema.org/name" tag="教育 コンテンツ">
+            <doc>ユーザーに表示されるコンテンツ項目の名前で、その主題や目的を示します。</doc>
+        </descriptor>
+        <descriptor id="contentDescription" title="コンテンツ説明" def="https://schema.org/description" tag="教育 コンテンツ">
+            <doc>コンテンツの目的、形式、学習目標の概要で、学生がその関連性を理解するのに役立ちます。</doc>
+        </descriptor>
+        <descriptor id="contentType" title="コンテンツタイプ" tag="教育 メディア">
+            <doc>テキスト、ビデオ、オーディオ、プレゼンテーション、インタラクティブシミュレーション、ダウンロード可能なファイルなど、コンテンツの形式。</doc>
+        </descriptor>
+        <descriptor id="contentData" title="コンテンツデータ" tag="教育 メディア">
+            <doc>実際のコンテンツ素材で、システム内に埋め込まれているか、外部ソースからリンクされている場合があります。</doc>
+        </descriptor>
+        <descriptor id="contentStatus" title="コンテンツステータス" tag="教育 ワークフロー" doc="下書きまたは公開済み">
+            <doc>コンテンツ項目の現在の状態を示し、開発中（下書き）か、学生が利用可能（公開済み）かを示します。</doc>
+        </descriptor>
+        <descriptor id="contentAccessibility" title="コンテンツアクセシビリティ機能" tag="教育 アクセシビリティ">
+            <doc>代替テキスト、キャプション、スクリーンリーダー互換性など、障害のある学生がコンテンツを利用できるようにするための配慮と設計要素です。</doc>
+        </descriptor>
+    </descriptor>
+
+    <!-- 評価関連 -->
+    <descriptor id="assignment" title="課題" tag="教育 評価" doc="学習を評価するために学生に割り当てられたタスク。コース目標に関連する知識、スキル、またはコンピテンシーを学生が示す必要がある評価アクティビティ。">
+        <descriptor id="assignmentId" title="課題識別子" tag="教育 コア">
+            <doc>課題の一意な識別子で、システム内での参照と追跡に使用されます。</doc>
+        </descriptor>
+        <descriptor id="assignmentTitle" title="課題タイトル" def="https://schema.org/name" tag="教育 評価">
+            <doc>ユーザーに表示される課題の名前で、その主題や目的を示します。</doc>
+        </descriptor>
+        <descriptor id="assignmentDescription" title="課題説明" def="https://schema.org/description" tag="教育 評価">
+            <doc>要件、形式、評価基準を含む、課題を完了するための詳細な指示です。</doc>
+        </descriptor>
+        <descriptor id="assignmentType" title="課題タイプ" tag="教育 評価">
+            <doc>エッセイ、クイズ、試験、プロジェクト、ディスカッション、実践演習など、評価のカテゴリです。</doc>
+        </descriptor>
+        <descriptor id="dueDate" title="提出期限" def="https://schema.org/endDate" tag="教育 スケジュール">
+            <doc>学生が課題を提出しなければならない締め切り日。これ以降は遅延ペナルティが適用されたり、提出が拒否される場合があります。</doc>
+        </descriptor>
+        <descriptor id="maxScore" title="最高点" tag="教育 評価">
+            <doc>課題で獲得できる最高点または最高評価で、採点尺度を設定します。</doc>
+        </descriptor>
+        <descriptor id="weightage" title="総合評価における重み" tag="教育 評価">
+            <doc>この課題によって決定される最終コース評価の割合または比率です。</doc>
+        </descriptor>
+    </descriptor>
+
+    <descriptor id="submission" title="課題提出物" tag="教育 評価 学生" doc="課題に対する学生の回答。課題の要件を満たすために学生が提供した成果物で、テキスト、ファイル、またはその他のデジタルアーティファクトが含まれる場合があります。">
+        <descriptor id="submissionId" title="提出物識別子" tag="教育 コア">
+            <doc>提出物の一意な識別子で、システム内での参照と追跡に使用されます。</doc>
+        </descriptor>
+        <descriptor id="submissionContent" title="提出物コンテンツ" tag="教育 評価">
+            <doc>学生が提出した実際の成果物で、テキスト入力、アップロードされたファイル、または外部リソースへのリンクが含まれる場合があります。</doc>
+        </descriptor>
+        <descriptor id="submissionDate" title="提出日" def="https://schema.org/dateCreated" tag="教育 追跡">
+            <doc>提出物がシステムで受信された日時で、締め切りに対する適時性を検証するために使用されます。</doc>
+        </descriptor>
+        <descriptor id="submissionStatus" title="提出ステータス" tag="教育 ワークフロー">
+            <doc>採点ワークフローにおける提出物の現在の状態。提出済み、レビュー中、採点済み、修正のために返却済みなどがあります。</doc>
+        </descriptor>
+    </descriptor>
+
+    <descriptor id="grade" title="成績" tag="教育 評価 評価" doc="学生の提出物の評価。課題に対する学生の成果物の品質、正確性、または達成レベルの評価。">
+        <descriptor id="gradeId" title="成績識別子" tag="教育 コア">
+            <doc>成績記録の一意な識別子で、システム内での参照と追跡に使用されます。</doc>
+        </descriptor>
+        <descriptor id="gradeValue" title="成績値" tag="教育 評価">
+            <doc>提出物に割り当てられたスコアまたは評価で、数値、文字ベース、またはカテゴリ（合格/不合格）の場合があります。</doc>
+        </descriptor>
+        <descriptor id="feedback" title="フィードバック" tag="教育 評価">
+            <doc>学生が評価を理解し、将来の成果物を改善するのを助けるために講師が提供するコメント、修正、および指導です。</doc>
+        </descriptor>
+        <descriptor id="gradedDate" title="採点日" tag="教育 追跡">
+            <doc>成績が割り当てられた日時で、採点のタイムライン追跡と通知目的に使用されます。</doc>
+        </descriptor>
+    </descriptor>
+
+    <descriptor id="rubric" title="評価ルーブリック" tag="教育 評価 評価" doc="学生の成果物を評価するための基準。課題の複数の次元にわたるパフォーマンス期待値を定義する構造化された採点ツール。">
+        <descriptor id="rubricId" title="ルーブリック識別子" tag="教育 コア">
+            <doc>ルーブリックの一意な識別子で、システム内での参照と追跡に使用されます。</doc>
+        </descriptor>
+        <descriptor id="rubricTitle" title="ルーブリックタイトル" tag="教育 評価">
+            <doc>ユーザーに表示されるルーブリックの名前で、多くの場合、それがサポートする課題または評価の種類を示します。</doc>
+        </descriptor>
+        <descriptor id="rubricCriteria" title="ルーブリック基準" tag="教育 評価">
+            <doc>評価に使用される特定の次元とパフォーマンスレベルで、各レベルでの期待値の説明が含まれます。</doc>
+        </descriptor>
+    </descriptor>
+
+    <!-- コミュニケーション関連 -->
+    <descriptor id="discussion" title="ディスカッションフォーラム" tag="コミュニケーション コラボレーション" doc="質問と回答のためのプラットフォーム。コース参加者がコーストピックに関するスレッド形式の会話に参加したり、質問したりできるインタラクティブなスペース。">
+        <descriptor id="discussionId" title="ディスカッション識別子" tag="コミュニケーション コア">
+            <doc>ディスカッションフォーラムの一意な識別子で、システム内での参照と追跡に使用されます。</doc>
+        </descriptor>
+        <descriptor id="discussionTitle" title="ディスカッションタイトル" def="https://schema.org/name" tag="コミュニケーション">
+            <doc>ユーザーに表示されるディスカッションフォーラムの名前で、そのトピックまたは目的を示します。</doc>
+        </descriptor>
+        <descriptor id="discussionDescription" title="ディスカッション説明" def="https://schema.org/description" tag="コミュニケーション">
+            <doc>フォーラムの目的、ガイドライン、および参加に対する期待値の説明です。</doc>
+        </descriptor>
+        <descriptor id="posts" title="ディスカッション投稿" tag="コミュニケーション">
+            <doc>参加者によってディスカッションに投稿されたメッセージのコレクションで、時系列またはスレッド形式で整理されます。</doc>
+        </descriptor>
+    </descriptor>
+
+    <descriptor id="post" title="ディスカッション投稿" tag="コミュニケーション コラボレーション" doc="ディスカッションフォーラム内のメッセージ。新しいスレッドを開始したり、既存のメッセージに応答したりする可能性のあるディスカッションフォーラムへの貢献。">
+        <descriptor id="postId" title="投稿識別子" tag="コミュニケーション コア">
+            <doc>投稿の一意な識別子で、システム内での参照と追跡に使用されます。</doc>
+        </descriptor>
+        <descriptor id="postContent" title="投稿内容" def="https://schema.org/text" tag="コミュニケーション">
+            <doc>メッセージのテキストで、書式設定、リンク、または埋め込みメディアが含まれる場合があります。</doc>
+        </descriptor>
+        <descriptor id="postDate" title="投稿日" def="https://schema.org/dateCreated" tag="コミュニケーション 追跡">
+            <doc>投稿が作成された日時で、時系列の整理とアクティビティ追跡に使用されます。</doc>
+        </descriptor>
+        <descriptor id="postAuthor" title="投稿者" def="https://schema.org/author" tag="コミュニケーション ユーザー">
+            <doc>投稿を作成したユーザーで、帰属のためにコンテンツと一緒に表示されます。</doc>
+        </descriptor>
+        <descriptor id="replies" title="投稿への返信" tag="コミュニケーション">
+            <doc>他のユーザーからの投稿への応答で、ネストされた会話スレッドを作成します。</doc>
+        </descriptor>
+    </descriptor>
+
+    <descriptor id="notification" title="通知" tag="コミュニケーション アラート" doc="ユーザーに情報を伝えるためのシステムメッセージ。関連イベント、締め切り、または更新についてユーザーに警告するためのLMSからの自動通信。">
+        <descriptor id="notificationId" title="通知識別子" tag="コミュニケーション コア">
+            <doc>通知の一意な識別子で、システム内での参照と追跡に使用されます。</doc>
+        </descriptor>
+        <descriptor id="notificationContent" title="通知内容" tag="コミュニケーション">
+            <doc>通知のメッセージ本文で、伝えられているイベントまたは情報を説明します。</doc>
+        </descriptor>
+        <descriptor id="notificationType" title="通知タイプ" tag="コミュニケーション">
+            <doc>アナウンス、締め切りリマインダー、成績投稿、またはシステムアラートなど、通知のカテゴリです。</doc>
+        </descriptor>
+        <descriptor id="notificationDate" title="通知日" def="https://schema.org/dateCreated" tag="コミュニケーション 追跡">
+            <doc>通知が生成された日時で、時系列の整理に使用されます。</doc>
+        </descriptor>
+        <descriptor id="notificationStatus" title="通知ステータス" tag="コミュニケーション">
+            <doc>未読、既読、または無視済みなど、通知の現在の状態で、ユーザーインタラクションを追跡します。</doc>
+        </descriptor>
+    </descriptor>
+
+    <descriptor id="message" title="ダイレクトメッセージ" tag="コミュニケーション パーソナル" doc="ユーザー間のプライベートなコミュニケーション。特定のシステムユーザー間の機密のやり取りで、他のユーザーには表示されません。">
+        <descriptor id="messageId" title="メッセージ識別子" tag="コミュニケーション コア">
+            <doc>メッセージの一意な識別子で、システム内での参照と追跡に使用されます。</doc>
+        </descriptor>
+        <descriptor id="messageContent" title="メッセージ内容" def="https://schema.org/text" tag="コミュニケーション">
+            <doc>メッセージのテキストで、書式設定、リンク、または埋め込みメディアが含まれる場合があります。</doc>
+        </descriptor>
+        <descriptor id="messageDate" title="メッセージ送信日" def="https://schema.org/dateCreated" tag="コミュニケーション 追跡">
+            <doc>メッセージが送信された日時で、時系列の整理に使用されます。</doc>
+        </descriptor>
+        <descriptor id="messageSender" title="メッセージ送信者" tag="コミュニケーション ユーザー">
+            <doc>メッセージを開始したユーザーで、帰属のために表示されます。</doc>
+        </descriptor>
+        <descriptor id="messageRecipient" title="メッセージ受信者" tag="コミュニケーション ユーザー">
+            <doc>メッセージを受信するように指定されたユーザーまたはユーザーで、その可視性を制御します。</doc>
+        </descriptor>
+        <descriptor id="messageAttachments" title="メッセージ添付ファイル" tag="コミュニケーション メディア">
+            <doc>ドキュメント、画像、リンクなど、メッセージに含まれるファイルまたは参照です。</doc>
+        </descriptor>
+    </descriptor>
+
+    <descriptor id="group" title="学生グループ" tag="コラボレーション" doc="コラボレーションのための学生の集まり。課題やアクティビティで協力するコース参加者の定義されたサブセット。">
+        <descriptor id="groupId" title="グループ識別子" tag="コラボレーション コア">
+            <doc>グループの一意な識別子で、システム内での参照と追跡に使用されます。</doc>
+        </descriptor>
+        <descriptor id="groupName" title="グループ名" def="https://schema.org/name" tag="コラボレーション">
+            <doc>ユーザーに表示されるグループの名前で、多くの場合、メンバーによって選択されるか、講師によって割り当てられます。</doc>
+        </descriptor>
+        <descriptor id="groupMembers" title="グループメンバー" tag="コラボレーション ユーザー">
+            <doc>グループに割り当てられた学生のコレクションで、共有アクティビティで協力できます。</doc>
+        </descriptor>
+        <descriptor id="groupWorkspace" title="共有ワークスペース" tag="コラボレーション">
+            <doc>グループメンバーがグループ内でプライベートにコミュニケーションを取り、ファイルを共有し、アクティビティで協力できる専用エリアです。</doc>
+        </descriptor>
+    </descriptor>
+
+    <descriptor id="webinar" title="オンラインセッション" tag="コミュニケーション 同期" doc="リアルタイムの仮想クラスセッション。講師と学生がビデオ、オーディオ、チャット、または共有画面を通じて同時にやり取りするスケジュールされたライブイベント。">
+        <descriptor id="webinarId" title="ウェビナー識別子" tag="コミュニケーション コア">
+            <doc>ウェビナーの一意な識別子で、システム内での参照と追跡に使用されます。</doc>
+        </descriptor>
+        <descriptor id="webinarTitle" title="ウェビナータイトル" def="https://schema.org/name" tag="コミュニケーション">
+            <doc>ユーザーに表示されるウェビナーの名前で、そのトピックまたは目的を示します。</doc>
+        </descriptor>
+        <descriptor id="webinarDescription" title="ウェビナー説明" def="https://schema.org/description" tag="コミュニケーション">
+            <doc>ウェビナーの内容、目的、および参加要件の説明です。</doc>
+        </descriptor>
+        <descriptor id="webinarDate" title="ウェビナー開催日時" def="https://schema.org/startDate" tag="コミュニケーション スケジュール">
+            <doc>ウェビナーが開始される日時で、スケジューリングとリマインダーに使用されます。</doc>
+        </descriptor>
+        <descriptor id="webinarDuration" title="ウェビナー時間" def="https://schema.org/duration" tag="コミュニケーション スケジュール">
+            <doc>セッションの予想される長さで、参加者が参加を計画するのに役立ちます。</doc>
+        </descriptor>
+        <descriptor id="webinarUrl" title="ウェビナーURL" def="https://schema.org/url" tag="コミュニケーション">
+            <doc>オンラインセッションに参加するためのWebアドレスで、ビデオ会議プラットフォームにリンクしている場合があります。</doc>
+        </descriptor>
+        <descriptor id="webinarRecording" title="ウェビナー録画" tag="コミュニケーション メディア">
+            <doc>ライブに参加できなかったり、レビューしたい人のために後で視聴できるように提供されるセッションのキャプチャされたビデオです。</doc>
+        </descriptor>
+    </descriptor>
+
+    <!-- 分析関連 -->
+    <descriptor id="analytics" title="ユーザー分析" tag="分析 追跡" doc="ユーザーエンゲージメントとアクティビティに関するデータ。ユーザーがシステムとどのように対話するかを追跡する指標で、学習行動とプラットフォーム利用に関する洞察を提供します。">
+        <descriptor id="loginFrequency" title="ログイン頻度" tag="分析 エンゲージメント">
+            <doc>ユーザーがシステムにアクセスする頻度で、時間単位あたりのログイン数として測定され、エンゲージメントレベルを示します。</doc>
+        </descriptor>
+        <descriptor id="contentViewed" title="閲覧済みコンテンツ" tag="分析 エンゲージメント">
+            <doc>ユーザーがアクセスしたコンテンツ項目の記録で、コース教材への接触を追跡します。</doc>
+        </descriptor>
+        <descriptor id="timeSpent" title="プラットフォーム滞在時間" tag="分析 エンゲージメント">
+            <doc>ユーザーセッションの期間で、分または時間で測定され、エンゲージメントの深さを示します。</doc>
+        </descriptor>
+        <descriptor id="assignmentCompletionTime" title="課題完了時間" tag="分析 パフォーマンス">
+            <doc>ユーザーが課題を完了するのにかかる時間で、最初の表示から提出まで測定され、努力レベルを示します。</doc>
+        </descriptor>
+    </descriptor>
+
+    <descriptor id="report" title="システムレポート" tag="分析 管理" doc="分析のための集計データ。特定の分析目的のために整理されたシステムデータの構造化されたコンパイルで、多くの場合、管理者が意思決定のために使用します。">
+        <descriptor id="reportId" title="レポート識別子" tag="分析 コア">
+            <doc>レポートの一意な識別子で、システム内での参照と追跡に使用されます。</doc>
+        </descriptor>
+        <descriptor id="reportTitle" title="レポートタイトル" tag="分析">
+            <doc>ユーザーに表示されるレポートの名前で、その内容または目的を示します。</doc>
+        </descriptor>
+        <descriptor id="reportType" title="レポートタイプ" tag="分析">
+            <doc>使用状況統計、成績分布、完了率、または財務概要など、レポートのカテゴリです。</doc>
+        </descriptor>
+        <descriptor id="reportData" title="レポートデータ" tag="分析">
+            <doc>レポートに含まれる実際の情報で、テーブル、チャート、または生データのエクスポートが含まれる場合があります。</doc>
+        </descriptor>
+        <descriptor id="reportDate" title="レポート生成日" def="https://schema.org/dateCreated" tag="分析 追跡">
+            <doc>レポートが作成された日時で、データの時間的文脈にとって重要です。</doc>
+        </descriptor>
+    </descriptor>
+
+    <!-- アクセシビリティとモバイル -->
+    <descriptor id="language" title="インターフェース言語" def="https://schema.org/inLanguage" tag="アクセシビリティ ローカライズ">
+        <doc>システムテキストとコミュニケーション用に選択された言語で、ユーザーが好みの言語でLMSと対話できるようにします。</doc>
+    </descriptor>
+
+    <descriptor id="accessibilityFeature" title="アクセシビリティ機能" def="https://schema.org/accessibilityFeature" tag="アクセシビリティ">
+        <doc>スクリーンリーダーのサポート、キーボードナビゲーション、ハイコントラストモード、テキストサイズ変更オプションなど、障害のあるユーザーの使いやすさを向上させる機能です。</doc>
+    </descriptor>
+
+    <descriptor id="offlineContent" title="オフラインコンテンツ" tag="モバイル アクセス" doc="インターネットなしでアクセスするためのダウンロード済みコンテンツ。接続が制限されているか利用できない場合に使用するためにデバイスにローカルに保存されたコース教材。">
+        <doc>学生がインターネット接続なしで閲覧するためにデバイスにダウンロードできるコース教材で、低接続状況での学習をサポートします。</doc>
+    </descriptor>
+
+    <!-- セクション 2: 包含関係 (タクソノミー) -->
+
+    <!-- 主要なアプリケーションの状態 -->
+    <descriptor id="Home" title="ホームページ" tag="ナビゲーション ダッシュボード" doc="システムのランディングページ。認証されたユーザーの主要なエントリポイントで、パーソナライズされたナビゲーション、通知、アクティビティの概要を表示します。">
+        <descriptor href="#course"/>
+        <descriptor href="#notification"/>
+        <descriptor href="#goCourseList"/>
+        <descriptor href="#goUserProfile"/>
+        <descriptor href="#goMessageCenter"/>
+        <descriptor href="#goNotifications"/>
+        <descriptor href="#goSettings"/>
+        <descriptor href="#goReportCenter"/>
+    </descriptor>
+
+    <!-- ユーザー管理の状態 -->
+    <descriptor id="Login" title="ログインページ" tag="ユーザー管理 認証">
+        <doc>ユーザー認証のエントリポイントで、既存のユーザーがシステムにアクセスするための認証情報を提供します。</doc>
+        <descriptor href="#userEmail"/>
+        <descriptor href="#userPassword"/>
+        <descriptor href="#doLogin"/>
+        <descriptor href="#goRegister"/>
+        <descriptor href="#doResetPassword"/>
+    </descriptor>
+
+    <descriptor id="Register" title="登録ページ" tag="ユーザー管理 登録">
+        <doc>新規ユーザーが個人情報を提供し、システム内での役割を選択してアカウントを作成するインターフェースです。</doc>
+        <descriptor href="#userName"/>
+        <descriptor href="#userEmail"/>
+        <descriptor href="#userPassword"/>
+        <descriptor href="#userRole"/>
+        <descriptor href="#doRegister"/>
+        <descriptor href="#goLogin"/>
+    </descriptor>
+
+    <descriptor id="UserProfile" title="ユーザープロフィールページ" tag="ユーザー管理 パーソナライズ">
+        <doc>ユーザーが個人情報、設定、システム設定を表示および編集できるインターフェースです。</doc>
+        <descriptor href="#user"/>
+        <descriptor href="#doUpdateProfile"/>
+        <descriptor href="#goHome"/>
+        <descriptor href="#goEnrolledCourses"/>
+    </descriptor>
+
+    <descriptor id="UserList" title="ユーザー管理ページ" tag="ユーザー管理 管理ツール">
+        <doc>すべてのシステムユーザーを表示し、アカウント管理と権限割り当てのためのツールを提供する管理インターフェースです。</doc>
+        <descriptor href="#user"/>
+        <descriptor href="#doCreateUser"/>
+        <descriptor href="#doDeleteUser"/>
+        <descriptor href="#doUpdateUser"/>
+        <descriptor href="#goUserDetail"/>
+        <descriptor href="#goHome"/>
+    </descriptor>
+
+    <descriptor id="UserDetail" title="ユーザー詳細ページ" tag="ユーザー管理 管理ツール">
+        <doc>特定のユーザーに関する包括的な情報（権限やアクティビティ履歴を含む）を表示する管理インターフェースです。</doc>
+        <descriptor href="#user"/>
+        <descriptor href="#doUpdateUser"/>
+        <descriptor href="#doDeleteUser"/>
+        <descriptor href="#goUserList"/>
+    </descriptor>
+
+    <!-- コース管理の状態 -->
+    <descriptor id="CourseList" title="コース一覧ページ" tag="コース管理 カタログ">
+        <doc>利用可能なコースを表示するインターフェースで、フィルタリングとソートオプションを使用してユーザーが関連する教育機会を発見するのに役立ちます。</doc>
+        <descriptor href="#course"/>
+        <descriptor href="#goFilterCourses"/>
+        <descriptor href="#goCourseDetail"/>
+        <descriptor href="#goCreateCourse"/>
+        <descriptor href="#goHome"/>
+    </descriptor>
+
+    <descriptor id="CourseDetail" title="コース詳細ページ" tag="コース管理 コンテンツ">
+        <doc>特定のコースの包括的なビューで、その構造、コンテンツ、アクティビティ、参加者情報を表示します。</doc>
+        <descriptor href="#course"/>
+        <descriptor href="#module"/>
+        <descriptor href="#assignment"/>
+        <descriptor href="#discussion"/>
+        <descriptor href="#instructor"/>
+        <descriptor href="#doEnrollCourse"/>
+        <descriptor href="#goModuleDetail"/>
+        <descriptor href="#goAssignmentList"/>
+        <descriptor href="#goDiscussionList"/>
+        <descriptor href="#goEditCourse"/>
+        <descriptor href="#goCourseList"/>
+        <descriptor href="#goProgressDashboard"/>
+        <descriptor href="#goWebinarSchedule"/>
+        <descriptor href="#goAnalyticsDashboard"/>
+        <descriptor href="#goAnnouncementCreation"/>
+        <descriptor href="#goGradebook"/>
+    </descriptor>
+
+    <descriptor id="CourseCreation" title="コース作成ページ" tag="コース管理 オーサリング">
+        <doc>講師が詳細、構造、設定を指定して新しいコースを定義し、カタログに公開する前のインターフェースです。</doc>
+        <descriptor href="#course"/>
+        <descriptor href="#doCreateCourse"/>
+        <descriptor href="#doSaveDraftCourse"/>
+        <descriptor href="#goCourseList"/>
+    </descriptor>
+
+    <descriptor id="CourseEdit" title="コース編集ページ" tag="コース管理 オーサリング">
+        <doc>講師が既存のコースを修正し、必要に応じてコンテンツ、構造、または設定を更新するインターフェースです。</doc>
+        <descriptor href="#course"/>
+        <descriptor href="#doUpdateCourse"/>
+        <descriptor href="#doDeleteCourse"/>
+        <descriptor href="#doSaveDraftCourse"/>
+        <descriptor href="#doPublishCourse"/>
+        <descriptor href="#goCourseDetail"/>
+    </descriptor>
+
+    <descriptor id="ModuleList" title="コースモジュールページ" tag="コース管理 構造">
+        <doc>コース内のすべてのモジュールを表示するインターフェースで、そのシーケンスを示し、管理操作を可能にします。</doc>
+        <descriptor href="#module"/>
+        <descriptor href="#doCreateModule"/>
+        <descriptor href="#goModuleDetail"/>
+        <descriptor href="#goCourseDetail"/>
+    </descriptor>
+
+    <descriptor id="ModuleDetail" title="モジュール詳細ページ" tag="コース管理 コンテンツ">
+        <doc>特定のモジュールの包括的なビューで、そのコンテンツ項目、構造を表示し、管理操作を可能にします。</doc>
+        <descriptor href="#module"/>
+        <descriptor href="#content"/>
+        <descriptor href="#doUpdateModule"/>
+        <descriptor href="#doDeleteModule"/>
+        <descriptor href="#goContentDetail"/>
+        <descriptor href="#goCreateContent"/>
+        <descriptor href="#goModuleList"/>
+    </descriptor>
+
+    <descriptor id="ContentCreation" title="コンテンツ作成ページ" tag="コンテンツ作成 オーサリング">
+        <doc>講師がコンテンツタイプを選択し、学習リソースを作成またはアップロードして教育資料を作成するインターフェースです。</doc>
+        <descriptor href="#content"/>
+        <descriptor href="#contentType"/>
+        <descriptor href="#contentAccessibility"/>
+        <descriptor href="#doCreateContent"/>
+        <descriptor href="#doSaveDraftContent"/>
+        <descriptor href="#goPreviewContent"/>
+        <descriptor href="#goModuleDetail"/>
+    </descriptor>
+
+    <descriptor id="ContentDetail" title="コンテンツ詳細ページ" tag="コンテンツ作成 管理">
+        <doc>特定のコンテンツ項目の包括的なビューで、その詳細を表示し、編集や削除などの管理操作を可能にします。</doc>
+        <descriptor href="#content"/>
+        <descriptor href="#doUpdateContent"/>
+        <descriptor href="#doDeleteContent"/>
+        <descriptor href="#goPreviewContent"/>
+        <descriptor href="#goModuleDetail"/>
+    </descriptor>
+
+    <!-- 登録と進捗の状態 -->
+    <descriptor id="EnrolledCourses" title="登録済みコースページ" tag="登録 学生">
+        <doc>学生向けにパーソナライズされたビューで、現在登録しているすべてのコースをステータスインジケーターとナビゲーションオプションと共に表示します。</doc>
+        <descriptor href="#course"/>
+        <descriptor href="#progress"/>
+        <descriptor href="#goCourseDetail"/>
+        <descriptor href="#goHome"/>
+    </descriptor>
+
+    <descriptor id="ProgressDashboard" title="学習進捗ダッシュボード" tag="進捗追跡 学生">
+        <doc>学生の教材の進捗状況を視覚的に表示し、モジュール全体の完了状況、スコア、滞在時間を示します。</doc>
+        <descriptor href="#course"/>
+        <descriptor href="#module"/>
+        <descriptor href="#progress"/>
+        <descriptor href="#goCourseDetail"/>
+        <descriptor href="#goModuleDetail"/>
+        <descriptor href="#goEnrolledCourses"/>
+    </descriptor>
+
+    <descriptor id="ClassProgress" title="クラス進捗ダッシュボード" tag="進捗追跡 講師ツール">
+        <doc>講師向けの概要で、コース内の全学生の進捗とパフォーマンスを表示し、成功または懸念のある領域を強調します。</doc>
+        <descriptor href="#student"/>
+        <descriptor href="#course"/>
+        <descriptor href="#progress"/>
+        <descriptor href="#goFilterStudents"/>
+        <descriptor href="#goStudentProgress"/>
+        <descriptor href="#goCourseDetail"/>
+    </descriptor>
+
+    <descriptor id="StudentProgress" title="個別学生進捗" tag="進捗追跡 講師ツール">
+        <doc>講師向けの、特定の学生のすべてのコースアクティビティと評価にわたるパフォーマンスとエンゲージメントの詳細ビューです。</doc>
+        <descriptor href="#student"/>
+        <descriptor href="#course"/>
+        <descriptor href="#module"/>
+        <descriptor href="#progress"/>
+        <descriptor href="#doExtendDeadline"/>
+        <descriptor href="#goClassProgress"/>
+    </descriptor>
+
+    <!-- 評価の状態 -->
+    <descriptor id="AssignmentList" title="コース課題ページ" tag="評価 コース管理">
+        <doc>コースのすべての評価アクティビティのリストで、時系列またはタイプ別に整理され、ステータスインジケーターと管理オプションが付いています。</doc>
+        <descriptor href="#assignment"/>
+        <descriptor href="#goFilterAssignments"/>
+        <descriptor href="#goAssignmentDetail"/>
+        <descriptor href="#goCreateAssignment"/>
+        <descriptor href="#goCourseDetail"/>
+    </descriptor>
+
+    <descriptor id="AssignmentCreation" title="課題作成ページ" tag="評価 オーサリング">
+        <doc>講師が要件、提出期限、採点基準を指定して新しい評価アクティビティを定義するインターフェースです。</doc>
+        <descriptor href="#assignment"/>
+        <descriptor href="#assignmentType"/>
+        <descriptor href="#rubric"/>
+        <descriptor href="#doCreateAssignment"/>
+        <descriptor href="#doCreateRubric"/>
+        <descriptor href="#goAssignmentList"/>
+    </descriptor>
+
+    <descriptor id="AssignmentDetail" title="課題詳細ページ" tag="評価">
+        <doc>特定の課題の包括的なビューで、その要件、締め切り、提出状況、利用可能なアクションを表示します。</doc>
+        <descriptor href="#assignment"/>
+        <descriptor href="#rubric"/>
+        <descriptor href="#submission"/>
+        <descriptor href="#doUpdateAssignment"/>
+        <descriptor href="#doDeleteAssignment"/>
+        <descriptor href="#doSubmitAssignment"/>
+        <descriptor href="#goSubmissionList"/>
+        <descriptor href="#goAssignmentList"/>
+    </descriptor>
+
+    <descriptor id="SubmissionList" title="課題提出物ページ" tag="評価 採点 講師ツール">
+        <doc>講師向けの、課題に対するすべての学生の回答のリストで、提出状況、タイムスタンプ、採点進捗を表示します。</doc>
+        <descriptor href="#submission"/>
+        <descriptor href="#goFilterSubmissions"/>
+        <descriptor href="#goSubmissionDetail"/>
+        <descriptor href="#goAssignmentDetail"/>
+    </descriptor>
+
+    <descriptor id="SubmissionDetail" title="提出物詳細ページ" tag="評価 採点 講師ツール">
+        <doc>特定の学生の課題回答の包括的なビューで、評価、フィードバック、成績割り当てのためのツールが付いています。</doc>
+        <descriptor href="#submission"/>
+        <descriptor href="#grade"/>
+        <descriptor href="#feedback"/>
+        <descriptor href="#rubric"/>
+        <descriptor href="#doGradeSubmission"/>
+        <descriptor href="#doProvideFeedback"/>
+        <descriptor href="#goSubmissionList"/>
+    </descriptor>
+
+    <descriptor id="Gradebook" title="コース成績表" tag="評価 採点 講師ツール">
+        <doc>コースのすべての学生評価の包括的な記録で、課題全体のスコアと計算された総合評価を表示します。</doc>
+        <descriptor href="#student"/>
+        <descriptor href="#assignment"/>
+        <descriptor href="#grade"/>
+        <descriptor href="#doExportGrades"/>
+        <descriptor href="#doCalculateOverallGrades"/>
+        <descriptor href="#goSubmissionDetail"/>
+        <descriptor href="#goCourseDetail"/>
+    </descriptor>
+
+    <!-- コミュニケーションの状態 -->
+    <descriptor id="DiscussionList" title="コースディスカッションページ" tag="コミュニケーション コラボレーション">
+        <doc>コースのすべての会話フォーラムのリストで、トピックまたはアクティビティレベル別に整理され、作成および参加オプションが付いています。</doc>
+        <descriptor href="#discussion"/>
+        <descriptor href="#goFilterDiscussions"/>
+        <descriptor href="#goDiscussionDetail"/>
+        <descriptor href="#goCreateDiscussion"/>
+        <descriptor href="#goCourseDetail"/>
+    </descriptor>
+
+    <descriptor id="DiscussionDetail" title="ディスカッションスレッドページ" tag="コミュニケーション コラボレーション">
+        <doc>特定の会話フォーラムのビューで、すべての投稿をスレッド形式または時系列で表示し、参加のためのツールが付いています。</doc>
+        <descriptor href="#discussion"/>
+        <descriptor href="#post"/>
+        <descriptor href="#doCreatePost"/>
+        <descriptor href="#doReplyToPost"/>
+        <descriptor href="#goDiscussionList"/>
+    </descriptor>
+
+    <descriptor id="External" title="外部システム" tag="統合" doc="LMS外の外部システムまたはURLを表します。学習システムと統合されたサードパーティのツール、リソース、またはプラットフォームへの接続点。">
+        <doc>ビデオ会議、専門的なシミュレーション、または外部コンテンツリポジトリなどの機能のために統合されたLMS外のサービスへの参照。</doc>
+    </descriptor>
+
+    <descriptor id="AnnouncementCreation" title="お知らせ作成ページ" tag="コミュニケーション 講師ツール">
+        <doc>講師がすべてのコース参加者に配信するシステムメッセージを作成するインターフェースで、タイミングと配信のオプションが付いています。</doc>
+        <descriptor href="#notification"/>
+        <descriptor href="#doCreateAnnouncement"/>
+        <descriptor href="#goCourseDetail"/>
+    </descriptor>
+
+    <descriptor id="MessageCenter" title="メッセージセンター" tag="コミュニケーション パーソナル">
+        <doc>システム内の個人的なコミュニケーションのための統合受信トレイで、他のユーザーと交換されたメッセージを会話スレッドで表示します。</doc>
+        <descriptor href="#message"/>
+        <descriptor href="#goFilterMessages"/>
+        <descriptor href="#goCreateMessage"/>
+        <descriptor href="#goMessageDetail"/>
+        <descriptor href="#goHome"/>
+    </descriptor>
+
+    <descriptor id="MessageDetail" title="メッセージ詳細ページ" tag="コミュニケーション パーソナル">
+        <doc>特定のメッセージ交換のビューで、会話履歴を表示し、応答と添付ファイル処理のためのツールを提供します。</doc>
+        <descriptor href="#message"/>
+        <descriptor href="#doReplyToMessage"/>
+        <descriptor href="#doAttachFile"/>
+        <descriptor href="#goMessageCenter"/>
+    </descriptor>
+
+    <descriptor id="GroupManagement" title="グループ管理ページ" tag="コラボレーション 講師ツール">
+        <doc>コース内で学生チームを作成および整理するためのインターフェースで、メンバーシップ割り当てとワークスペース構成のためのツールが付いています。</doc>
+        <descriptor href="#group"/>
+        <descriptor href="#doCreateGroup"/>
+        <descriptor href="#doUpdateGroup"/>
+        <descriptor href="#doDeleteGroup"/>
+        <descriptor href="#goGroupDetail"/>
+        <descriptor href="#goCourseDetail"/>
+    </descriptor>
+
+    <descriptor id="GroupDetail" title="グループ詳細ページ" tag="コラボレーション">
+        <doc>特定の学生チームの包括的なビューで、そのメンバー、共有リソース、コラボレーションスペースを管理オプションと共に表示します。</doc>
+        <descriptor href="#group"/>
+        <descriptor href="#groupWorkspace"/>
+        <descriptor href="#doAddGroupMember"/>
+        <descriptor href="#doRemoveGroupMember"/>
+        <descriptor href="#goGroupManagement"/>
+    </descriptor>
+
+    <descriptor id="WebinarSchedule" title="ウェビナースケジュールページ" tag="コミュニケーション 同期 講師ツール">
+        <doc>コースで計画されているライブセッションのカレンダービューで、仮想会議の作成、管理、参加オプションが付いています。</doc>
+        <descriptor href="#webinar"/>
+        <descriptor href="#doCreateWebinar"/>
+        <descriptor href="#doUpdateWebinar"/>
+        <descriptor href="#doDeleteWebinar"/>
+        <descriptor href="#goWebinarDetail"/>
+        <descriptor href="#goCourseDetail"/>
+    </descriptor>
+
+    <descriptor id="WebinarDetail" title="ウェビナー詳細ページ" tag="コミュニケーション 同期">
+        <doc>特定のライブセッションの包括的なビューで、その詳細、参加リンク、録画アクセスを関連するアクションと共に表示します。</doc>
+        <descriptor href="#webinar"/>
+        <descriptor href="#webinarRecording"/>
+        <descriptor href="#doJoinWebinar"/>
+        <descriptor href="#goViewRecording"/>
+        <descriptor href="#goWebinarSchedule"/>
+    </descriptor>
+
+    <!-- 分析とレポートの状態 -->
+    <descriptor id="AnalyticsDashboard" title="分析ダッシュボード" tag="分析 講師ツール">
+        <doc>コースのエンゲージメントとパフォーマンスデータの視覚的な表示で、講師がパターンを特定し、情報に基づいた意思決定を行うのに役立ちます。</doc>
+        <descriptor href="#analytics"/>
+        <descriptor href="#student"/>
+        <descriptor href="#course"/>
+        <descriptor href="#goFilterAnalytics"/>
+        <descriptor href="#doExportAnalytics"/>
+        <descriptor href="#goCourseDetail"/>
+    </descriptor>
+
+    <descriptor id="ReportCenter" title="レポートセンター" tag="分析 管理ツール">
+        <doc>機関分析と報告のためにシステム全体のデータコンパイルを生成、表示、エクスポートするための管理インターフェースです。</doc>
+        <descriptor href="#report"/>
+        <descriptor href="#doGenerateReport"/>
+        <descriptor href="#doExportReport"/>
+        <descriptor href="#goReportDetail"/>
+        <descriptor href="#goHome"/>
+    </descriptor>
+
+    <descriptor id="ReportDetail" title="レポート詳細ページ" tag="分析 管理ツール">
+        <doc>特定のデータコンパイルの包括的なビューで、その内容を表形式、グラフ形式、またはダウンロード可能な形式で表示します。</doc>
+        <descriptor href="#report"/>
+        <descriptor href="#doExportReport"/>
+        <descriptor href="#goReportCenter"/>
+    </descriptor>
+
+    <!-- アクセシビリティと設定 -->
+    <descriptor id="Settings" title="ユーザー設定ページ" tag="アクセシビリティ パーソナライズ">
+        <doc>ユーザーが言語、通知、アクセシビリティ配慮など、システム設定を構成するインターフェースです。</doc>
+        <descriptor href="#language"/>
+        <descriptor href="#accessibilityFeature"/>
+        <descriptor href="#userPreferences"/>
+        <descriptor href="#doUpdateSettings"/>
+        <descriptor href="#goUserProfile"/>
+    </descriptor>
+
+    <!-- 外部コンテンツの状態 -->
+    <descriptor id="WebinarView" title="ウェビナー視聴ページ" tag="コミュニケーション 同期 メディア">
+        <doc>ユーザーがライブセッションにアクティブに参加するインターフェースで、リアルタイムエンゲージメントのためのビデオ、オーディオ、チャット、インタラクティブ要素が付いています。</doc>
+        <descriptor href="#webinar"/>
+        <descriptor href="#goWebinarDetail"/>
+    </descriptor>
+
+    <descriptor id="RecordingView" title="録画視聴ページ" tag="コミュニケーション メディア">
+        <doc>ユーザーがキャプチャされたセッションを再生するインターフェースで、非同期視聴のための再生コントロールとナビゲーションオプションが付いています。</doc>
+        <descriptor href="#webinarRecording"/>
+        <descriptor href="#goWebinarDetail"/>
+    </descriptor>
+
+    <descriptor id="MobileAccess" title="モバイルアプリケーション状態" tag="モバイルアクセス">
+        <doc>スマートフォンまたはタブレットアクセス用に最適化されたインターフェースで、小さな画面とタッチ操作への適応、さらにオフライン機能が付いています。</doc>
+        <descriptor href="#course"/>
+        <descriptor href="#notification"/>
+        <descriptor href="#offlineContent"/>
+        <descriptor href="#doDownloadContent"/>
+        <descriptor href="#doEnableNotifications"/>
+        <descriptor href="#goHome"/>
+        <descriptor href="#goCourseList"/>
+        <descriptor href="#goEnrolledCourses"/>
+    </descriptor>
+
+    <!-- セクション 3: 状態遷移 (コレオグラフィー) -->
+
+    <!-- 認証遷移 -->
+    <descriptor id="doLogin" type="unsafe" title="システムへのログイン" rt="#Home" tag="認証">
+        <doc>ユーザー認証情報を検証し、成功した場合、認証済みセッションを作成してシステムへのアクセスを提供します。</doc>
+    </descriptor>
+
+    <descriptor id="doRegister" type="unsafe" title="新規ユーザー登録" rt="#Login" tag="ユーザー管理">
+        <doc>提供された情報に基づいてシステムに新しいユーザーアカウントを作成し、ポリシーで要求される場合は検証を送信します。</doc>
+        <descriptor href="#userName"/>
+        <descriptor href="#userEmail"/>
+        <descriptor href="#userPassword"/>
+        <descriptor href="#userRole"/>
+    </descriptor>
+
+    <descriptor id="doResetPassword" type="unsafe" title="パスワードリセット" rt="#Login" tag="ユーザー管理 セキュリティ">
+        <doc>ユーザーの登録済みメールアドレスに指示を送信することで、パスワード回復プロセスを開始します。</doc>
+        <descriptor href="#userEmail"/>
+    </descriptor>
+
+    <descriptor id="doLogout" type="idempotent" title="システムからのログアウト" rt="#Login" tag="認証">
+        <doc>ユーザーのアクティブなセッションを終了し、さらなるシステムアクセスには再認証が必要です。</doc>
+    </descriptor>
+
+    <!-- ナビゲーション遷移 -->
+    <descriptor id="goHome" type="safe" title="ホームページへ移動" rt="#Home" tag="ナビゲーション">
+        <doc>ユーザーを認証後の主要なエントリポイントであるパーソナライズされたダッシュボードにリダイレクトします。</doc>
+    </descriptor>
+
+    <descriptor id="goLogin" type="safe" title="ログインページへ移動" rt="#Login" tag="ナビゲーション 認証">
+        <doc>ユーザーを認証画面に誘導し、そこでシステムアクセスのための認証情報を提供できます。</doc>
+    </descriptor>
+
+    <descriptor id="goRegister" type="safe" title="登録ページへ移動" rt="#Register" tag="ナビゲーション ユーザー管理">
+        <doc>ユーザーをアカウント作成画面に誘導し、そこで新規ユーザーがシステムIDを設定できます。</doc>
+    </descriptor>
+
+    <descriptor id="goSettings" type="safe" title="設定ページへ移動" rt="#Settings" tag="ナビゲーション パーソナライズ">
+        <doc>ユーザーをシステム設定や構成をカスタマイズできるインターフェースに誘導します。</doc>
+    </descriptor>
+
+    <descriptor id="goReportCenter" type="safe" title="レポートセンターへ移動" rt="#ReportCenter" tag="ナビゲーション 分析">
+        <doc>ユーザーをシステム全体のデータレポートを生成および表示するための管理インターフェースに誘導します。</doc>
+    </descriptor>
+
+    <descriptor id="goProgressDashboard" type="safe" title="進捗ダッシュボードへ移動" rt="#ProgressDashboard" tag="ナビゲーション 進捗追跡">
+        <doc>ユーザーをコースの進捗とパフォーマンス統計の視覚的表示に誘導します。</doc>
+    </descriptor>
+
+    <descriptor id="goAnalyticsDashboard" type="safe" title="分析ダッシュボードへ移動" rt="#AnalyticsDashboard" tag="ナビゲーション 分析">
+        <doc>ユーザーをコースのエンゲージメントとパフォーマンス指標を示すデータ視覚化インターフェースに誘導します。</doc>
+    </descriptor>
+
+    <descriptor id="goAnnouncementCreation" type="safe" title="お知らせ作成へ移動" rt="#AnnouncementCreation" tag="ナビゲーション コミュニケーション">
+        <doc>講師をすべてのコース参加者へのメッセージを作成および配信するためのインターフェースに誘導します。</doc>
+    </descriptor>
+
+    <descriptor id="goGradebook" type="safe" title="成績表へ移動" rt="#Gradebook" tag="ナビゲーション 評価">
+        <doc>講師をコースのすべての学生評価と計算された成績の包括的な記録に誘導します。</doc>
+    </descriptor>
+
+    <descriptor id="goReportDetail" type="safe" title="レポート詳細へ移動" rt="#ReportDetail" tag="ナビゲーション 分析">
+        <doc>ユーザーをその一意の参照によって識別される、特定のデータコンパイルの包括的なビューに誘導します。</doc>
+        <descriptor href="#reportId"/>
+    </descriptor>
+
+    <descriptor id="goUserProfile" type="safe" title="ユーザープロフィールを表示" rt="#UserProfile" tag="ナビゲーション ユーザー管理">
+        <doc>ユーザーを個人情報とアカウント設定を表示するインターフェースに誘導します。</doc>
+    </descriptor>
+
+    <descriptor id="goUserList" type="safe" title="ユーザー一覧を表示" rt="#UserList" tag="ナビゲーション 管理ツール">
+        <doc>管理者をすべてのシステムユーザーを管理オプションと共に表示するインターフェースに誘導します。</doc>
+    </descriptor>
+
+    <descriptor id="goUserDetail" type="safe" title="ユーザー詳細を表示" rt="#UserDetail" tag="ナビゲーション 管理ツール">
+        <doc>管理者をその一意の参照によって識別される、特定のユーザーアカウントの包括的なビューに誘導します。</doc>
+        <descriptor href="#userId"/>
+    </descriptor>
+
+    <descriptor id="goCourseList" type="safe" title="コース一覧を表示" rt="#CourseList" tag="ナビゲーション コース管理">
+        <doc>ユーザーを利用可能なコースのカタログ（発見およびフィルタリングオプション付き）に誘導します。</doc>
+    </descriptor>
+
+    <descriptor id="goCourseDetail" type="safe" title="コース詳細を表示" rt="#CourseDetail" tag="ナビゲーション コース管理">
+        <doc>ユーザーをその一意の参照によって識別される、特定のコースの包括的なビューに誘導します。</doc>
+        <descriptor href="#courseId"/>
+    </descriptor>
+
+    <descriptor id="goCreateCourse" type="safe" title="コース作成へ移動" rt="#CourseCreation" tag="ナビゲーション コース管理">
+        <doc>講師を新しい教育提供を定義および構成するためのインターフェースに誘導します。</doc>
+    </descriptor>
+
+    <descriptor id="goEditCourse" type="safe" title="コース編集へ移動" rt="#CourseEdit" tag="ナビゲーション コース管理">
+        <doc>講師を既存のコースの詳細と構造を修正するためのインターフェースに誘導します。</doc>
+        <descriptor href="#courseId"/>
+    </descriptor>
+
+    <descriptor id="goModuleList" type="safe" title="モジュール一覧を表示" rt="#ModuleList" tag="ナビゲーション コース管理">
+        <doc>ユーザーを特定のコース内のすべてのテーマ別セクションのリストに誘導します。</doc>
+        <descriptor href="#courseId"/>
+    </descriptor>
+
+    <descriptor id="goModuleDetail" type="safe" title="モジュール詳細を表示" rt="#ModuleDetail" tag="ナビゲーション コース管理">
+        <doc>ユーザーをその一意の参照によって識別される、特定のテーマ別セクションの包括的なビューに誘導します。</doc>
+        <descriptor href="#moduleId"/>
+    </descriptor>
+
+    <descriptor id="goCreateContent" type="safe" title="コンテンツ作成へ移動" rt="#ContentCreation" tag="ナビゲーション コンテンツ作成">
+        <doc>講師をモジュールに含める新しい教育資料を作成するためのインターフェースに誘導します。</doc>
+    </descriptor>
+
+    <descriptor id="goContentDetail" type="safe" title="コンテンツ詳細を表示" rt="#ContentDetail" tag="ナビゲーション コンテンツ作成">
+        <doc>ユーザーをその一意の参照によって識別される、特定の教育リソースの包括的なビューに誘導します。</doc>
+        <descriptor href="#contentId"/>
+    </descriptor>
+
+    <descriptor id="goEnrolledCourses" type="safe" title="登録済みコースを表示" rt="#EnrolledCourses" tag="ナビゲーション 登録">
+        <doc>学生を登録したコースのパーソナライズされたリストに誘導します。</doc>
+    </descriptor>
+
+    <descriptor id="goAssignmentList" type="safe" title="課題一覧を表示" rt="#AssignmentList" tag="ナビゲーション 評価">
+        <doc>ユーザーを特定のコースのすべての評価アクティビティのリストに誘導します。</doc>
+        <descriptor href="#courseId"/>
+    </descriptor>
+
+    <descriptor id="goCreateAssignment" type="safe" title="課題作成へ移動" rt="#AssignmentCreation" tag="ナビゲーション 評価">
+        <doc>講師を学生向けの新しい評価アクティビティを定義するためのインターフェースに誘導します。</doc>
+    </descriptor>
+
+    <descriptor id="goAssignmentDetail" type="safe" title="課題詳細を表示" rt="#AssignmentDetail" tag="ナビゲーション 評価">
+        <doc>ユーザーをその一意の参照によって識別される、特定の評価アクティビティの包括的なビューに誘導します。</doc>
+        <descriptor href="#assignmentId"/>
+    </descriptor>
+
+    <descriptor id="goSubmissionList" type="safe" title="提出物一覧を表示" rt="#SubmissionList" tag="ナビゲーション 評価">
+        <doc>講師を特定の課題に対するすべての学生の回答のリストに誘導します。</doc>
+        <descriptor href="#assignmentId"/>
+    </descriptor>
+
+    <descriptor id="goSubmissionDetail" type="safe" title="提出物詳細を表示" rt="#SubmissionDetail" tag="ナビゲーション 評価">
+        <doc>ユーザーをその一意の参照によって識別される、特定の学生の課題回答の包括的なビューに誘導します。</doc>
+        <descriptor href="#submissionId"/>
+    </descriptor>
+
+    <descriptor id="goDiscussionList" type="safe" title="ディスカッション一覧を表示" rt="#DiscussionList" tag="ナビゲーション コミュニケーション">
+        <doc>ユーザーを特定のコースのすべての会話フォーラムのリストに誘導します。</doc>
+        <descriptor href="#courseId"/>
+    </descriptor>
+
+    <descriptor id="goDiscussionDetail" type="safe" title="ディスカッション詳細を表示" rt="#DiscussionDetail" tag="ナビゲーション コミュニケーション">
+        <doc>ユーザーをその一意の参照によって識別される、特定の会話フォーラムのビューに誘導します。</doc>
+        <descriptor href="#discussionId"/>
+    </descriptor>
+
+    <descriptor id="goCreateDiscussion" type="safe" title="ディスカッション作成へ移動" rt="#DiscussionDetail" tag="ナビゲーション コミュニケーション">
+        <doc>ユーザーをコース内で新しい会話トピックを開始するためのインターフェースに誘導します。</doc>
+    </descriptor>
+
+    <descriptor id="goMessageCenter" type="safe" title="メッセージセンターへ移動" rt="#MessageCenter" tag="ナビゲーション コミュニケーション">
+        <doc>ユーザーをシステム内の個人的なコミュニケーションのための統合受信トレイに誘導します。</doc>
+    </descriptor>
+
+    <descriptor id="goCreateMessage" type="safe" title="メッセージ作成へ移動" rt="#MessageDetail" tag="ナビゲーション コミュニケーション">
+        <doc>ユーザーを別のシステムユーザーへの新しい個人的なコミュニケーションを作成するためのインターフェースに誘導します。</doc>
+    </descriptor>
+
+    <descriptor id="goMessageDetail" type="safe" title="メッセージ詳細を表示" rt="#MessageDetail" tag="ナビゲーション コミュニケーション">
+        <doc>ユーザーをその一意の参照によって識別される、特定のメッセージ交換のビューに誘導します。</doc>
+        <descriptor href="#messageId"/>
+    </descriptor>
+
+    <descriptor id="goGroupManagement" type="safe" title="グループ管理へ移動" rt="#GroupManagement" tag="ナビゲーション コラボレーション">
+        <doc>講師をコース内で学生チームを作成および整理するためのインターフェースに誘導します。</doc>
+        <descriptor href="#courseId"/>
+    </descriptor>
+
+    <descriptor id="goGroupDetail" type="safe" title="グループ詳細を表示" rt="#GroupDetail" tag="ナビゲーション コラボレーション">
+        <doc>ユーザーをその一意の参照によって識別される、特定の学生チームの包括的なビューに誘導します。</doc>
+        <descriptor href="#groupId"/>
+    </descriptor>
+
+    <descriptor id="goWebinarSchedule" type="safe" title="ウェビナースケジュールを表示" rt="#WebinarSchedule" tag="ナビゲーション コミュニケーション">
+        <doc>ユーザーを特定のコースで計画されているライブセッションのカレンダーに誘導します。</doc>
+        <descriptor href="#courseId"/>
+    </descriptor>
+
+    <descriptor id="goWebinarDetail" type="safe" title="ウェビナー詳細を表示" rt="#WebinarDetail" tag="ナビゲーション コミュニケーション">
+        <doc>ユーザーをその一意の参照によって識別される、特定のライブセッションの包括的なビューに誘導します。</doc>
+        <descriptor href="#webinarId"/>
+    </descriptor>
+
+    <descriptor id="goNotifications" type="safe" title="通知を表示" rt="#MessageCenter" tag="ナビゲーション コミュニケーション">
+        <doc>ユーザーをイベントや更新によって生成されたシステムメッセージとアラートのリストに誘導します。</doc>
+    </descriptor>
+
+    <descriptor id="goClassProgress" type="safe" title="クラス進捗を表示" rt="#ClassProgress" tag="ナビゲーション 進捗追跡">
+        <doc>講師を特定のコースにおける全学生の進捗とパフォーマンスの概要に誘導します。</doc>
+        <descriptor href="#courseId"/>
+    </descriptor>
+
+    <descriptor id="goStudentProgress" type="safe" title="学生進捗を表示" rt="#StudentProgress" tag="ナビゲーション 進捗追跡">
+        <doc>講師をコースとユーザーの両方の参照によって識別される、特定の学生のコースでのパフォーマンスの詳細ビューに誘導します。</doc>
+        <descriptor href="#courseId"/>
+        <descriptor href="#userId"/>
+    </descriptor>
+
+    <!-- コース管理遷移 -->
+    <descriptor id="doCreateCourse" type="unsafe" title="新規コース作成" rt="#CourseDetail" tag="コース管理 オーサリング">
+        <doc>講師が提供した詳細と構成設定に基づいて、システム内に新しい教育提供を生成します。</doc>
+        <descriptor href="#courseTitle"/>
+        <descriptor href="#courseDescription"/>
+        <descriptor href="#courseCategory"/>
+        <descriptor href="#startDate"/>
+        <descriptor href="#endDate"/>
+        <descriptor href="#enrollmentCapacity"/>
+        <descriptor href="#difficultyLevel"/>
+    </descriptor>
+
+    <descriptor id="doUpdateCourse" type="idempotent" title="コース更新" rt="#CourseDetail" tag="コース管理 オーサリング">
+        <doc>講師の入力に基づいて既存のコースの詳細、構造、または設定を変更し、そのIDと登録を保持します。</doc>
+        <descriptor href="#courseId"/>
+        <descriptor href="#courseTitle"/>
+        <descriptor href="#courseDescription"/>
+        <descriptor href="#courseCategory"/>
+        <descriptor href="#startDate"/>
+        <descriptor href="#endDate"/>
+        <descriptor href="#enrollmentCapacity"/>
+        <descriptor href="#difficultyLevel"/>
+    </descriptor>
+
+    <descriptor id="doDeleteCourse" type="idempotent" title="コース削除" rt="#CourseList" tag="コース管理 管理">
+        <doc>アクティブなカタログからコースを削除し、記録保持のためにそのコンテンツと登録履歴をアーカイブする可能性があります。</doc>
+        <descriptor href="#courseId"/>
+    </descriptor>
+
+    <descriptor id="doCreateModule" type="unsafe" title="コースモジュール作成" rt="#ModuleDetail" tag="コース管理 オーサリング">
+        <doc>コース内に新しいテーマ別セクションを生成し、学習シーケンス内での位置とコンテンツのコンテナを確立します。</doc>
+        <descriptor href="#courseId"/>
+        <descriptor href="#moduleTitle"/>
+        <descriptor href="#moduleDescription"/>
+        <descriptor href="#moduleOrder"/>
+    </descriptor>
+
+    <descriptor id="doUpdateModule" type="idempotent" title="モジュール更新" rt="#ModuleDetail" tag="コース管理 オーサリング">
+        <doc>既存のモジュールの詳細、説明、または親コース内でのシーケンス位置を変更します。</doc>
+        <descriptor href="#moduleId"/>
+        <descriptor href="#moduleTitle"/>
+        <descriptor href="#moduleDescription"/>
+        <descriptor href="#moduleOrder"/>
+    </descriptor>
+
+    <descriptor id="doDeleteModule" type="idempotent" title="モジュール削除" rt="#ModuleList" tag="コース管理 オーサリング">
+        <doc>コースからテーマ別セクションを削除し、そのコンテンツ項目とコース全体の構造に影響を与える可能性があります。</doc>
+        <descriptor href="#moduleId"/>
+    </descriptor>
+
+    <descriptor id="doCreateContent" type="unsafe" title="コンテンツ作成" rt="#ContentDetail" tag="コンテンツ作成 オーサリング">
+        <doc>モジュール内に新しい教育リソースを生成し、その形式、アクセシビリティ機能、および学習教材を確立します。</doc>
+        <descriptor href="#moduleId"/>
+        <descriptor href="#contentTitle"/>
+        <descriptor href="#contentDescription"/>
+        <descriptor href="#contentType"/>
+        <descriptor href="#contentData"/>
+        <descriptor href="#contentAccessibility"/>
+    </descriptor>
+
+    <descriptor id="doUpdateContent" type="idempotent" title="コンテンツ更新" rt="#ContentDetail" tag="コンテンツ作成 オーサリング">
+        <doc>既存の教育リソースの詳細、教材、またはアクセシビリティ機能を、コース構造内での位置を維持しながら変更します。</doc>
+        <descriptor href="#contentId"/>
+        <descriptor href="#contentTitle"/>
+        <descriptor href="#contentDescription"/>
+        <descriptor href="#contentType"/>
+        <descriptor href="#contentData"/>
+        <descriptor href="#contentAccessibility"/>
+    </descriptor>
+
+    <descriptor id="doDeleteContent" type="idempotent" title="コンテンツ削除" rt="#ModuleDetail" tag="コンテンツ作成 オーサリング">
+        <doc>親モジュールから教育リソースを削除し、モジュールの完全性と学生の進捗追跡に影響を与える可能性があります。</doc>
+        <descriptor href="#contentId"/>
+    </descriptor>
+
+    <descriptor id="doSaveDraftCourse" type="idempotent" title="コースを下書きとして保存" rt="#CourseEdit" tag="コース管理 ワークフロー">
+        <doc>開発中のコースの現在の状態を、学生に表示したり登録可能にしたりせずに保存します。</doc>
+    </descriptor>
+
+    <descriptor id="doSaveDraftContent" type="idempotent" title="コンテンツを下書きとして保存" rt="#ContentCreation" tag="コンテンツ作成 ワークフロー">
+        <doc>開発中の教育リソースの現在の状態を、モジュール内の学生に公開せずに保存します。</doc>
+    </descriptor>
+
+    <descriptor id="goPreviewContent" type="safe" title="コンテンツプレビュー" rt="#ContentDetail" tag="コンテンツ作成 オーサリング">
+        <doc>学生に表示されるように教育リソースを表示し、講師が公開前にその表示を確認できるようにします。</doc>
+        <descriptor href="#contentId"/>
+    </descriptor>
+
+    <descriptor id="doPublishCourse" type="idempotent" title="コース公開" rt="#CourseDetail" tag="コース管理 ワークフロー">
+        <doc>コースをカタログに表示し、登録可能にし、下書きからアクティブステータスに移行します。</doc>
+        <descriptor href="#courseId"/>
+    </descriptor>
+
+    <!-- 登録遷移 -->
+    <descriptor id="doEnrollCourse" type="unsafe" title="コースに登録" rt="#EnrolledCourses" tag="登録 学生">
+        <doc>特定のコースに学生を登録し、その教材へのアクセスを許可し、登録済みコースリストに追加します。</doc>
+        <descriptor href="#courseId"/>
+        <descriptor href="#userId"/>
+    </descriptor>
+
+    <descriptor id="doUnenrollCourse" type="idempotent" title="コース登録解除" rt="#EnrolledCourses" tag="登録 学生">
+        <doc>コースから学生の登録を削除し、教材へのアクセスや進捗記録に影響を与える可能性があります。</doc>
+        <descriptor href="#courseId"/>
+        <descriptor href="#userId"/>
+    </descriptor>
+
+    <descriptor id="doExtendDeadline" type="idempotent" title="締め切り延長" rt="#StudentProgress" tag="評価 講師ツール">
+        <doc>特別な状況に対応するため、特定の学生に標準の終了日を超えてコース完了のための追加時間を与えます。</doc>
+        <descriptor href="#courseId"/>
+        <descriptor href="#userId"/>
+        <descriptor href="#endDate"/>
+    </descriptor>
+
+    <!-- 課題遷移 -->
+    <descriptor id="doCreateAssignment" type="unsafe" title="課題作成" rt="#AssignmentDetail" tag="評価 講師ツール">
+        <doc>コース内に新しい評価アクティビティを生成し、その要件、締め切り、および評価パラメータを確立します。</doc>
+        <descriptor href="#courseId"/>
+        <descriptor href="#assignmentTitle"/>
+        <descriptor href="#assignmentDescription"/>
+        <descriptor href="#assignmentType"/>
+        <descriptor href="#dueDate"/>
+        <descriptor href="#maxScore"/>
+    </descriptor>
+
+    <descriptor id="doUpdateAssignment" type="idempotent" title="課題更新" rt="#AssignmentDetail" tag="評価 講師ツール">
+        <doc>既存の評価アクティビティの詳細、要件、またはパラメータを、そのIDと提出物を維持しながら変更します。</doc>
+        <descriptor href="#assignmentId"/>
+        <descriptor href="#assignmentTitle"/>
+        <descriptor href="#assignmentDescription"/>
+        <descriptor href="#assignmentType"/>
+        <descriptor href="#dueDate"/>
+        <descriptor href="#maxScore"/>
+    </descriptor>
+
+    <descriptor id="doDeleteAssignment" type="idempotent" title="課題削除" rt="#AssignmentList" tag="評価 講師ツール">
+        <doc>コースから評価アクティビティを削除し、その成績計算と学生の提出物に影響を与える可能性があります。</doc>
+        <descriptor href="#assignmentId"/>
+    </descriptor>
+
+    <descriptor id="doCreateRubric" type="unsafe" title="評価ルーブリック作成" rt="#AssignmentDetail" tag="評価 講師ツール">
+        <doc>課題のための構造化された採点ツールを確立し、評価のための次元とパフォーマンスレベルを定義します。</doc>
+        <descriptor href="#assignmentId"/>
+        <descriptor href="#rubricTitle"/>
+        <descriptor href="#rubricCriteria"/>
+    </descriptor>
+
+    <descriptor id="doSubmitAssignment" type="unsafe" title="課題提出" rt="#AssignmentDetail" tag="評価 学生">
+        <doc>評価アクティビティに対する学生の回答を記録し、講師のレビューと採点のためにその成果物をキャプチャします。</doc>
+        <descriptor href="#assignmentId"/>
+        <descriptor href="#submissionContent"/>
+    </descriptor>
+
+    <descriptor id="doGradeSubmission" type="idempotent" title="提出物採点" rt="#SubmissionDetail" tag="評価 講師ツール">
+        <doc>学生の課題回答を評価し、スコアを割り当て、説明的なフィードバックを提供する可能性があります。</doc>
+        <descriptor href="#submissionId"/>
+        <descriptor href="#gradeValue"/>
+        <descriptor href="#feedback"/>
+    </descriptor>
+
+    <descriptor id="doProvideFeedback" type="idempotent" title="フィードバック提供" rt="#SubmissionDetail" tag="評価 講師ツール">
+        <doc>学生の成果物に関する指導的なコメントを追加または更新し、必ずしも成績を変更することなくガイダンスを提供します。</doc>
+        <descriptor href="#submissionId"/>
+        <descriptor href="#feedback"/>
+    </descriptor>
+
+    <descriptor id="doExportGrades" type="idempotent" title="成績エクスポート" rt="#Gradebook" tag="評価 講師ツール">
+        <doc>コースの学生スコアを含むダウンロード可能なファイルを生成し、外部システムで使用するためにフォーマットします。</doc>
+        <descriptor href="#courseId"/>
+    </descriptor>
+
+    <descriptor id="doCalculateOverallGrades" type="safe" title="総合評価計算" rt="#Gradebook" tag="評価 講師ツール">
+        <doc>採点スキームに従って個々の課題スコアに重み付けを適用することにより、最終コース評価を計算します。</doc>
+        <descriptor href="#courseId"/>
+    </descriptor>
+
+    <!-- コミュニケーション遷移 -->
+    <descriptor id="doCreateDiscussion" type="unsafe" title="ディスカッション作成" rt="#DiscussionDetail" tag="コミュニケーション コラボレーション">
+        <doc>コース内に新しい会話フォーラムを確立し、そのトピックと参加のための最初のプロンプトを定義します。</doc>
+        <descriptor href="#courseId"/>
+        <descriptor href="#discussionTitle"/>
+        <descriptor href="#discussionDescription"/>
+    </descriptor>
+
+    <descriptor id="doCreatePost" type="unsafe" title="ディスカッション投稿作成" rt="#DiscussionDetail" tag="コミュニケーション コラボレーション">
+        <doc>会話フォーラムに新しいメッセージを追加し、スレッドを開始するか、ディスカッションのための新しいトピックを開始します。</doc>
+        <descriptor href="#discussionId"/>
+        <descriptor href="#postContent"/>
+    </descriptor>
+
+    <descriptor id="doReplyToPost" type="unsafe" title="投稿に返信" rt="#DiscussionDetail" tag="コミュニケーション コラボレーション">
+        <doc>会話フォーラムの既存のメッセージに応答を追加し、ディスカッションのスレッドを続けます。</doc>
+        <descriptor href="#postId"/>
+        <descriptor href="#postContent"/>
+    </descriptor>
+
+    <descriptor id="doCreateAnnouncement" type="unsafe" title="お知らせ作成" rt="#CourseDetail" tag="コミュニケーション 講師ツール">
+        <doc>コースのすべての参加者にシステムメッセージを配信し、重要な情報や更新を通知します。</doc>
+        <descriptor href="#courseId"/>
+        <descriptor href="#notificationContent"/>
+    </descriptor>
+
+    <descriptor id="doReplyToMessage" type="unsafe" title="メッセージに返信" rt="#MessageDetail" tag="コミュニケーション パーソナル">
+        <doc>別のユーザーからの個人的なコミュニケーションに応答し、プライベートな会話スレッドを続けます。</doc>
+        <descriptor href="#messageId"/>
+        <descriptor href="#messageContent"/>
+    </descriptor>
+
+    <descriptor id="doAttachFile" type="unsafe" title="メッセージにファイルを添付" rt="#MessageDetail" tag="コミュニケーション メディア">
+        <doc>個人的なコミュニケーションにドキュメントまたはメディアリソースを含め、受信者が利用できるようにします。</doc>
+        <descriptor href="#messageId"/>
+        <descriptor href="#messageAttachments"/>
+    </descriptor>
+
+    <descriptor id="doCreateGroup" type="unsafe" title="学生グループ作成" rt="#GroupDetail" tag="コラボレーション 講師ツール">
+        <doc>コース内に新しい学生チームを確立し、そのメンバーシップと共同ワークスペースを定義します。</doc>
+        <descriptor href="#courseId"/>
+        <descriptor href="#groupName"/>
+        <descriptor href="#groupMembers"/>
+    </descriptor>
+
+    <descriptor id="doUpdateGroup" type="idempotent" title="グループ更新" rt="#GroupDetail" tag="コラボレーション 講師ツール">
+        <doc>既存の学生チームの詳細または設定を、そのIDとワークスペースを維持しながら変更します。</doc>
+        <descriptor href="#groupId"/>
+        <descriptor href="#groupName"/>
+    </descriptor>
+
+    <descriptor id="doDeleteGroup" type="idempotent" title="グループ削除" rt="#GroupManagement" tag="コラボレーション 講師ツール">
+        <doc>コースから学生チームを削除し、共同課題とワークスペースアクセスに影響を与える可能性があります。</doc>
+        <descriptor href="#groupId"/>
+    </descriptor>
+
+    <descriptor id="doAddGroupMember" type="unsafe" title="グループメンバー追加" rt="#GroupDetail" tag="コラボレーション 講師ツール">
+        <doc>既存のチームに追加の学生を含め、その共同ワークスペースへのアクセスを許可します。</doc>
+        <descriptor href="#groupId"/>
+        <descriptor href="#userId"/>
+    </descriptor>
+
+    <descriptor id="doRemoveGroupMember" type="idempotent" title="グループメンバー削除" rt="#GroupDetail" tag="コラボレーション 講師ツール">
+        <doc>チームから学生を除外し、その共同ワークスペースとアクティビティへのアクセスを取り消します。</doc>
+        <descriptor href="#groupId"/>
+        <descriptor href="#userId"/>
+    </descriptor>
+
+    <descriptor id="doCreateWebinar" type="unsafe" title="ウェビナー作成" rt="#WebinarDetail" tag="コミュニケーション 同期 講師ツール">
+        <doc>コースの新しいライブセッションをスケジュールし、そのタイミング、アクセス詳細、およびトピックを確立します。</doc>
+        <descriptor href="#courseId"/>
+        <descriptor href="#webinarTitle"/>
+        <descriptor href="#webinarDescription"/>
+        <descriptor href="#webinarDate"/>
+        <descriptor href="#webinarDuration"/>
+        <descriptor href="#webinarUrl"/>
+    </descriptor>
+
+    <descriptor id="doUpdateWebinar" type="idempotent" title="ウェビナー更新" rt="#WebinarDetail" tag="コミュニケーション 同期 講師ツール">
+        <doc>既存のライブセッションの詳細、タイミング、またはアクセス情報を、そのIDを維持しながら変更します。</doc>
+        <descriptor href="#webinarId"/>
+        <descriptor href="#webinarTitle"/>
+        <descriptor href="#webinarDescription"/>
+        <descriptor href="#webinarDate"/>
+        <descriptor href="#webinarDuration"/>
+        <descriptor href="#webinarUrl"/>
+    </descriptor>
+
+    <descriptor id="doDeleteWebinar" type="idempotent" title="ウェビナー削除" rt="#WebinarSchedule" tag="コミュニケーション 同期 講師ツール">
+        <doc>計画されていたライブセッションをキャンセルし、コーススケジュールから削除し、潜在的な参加者に通知します。</doc>
+        <descriptor href="#webinarId"/>
+    </descriptor>
+
+    <descriptor id="doJoinWebinar" type="idempotent" title="ウェビナーに参加" rt="#WebinarView" tag="コミュニケーション 同期">
+        <doc>ユーザーをアクティブなライブセッションに接続し、ビデオ、オーディオ、またはチャットを通じてリアルタイムでの参加を可能にします。</doc>
+        <descriptor href="#webinarId"/>
+        <descriptor href="#webinarUrl"/>
+    </descriptor>
+
+    <descriptor id="goViewRecording" type="safe" title="ウェビナー録画を表示" rt="#RecordingView" tag="コミュニケーション メディア">
+        <doc>ユーザーをキャプチャされたライブセッションの再生インターフェースに誘導し、非同期視聴を可能にします。</doc>
+        <descriptor href="#webinarId"/>
+        <descriptor href="#webinarRecording"/>
+    </descriptor>
+
+    <!-- 分析遷移 -->
+    <descriptor id="goFilterAnalytics" type="safe" title="分析データフィルタリング" rt="#AnalyticsDashboard" tag="分析 講師ツール">
+        <doc>表示されるエンゲージメントとパフォーマンス指標のパラメータを調整して、特定の時間枠または側面に焦点を合わせます。</doc>
+        <descriptor href="#courseId"/>
+        <descriptor href="#startDate"/>
+        <descriptor href="#endDate"/>
+    </descriptor>
+
+    <descriptor id="doExportAnalytics" type="idempotent" title="分析データエクスポート" rt="#AnalyticsDashboard" tag="分析 講師ツール">
+        <doc>コースのエンゲージメントとパフォーマンス指標を含むダウンロード可能なファイルを生成し、外部分析用にフォーマットします。</doc>
+        <descriptor href="#courseId"/>
+    </descriptor>
+
+    <descriptor id="doGenerateReport" type="unsafe" title="システムレポート生成" rt="#ReportDetail" tag="分析 管理ツール">
+        <doc>指定されたパラメータに基づいて新しいデータコンパイルを作成し、機関分析のためにシステム情報を処理します。</doc>
+        <descriptor href="#reportTitle"/>
+        <descriptor href="#reportType"/>
+        <descriptor href="#startDate"/>
+        <descriptor href="#endDate"/>
+    </descriptor>
+
+    <descriptor id="doExportReport" type="idempotent" title="レポートデータエクスポート" rt="#ReportDetail" tag="分析 管理ツール">
+        <doc>レポート情報を含むダウンロード可能なファイルを生成し、外部システムまたはプレゼンテーションで使用するためにフォーマットします。</doc>
+        <descriptor href="#reportId"/>
+    </descriptor>
+
+    <!-- フィルター遷移 -->
+    <descriptor id="goFilterCourses" type="safe" title="コース一覧フィルタリング" rt="#CourseList" tag="ナビゲーション コース管理">
+        <doc>表示されるコースのパラメータを調整して、よりターゲットを絞ったブラウジングのために特定の基準に一致するもののみを表示します。</doc>
+        <descriptor href="#courseCategory"/>
+        <descriptor href="#instructor"/>
+        <descriptor href="#courseStatus"/>
+    </descriptor>
+
+    <descriptor id="goFilterStudents" type="safe" title="学生一覧フィルタリング" rt="#ClassProgress" tag="ナビゲーション 講師ツール">
+        <doc>表示される学生のパラメータを調整して、焦点を絞ったモニタリングのために特定の基準に一致するもののみを表示します。</doc>
+        <descriptor href="#courseId"/>
+    </descriptor>
+
+    <descriptor id="goFilterAssignments" type="safe" title="課題一覧フィルタリング" rt="#AssignmentList" tag="ナビゲーション 評価">
+        <doc>表示される課題のパラメータを調整して、ターゲットを絞った管理のために特定の基準に一致するもののみを表示します。</doc>
+        <descriptor href="#courseId"/>
+        <descriptor href="#dueDate"/>
+    </descriptor>
+
+    <descriptor id="goFilterSubmissions" type="safe" title="提出物一覧フィルタリング" rt="#SubmissionList" tag="ナビゲーション 評価">
+        <doc>表示される学生の回答のパラメータを調整して、焦点を絞った採点のために特定のステータス基準に一致するもののみを表示します。</doc>
+        <descriptor href="#assignmentId"/>
+        <descriptor href="#submissionStatus"/>
+    </descriptor>
+
+    <descriptor id="goFilterDiscussions" type="safe" title="ディスカッション一覧フィルタリング" rt="#DiscussionList" tag="ナビゲーション コミュニケーション">
+        <doc>表示される会話フォーラムのパラメータを調整して、ターゲットを絞った参加のために特定の基準に一致するもののみを表示します。</doc>
+        <descriptor href="#courseId"/>
+    </descriptor>
+
+    <descriptor id="goFilterMessages" type="safe" title="メッセージフィルタリング" rt="#MessageCenter" tag="ナビゲーション コミュニケーション">
+        <doc>表示される個人的なコミュニケーションのパラメータを調整して、焦点を絞ったレビューのために特定の送信者または日付に一致するもののみを表示します。</doc>
+        <descriptor href="#messageSender"/>
+        <descriptor href="#messageDate"/>
+    </descriptor>
+
+    <!-- ユーザー管理遷移 -->
+    <descriptor id="doUpdateProfile" type="idempotent" title="ユーザープロフィール更新" rt="#UserProfile" tag="ユーザー管理 パーソナライズ">
+        <doc>ユーザーの個人情報またはシステム設定を、アカウントIDと履歴を維持しながら変更します。</doc>
+        <descriptor href="#userName"/>
+        <descriptor href="#userEmail"/>
+        <descriptor href="#userPassword"/>
+        <descriptor href="#userPreferences"/>
+    </descriptor>
+
+    <descriptor id="doCreateUser" type="unsafe" title="ユーザー作成" rt="#UserDetail" tag="ユーザー管理 管理ツール">
+        <doc>システム内に新しいアカウントを確立し、ユーザーのID、連絡先情報、およびアクセス権限を定義します。</doc>
+        <descriptor href="#userName"/>
+        <descriptor href="#userEmail"/>
+        <descriptor href="#userPassword"/>
+        <descriptor href="#userRole"/>
+    </descriptor>
+
+    <descriptor id="doUpdateUser" type="idempotent" title="ユーザー更新" rt="#UserDetail" tag="ユーザー管理 管理ツール">
+        <doc>管理者がユーザーのアカウント詳細または権限を、そのIDと履歴を保持しながら変更します。</doc>
+        <descriptor href="#userId"/>
+        <descriptor href="#userName"/>
+        <descriptor href="#userEmail"/>
+        <descriptor href="#userRole"/>
+        <descriptor href="#adminPermissions"/>
+    </descriptor>
+
+    <descriptor id="doDeleteUser" type="idempotent" title="ユーザー削除" rt="#UserList" tag="ユーザー管理 管理ツール">
+        <doc>アクティブなシステムからユーザーアカウントを削除し、記録保持またはコンプライアンスのためにそのデータを保持する可能性があります。</doc>
+        <descriptor href="#userId"/>
+    </descriptor>
+
+    <!-- 設定遷移 -->
+    <descriptor id="doUpdateSettings" type="idempotent" title="設定更新" rt="#Settings" tag="アクセシビリティ パーソナライズ">
+        <doc>ユーザーのシステム構成設定（インターフェース言語、通知、アクセシビリティ配慮を含む）を変更します。</doc>
+        <descriptor href="#language"/>
+        <descriptor href="#accessibilityFeature"/>
+        <descriptor href="#userPreferences"/>
+    </descriptor>
+
+    <!-- モバイル遷移 -->
+    <descriptor id="doDownloadContent" type="unsafe" title="オフラインアクセス用にコンテンツをダウンロード" rt="#MobileAccess" tag="モバイルアクセス">
+        <doc>コース教材をモバイルデバイスのローカルストレージに保存し、アクティブなインターネット接続なしでレビューできるようにします。</doc>
+        <descriptor href="#contentId"/>
+    </descriptor>
+
+    <descriptor id="doEnableNotifications" type="idempotent" title="モバイル通知を有効化" rt="#MobileAccess" tag="モバイルアクセス コミュニケーション">
+        <doc>アプリケーションがアクティブに開かれていない場合でも、プッシュ通知としてシステムアラートを受信するようにモバイルデバイスを設定します。</doc>
+    </descriptor>
+
+</alps>

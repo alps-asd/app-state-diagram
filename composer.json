@@ -49,15 +49,10 @@
         "post-update-cmd": ["@composer bin all update --ansi", "cd asd-sync && npm install"],
         "bin": "echo 'bin not installed'",
         "docs" : [
-            "bin/asd -c docs/blog/asd.xml docs/blog/profile.xml",
-            "bin/asd -c docs/blog/asd.md.xml docs/blog/profile.md.xml",
-            "bin/asd docs/todomvc/profile.json",
-            "bin/asd -c docs-md/blog/asd.xml docs-md/blog/profile.xml",
-            "bin/asd docs/bookstore/bookstore.xml",
-            "bin/asd docs/ecommerce/amazon.json",
-            "bin/asd docs/lms/lms.xml",
-            "bin/asd --mode=markdown docs/mini-commerce/alps.xml",
-            "bin/asd --mode=html docs/mini-commerce/alps.xml"
+            "bin/asd docs/bookstore/alps.xml",
+            "bin/asd docs/amazon/alps.json",
+            "bin/asd docs/lms/alps.xml",
+            "bin/asd --mode=markdown docs/bookstore/alps.xml"
         ],
         "md" : "bin/asd -c docs/blog/asd.md.xml docs/blog/profile.xml",
         "test": ["./vendor/bin/phpunit"],

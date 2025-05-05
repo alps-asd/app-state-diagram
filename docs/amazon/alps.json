@@ -1,0 +1,825 @@
+{
+    "$schema": "https://alps-io.github.io/schemas/alps.json",
+    "alps": {
+        "title": "大規模マルチベンダーEコマースALPSプラットフォーム",
+        "version": "1.0",
+        "doc": {
+            "value": "このALPS定義は、Amazon風の大規模マルチベンダーEコマースプラットフォームの主要コンポーネントを網羅しています。以下の機能を含む現代の複雑なEコマースエコシステムの多様な側面をカバーしています：\n\n- ユーザー管理\n- 製品カタログ\n- 注文処理\n- 在庫管理\n- マーケットプレイス機能\n- フルフィルメントロジスティクス\n- アフィリエイトプログラム\n- サブスクリプションサービス\n\n主要機能には、マルチベンダーマーケットプレイス、詳細な製品管理、包括的な注文処理、柔軟な支払いシステム、高度な在庫管理、フルフィルメントセンター統合、アフィリエイトマーケティング、ユーザーおよび販売者プロファイル、カテゴリと評価システムが含まれます。スタートアップから大規模Eコマース事業者まで、幅広い規模のオンラインマーケットプレイスの設計と実装に適用できます。"
+        },
+        "descriptor": [
+            {"id": "userId", "title": "ユーザーの一意の識別子", "doc": {
+                "value": "ユーザーの一意の識別子。UUIDを使用し、予測不可能で安全な値を保証します。システム全体でユーザーを一意に識別するために使用され、セキュリティとデータ整合性の基盤となります。"
+            }},
+            {"id": "username", "title": "ユーザーのユーザー名"},
+            {"id": "email", "title": "ユーザーのメールアドレス", "doc": {
+                "value": "ユーザーの主要な連絡手段。アカウント認証と重要な通知に使用されます。一意である必要があり、適切な形式検証が必要です。マーケティングコミュニケーションやトランザクション通知の送信先としても機能し、ユーザーエンゲージメントの重要な要素です。"
+            }},
+            {"id": "fullName", "title": "ユーザーのフルネーム"},
+            {"id": "profileImage", "title": "ユーザーのプロファイル画像URL"},
+            {"id": "role", "title": "システムにおけるユーザーの役割", "doc": {
+                "value": "システム内でのユーザーの権限レベルを定義します。例：CUSTOMER, SELLER, AFFILIATE, ADMIN。役割ベースのアクセス制御（RBAC）システムと連携し、ユーザーが実行できる操作と表示できる情報を決定します。プラットフォームのセキュリティとユーザー体験のカスタマイズに不可欠です。",
+                "link": [
+                    {
+                        "rel": "describedby",
+                        "href": "role.md"
+                    }
+                ]
+            }},
+            {"id": "productId", "title": "製品の一意の識別子",
+                "doc": {
+                    "value": "製品の一意の識別子。SKU（Stock Keeping Unit）と連携し、在庫管理システムとの整合性を保ちます。注文処理、在庫追跡、製品検索など、多くのシステム機能で使用される重要な参照ポイントです。グローバルユニークである必要があり、マルチベンダー環境での製品の一意性を保証します。"
+                }
+            },
+            {"id": "name", "title": "名前（製品名、カテゴリー名など）",
+                "doc": {
+                    "value": "製品の表示名。SEO最適化と製品検索のために重要。多言語サポートを考慮する必要があります。顧客が製品を識別し、理解するための主要な要素であり、検索結果や製品リストでの表示に使用されます。わかりやすく、魅力的で、かつ正確である必要があります。"
+                }},
+            {"id": "description", "title": "説明"},
+            {"id": "price", "title": "価格", "doc": {
+                "value": "製品の現在の価格。動的価格設定アルゴリズム、プロモーション、税金計算と連携します。異なる通貨と価格帯をサポートする必要があります。顧客の購買決定に直接影響を与え、競争力と収益性のバランスを取るための重要な要素です。価格履歴の追跡や、マーケットプレイス全体の価格動向分析にも使用されます。"
+            }},
+            {"id": "category", "title": "カテゴリー"},
+            {"id": "subcategory", "title": "サブカテゴリー"},
+            {"id": "inventory", "title": "在庫数"},
+            {"id": "weight", "title": "重量"},
+            {"id": "dimensions", "title": "寸法"},
+            {"id": "isCustomizable", "title": "カスタマイズ可能かどうか"},
+            {"id": "createdAt", "title": "作成日時"},
+            {"id": "updatedAt", "title": "更新日時"},
+            {"id": "orderId", "title": "注文の一意の識別子"},
+            {"id": "totalAmount", "title": "合計金額"},
+            {"id": "status", "title": "状態（注文状態など）"},
+            {"id": "address", "title": "一般住所"},
+            {"id": "shippingAddress", "title": "配送先住所"},
+            {"id": "billingAddress", "title": "請求先住所"},
+            {"id": "paymentMethod", "title": "支払い方法"},
+            {"id": "street", "title": "通り名と番号"},
+            {"id": "city", "title": "都市名"},
+            {"id": "state", "title": "州または県名"},
+            {"id": "postalCode", "title": "郵便番号"},
+            {"id": "country", "title": "国名"},
+            {"id": "phoneNumber", "title": "電話番号"},
+            {"id": "amount", "title": "金額"},
+            {"id": "currency", "title": "通貨"},
+            {"id": "supplierId", "title": "供給者の一意の識別子"},
+            {"id": "contactInfo", "title": "連絡先情報"},
+            {"id": "rating", "title": "評価"},
+            {"id": "paymentTerms", "title": "支払い条件"},
+            {"id": "leadTime", "title": "リードタイム"},
+            {"id": "minimumOrderQuantity", "title": "最小注文数量"},
+            {"id": "discountId", "title": "割引の一意の識別子"},
+            {"id": "discountType", "title": "割引の種類"},
+            {"id": "discountAmount", "title": "割引額"},
+            {"id": "validFrom", "title": "有効開始日"},
+            {"id": "validTo", "title": "有効終了日"},
+            {"id": "couponCode", "title": "クーポンコード"},
+            {"id": "imageId", "title": "画像の一意の識別子"},
+            {"id": "url", "title": "URL"},
+            {"id": "altText", "title": "代替テキスト"},
+            {"id": "width", "title": "幅"},
+            {"id": "height", "title": "高さ"},
+            {"id": "size", "title": "サイズ"},
+            {"id": "format", "title": "フォーマット"},
+            {"id": "reviewId", "title": "レビューの一意の識別子"},
+            {"id": "comment", "title": "コメント"},
+            {"id": "reviewDate", "title": "レビュー日"},
+            {"id": "helpfulVotes", "title": "役立つ投票数"},
+            {"id": "verifiedPurchase", "title": "確認済み購入"},
+            {"id": "notificationId", "title": "通知の一意の識別子"},
+            {"id": "message", "title": "メッセージ"},
+            {"id": "isRead", "title": "既読かどうか"},
+            {"id": "marketplaceId", "title": "マーケットプレイスの一意の識別子"},
+            {"id": "commissionRate", "title": "手数料率"},
+            {"id": "sellerId", "title": "販売者の一意の識別子"},
+            {"id": "businessAddress", "title": "事業所住所"},
+            {"id": "taxInformation", "title": "税務情報"},
+            {"id": "performanceMetrics", "title": "パフォーマンス指標"},
+            {"id": "affiliateId", "title": "アフィリエイトの一意の識別子"},
+            {"id": "website", "title": "ウェブサイト"},
+            {"id": "earnings", "title": "収益"},
+            {"id": "clickCount", "title": "クリック数"},
+            {"id": "conversionRate", "title": "コンバージョン率"},
+            {"id": "subscriptionId", "title": "サブスクリプションの一意の識別子"},
+            {"id": "plan", "title": "プラン"},
+            {"id": "startDate", "title": "開始日"},
+            {"id": "endDate", "title": "終了日"},
+            {"id": "autoRenew", "title": "自動更新"},
+            {"id": "quantity", "title": "数量", "doc": {
+                "value": "カートに追加する製品の数量。この値は、在庫の可用性チェックや価格計算に使用されます。また、バルク購入や数量割引の適用条件としても機能します。"
+            }},
+            {"id": "isDefault", "title": "デフォルトかどうか"},
+            {"id": "isActive", "title": "アクティブかどうか"},
+            {"id": "expiryDate", "title": "有効期限"},
+            {"id": "trackingNumber", "title": "追跡番号"},
+            {"id": "estimatedDeliveryDate", "title": "予想配達日"},
+            {"id": "isInStock", "title": "在庫があるかどうか"},
+            {"id": "lowStockThreshold", "title": "在庫低下警告のしきい値"},
+            {"id": "reservedQuantity", "title": "予約済みの数量"},
+            {"id": "availableQuantity", "title": "利用可能な数量"},
+            {"id": "baseCost", "title": "基本コスト"},
+            {"id": "freeShippingThreshold", "title": "送料無料の閾値"},
+            {"id": "parentCategory", "title": "親カテゴリー"},
+            {"id": "capacity", "title": "容量"},
+            {"id": "operatingHours", "title": "営業時間"},
+            {"id": "reviewCount", "title": "レビューカウント"},
+            {"id": "currentPassword", "title": "現在のパスワード"},
+            {"id": "newPassword","title": "新しいパスワード"},
+            {"id": "confirmNewPassword", "title": "新しいパスワードの確認"},
+            {"id": "registrationDate", "title": "登録日時"},
+            {"id": "reason", "title": "理由"},
+            {"id": "searchKeyword", "title": "検索キーワード"},
+            {"id": "pageNumber", "title": "ページ番号"},
+            {"id": "pageSize", "title": "ページ番号"},
+            {
+                "id": "User",
+                "title": "ユーザー情報",
+                "doc": {
+                    "value": "プラットフォーム上の個々のアカウントを表します。顧客、販売者、アフィリエイト、管理者など、様々な役割を持つユーザーを含みます。ユーザーの行動追跡、認証、パーソナライゼーション、権限管理の基盤となる重要なエンティティです。"
+                },
+                "descriptor": [
+                    {"href": "#userId"},
+                    {"href": "#username"},
+                    {"href": "#email"},
+                    {"href": "#fullName"},
+                    {"href": "#profileImage"},
+                    {"href": "#role"},
+                    {"href": "#createdAt"},
+                    {"href": "#updatedAt"}
+                ]
+            },
+            {
+                "id": "Product",
+                "title": "製品情報",
+                "doc": {
+                    "value": "プラットフォーム上で販売される個々の商品やサービスを表します。物理的な商品、デジタル製品、サービスなど、多様な製品タイプをサポートします。製品情報の正確性と完全性は、顧客の購買決定とプラットフォームの信頼性に直接影響します。検索エンジン、推奨システム、在庫管理システムなど、多くのコンポーネントと相互作用する中心的なエンティティです。"
+                },
+                "descriptor": [
+                    {"href": "#productId"},
+                    {"href": "#name"},
+                    {"href": "#description"},
+                    {"href": "#price"},
+                    {"href": "#category"},
+                    {"href": "#subcategory"},
+                    {"href": "#inventory"},
+                    {"href": "#weight"},
+                    {"href": "#dimensions"},
+                    {"href": "#isCustomizable"},
+                    {"href": "#createdAt"},
+                    {"href": "#updatedAt"}
+                ]
+            },
+            {
+                "id": "Order",
+                "title": "注文情報",
+                "descriptor": [
+                    {"href": "#orderId"},
+                    {"href": "#userId"},
+                    {"href": "#totalAmount"},
+                    {"href": "#status"},
+                    {"href": "#shippingAddress"},
+                    {"href": "#billingAddress"},
+                    {"href": "#paymentMethod"},
+                    {"href": "#createdAt"},
+                    {"href": "#updatedAt"}
+                ]
+            },
+            {
+                "id": "Address",
+                "title": "住所情報",
+                "descriptor": [
+                    {"href": "#street"},
+                    {"href": "#city"},
+                    {"href": "#state"},
+                    {"href": "#postalCode"},
+                    {"href": "#country"},
+                    {"href": "#phoneNumber"}
+                ]
+            },
+            {
+                "id": "PaymentMethod",
+                "title": "支払い方法",
+                "descriptor": [
+                    {"href": "#paymentMethod"},
+                    {"href": "#name"},
+                    {"href": "#description"}
+                ]
+            },
+            {
+                "id": "Supplier",
+                "title": "供給者情報",
+                "descriptor": [
+                    {"href": "#supplierId"},
+                    {"href": "#name"},
+                    {"href": "#contactInfo"},
+                    {"href": "#rating"},
+                    {"href": "#paymentTerms"},
+                    {"href": "#leadTime"},
+                    {"href": "#minimumOrderQuantity"}
+                ]
+            },
+            {
+                "id": "Discount",
+                "title": "割引情報",
+                "descriptor": [
+                    {"href": "#discountId"},
+                    {"href": "#name"},
+                    {"href": "#description"},
+                    {"href": "#discountType"},
+                    {"href": "#discountAmount"},
+                    {"href": "#validFrom"},
+                    {"href": "#validTo"},
+                    {"href": "#couponCode"}
+                ]
+            },
+            {
+                "id": "Image",
+                "title": "画像情報",
+                "descriptor": [
+                    {"href": "#imageId"},
+                    {"href": "#url"},
+                    {"href": "#altText"},
+                    {"href": "#width"},
+                    {"href": "#height"},
+                    {"href": "#size"},
+                    {"href": "#format"}
+                ]
+            },
+            {
+                "id": "Review",
+                "title": "レビュー情報",
+                "descriptor": [
+                    {"href": "#reviewId"},
+                    {"href": "#userId"},
+                    {"href": "#productId"},
+                    {"href": "#rating"},
+                    {"href": "#comment"},
+                    {"href": "#reviewDate"},
+                    {"href": "#helpfulVotes"},
+                    {"href": "#verifiedPurchase"}
+                ]
+            },
+            {
+                "id": "Notification",
+                "title": "通知情報",
+                "descriptor": [
+                    {"href": "#notificationId"},
+                    {"href": "#userId"},
+                    {"href": "#message"},
+                    {"href": "#isRead"},
+                    {"href": "#createdAt"}
+                ]
+            },
+            {
+                "id": "Marketplace",
+                "title": "マーケットプレイス情報",
+                "descriptor": [
+                    {"href": "#marketplaceId"},
+                    {"href": "#name"},
+                    {"href": "#description"},
+                    {"href": "#commissionRate"}
+                ]
+            },
+            {
+                "id": "Seller",
+                "title": "販売者情報",
+                "descriptor": [
+                    {"href": "#sellerId"},
+                    {"href": "#name"},
+                    {"href": "#email"},
+                    {"href": "#phoneNumber"},
+                    {"href": "#businessAddress"},
+                    {"href": "#taxInformation"},
+                    {"href": "#performanceMetrics"},
+                    {"href": "#createdAt"}
+                ]
+            },
+            {
+                "id": "Affiliate",
+                "title": "アフィリエイト情報",
+                "descriptor": [
+                    {"href": "#affiliateId"},
+                    {"href": "#name"},
+                    {"href": "#email"},
+                    {"href": "#website"},
+                    {"href": "#earnings"},
+                    {"href": "#clickCount"},
+                    {"href": "#conversionRate"}
+                ]
+            },
+            {
+                "id": "Subscription",
+                "title": "サブスクリプション情報",
+                "descriptor": [
+                    {"href": "#subscriptionId"},
+                    {"href": "#userId"},
+                    {"href": "#plan"},
+                    {"href": "#startDate"},
+                    {"href": "#endDate"},
+                    {"href": "#status"},
+                    {"href": "#autoRenew"},
+                    {"href": "#price"}
+                ]
+            },
+            {
+                "id": "CartItem",
+                "title": "カート項目",
+                "descriptor": [
+                    {"href": "#productId"},
+                    {"href": "#quantity"},
+                    {"href": "#price"}
+                ]
+            },
+            {
+                "id": "Cart",
+                "title": "ショッピングカート",
+                "descriptor": [
+                    {"href": "#userId"},
+                    {"href": "#CartItem"},
+                    {"href": "#totalAmount"},
+                    {"href": "#updatedAt"}
+                ]
+            },
+            {
+                "id": "WishlistItem",
+                "title": "ウィッシュリスト項目",
+                "descriptor": [
+                    {"href": "#productId"},
+                    {"href": "#updatedAt"}
+                ]
+            },
+            {
+                "id": "Wishlist",
+                "title": "ウィッシュリスト",
+                "descriptor": [
+                    {"href": "#userId"},
+                    {"href": "#WishlistItem"}
+                ]
+            },
+            {
+                "id": "Promotion",
+                "title": "プロモーション",
+                "descriptor": [
+                    {"href": "#name"},
+                    {"href": "#description"},
+                    {"href": "#discountType"},
+                    {"href": "#discountAmount"},
+                    {"href": "#validFrom"},
+                    {"href": "#validTo"},
+                    {"href": "#couponCode"},
+                    {"href": "#isActive"}
+                ]
+            },
+            {
+                "id": "Inventory",
+                "title": "在庫",
+                "descriptor": [
+                    {"href": "#productId"},
+                    {"href": "#quantity"},
+                    {"href": "#isInStock"},
+                    {"href": "#lowStockThreshold"},
+                    {"href": "#reservedQuantity"},
+                    {"href": "#availableQuantity"},
+                    {"href": "#updatedAt"}
+                ]
+            },
+            {
+                "id": "ShippingMethod",
+                "title": "配送方法",
+                "descriptor": [
+                    {"href": "#name"},
+                    {"href": "#description"},
+                    {"href": "#baseCost"},
+                    {"href": "#estimatedDeliveryDate"},
+                    {"href": "#freeShippingThreshold"},
+                    {"href": "#isActive"}
+                ]
+            },
+            {
+                "id": "Category",
+                "title": "カテゴリー",
+                "descriptor": [
+                    {"href": "#name"},
+                    {"href": "#description"},
+                    {"href": "#parentCategory"},
+                    {"href": "#isActive"}
+                ]
+            },
+            {
+                "id": "FulfillmentCenter",
+                "title": "フルフィルメントセンター",
+                "descriptor": [
+                    {"href": "#name"},
+                    {"href": "#address"},
+                    {"href": "#capacity"},
+                    {"href": "#operatingHours"}
+                ]
+            },
+            {
+                "id": "Money",
+                "title": "金額",
+                "descriptor": [
+                    {"href": "#amount"},
+                    {"href": "#currency"}
+                ]
+            },
+            {
+                "id": "Rating",
+                "title": "評価",
+                "descriptor": [
+                    {"href": "#rating"},
+                    {"href": "#reviewCount"}
+                ]
+            },
+            {
+                "id": "OrderItem",
+                "title": "注文項目",
+                "descriptor": [
+                    {"href": "#productId"},
+                    {"href": "#quantity"},
+                    {"href": "#price"},
+                    {"href": "#discountId"}
+                ]
+            },
+            {
+                "id": "Order",
+                "title": "注文",
+                "descriptor": [
+                    {"href": "#orderId"},
+                    {"href": "#userId"},
+                    {"href": "#OrderItem"},
+                    {"href": "#totalAmount"},
+                    {"href": "#status"},
+                    {"href": "#shippingAddress"},
+                    {"href": "#billingAddress"},
+                    {"href": "#paymentMethod"},
+                    {"href": "#ShippingMethod"},
+                    {"href": "#trackingNumber"},
+                    {"href": "#createdAt"},
+                    {"href": "#updatedAt"}
+                ]
+            },
+            {
+                "id": "LoginPage",
+                "type": "semantic",
+                "title": "ログインページ",
+                "descriptor": [
+                    {"href": "#doLogin"},
+                    {"href": "#goToRegister"}
+                ]
+            },
+            {
+                "id": "RegisterPage",
+                "type": "semantic",
+                "title": "ユーザー登録ページ",
+                "descriptor": [
+                    {"href": "#doRegister"},
+                    {"href": "#goToLogin"}
+                ]
+            },
+            {
+                "id": "UserHomePage",
+                "type": "semantic",
+                "title": "ユーザーホームページ",
+                "descriptor": [
+                    {"href": "#goToUserProductList"},
+                    {"href": "#goToUserCart"},
+                    {"href": "#goToUserOrderHistory"},
+                    {"href": "#goToUserProfile"},
+                    {"href": "#doLogout"}
+                ]
+            },
+            {
+                "id": "UserProductListPage",
+                "type": "semantic",
+                "title": "ユーザー製品リストページ",
+                "descriptor": [
+                    {"href": "#goToUserProductDetail"},
+                    {"href": "#goToUserHome"},
+                    {"href": "#doSearchProducts"},
+                    {"href": "#doPaginateProducts"}
+                ]
+            },
+            {
+                "id": "UserProductDetailPage",
+                "type": "semantic",
+                "title": "ユーザー製品詳細ページ",
+                "descriptor": [
+                    {"href": "#doAddToCart"},
+                    {"href": "#goToUserProductList"},
+                    {"href": "#goToUserCart"},
+                    {"href": "#goToUserReview"}
+                ]
+            },
+            {
+                "id": "UserCartPage",
+                "type": "semantic",
+                "title": "ユーザーカートページ",
+                "descriptor": [
+                    {"href": "#doUpdateCartItem"},
+                    {"href": "#doRemoveCartItem"},
+                    {"href": "#goToUserCheckout"},
+                    {"href": "#goToUserHome"}
+                ]
+            },
+            {
+                "id": "UserCheckoutPage",
+                "type": "semantic",
+                "title": "ユーザーチェックアウトページ",
+                "descriptor": [
+                    {"href": "#doPlaceOrder"},
+                    {"href": "#goToUserCart"},
+                    {"href": "#goToUserHome"}
+                ]
+            },
+            {
+                "id": "UserOrderHistoryPage",
+                "type": "semantic",
+                "title": "ユーザー注文履歴ページ",
+                "descriptor": [
+                    {"href": "#goToUserOrderDetail"},
+                    {"href": "#goToUserHome"},
+                    {"href": "#doPaginateOrders"}
+                ]
+            },
+            {
+                "id": "UserOrderDetailPage",
+                "type": "semantic",
+                "title": "ユーザー注文詳細ページ",
+                "descriptor": [
+                    {"href": "#goToUserOrderHistory"},
+                    {"href": "#goToUserHome"},
+                    {"href": "#goToUserReturnRefund"}
+                ]
+            },
+            {
+                "id": "UserProfilePage",
+                "type": "semantic",
+                "title": "ユーザープロフィールページ",
+                "descriptor": [
+                    {"href": "#doUpdateUserProfile"},
+                    {"href": "#goToUserHome"}
+                ]
+            },
+            {
+                "id": "UserReviewPage",
+                "type": "semantic",
+                "title": "ユーザーレビューページ",
+                "descriptor": [
+                    {"href": "#doAddReview"},
+                    {"href": "#doUpdateReview"},
+                    {"href": "#doDeleteReview"},
+                    {"href": "#goToUserProductDetail"}
+                ]
+            },
+            {
+                "id": "UserReturnRefundPage",
+                "type": "semantic",
+                "title": "返品/払い戻しページ",
+                "descriptor": [
+                    {"href": "#doRequestReturn"},
+                    {"href": "#doRequestRefund"},
+                    {"href": "#goToUserOrderDetail"}
+                ]
+            },
+            {
+                "id": "goToRegister",
+                "type": "safe",
+                "title": "登録ページへ移動",
+                "doc": {
+                    "value": "ユーザーを新規アカウント作成ページにナビゲートします。このトランジションは、新規ユーザー獲得プロセスの開始点であり、コンバージョンファネルの重要なステップです。ユーザーエクスペリエンスを最適化し、登録の完了率を高めるために、このページへの遷移はスムーズで直感的である必要があります。また、ユーザーの現在のコンテキスト（例：閲覧していた製品ページ）を保持し、登録後にシームレスに元のコンテキストに戻れるようにすることが重要です。"
+                },
+                "rt": "#RegisterPage"
+            },
+            {
+                "id": "goToLogin",
+                "type": "safe",
+                "title": "ログインページへ移動",
+                "rt": "#LoginPage"
+            },
+            {
+                "id": "goToUserHome",
+                "type": "safe",
+                "title": "ユーザーホームへ移動",
+                "rt": "#UserHomePage"
+            },
+            {
+                "id": "goToUserProductList",
+                "type": "safe",
+                "title": "ユーザー製品リストへ移動",
+                "rt": "#UserProductListPage"
+            },
+            {
+                "id": "goToUserProductDetail",
+                "type": "safe",
+                "title": "ユーザー製品詳細へ移動",
+                "rt": "#UserProductDetailPage"
+            },
+            {
+                "id": "goToUserCart",
+                "type": "safe",
+                "title": "ユーザーカートへ移動",
+                "rt": "#UserCartPage"
+            },
+            {
+                "id": "goToUserCheckout",
+                "type": "safe",
+                "title": "ユーザーチェックアウトへ移動",
+                "rt": "#UserCheckoutPage"
+            },
+            {
+                "id": "goToUserOrderHistory",
+                "type": "safe",
+                "title": "ユーザー注文履歴へ移動",
+                "rt": "#UserOrderHistoryPage"
+            },
+            {
+                "id": "goToUserOrderDetail",
+                "type": "safe",
+                "title": "ユーザー注文詳細へ移動",
+                "rt": "#UserOrderDetailPage"
+            },
+            {
+                "id": "goToUserProfile",
+                "type": "safe",
+                "title": "ユーザープロフィールへ移動",
+                "rt": "#UserProfilePage"
+            },
+            {
+                "id": "goToUserReview",
+                "type": "safe",
+                "title": "ユーザーレビューページへ移動",
+                "rt": "#UserReviewPage"
+            },
+            {
+                "id": "goToUserReturnRefund",
+                "type": "safe",
+                "title": "返品/払い戻しページへ移動",
+                "rt": "#UserReturnRefundPage"
+            },
+            {
+                "id": "doLogin",
+                "type": "unsafe",
+                "title": "ログイン",
+                "rt": "#UserHomePage",
+                "descriptor": [
+                    {"href": "#email"},
+                    {"href": "#currentPassword"}
+                ]
+            },
+            {
+                "id": "doLogout",
+                "type": "safe",
+                "title": "ログアウト",
+                "rt": "#LoginPage"
+            },
+            {
+                "id": "doRegister",
+                "type": "unsafe",
+                "title": "ユーザー登録",
+                "rt": "#UserHomePage",
+                "descriptor": [
+                    {"href": "#name"},
+                    {"href": "#email"},
+                    {"href": "#currentPassword"},
+                    {"href": "#confirmNewPassword"}
+                ]
+            },
+            {
+                "id": "doAddToCart",
+                "type": "unsafe",
+                "title": "カートに追加",
+                "doc": {
+                    "value": "指定された製品を指定された数量だけユーザーのショッピングカートに追加します。この操作は、Eコマースプラットフォームの中核的な機能の一つであり、ユーザーの購買意図を捕捉する重要なポイントです。実行時には、リアルタイムの在庫確認、価格の再計算、関連商品の推奨などの処理が行われます。また、ユーザーの過去の行動に基づいて、クロスセリングやアップセリングの機会を識別します。カートの状態変化は、在庫管理システムに即時に反映され、他の顧客の購買体験に影響を与えないようにします。パフォーマンスとユーザーエクスペリエンスの観点から、この操作は高速で信頼性が高く、ユーザーに明確なフィードバックを提供する必要があります。"
+                },
+                "rt": "#UserCartPage",
+                "descriptor": [
+                    {"href": "#productId"},
+                    {"href": "#quantity"}
+                ]
+            },
+            {
+                "id": "doUpdateCartItem",
+                "type": "idempotent",
+                "title": "カート内アイテム更新",
+                "rt": "#UserCartPage",
+                "descriptor": [
+                    {"href": "#productId"},
+                    {"href": "#quantity"}
+                ]
+            },
+            {
+                "id": "doRemoveCartItem",
+                "type": "idempotent",
+                "title": "カート内アイテム削除",
+                "rt": "#UserCartPage",
+                "descriptor": [
+                    {"href": "#productId"}
+                ]
+            },
+            {
+                "id": "doPlaceOrder",
+                "type": "unsafe",
+                "title": "注文確定",
+                "rt": "#UserOrderDetailPage",
+                "descriptor": [
+                    {"href": "#shippingAddress"},
+                    {"href": "#paymentMethod"}
+                ]
+            },
+            {
+                "id": "doUpdateUserProfile",
+                "type": "idempotent",
+                "title": "ユーザープロフィール更新",
+                "rt": "#UserProfilePage",
+                "descriptor": [
+                    {"href": "#name"},
+                    {"href": "#email"},
+                    {"href": "#phoneNumber"},
+                    {"href": "#address"}
+                ]
+            },
+            {
+                "id": "doAddReview",
+                "type": "unsafe",
+                "title": "レビュー追加",
+                "rt": "#UserProductDetailPage",
+                "descriptor": [
+                    {"href": "#productId"},
+                    {"href": "#rating"},
+                    {"href": "#comment"}
+                ]
+            },
+            {
+                "id": "doUpdateReview",
+                "type": "idempotent",
+                "title": "レビュー更新",
+                "rt": "#UserProductDetailPage",
+                "descriptor": [
+                    {"href": "#reviewId"},
+                    {"href": "#rating"},
+                    {"href": "#comment"}
+                ]
+            },
+            {
+                "id": "doDeleteReview",
+                "type": "idempotent",
+                "title": "レビュー削除",
+                "rt": "#UserProductDetailPage",
+                "descriptor": [
+                    {"href": "#reviewId"}
+                ]
+            },
+            {
+                "id": "doRequestReturn",
+                "type": "unsafe",
+                "title": "返品リクエスト",
+                "rt": "#UserOrderDetailPage",
+                "descriptor": [
+                    {"href": "#orderId"},
+                    {"href": "#reason"}
+                ]
+            },
+            {
+                "id": "doRequestRefund",
+                "type": "unsafe",
+                "title": "払い戻しリクエスト",
+                "rt": "#UserOrderDetailPage",
+                "descriptor": [
+                    {"href": "#orderId"},
+                    {"href": "#reason"}
+                ]
+            },
+            {
+                "id": "doSearchProducts",
+                "type": "safe",
+                "title": "製品検索",
+                "rt": "#UserProductListPage",
+                "descriptor": [
+                    {"href": "#searchKeyword"},
+                    {"href": "#category"},
+                    {"href": "#subcategory"}
+                ]
+            },
+            {
+                "id": "doPaginateProducts",
+                "type": "safe",
+                "title": "製品リストのページネーション",
+                "rt": "#UserProductListPage",
+                "descriptor": [
+                    {"href": "#pageNumber"},
+                    {"href": "#pageSize"}
+                ]
+            },
+            {
+                "id": "doPaginateOrders",
+                "type": "safe",
+                "title": "注文リストのページネーション",
+                "rt": "#UserOrderHistoryPage",
+                "descriptor": [
+                    {"href": "#pageNumber"},
+                    {"href": "#pageSize"}
+                ]
+            }
+        ]
+    }
+}

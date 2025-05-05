@@ -8,9 +8,9 @@
  viewBox="0.00 0.00 425.63 530.80" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 <g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 526.8)">
 <title>application_state_diagram</title>
-<g id="a_graph0"><a xlink:href="index.html" xlink:title="オンライン書店カタログシステム2" target="_parent">
+<g id="a_graph0"><a xlink:href="index.html" xlink:title="ALPS Book Store" target="_parent">
 <polygon fill="#ffffff" stroke="transparent" points="-4,4 -4,-526.8 421.6301,-526.8 421.6301,4 -4,4"/>
-<text text-anchor="middle" x="208.815" y="-506.2" font-family="Helvetica,sans-Serif" font-size="14.00" fill="#000000">オンライン書店カタログシステム2</text>
+<text text-anchor="middle" x="208.815" y="-506.2" font-family="Helvetica,sans-Serif" font-size="14.00" fill="#000000">ALPS Book Store</text>
 </a>
 </g>
 <!-- Book -->
@@ -26,7 +26,7 @@
 <g id="node2" class="node">
 <title>Catalog</title>
 <g id="a_node2"><a xlink:href="#Catalog" xlink:title="Catalog" target="_parent">
-<polygon fill="#d3d3d3" stroke="#000000" stroke-width="2" points="71.5915,-406.5 17.5915,-406.5 17.5915,-370.5 71.5915,-370.5 71.5915,-406.5"/>
+<polygon fill="#d3d3d3" stroke="#000000" stroke-width="2" points="73.1403,-406.5 16.0427,-406.5 16.0427,-370.5 73.1403,-370.5 73.1403,-406.5"/>
 <text text-anchor="middle" x="44.5915" y="-384.3" font-family="Times,serif" font-size="14.00" fill="#000000">Catalog</text>
 </a>
 </g>
@@ -95,24 +95,24 @@
 <g id="edge4" class="edge goGetCategories">
 <title>Catalog&#45;&gt;Catalog</title>
 <g id="a_edge4"><a xlink:href="#goGetCategories" xlink:title="&lt;TABLE&gt;" target="_parent">
-<path fill="none" stroke="#000000" stroke-width="1.5" d="M71.8323,-397.4912C81.6154,-397.6846 89.5915,-394.6875 89.5915,-388.5 89.5915,-384.7295 86.6297,-382.1437 82.102,-380.7427"/>
-<polygon fill="#000000" stroke="#000000" stroke-width="1.5" points="82.1784,-377.2268 71.8323,-379.5088 81.3433,-384.1768 82.1784,-377.2268"/>
+<path fill="none" stroke="#000000" stroke-width="1.5" d="M73.3667,-397.4978C83.3239,-397.593 91.365,-394.5938 91.365,-388.5 91.365,-384.6914 88.2239,-382.0916 83.4372,-380.7006"/>
+<polygon fill="#000000" stroke="#000000" stroke-width="1.5" points="83.7103,-377.2085 73.3667,-379.5022 82.8831,-384.1594 83.7103,-377.2085"/>
 </a>
 </g>
 <g id="a_edge4&#45;label"><a xlink:href="#goGetCategories" xlink:title="&lt;TABLE&gt;" target="_parent">
 <g id="a_edge4_3"><a xlink:href="#goGetCategories" xlink:title="カテゴリー一覧の取得 (safe)" target="_parent">
-<text text-anchor="start" x="89.2483" y="-399.8" font-family="Times,serif" font-size="13.00" fill="#00a86b">■</text>
-<text text-anchor="start" x="98.9983" y="-399.8" font-family="Times,serif" font-size="13.00" fill="#000000"> goGetCategories</text>
+<text text-anchor="start" x="91.0218" y="-399.8" font-family="Times,serif" font-size="13.00" fill="#00a86b">■</text>
+<text text-anchor="start" x="100.7718" y="-399.8" font-family="Times,serif" font-size="13.00" fill="#000000"> goGetCategories</text>
 </a>
 </g>
 <g id="a_edge4_4"><a xlink:href="#goListBooks" xlink:title="書籍一覧の取得 (safe)" target="_parent">
-<text text-anchor="start" x="89.5915" y="-384.8" font-family="Times,serif" font-size="13.00" fill="#00a86b">■</text>
-<text text-anchor="start" x="99.3415" y="-384.8" font-family="Times,serif" font-size="13.00" fill="#000000"> goListBooks</text>
+<text text-anchor="start" x="91.365" y="-384.8" font-family="Times,serif" font-size="13.00" fill="#00a86b">■</text>
+<text text-anchor="start" x="101.115" y="-384.8" font-family="Times,serif" font-size="13.00" fill="#000000"> goListBooks</text>
 </a>
 </g>
 <g id="a_edge4_5"><a xlink:href="#goSearchBooks" xlink:title="書籍の検索 (safe)" target="_parent">
-<text text-anchor="start" x="89.5915" y="-369.8" font-family="Times,serif" font-size="13.00" fill="#00a86b">■</text>
-<text text-anchor="start" x="99.3415" y="-369.8" font-family="Times,serif" font-size="13.00" fill="#000000"> goSearchBooks</text>
+<text text-anchor="start" x="91.365" y="-369.8" font-family="Times,serif" font-size="13.00" fill="#00a86b">■</text>
+<text text-anchor="start" x="101.115" y="-369.8" font-family="Times,serif" font-size="13.00" fill="#000000"> goSearchBooks</text>
 </a>
 </g>
 </a>
@@ -122,7 +122,7 @@
 <g id="edge5" class="edge goToCart">
 <title>Catalog&#45;&gt;ShoppingCart</title>
 <g id="a_edge5"><a xlink:href="#goToCart" xlink:title="&lt;TABLE&gt;" target="_parent">
-<path fill="none" stroke="#000000" stroke-width="1.5" d="M71.6612,-381.3122C90.304,-375.153 114.5173,-364.5965 130.5915,-348 138.0176,-340.3326 143.3307,-330.0005 147.0379,-320.33"/>
+<path fill="none" stroke="#000000" stroke-width="1.5" d="M73.2724,-380.7735C91.681,-374.5449 114.9765,-364.1224 130.5915,-348 138.0176,-340.3326 143.3307,-330.0005 147.0379,-320.33"/>
 <polygon fill="#000000" stroke="#000000" stroke-width="1.5" points="150.4302,-321.2257 150.3411,-310.6312 143.804,-318.9689 150.4302,-321.2257"/>
 </a>
 </g>

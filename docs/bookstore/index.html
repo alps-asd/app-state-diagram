@@ -1,6 +1,6 @@
 <html lang="en">
 <head>
-    <title>オンライン書店カタログシステム2</title>
+    <title>ALPS Book Store</title>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/3.0.1/github-markdown.min.css">
     <style>
@@ -517,9 +517,9 @@ const setupDocClick = () => {
 </script></head>
 <body>
     <div class="markdown-body">
-        <h1>オンライン書店カタログシステム2</h1>
+        <h1>ALPS Book Store</h1>
 
-<p>オンライン書店の書籍カタログを管理し、ユーザーの購買フローを定義するためのALPSプロファイル。</p>
+<p>ALPS profile for managing an online bookstore catalog and defining the user purchase flow. This profile provides semantic definitions for both RESTful APIs and UI.</p>
 
 <!-- Container for the ASDs -->
 
@@ -532,8 +532,8 @@ const setupDocClick = () => {
     document.addEventListener('DOMContentLoaded', async function() {
         try {
             await Promise.all([
-                    renderGraph("#asd-graph-id", 'digraph application_state_diagram {  graph [    labelloc="t";    fontname="Helvetica"    label="オンライン書店カタログシステム2";    URL="index.html" target="_parent"  ];  node [shape = box, style = "bold,filled" fillcolor="lightgray", margin="0.3,0.1"];    Book [margin=0.1, label="Book", shape=box, URL="#Book" target="_parent"]    Catalog [margin=0.1, label="Catalog", shape=box, URL="#Catalog" target="_parent"]    Book -> Catalog [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goToCatalog" tooltip="カタログ画面に移動 (safe)"><font color="#00A86B">■</font> goToCatalog</td></tr></table>> URL="#goToCatalog" target="_parent" fontsize=13 class="goToCatalog" penwidth=1.5];    Book -> ShoppingCart [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#doAddToCart" tooltip="カートに追加 (unsafe)"><font color="#FF4136">■</font> doAddToCart</td></tr></table>> URL="#doAddToCart" target="_parent" fontsize=13 class="doAddToCart" penwidth=1.5];    Catalog -> Book [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goToBookDetails" tooltip="書籍詳細画面に移動 (safe)"><font color="#00A86B">■</font> goToBookDetails</td></tr></table>> URL="#goToBookDetails" target="_parent" fontsize=13 class="goToBookDetails" penwidth=1.5];    Catalog -> Catalog [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" align="left" href="#goGetCategories" tooltip="カテゴリー一覧の取得 (safe)"><font color="#00A86B">■</font> goGetCategories</td></tr><tr><td valign="middle" align="left" href="#goListBooks" tooltip="書籍一覧の取得 (safe)"><font color="#00A86B">■</font> goListBooks</td></tr><tr><td valign="middle" align="left" href="#goSearchBooks" tooltip="書籍の検索 (safe)"><font color="#00A86B">■</font> goSearchBooks</td></tr></table>> URL="#goGetCategories" target="_parent" fontsize=13 class="goGetCategories" penwidth=1.5];    Catalog -> ShoppingCart [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goToCart" tooltip="カート画面に移動 (safe)"><font color="#00A86B">■</font> goToCart</td></tr></table>> URL="#goToCart" target="_parent" fontsize=13 class="goToCart" penwidth=1.5];    Checkout -> Checkout [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" align="left" href="#doPaymentInfo" tooltip="支払い情報の入力 (unsafe)"><font color="#FF4136">■</font> doPaymentInfo</td></tr><tr><td valign="middle" align="left" href="#doShippingInfo" tooltip="配送情報の入力 (unsafe)"><font color="#FF4136">■</font> doShippingInfo</td></tr><tr><td valign="middle" align="left" href="#doUserInfo" tooltip="ユーザー情報の入力 (unsafe)"><font color="#FF4136">■</font> doUserInfo</td></tr></table>> URL="#doPaymentInfo" target="_parent" fontsize=13 class="doPaymentInfo" penwidth=1.5];    Checkout -> OrderConfirmation [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#doPlaceOrder" tooltip="注文の確定 (unsafe)"><font color="#FF4136">■</font> doPlaceOrder</td></tr></table>> URL="#doPlaceOrder" target="_parent" fontsize=13 class="doPlaceOrder" penwidth=1.5];    Checkout -> ShoppingCart [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goToCart" tooltip="カート画面に移動 (safe)"><font color="#00A86B">■</font> goToCart</td></tr></table>> URL="#goToCart" target="_parent" fontsize=13 class="goToCart" penwidth=1.5];    Home -> Catalog [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goToCatalog" tooltip="カタログ画面に移動 (safe)"><font color="#00A86B">■</font> goToCatalog</td></tr></table>> URL="#goToCatalog" target="_parent" fontsize=13 class="goToCatalog" penwidth=1.5];    Home -> ShoppingCart [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goToCart" tooltip="カート画面に移動 (safe)"><font color="#00A86B">■</font> goToCart</td></tr></table>> URL="#goToCart" target="_parent" fontsize=13 class="goToCart" penwidth=1.5];    OrderConfirmation -> Home [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goToHome" tooltip="ホーム画面に移動 (safe)"><font color="#00A86B">■</font> goToHome</td></tr></table>> URL="#goToHome" target="_parent" fontsize=13 class="goToHome" penwidth=1.5];    OrderConfirmation -> OrderConfirmation [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goOrderDetails" tooltip="注文詳細の表示 (safe)"><font color="#00A86B">■</font> goOrderDetails</td></tr></table>> URL="#goOrderDetails" target="_parent" fontsize=13 class="goOrderDetails" penwidth=1.5];    ShoppingCart -> Catalog [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goToCatalog" tooltip="カタログ画面に移動 (safe)"><font color="#00A86B">■</font> goToCatalog</td></tr></table>> URL="#goToCatalog" target="_parent" fontsize=13 class="goToCatalog" penwidth=1.5];    ShoppingCart -> Checkout [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goToCheckout" tooltip="決済画面に移動 (safe)"><font color="#00A86B">■</font> goToCheckout</td></tr></table>> URL="#goToCheckout" target="_parent" fontsize=13 class="goToCheckout" penwidth=1.5];    ShoppingCart -> ShoppingCart [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" align="left" href="#doRemoveFromCart" tooltip="カートからアイテムを削除 (idempotent)"><font color="#FFDC00">■</font> doRemoveFromCart</td></tr><tr><td valign="middle" align="left" href="#doUpdateQuantity" tooltip="カート内アイテムの数量更新 (idempotent)"><font color="#FFDC00">■</font> doUpdateQuantity</td></tr><tr><td valign="middle" align="left" href="#goListCartItems" tooltip="カート内アイテム一覧の取得 (safe)"><font color="#00A86B">■</font> goListCartItems</td></tr></table>> URL="#doRemoveFromCart" target="_parent" fontsize=13 class="doRemoveFromCart" penwidth=1.5];    Book [label = <Book> URL="#Book" target="_parent"]    Catalog [label = <Catalog> URL="#Catalog" target="_parent"]    ShoppingCart [label = <ShoppingCart> URL="#ShoppingCart" target="_parent"]    Checkout [label = <Checkout> URL="#Checkout" target="_parent"]    OrderConfirmation [label = <OrderConfirmation> URL="#OrderConfirmation" target="_parent"]    Home [label = <Home> URL="#Home" target="_parent"]}'),
-                    renderGraph("#asd-graph-name", 'digraph application_state_diagram {  graph [    labelloc="t";    fontname="Helvetica"    label="オンライン書店カタログシステム2";    URL="index.html" target="_parent"  ];  node [shape = box, style = "bold,filled" fillcolor="lightgray", margin="0.3,0.1"];    Book [margin=0.1, label="書籍", shape=box, URL="#Book" target="_parent"]    Catalog [margin=0.1, label="書籍カタログ", shape=box, URL="#Catalog" target="_parent"]    Book -> Catalog [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goToCatalog" tooltip="カタログ画面に移動 (safe)"><font color="#00A86B">■</font> カタログ画面に移動</td></tr></table>> URL="#goToCatalog" target="_parent" fontsize=13 class="goToCatalog" penwidth=1.5];    Book -> ShoppingCart [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#doAddToCart" tooltip="カートに追加 (unsafe)"><font color="#FF4136">■</font> カートに追加</td></tr></table>> URL="#doAddToCart" target="_parent" fontsize=13 class="doAddToCart" penwidth=1.5];    Catalog -> Book [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goToBookDetails" tooltip="書籍詳細画面に移動 (safe)"><font color="#00A86B">■</font> 書籍詳細画面に移動</td></tr></table>> URL="#goToBookDetails" target="_parent" fontsize=13 class="goToBookDetails" penwidth=1.5];    Catalog -> Catalog [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" align="left" href="#goGetCategories" tooltip="カテゴリー一覧の取得 (safe)"><font color="#00A86B">■</font> カテゴリー一覧の取得</td></tr><tr><td valign="middle" align="left" href="#goListBooks" tooltip="書籍一覧の取得 (safe)"><font color="#00A86B">■</font> 書籍一覧の取得</td></tr><tr><td valign="middle" align="left" href="#goSearchBooks" tooltip="書籍の検索 (safe)"><font color="#00A86B">■</font> 書籍の検索</td></tr></table>> URL="#goGetCategories" target="_parent" fontsize=13 class="goGetCategories" penwidth=1.5];    Catalog -> ShoppingCart [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goToCart" tooltip="カート画面に移動 (safe)"><font color="#00A86B">■</font> カート画面に移動</td></tr></table>> URL="#goToCart" target="_parent" fontsize=13 class="goToCart" penwidth=1.5];    Checkout -> Checkout [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" align="left" href="#doPaymentInfo" tooltip="支払い情報の入力 (unsafe)"><font color="#FF4136">■</font> 支払い情報の入力</td></tr><tr><td valign="middle" align="left" href="#doShippingInfo" tooltip="配送情報の入力 (unsafe)"><font color="#FF4136">■</font> 配送情報の入力</td></tr><tr><td valign="middle" align="left" href="#doUserInfo" tooltip="ユーザー情報の入力 (unsafe)"><font color="#FF4136">■</font> ユーザー情報の入力</td></tr></table>> URL="#doPaymentInfo" target="_parent" fontsize=13 class="doPaymentInfo" penwidth=1.5];    Checkout -> OrderConfirmation [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#doPlaceOrder" tooltip="注文の確定 (unsafe)"><font color="#FF4136">■</font> 注文の確定</td></tr></table>> URL="#doPlaceOrder" target="_parent" fontsize=13 class="doPlaceOrder" penwidth=1.5];    Checkout -> ShoppingCart [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goToCart" tooltip="カート画面に移動 (safe)"><font color="#00A86B">■</font> カート画面に移動</td></tr></table>> URL="#goToCart" target="_parent" fontsize=13 class="goToCart" penwidth=1.5];    Home -> Catalog [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goToCatalog" tooltip="カタログ画面に移動 (safe)"><font color="#00A86B">■</font> カタログ画面に移動</td></tr></table>> URL="#goToCatalog" target="_parent" fontsize=13 class="goToCatalog" penwidth=1.5];    Home -> ShoppingCart [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goToCart" tooltip="カート画面に移動 (safe)"><font color="#00A86B">■</font> カート画面に移動</td></tr></table>> URL="#goToCart" target="_parent" fontsize=13 class="goToCart" penwidth=1.5];    OrderConfirmation -> Home [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goToHome" tooltip="ホーム画面に移動 (safe)"><font color="#00A86B">■</font> ホーム画面に移動</td></tr></table>> URL="#goToHome" target="_parent" fontsize=13 class="goToHome" penwidth=1.5];    OrderConfirmation -> OrderConfirmation [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goOrderDetails" tooltip="注文詳細の表示 (safe)"><font color="#00A86B">■</font> 注文詳細の表示</td></tr></table>> URL="#goOrderDetails" target="_parent" fontsize=13 class="goOrderDetails" penwidth=1.5];    ShoppingCart -> Catalog [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goToCatalog" tooltip="カタログ画面に移動 (safe)"><font color="#00A86B">■</font> カタログ画面に移動</td></tr></table>> URL="#goToCatalog" target="_parent" fontsize=13 class="goToCatalog" penwidth=1.5];    ShoppingCart -> Checkout [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goToCheckout" tooltip="決済画面に移動 (safe)"><font color="#00A86B">■</font> 決済画面に移動</td></tr></table>> URL="#goToCheckout" target="_parent" fontsize=13 class="goToCheckout" penwidth=1.5];    ShoppingCart -> ShoppingCart [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" align="left" href="#doRemoveFromCart" tooltip="カートからアイテムを削除 (idempotent)"><font color="#FFDC00">■</font> カートからアイテムを削除</td></tr><tr><td valign="middle" align="left" href="#doUpdateQuantity" tooltip="カート内アイテムの数量更新 (idempotent)"><font color="#FFDC00">■</font> カート内アイテムの数量更新</td></tr><tr><td valign="middle" align="left" href="#goListCartItems" tooltip="カート内アイテム一覧の取得 (safe)"><font color="#00A86B">■</font> カート内アイテム一覧の取得</td></tr></table>> URL="#doRemoveFromCart" target="_parent" fontsize=13 class="doRemoveFromCart" penwidth=1.5];    Book [label = <書籍> URL="#Book" target="_parent"]    Catalog [label = <書籍カタログ> URL="#Catalog" target="_parent"]    ShoppingCart [label = <ショッピングカート> URL="#ShoppingCart" target="_parent"]    Checkout [label = <決済画面> URL="#Checkout" target="_parent"]    OrderConfirmation [label = <注文確認画面> URL="#OrderConfirmation" target="_parent"]    Home [label = <ホーム画面> URL="#Home" target="_parent"]}')
+                    renderGraph("#asd-graph-id", 'digraph application_state_diagram {  graph [    labelloc="t";    fontname="Helvetica"    label="ALPS Book Store";    URL="index.html" target="_parent"  ];  node [shape = box, style = "bold,filled" fillcolor="lightgray", margin="0.3,0.1"];    Book [margin=0.1, label="Book", shape=box, URL="#Book" target="_parent"]    Catalog [margin=0.1, label="Catalog", shape=box, URL="#Catalog" target="_parent"]    Payment [margin=0.1, label="Payment", shape=box, URL="#Payment" target="_parent"]    Book -> Catalog [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goToCatalog" tooltip="Go to Catalog Screen (safe)"><font color="#00A86B">■</font> goToCatalog</td></tr></table>> URL="#goToCatalog" target="_parent" fontsize=13 class="goToCatalog" penwidth=1.5];    Book -> ShoppingCart [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#doAddToCart" tooltip="Add to Cart (unsafe)"><font color="#FF4136">■</font> doAddToCart</td></tr></table>> URL="#doAddToCart" target="_parent" fontsize=13 class="doAddToCart" penwidth=1.5];    Catalog -> Book [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goToBookDetails" tooltip="Go to Book Details Screen (safe)"><font color="#00A86B">■</font> goToBookDetails</td></tr></table>> URL="#goToBookDetails" target="_parent" fontsize=13 class="goToBookDetails" penwidth=1.5];    Catalog -> Catalog [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" align="left" href="#goGetCategories" tooltip="Get Category List (safe)"><font color="#00A86B">■</font> goGetCategories</td></tr><tr><td valign="middle" align="left" href="#goListBooks" tooltip="Get Book List (safe)"><font color="#00A86B">■</font> goListBooks</td></tr><tr><td valign="middle" align="left" href="#goSearchBooks" tooltip="Search Books (safe)"><font color="#00A86B">■</font> goSearchBooks</td></tr></table>> URL="#goGetCategories" target="_parent" fontsize=13 class="goGetCategories" penwidth=1.5];    Catalog -> ShoppingCart [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goToCart" tooltip="Go to Cart Screen (safe)"><font color="#00A86B">■</font> goToCart</td></tr></table>> URL="#goToCart" target="_parent" fontsize=13 class="goToCart" penwidth=1.5];    Checkout -> Checkout [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" align="left" href="#doShippingInfo" tooltip="Input Shipping Information (unsafe)"><font color="#FF4136">■</font> doShippingInfo</td></tr><tr><td valign="middle" align="left" href="#doUserInfo" tooltip="Input User Information (unsafe)"><font color="#FF4136">■</font> doUserInfo</td></tr></table>> URL="#doShippingInfo" target="_parent" fontsize=13 class="doShippingInfo" penwidth=1.5];    Checkout -> Payment [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goToPayment" tooltip="Go to Payment Screen (safe)"><font color="#00A86B">■</font> goToPayment</td></tr></table>> URL="#goToPayment" target="_parent" fontsize=13 class="goToPayment" penwidth=1.5];    Checkout -> ShoppingCart [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goToCart" tooltip="Go to Cart Screen (safe)"><font color="#00A86B">■</font> goToCart</td></tr></table>> URL="#goToCart" target="_parent" fontsize=13 class="goToCart" penwidth=1.5];    Home -> Catalog [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goToCatalog" tooltip="Go to Catalog Screen (safe)"><font color="#00A86B">■</font> goToCatalog</td></tr></table>> URL="#goToCatalog" target="_parent" fontsize=13 class="goToCatalog" penwidth=1.5];    Home -> ShoppingCart [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goToCart" tooltip="Go to Cart Screen (safe)"><font color="#00A86B">■</font> goToCart</td></tr></table>> URL="#goToCart" target="_parent" fontsize=13 class="goToCart" penwidth=1.5];    Payment -> Home [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goToHome" tooltip="Go to Home Screen (safe)"><font color="#00A86B">■</font> goToHome</td></tr></table>> URL="#goToHome" target="_parent" fontsize=13 class="goToHome" penwidth=1.5];    Payment -> Payment [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" align="left" href="#doPaymentInfo" tooltip="Input Payment Information (unsafe)"><font color="#FF4136">■</font> doPaymentInfo</td></tr><tr><td valign="middle" align="left" href="#doPlaceOrder" tooltip="Place Order (unsafe)"><font color="#FF4136">■</font> doPlaceOrder</td></tr><tr><td valign="middle" align="left" href="#goOrderDetails" tooltip="Display Order Details (safe)"><font color="#00A86B">■</font> goOrderDetails</td></tr></table>> URL="#doPaymentInfo" target="_parent" fontsize=13 class="doPaymentInfo" penwidth=1.5];    Payment -> ShoppingCart [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goToCart" tooltip="Go to Cart Screen (safe)"><font color="#00A86B">■</font> goToCart</td></tr></table>> URL="#goToCart" target="_parent" fontsize=13 class="goToCart" penwidth=1.5];    ShoppingCart -> Catalog [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goToCatalog" tooltip="Go to Catalog Screen (safe)"><font color="#00A86B">■</font> goToCatalog</td></tr></table>> URL="#goToCatalog" target="_parent" fontsize=13 class="goToCatalog" penwidth=1.5];    ShoppingCart -> Checkout [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goToCheckout" tooltip="Go to Checkout Screen (safe)"><font color="#00A86B">■</font> goToCheckout</td></tr></table>> URL="#goToCheckout" target="_parent" fontsize=13 class="goToCheckout" penwidth=1.5];    ShoppingCart -> ShoppingCart [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" align="left" href="#doRemoveFromCart" tooltip="Remove Item from Cart (idempotent)"><font color="#FFDC00">■</font> doRemoveFromCart</td></tr><tr><td valign="middle" align="left" href="#doUpdateQuantity" tooltip="Update Cart Item Quantity (idempotent)"><font color="#FFDC00">■</font> doUpdateQuantity</td></tr><tr><td valign="middle" align="left" href="#goListCartItems" tooltip="Get Cart Items List (safe)"><font color="#00A86B">■</font> goListCartItems</td></tr></table>> URL="#doRemoveFromCart" target="_parent" fontsize=13 class="doRemoveFromCart" penwidth=1.5];    Book [label = <Book> URL="#Book" target="_parent"]    Catalog [label = <Catalog> URL="#Catalog" target="_parent"]    ShoppingCart [label = <ShoppingCart> URL="#ShoppingCart" target="_parent"]    Checkout [label = <Checkout> URL="#Checkout" target="_parent"]    Payment [label = <Payment> URL="#Payment" target="_parent"]    Home [label = <Home> URL="#Home" target="_parent"]}'),
+                    renderGraph("#asd-graph-name", 'digraph application_state_diagram {  graph [    labelloc="t";    fontname="Helvetica"    label="ALPS Book Store";    URL="index.html" target="_parent"  ];  node [shape = box, style = "bold,filled" fillcolor="lightgray", margin="0.3,0.1"];    Book [margin=0.1, label="Book", shape=box, URL="#Book" target="_parent"]    Catalog [margin=0.1, label="Book Catalog", shape=box, URL="#Catalog" target="_parent"]    Payment [margin=0.1, label="Payment Screen", shape=box, URL="#Payment" target="_parent"]    Book -> Catalog [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goToCatalog" tooltip="Go to Catalog Screen (safe)"><font color="#00A86B">■</font> Go&nbsp;to&nbsp;Catalog&nbsp;Screen</td></tr></table>> URL="#goToCatalog" target="_parent" fontsize=13 class="goToCatalog" penwidth=1.5];    Book -> ShoppingCart [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#doAddToCart" tooltip="Add to Cart (unsafe)"><font color="#FF4136">■</font> Add&nbsp;to&nbsp;Cart</td></tr></table>> URL="#doAddToCart" target="_parent" fontsize=13 class="doAddToCart" penwidth=1.5];    Catalog -> Book [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goToBookDetails" tooltip="Go to Book Details Screen (safe)"><font color="#00A86B">■</font> Go&nbsp;to&nbsp;Book&nbsp;Details&nbsp;Screen</td></tr></table>> URL="#goToBookDetails" target="_parent" fontsize=13 class="goToBookDetails" penwidth=1.5];    Catalog -> Catalog [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" align="left" href="#goGetCategories" tooltip="Get Category List (safe)"><font color="#00A86B">■</font> Get&nbsp;Category&nbsp;List</td></tr><tr><td valign="middle" align="left" href="#goListBooks" tooltip="Get Book List (safe)"><font color="#00A86B">■</font> Get&nbsp;Book&nbsp;List</td></tr><tr><td valign="middle" align="left" href="#goSearchBooks" tooltip="Search Books (safe)"><font color="#00A86B">■</font> Search&nbsp;Books</td></tr></table>> URL="#goGetCategories" target="_parent" fontsize=13 class="goGetCategories" penwidth=1.5];    Catalog -> ShoppingCart [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goToCart" tooltip="Go to Cart Screen (safe)"><font color="#00A86B">■</font> Go&nbsp;to&nbsp;Cart&nbsp;Screen</td></tr></table>> URL="#goToCart" target="_parent" fontsize=13 class="goToCart" penwidth=1.5];    Checkout -> Checkout [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" align="left" href="#doShippingInfo" tooltip="Input Shipping Information (unsafe)"><font color="#FF4136">■</font> Input&nbsp;Shipping&nbsp;Information</td></tr><tr><td valign="middle" align="left" href="#doUserInfo" tooltip="Input User Information (unsafe)"><font color="#FF4136">■</font> Input&nbsp;User&nbsp;Information</td></tr></table>> URL="#doShippingInfo" target="_parent" fontsize=13 class="doShippingInfo" penwidth=1.5];    Checkout -> Payment [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goToPayment" tooltip="Go to Payment Screen (safe)"><font color="#00A86B">■</font> Go&nbsp;to&nbsp;Payment&nbsp;Screen</td></tr></table>> URL="#goToPayment" target="_parent" fontsize=13 class="goToPayment" penwidth=1.5];    Checkout -> ShoppingCart [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goToCart" tooltip="Go to Cart Screen (safe)"><font color="#00A86B">■</font> Go&nbsp;to&nbsp;Cart&nbsp;Screen</td></tr></table>> URL="#goToCart" target="_parent" fontsize=13 class="goToCart" penwidth=1.5];    Home -> Catalog [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goToCatalog" tooltip="Go to Catalog Screen (safe)"><font color="#00A86B">■</font> Go&nbsp;to&nbsp;Catalog&nbsp;Screen</td></tr></table>> URL="#goToCatalog" target="_parent" fontsize=13 class="goToCatalog" penwidth=1.5];    Home -> ShoppingCart [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goToCart" tooltip="Go to Cart Screen (safe)"><font color="#00A86B">■</font> Go&nbsp;to&nbsp;Cart&nbsp;Screen</td></tr></table>> URL="#goToCart" target="_parent" fontsize=13 class="goToCart" penwidth=1.5];    Payment -> Home [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goToHome" tooltip="Go to Home Screen (safe)"><font color="#00A86B">■</font> Go&nbsp;to&nbsp;Home&nbsp;Screen</td></tr></table>> URL="#goToHome" target="_parent" fontsize=13 class="goToHome" penwidth=1.5];    Payment -> Payment [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" align="left" href="#doPaymentInfo" tooltip="Input Payment Information (unsafe)"><font color="#FF4136">■</font> Input&nbsp;Payment&nbsp;Information</td></tr><tr><td valign="middle" align="left" href="#doPlaceOrder" tooltip="Place Order (unsafe)"><font color="#FF4136">■</font> Place&nbsp;Order</td></tr><tr><td valign="middle" align="left" href="#goOrderDetails" tooltip="Display Order Details (safe)"><font color="#00A86B">■</font> Display&nbsp;Order&nbsp;Details</td></tr></table>> URL="#doPaymentInfo" target="_parent" fontsize=13 class="doPaymentInfo" penwidth=1.5];    Payment -> ShoppingCart [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goToCart" tooltip="Go to Cart Screen (safe)"><font color="#00A86B">■</font> Go&nbsp;to&nbsp;Cart&nbsp;Screen</td></tr></table>> URL="#goToCart" target="_parent" fontsize=13 class="goToCart" penwidth=1.5];    ShoppingCart -> Catalog [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goToCatalog" tooltip="Go to Catalog Screen (safe)"><font color="#00A86B">■</font> Go&nbsp;to&nbsp;Catalog&nbsp;Screen</td></tr></table>> URL="#goToCatalog" target="_parent" fontsize=13 class="goToCatalog" penwidth=1.5];    ShoppingCart -> Checkout [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goToCheckout" tooltip="Go to Checkout Screen (safe)"><font color="#00A86B">■</font> Go&nbsp;to&nbsp;Checkout&nbsp;Screen</td></tr></table>> URL="#goToCheckout" target="_parent" fontsize=13 class="goToCheckout" penwidth=1.5];    ShoppingCart -> ShoppingCart [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" align="left" href="#doRemoveFromCart" tooltip="Remove Item from Cart (idempotent)"><font color="#FFDC00">■</font> Remove&nbsp;Item&nbsp;from&nbsp;Cart</td></tr><tr><td valign="middle" align="left" href="#doUpdateQuantity" tooltip="Update Cart Item Quantity (idempotent)"><font color="#FFDC00">■</font> Update&nbsp;Cart&nbsp;Item&nbsp;Quantity</td></tr><tr><td valign="middle" align="left" href="#goListCartItems" tooltip="Get Cart Items List (safe)"><font color="#00A86B">■</font> Get&nbsp;Cart&nbsp;Items&nbsp;List</td></tr></table>> URL="#doRemoveFromCart" target="_parent" fontsize=13 class="doRemoveFromCart" penwidth=1.5];    Book [label = <Book> URL="#Book" target="_parent"]    Catalog [label = <Book Catalog> URL="#Catalog" target="_parent"]    ShoppingCart [label = <Shopping Cart> URL="#ShoppingCart" target="_parent"]    Checkout [label = <Checkout Screen> URL="#Checkout" target="_parent"]    Payment [label = <Payment Screen> URL="#Payment" target="_parent"]    Home [label = <Home Screen> URL="#Home" target="_parent"]}')
             ]);
             setupTagTrigger();
             setupModeSwitch('asd-show-id', 'asd-graph-id', 'asd-graph-name');
@@ -541,7 +541,7 @@ const setupDocClick = () => {
             applySmoothScrollToLinks(document.querySelectorAll('a[href^="#"]'));
             setupTagClick();
             setupDocClick(); 
-            setupTagEventListener('collection', ['Catalog', 'ShoppingCart'], 'LightGreen'); setupTagEventListener('item', ['Book', 'Category'], 'SkyBlue'); 
+            setupTagEventListener('cart', ['ShoppingCart', 'doAddToCart', 'doRemoveFromCart', 'doUpdateQuantity', 'goListCartItems'], 'LightGreen'); setupTagEventListener('catalog', ['Book', 'Catalog', 'Category', 'author', 'category', 'goGetBookDetails', 'goGetCategories', 'goListBooks', 'goSearchBooks', 'isbn', 'query', 'title'], 'SkyBlue'); setupTagEventListener('checkout', ['Checkout'], 'LightCoral'); setupTagEventListener('commerce', ['price', 'quantity', 'totalAmount'], 'LightSalmon'); setupTagEventListener('core', ['id'], 'Khaki'); setupTagEventListener('customer', ['doUserInfo', 'userEmail', 'userName'], 'Plum'); setupTagEventListener('navigation', ['Home'], 'Wheat'); setupTagEventListener('order', ['doPlaceOrder', 'goOrderDetails'], 'LightGreen'); setupTagEventListener('payment', ['Payment', 'doPaymentInfo', 'paymentMethod'], 'SkyBlue'); setupTagEventListener('shipping', ['doShippingInfo', 'shippingAddress'], 'LightCoral'); 
         } catch (error) {
                console.error("Error in main process:", error);
         }});
@@ -556,8 +556,16 @@ const setupDocClick = () => {
 </div>
 
 <div class="selector-container"><span class="selector-label">Tags:</span>
-<span class="selector-option"><input type="checkbox" id="tag-collection" class="tag-trigger-checkbox" data-tag="collection" name="tag-collection"><label for="tag-collection"> collection</label></span>
-<span class="selector-option"><input type="checkbox" id="tag-item" class="tag-trigger-checkbox" data-tag="item" name="tag-item"><label for="tag-item"> item</label></span></div>
+<span class="selector-option"><input type="checkbox" id="tag-cart" class="tag-trigger-checkbox" data-tag="cart" name="tag-cart"><label for="tag-cart"> cart</label></span>
+<span class="selector-option"><input type="checkbox" id="tag-catalog" class="tag-trigger-checkbox" data-tag="catalog" name="tag-catalog"><label for="tag-catalog"> catalog</label></span>
+<span class="selector-option"><input type="checkbox" id="tag-checkout" class="tag-trigger-checkbox" data-tag="checkout" name="tag-checkout"><label for="tag-checkout"> checkout</label></span>
+<span class="selector-option"><input type="checkbox" id="tag-commerce" class="tag-trigger-checkbox" data-tag="commerce" name="tag-commerce"><label for="tag-commerce"> commerce</label></span>
+<span class="selector-option"><input type="checkbox" id="tag-core" class="tag-trigger-checkbox" data-tag="core" name="tag-core"><label for="tag-core"> core</label></span>
+<span class="selector-option"><input type="checkbox" id="tag-customer" class="tag-trigger-checkbox" data-tag="customer" name="tag-customer"><label for="tag-customer"> customer</label></span>
+<span class="selector-option"><input type="checkbox" id="tag-navigation" class="tag-trigger-checkbox" data-tag="navigation" name="tag-navigation"><label for="tag-navigation"> navigation</label></span>
+<span class="selector-option"><input type="checkbox" id="tag-order" class="tag-trigger-checkbox" data-tag="order" name="tag-order"><label for="tag-order"> order</label></span>
+<span class="selector-option"><input type="checkbox" id="tag-payment" class="tag-trigger-checkbox" data-tag="payment" name="tag-payment"><label for="tag-payment"> payment</label></span>
+<span class="selector-option"><input type="checkbox" id="tag-shipping" class="tag-trigger-checkbox" data-tag="shipping" name="tag-shipping"><label for="tag-shipping"> shipping</label></span></div>
 
 <div class="legend">
     <div class="legend-item" title="A state element (e.g.  HTML.SPAN, HTML.INPUT, etc.).">
@@ -597,268 +605,275 @@ const setupDocClick = () => {
 <tr>
   <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
   <td align="left"><a id="author"></a><a href="#author">author</a></td>
-  <td align="left"><span style="white-space: normal;">著者</span></td>
+  <td align="left"><span style="white-space: normal;">Author</span></td>
   <td align="left"></td>
-  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">def:</span><span class="meta-tag def-tag"><a href="https://schema.org/author" target="_blank">schema.org/author</a></span></span></span></span></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">def:</span><span class="meta-tag def-tag"><a href="https://schema.org/author" target="_blank">schema.org/author</a></span></span><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-catalog">catalog</a></span></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">Name of the book&#039;s author. For multiple authors, names are comma-separated.</span></span></span></span></td>
 </tr>
 <tr>
   <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
   <td align="left"><a id="Book"></a><a href="#Book">Book</a></td>
-  <td align="left"><span style="white-space: normal;">書籍</span></td>
+  <td align="left"><span style="white-space: normal;">Book</span></td>
   <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#id">id</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#title">title</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#author">author</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#isbn">isbn</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#price">price</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#category">category</a><br><span class="type-indicator-small safe" title="Safe"></span><a href="#goToCatalog">goToCatalog</a><br><span class="type-indicator-small unsafe" title="Unsafe"></span><a href="#doAddToCart">doAddToCart</a></td>
-  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">def:</span><span class="meta-tag def-tag"><a href="https://schema.org/Book" target="_blank">schema.org/Book</a></span></span><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-item">item</a></span></span></span></span></span></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">def:</span><span class="meta-tag def-tag"><a href="https://schema.org/Book" target="_blank">schema.org/Book</a></span></span><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-catalog">catalog</a></span></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag clickable" data-full="Screen displaying individual book information. Shows detailed information, reviews, and related books. Items can be added to cart from this screen." title="Screen displaying individual book information. Shows detailed information, reviews, and related books. Items can be added to cart from this screen.">Screen displaying individual book information. Shows detailed information, reviews, and related books. Items can be added to cart from this screen.</span></span></span></span></td>
 </tr>
 <tr>
   <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
   <td align="left"><a id="Catalog"></a><a href="#Catalog">Catalog</a></td>
-  <td align="left"><span style="white-space: normal;">書籍カタログ</span></td>
+  <td align="left"><span style="white-space: normal;">Book Catalog</span></td>
   <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#Book">Book</a><br><span class="type-indicator-small safe" title="Safe"></span><a href="#goListBooks">goListBooks</a><br><span class="type-indicator-small safe" title="Safe"></span><a href="#goSearchBooks">goSearchBooks</a><br><span class="type-indicator-small safe" title="Safe"></span><a href="#goGetCategories">goGetCategories</a><br><span class="type-indicator-small safe" title="Safe"></span><a href="#goToBookDetails">goToBookDetails</a><br><span class="type-indicator-small safe" title="Safe"></span><a href="#goToCart">goToCart</a></td>
-  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">def:</span><span class="meta-tag def-tag"><a href="https://schema.org/CollectionPage" target="_blank">schema.org/CollectionPage</a></span></span><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-collection">collection</a></span></span></span></span></span></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">def:</span><span class="meta-tag def-tag"><a href="https://schema.org/CollectionPage" target="_blank">schema.org/CollectionPage</a></span></span><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-catalog">catalog</a></span></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag clickable" data-full="Screen displaying all books. Provides category filtering, keyword search, and sorting functions. Default display is ordered by recent additions." title="Screen displaying all books. Provides category filtering, keyword search, and sorting functions. Default display is ordered by recent additions.">Screen displaying all books. Provides category filtering, keyword search, and sorting functions. Default display is ordered by recent additions.</span></span></span></span></td>
 </tr>
 <tr>
   <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
   <td align="left"><a id="Category"></a><a href="#Category">Category</a></td>
-  <td align="left"><span style="white-space: normal;">カテゴリー</span></td>
+  <td align="left"><span style="white-space: normal;">Category</span></td>
   <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#id">id</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#title">title</a></td>
-  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">def:</span><span class="meta-tag def-tag"><a href="https://schema.org/Category" target="_blank">schema.org/Category</a></span></span><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-item">item</a></span></span></span></span></span></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">def:</span><span class="meta-tag def-tag"><a href="https://schema.org/Category" target="_blank">schema.org/Category</a></span></span><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-catalog">catalog</a></span></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">Book genre classification. May have a hierarchical structure with parent and child categories.</span></span></span></span></td>
 </tr>
 <tr>
   <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
   <td align="left"><a id="category"></a><a href="#category">category</a></td>
-  <td align="left"><span style="white-space: normal;">カテゴリー</span></td>
+  <td align="left"><span style="white-space: normal;">Category</span></td>
   <td align="left"></td>
-  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">def:</span><span class="meta-tag def-tag"><a href="https://schema.org/category" target="_blank">schema.org/category</a></span></span></span></span></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">def:</span><span class="meta-tag def-tag"><a href="https://schema.org/category" target="_blank">schema.org/category</a></span></span><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-catalog">catalog</a></span></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">Genre or category of the book. Books may belong to multiple categories.</span></span></span></span></td>
 </tr>
 <tr>
   <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
   <td align="left"><a id="Checkout"></a><a href="#Checkout">Checkout</a></td>
-  <td align="left"><span style="white-space: normal;">決済画面</span></td>
-  <td align="left"><span class="type-indicator-small safe" title="Safe"></span><a href="#goToCart">goToCart</a><br><span class="type-indicator-small unsafe" title="Unsafe"></span><a href="#doUserInfo">doUserInfo</a><br><span class="type-indicator-small unsafe" title="Unsafe"></span><a href="#doShippingInfo">doShippingInfo</a><br><span class="type-indicator-small unsafe" title="Unsafe"></span><a href="#doPaymentInfo">doPaymentInfo</a><br><span class="type-indicator-small unsafe" title="Unsafe"></span><a href="#doPlaceOrder">doPlaceOrder</a></td>
-  <td align="left"><span style="white-space: normal;"></span></td>
+  <td align="left"><span style="white-space: normal;">Checkout Screen</span></td>
+  <td align="left"><span class="type-indicator-small safe" title="Safe"></span><a href="#goToPayment">goToPayment</a><br><span class="type-indicator-small safe" title="Safe"></span><a href="#goToCart">goToCart</a><br><span class="type-indicator-small unsafe" title="Unsafe"></span><a href="#doUserInfo">doUserInfo</a><br><span class="type-indicator-small unsafe" title="Unsafe"></span><a href="#doShippingInfo">doShippingInfo</a></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-checkout">checkout</a></span></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag clickable" data-full="Purchase procedure screen. Input user information, delivery destination, and proceed to payment. Displays final confirmation before order is placed." title="Purchase procedure screen. Input user information, delivery destination, and proceed to payment. Displays final confirmation before order is placed.">Purchase procedure screen. Input user information, delivery destination, and proceed to payment. Displays final confirmation before order is placed.</span></span></span></span></td>
 </tr>
 <tr>
   <td align="center"><span class="legend"><span class="legend-icon unsafe"></span></span></td>
   <td align="left"><a id="doAddToCart"></a><a href="#doAddToCart">doAddToCart</a></td>
-  <td align="left"><span style="white-space: normal;">カートに追加</span></td>
+  <td align="left"><span style="white-space: normal;">Add to Cart</span></td>
   <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#id">id</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#quantity">quantity</a></td>
-  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rel:</span><span class="meta-tag rel-tag">collection</span></span><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#ShoppingCart">ShoppingCart</a></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">指定された書籍をショッピングカートに追加する。</span></span></span></span></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-cart">cart</a></span></span></span><span class="meta-item"><span class="meta-label">rel:</span><span class="meta-tag rel-tag">collection</span></span><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#ShoppingCart">ShoppingCart</a></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">Add the specified book to the shopping cart. If already in the cart, quantity is increased. Orders exceeding stock will result in an error.</span></span></span></span></td>
 </tr>
 <tr>
   <td align="center"><span class="legend"><span class="legend-icon unsafe"></span></span></td>
   <td align="left"><a id="doPaymentInfo"></a><a href="#doPaymentInfo">doPaymentInfo</a></td>
-  <td align="left"><span style="white-space: normal;">支払い情報の入力</span></td>
+  <td align="left"><span style="white-space: normal;">Input Payment Information</span></td>
   <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#paymentMethod">paymentMethod</a></td>
-  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#Checkout">Checkout</a></span></span></span></span></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-payment">payment</a></span></span></span><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#Payment">Payment</a></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">Select order payment method and input necessary payment information. When credit card is selected, card information is input and validated.</span></span></span></span></td>
 </tr>
 <tr>
   <td align="center"><span class="legend"><span class="legend-icon unsafe"></span></span></td>
   <td align="left"><a id="doPlaceOrder"></a><a href="#doPlaceOrder">doPlaceOrder</a></td>
-  <td align="left"><span style="white-space: normal;">注文の確定</span></td>
+  <td align="left"><span style="white-space: normal;">Place Order</span></td>
   <td align="left"></td>
-  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#OrderConfirmation">OrderConfirmation</a></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">ユーザーの入力情報を基に注文を確定し、注文確認画面に遷移する。</span></span></span></span></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-order">order</a></span></span></span><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#Payment">Payment</a></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag clickable" data-full="Confirm order based on user input information, process payment, and display order confirmation details on the payment screen. Payment processing is executed, inventory is secured, and a confirmation email is sent. This operation cannot be reversed." title="Confirm order based on user input information, process payment, and display order confirmation details on the payment screen. Payment processing is executed, inventory is secured, and a confirmation email is sent. This operation cannot be reversed.">Confirm order based on user input information, process payment, and display order confirmation details on the payment screen. Payment processing is executed, inventory is secured, and a confirmation email is sent. This operation cannot be reversed.</span></span></span></span></td>
 </tr>
 <tr>
   <td align="center"><span class="legend"><span class="legend-icon idempotent"></span></span></td>
   <td align="left"><a id="doRemoveFromCart"></a><a href="#doRemoveFromCart">doRemoveFromCart</a></td>
-  <td align="left"><span style="white-space: normal;">カートからアイテムを削除</span></td>
+  <td align="left"><span style="white-space: normal;">Remove Item from Cart</span></td>
   <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#id">id</a></td>
-  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#ShoppingCart">ShoppingCart</a></span></span></span></span></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-cart">cart</a></span></span></span><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#ShoppingCart">ShoppingCart</a></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">Completely remove the specified item from the cart. If the item does not exist in the cart, no changes are made.</span></span></span></span></td>
 </tr>
 <tr>
   <td align="center"><span class="legend"><span class="legend-icon unsafe"></span></span></td>
   <td align="left"><a id="doShippingInfo"></a><a href="#doShippingInfo">doShippingInfo</a></td>
-  <td align="left"><span style="white-space: normal;">配送情報の入力</span></td>
+  <td align="left"><span style="white-space: normal;">Input Shipping Information</span></td>
   <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#shippingAddress">shippingAddress</a></td>
-  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#Checkout">Checkout</a></span></span></span></span></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-shipping">shipping</a></span></span></span><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#Checkout">Checkout</a></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">Input product delivery address. Features automatic address input using postal code lookup.</span></span></span></span></td>
 </tr>
 <tr>
   <td align="center"><span class="legend"><span class="legend-icon idempotent"></span></span></td>
   <td align="left"><a id="doUpdateQuantity"></a><a href="#doUpdateQuantity">doUpdateQuantity</a></td>
-  <td align="left"><span style="white-space: normal;">カート内アイテムの数量更新</span></td>
+  <td align="left"><span style="white-space: normal;">Update Cart Item Quantity</span></td>
   <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#id">id</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#quantity">quantity</a></td>
-  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#ShoppingCart">ShoppingCart</a></span></span></span></span></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-cart">cart</a></span></span></span><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#ShoppingCart">ShoppingCart</a></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag clickable" data-full="Update the quantity of a specific product in the cart. Values less than or equal to 0 cannot be specified. Quantities exceeding stock will result in an error." title="Update the quantity of a specific product in the cart. Values less than or equal to 0 cannot be specified. Quantities exceeding stock will result in an error.">Update the quantity of a specific product in the cart. Values less than or equal to 0 cannot be specified. Quantities exceeding stock will result in an error.</span></span></span></span></td>
 </tr>
 <tr>
   <td align="center"><span class="legend"><span class="legend-icon unsafe"></span></span></td>
   <td align="left"><a id="doUserInfo"></a><a href="#doUserInfo">doUserInfo</a></td>
-  <td align="left"><span style="white-space: normal;">ユーザー情報の入力</span></td>
+  <td align="left"><span style="white-space: normal;">Input User Information</span></td>
   <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#userName">userName</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#userEmail">userEmail</a></td>
-  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#Checkout">Checkout</a></span></span></span></span></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-customer">customer</a></span></span></span><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#Checkout">Checkout</a></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">Input customer&#039;s name and email address. Email address is validated using regular expressions.</span></span></span></span></td>
 </tr>
 <tr>
   <td align="center"><span class="legend"><span class="legend-icon safe"></span></span></td>
   <td align="left"><a id="goGetBookDetails"></a><a href="#goGetBookDetails">goGetBookDetails</a></td>
-  <td align="left"><span style="white-space: normal;">書籍詳細の取得</span></td>
+  <td align="left"><span style="white-space: normal;">Get Book Details</span></td>
   <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#id">id</a></td>
-  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rel:</span><span class="meta-tag rel-tag">item</span></span><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#Book">Book</a></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">指定された書籍IDに基づいて、特定の書籍の詳細情報を取得する。</span></span></span></span></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-catalog">catalog</a></span></span></span><span class="meta-item"><span class="meta-label">rel:</span><span class="meta-tag rel-tag">item</span></span><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#Book">Book</a></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">Retrieve detailed information for a specific book based on the specified book ID. Includes stock status and related book information.</span></span></span></span></td>
 </tr>
 <tr>
   <td align="center"><span class="legend"><span class="legend-icon safe"></span></span></td>
   <td align="left"><a id="goGetCategories"></a><a href="#goGetCategories">goGetCategories</a></td>
-  <td align="left"><span style="white-space: normal;">カテゴリー一覧の取得</span></td>
+  <td align="left"><span style="white-space: normal;">Get Category List</span></td>
   <td align="left"></td>
-  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rel:</span><span class="meta-tag rel-tag">collection</span></span><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#Catalog">Catalog</a></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">利用可能なすべての書籍カテゴリーの一覧を取得する。</span></span></span></span></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-catalog">catalog</a></span></span></span><span class="meta-item"><span class="meta-label">rel:</span><span class="meta-tag rel-tag">collection</span></span><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#Catalog">Catalog</a></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">Retrieve list of all available book categories. For hierarchical categories, parent-child relationships are also returned.</span></span></span></span></td>
 </tr>
 <tr>
   <td align="center"><span class="legend"><span class="legend-icon safe"></span></span></td>
   <td align="left"><a id="goListBooks"></a><a href="#goListBooks">goListBooks</a></td>
-  <td align="left"><span style="white-space: normal;">書籍一覧の取得</span></td>
+  <td align="left"><span style="white-space: normal;">Get Book List</span></td>
   <td align="left"></td>
-  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rel:</span><span class="meta-tag rel-tag">collection</span></span><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#Catalog">Catalog</a></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">カタログ内のすべての書籍一覧を取得する。ページネーションやソート順の指定が可能。</span></span></span></span></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-catalog">catalog</a></span></span></span><span class="meta-item"><span class="meta-label">rel:</span><span class="meta-tag rel-tag">collection</span></span><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#Catalog">Catalog</a></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">Retrieve list of all books in the catalog. Can specify pagination (default 20 items/page) and sort order (newest, price, popularity, etc.).</span></span></span></span></td>
 </tr>
 <tr>
   <td align="center"><span class="legend"><span class="legend-icon safe"></span></span></td>
   <td align="left"><a id="goListCartItems"></a><a href="#goListCartItems">goListCartItems</a></td>
-  <td align="left"><span style="white-space: normal;">カート内アイテム一覧の取得</span></td>
+  <td align="left"><span style="white-space: normal;">Get Cart Items List</span></td>
   <td align="left"></td>
-  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rel:</span><span class="meta-tag rel-tag">collection</span></span><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#ShoppingCart">ShoppingCart</a></span></span></span></span></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-cart">cart</a></span></span></span><span class="meta-item"><span class="meta-label">rel:</span><span class="meta-tag rel-tag">collection</span></span><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#ShoppingCart">ShoppingCart</a></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">Retrieve all products in the current shopping cart, including their quantities, subtotals, and total amount.</span></span></span></span></td>
 </tr>
 <tr>
   <td align="center"><span class="legend"><span class="legend-icon safe"></span></span></td>
   <td align="left"><a id="goOrderDetails"></a><a href="#goOrderDetails">goOrderDetails</a></td>
-  <td align="left"><span style="white-space: normal;">注文詳細の表示</span></td>
+  <td align="left"><span style="white-space: normal;">Display Order Details</span></td>
   <td align="left"></td>
-  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#OrderConfirmation">OrderConfirmation</a></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">確定した注文の詳細情報を表示する。</span></span></span></span></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-order">order</a></span></span></span><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#Payment">Payment</a></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag clickable" data-full="Display detailed information for the confirmed order on the payment screen. Includes order number, list of purchased products, total amount, delivery destination, payment method, etc." title="Display detailed information for the confirmed order on the payment screen. Includes order number, list of purchased products, total amount, delivery destination, payment method, etc.">Display detailed information for the confirmed order on the payment screen. Includes order number, list of purchased products, total amount, delivery destination, payment method, etc.</span></span></span></span></td>
 </tr>
 <tr>
   <td align="center"><span class="legend"><span class="legend-icon safe"></span></span></td>
   <td align="left"><a id="goSearchBooks"></a><a href="#goSearchBooks">goSearchBooks</a></td>
-  <td align="left"><span style="white-space: normal;">書籍の検索</span></td>
+  <td align="left"><span style="white-space: normal;">Search Books</span></td>
   <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#query">query</a></td>
-  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rel:</span><span class="meta-tag rel-tag">collection</span></span><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#Catalog">Catalog</a></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">指定された検索クエリに基づいて書籍を検索する。</span></span></span></span></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-catalog">catalog</a></span></span></span><span class="meta-item"><span class="meta-label">rel:</span><span class="meta-tag rel-tag">collection</span></span><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#Catalog">Catalog</a></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag clickable" data-full="Search for books based on specified search query. Can search across multiple fields including title, author name, content description, ISBN, etc." title="Search for books based on specified search query. Can search across multiple fields including title, author name, content description, ISBN, etc.">Search for books based on specified search query. Can search across multiple fields including title, author name, content description, ISBN, etc.</span></span></span></span></td>
 </tr>
 <tr>
   <td align="center"><span class="legend"><span class="legend-icon safe"></span></span></td>
   <td align="left"><a id="goToBookDetails"></a><a href="#goToBookDetails">goToBookDetails</a></td>
-  <td align="left"><span style="white-space: normal;">書籍詳細画面に移動</span></td>
+  <td align="left"><span style="white-space: normal;">Go to Book Details Screen</span></td>
   <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#id">id</a></td>
-  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#Book">Book</a></span></span></span></span></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#Book">Book</a></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">Navigate to the detailed information screen for the selected book. Book ID must be specified.</span></span></span></span></td>
 </tr>
 <tr>
   <td align="center"><span class="legend"><span class="legend-icon safe"></span></span></td>
   <td align="left"><a id="goToCart"></a><a href="#goToCart">goToCart</a></td>
-  <td align="left"><span style="white-space: normal;">カート画面に移動</span></td>
+  <td align="left"><span style="white-space: normal;">Go to Cart Screen</span></td>
   <td align="left"></td>
-  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#ShoppingCart">ShoppingCart</a></span></span></span></span></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#ShoppingCart">ShoppingCart</a></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">Navigate to the screen displaying the contents of the current shopping cart.</span></span></span></span></td>
 </tr>
 <tr>
   <td align="center"><span class="legend"><span class="legend-icon safe"></span></span></td>
   <td align="left"><a id="goToCatalog"></a><a href="#goToCatalog">goToCatalog</a></td>
-  <td align="left"><span style="white-space: normal;">カタログ画面に移動</span></td>
+  <td align="left"><span style="white-space: normal;">Go to Catalog Screen</span></td>
   <td align="left"></td>
-  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#Catalog">Catalog</a></span></span></span></span></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#Catalog">Catalog</a></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">Navigate to the book catalog list screen. All books are displayed.</span></span></span></span></td>
 </tr>
 <tr>
   <td align="center"><span class="legend"><span class="legend-icon safe"></span></span></td>
   <td align="left"><a id="goToCheckout"></a><a href="#goToCheckout">goToCheckout</a></td>
-  <td align="left"><span style="white-space: normal;">決済画面に移動</span></td>
+  <td align="left"><span style="white-space: normal;">Go to Checkout Screen</span></td>
   <td align="left"></td>
-  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#Checkout">Checkout</a></span></span></span></span></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#Checkout">Checkout</a></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">Navigate to the screen to confirm cart contents and proceed with purchase. Cannot transition if cart is empty.</span></span></span></span></td>
 </tr>
 <tr>
   <td align="center"><span class="legend"><span class="legend-icon safe"></span></span></td>
   <td align="left"><a id="goToHome"></a><a href="#goToHome">goToHome</a></td>
-  <td align="left"><span style="white-space: normal;">ホーム画面に移動</span></td>
+  <td align="left"><span style="white-space: normal;">Go to Home Screen</span></td>
   <td align="left"></td>
-  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#Home">Home</a></span></span></span></span></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#Home">Home</a></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">Navigate to the application&#039;s home screen. Accessible from any screen.</span></span></span></span></td>
+</tr>
+<tr>
+  <td align="center"><span class="legend"><span class="legend-icon safe"></span></span></td>
+  <td align="left"><a id="goToPayment"></a><a href="#goToPayment">goToPayment</a></td>
+  <td align="left"><span style="white-space: normal;">Go to Payment Screen</span></td>
+  <td align="left"></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#Payment">Payment</a></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">Navigate to the payment screen to input payment information and complete the order.</span></span></span></span></td>
 </tr>
 <tr>
   <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
   <td align="left"><a id="Home"></a><a href="#Home">Home</a></td>
-  <td align="left"><span style="white-space: normal;">ホーム画面</span></td>
+  <td align="left"><span style="white-space: normal;">Home Screen</span></td>
   <td align="left"><span class="type-indicator-small safe" title="Safe"></span><a href="#goToCatalog">goToCatalog</a><br><span class="type-indicator-small safe" title="Safe"></span><a href="#goToCart">goToCart</a></td>
-  <td align="left"><span style="white-space: normal;"></span></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-navigation">navigation</a></span></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">Starting point of the application. Displays site-wide navigation and promotional information.</span></span></span></span></td>
 </tr>
 <tr>
   <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
   <td align="left"><a id="id"></a><a href="#id">id</a></td>
-  <td align="left"><span style="white-space: normal;">識別子</span></td>
+  <td align="left"><span style="white-space: normal;">Identifier</span></td>
   <td align="left"></td>
-  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">def:</span><span class="meta-tag def-tag"><a href="https://schema.org/identifier" target="_blank">schema.org/identifier</a></span></span></span></span></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">def:</span><span class="meta-tag def-tag"><a href="https://schema.org/identifier" target="_blank">schema.org/identifier</a></span></span><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-core">core</a></span></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">Unique identifier for each resource. UUID or auto-generated integer.</span></span></span></span></td>
 </tr>
 <tr>
   <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
   <td align="left"><a id="isbn"></a><a href="#isbn">isbn</a></td>
   <td align="left"><span style="white-space: normal;">ISBN</span></td>
   <td align="left"></td>
-  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">def:</span><span class="meta-tag def-tag"><a href="https://schema.org/isbn" target="_blank">schema.org/isbn</a></span></span></span></span></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">def:</span><span class="meta-tag def-tag"><a href="https://schema.org/isbn" target="_blank">schema.org/isbn</a></span></span><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-catalog">catalog</a></span></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">International Standard Book Number. Formatted as ISBN-13 with hyphens.</span></span></span></span></td>
 </tr>
 <tr>
   <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
-  <td align="left"><a id="OrderConfirmation"></a><a href="#OrderConfirmation">OrderConfirmation</a></td>
-  <td align="left"><span style="white-space: normal;">注文確認画面</span></td>
-  <td align="left"><span class="type-indicator-small safe" title="Safe"></span><a href="#goOrderDetails">goOrderDetails</a><br><span class="type-indicator-small safe" title="Safe"></span><a href="#goToHome">goToHome</a></td>
-  <td align="left"><span style="white-space: normal;"></span></td>
+  <td align="left"><a id="Payment"></a><a href="#Payment">Payment</a></td>
+  <td align="left"><span style="white-space: normal;">Payment Screen</span></td>
+  <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#paymentMethod">paymentMethod</a><br><span class="type-indicator-small safe" title="Safe"></span><a href="#goOrderDetails">goOrderDetails</a><br><span class="type-indicator-small safe" title="Safe"></span><a href="#goToHome">goToHome</a><br><span class="type-indicator-small safe" title="Safe"></span><a href="#goToCart">goToCart</a><br><span class="type-indicator-small unsafe" title="Unsafe"></span><a href="#doPaymentInfo">doPaymentInfo</a><br><span class="type-indicator-small unsafe" title="Unsafe"></span><a href="#doPlaceOrder">doPlaceOrder</a></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-payment">payment</a></span></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag clickable" data-full="Screen for entering payment information, confirming the order, and displaying order completion details. Handles payment method selection, payment validation, order placement, and shows order number, total amount, and estimated delivery date upon completion. A confirmation email is sent automatically." title="Screen for entering payment information, confirming the order, and displaying order completion details. Handles payment method selection, payment validation, order placement, and shows order number, total amount, and estimated delivery date upon completion. A confirmation email is sent automatically.">Screen for entering payment information, confirming the order, and displaying order completion details. Handles payment method selection, payment validation, order placement, and shows order number, total amount, and estimated delivery date upon completion. A confirmation email is sent automatically.</span></span></span></span></td>
 </tr>
 <tr>
   <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
   <td align="left"><a id="paymentMethod"></a><a href="#paymentMethod">paymentMethod</a></td>
-  <td align="left"><span style="white-space: normal;">支払い方法</span></td>
+  <td align="left"><span style="white-space: normal;">Payment Method</span></td>
   <td align="left"></td>
-  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">def:</span><span class="meta-tag def-tag"><a href="https://schema.org/paymentMethod" target="_blank">schema.org/paymentMethod</a></span></span></span></span></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">def:</span><span class="meta-tag def-tag"><a href="https://schema.org/paymentMethod" target="_blank">schema.org/paymentMethod</a></span></span><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-payment">payment</a></span></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">Method of payment for the order. Options include credit card, cash on delivery, bank transfer, etc.</span></span></span></span></td>
 </tr>
 <tr>
   <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
   <td align="left"><a id="price"></a><a href="#price">price</a></td>
-  <td align="left"><span style="white-space: normal;">価格</span></td>
+  <td align="left"><span style="white-space: normal;">Price</span></td>
   <td align="left"></td>
-  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">def:</span><span class="meta-tag def-tag"><a href="https://schema.org/price" target="_blank">schema.org/price</a></span></span></span></span></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">def:</span><span class="meta-tag def-tag"><a href="https://schema.org/price" target="_blank">schema.org/price</a></span></span><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-commerce">commerce</a></span></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">Sales price of the book. Pre-tax amount in JPY currency.</span></span></span></span></td>
 </tr>
 <tr>
   <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
   <td align="left"><a id="quantity"></a><a href="#quantity">quantity</a></td>
-  <td align="left"><span style="white-space: normal;">数量</span></td>
+  <td align="left"><span style="white-space: normal;">Quantity</span></td>
   <td align="left"></td>
-  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">def:</span><span class="meta-tag def-tag"><a href="https://schema.org/quantityValue" target="_blank">schema.org/quantityValue</a></span></span></span></span></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">def:</span><span class="meta-tag def-tag"><a href="https://schema.org/quantityValue" target="_blank">schema.org/quantityValue</a></span></span><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-commerce">commerce</a></span></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">Quantity of books in the cart. Integer value greater than or equal to 1.</span></span></span></span></td>
 </tr>
 <tr>
   <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
   <td align="left"><a id="query"></a><a href="#query">query</a></td>
-  <td align="left"><span style="white-space: normal;">検索クエリ</span></td>
+  <td align="left"><span style="white-space: normal;">Search Query</span></td>
   <td align="left"></td>
-  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">検索に使用するキーワードや条件。</span></span></span></span></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-catalog">catalog</a></span></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">Keywords or conditions used for book searches. Can search by title, author name, ISBN, etc.</span></span></span></span></td>
 </tr>
 <tr>
   <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
   <td align="left"><a id="shippingAddress"></a><a href="#shippingAddress">shippingAddress</a></td>
-  <td align="left"><span style="white-space: normal;">配送先住所</span></td>
+  <td align="left"><span style="white-space: normal;">Shipping Address</span></td>
   <td align="left"></td>
-  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">def:</span><span class="meta-tag def-tag"><a href="https://schema.org/address" target="_blank">schema.org/address</a></span></span></span></span></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">def:</span><span class="meta-tag def-tag"><a href="https://schema.org/address" target="_blank">schema.org/address</a></span></span><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-shipping">shipping</a></span></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">Delivery address for products. Includes postal code, prefecture, city, street address, and building name.</span></span></span></span></td>
 </tr>
 <tr>
   <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
   <td align="left"><a id="ShoppingCart"></a><a href="#ShoppingCart">ShoppingCart</a></td>
-  <td align="left"><span style="white-space: normal;">ショッピングカート</span></td>
+  <td align="left"><span style="white-space: normal;">Shopping Cart</span></td>
   <td align="left"><span class="type-indicator-small safe" title="Safe"></span><a href="#goListCartItems">goListCartItems</a><br><span class="type-indicator-small safe" title="Safe"></span><a href="#goToCheckout">goToCheckout</a><br><span class="type-indicator-small safe" title="Safe"></span><a href="#goToCatalog">goToCatalog</a><br><span class="type-indicator-small idempotent" title="Idempotent"></span><a href="#doUpdateQuantity">doUpdateQuantity</a><br><span class="type-indicator-small idempotent" title="Idempotent"></span><a href="#doRemoveFromCart">doRemoveFromCart</a></td>
-  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">def:</span><span class="meta-tag def-tag"><a href="https://schema.org/ShoppingCart" target="_blank">schema.org/ShoppingCart</a></span></span><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-collection">collection</a></span></span></span></span></span></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">def:</span><span class="meta-tag def-tag"><a href="https://schema.org/ShoppingCart" target="_blank">schema.org/ShoppingCart</a></span></span><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-cart">cart</a></span></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag clickable" data-full="Cart containing books the user intends to purchase. Allows quantity changes, deletion, and total amount confirmation. Managed on a session basis." title="Cart containing books the user intends to purchase. Allows quantity changes, deletion, and total amount confirmation. Managed on a session basis.">Cart containing books the user intends to purchase. Allows quantity changes, deletion, and total amount confirmation. Managed on a session basis.</span></span></span></span></td>
 </tr>
 <tr>
   <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
   <td align="left"><a id="title"></a><a href="#title">title</a></td>
-  <td align="left"><span style="white-space: normal;">タイトル</span></td>
+  <td align="left"><span style="white-space: normal;">Title</span></td>
   <td align="left"></td>
-  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">def:</span><span class="meta-tag def-tag"><a href="https://schema.org/name" target="_blank">schema.org/name</a></span></span></span></span></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">def:</span><span class="meta-tag def-tag"><a href="https://schema.org/name" target="_blank">schema.org/name</a></span></span><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-catalog">catalog</a></span></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">Title of book or category name. String with a maximum of 200 characters.</span></span></span></span></td>
 </tr>
 <tr>
   <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
   <td align="left"><a id="totalAmount"></a><a href="#totalAmount">totalAmount</a></td>
-  <td align="left"><span style="white-space: normal;">合計金額</span></td>
+  <td align="left"><span style="white-space: normal;">Total Amount</span></td>
   <td align="left"></td>
-  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">def:</span><span class="meta-tag def-tag"><a href="https://schema.org/totalPrice" target="_blank">schema.org/totalPrice</a></span></span></span></span></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">def:</span><span class="meta-tag def-tag"><a href="https://schema.org/totalPrice" target="_blank">schema.org/totalPrice</a></span></span><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-commerce">commerce</a></span></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">Total amount for an order or cart contents. Displayed with tax included.</span></span></span></span></td>
 </tr>
 <tr>
   <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
   <td align="left"><a id="userEmail"></a><a href="#userEmail">userEmail</a></td>
-  <td align="left"><span style="white-space: normal;">メールアドレス</span></td>
+  <td align="left"><span style="white-space: normal;">Email Address</span></td>
   <td align="left"></td>
-  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">def:</span><span class="meta-tag def-tag"><a href="https://schema.org/email" target="_blank">schema.org/email</a></span></span></span></span></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">def:</span><span class="meta-tag def-tag"><a href="https://schema.org/email" target="_blank">schema.org/email</a></span></span><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-customer">customer</a></span></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">Customer&#039;s contact email address. Used for sending order confirmation emails.</span></span></span></span></td>
 </tr>
 <tr>
   <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
   <td align="left"><a id="userName"></a><a href="#userName">userName</a></td>
-  <td align="left"><span style="white-space: normal;">ユーザー名</span></td>
+  <td align="left"><span style="white-space: normal;">User Name</span></td>
   <td align="left"></td>
-  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">def:</span><span class="meta-tag def-tag"><a href="https://schema.org/name" target="_blank">schema.org/name</a></span></span></span></span></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">def:</span><span class="meta-tag def-tag"><a href="https://schema.org/name" target="_blank">schema.org/name</a></span></span><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-customer">customer</a></span></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">Name of the customer. First and last name separated by a space.</span></span></span></span></td>
 </tr>
 </tbody>
 </table>
@@ -877,31 +892,60 @@ const setupDocClick = () => {
 &lt;alps
         xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
         xsi:noNamespaceSchemaLocation=&quot;https://alps-io.github.io/schemas/alps.xsd&quot;&gt;
-    &lt;title&gt;オンライン書店カタログシステム2&lt;/title&gt;
-    &lt;doc&gt;オンライン書店の書籍カタログを管理し、ユーザーの購買フローを定義するためのALPSプロファイル。&lt;/doc&gt;
+    &lt;title&gt;ALPS Book Store&lt;/title&gt;
+    &lt;doc&gt;ALPS profile for managing an online bookstore catalog and defining the user purchase flow. This profile provides semantic definitions for both RESTful APIs and UI.&lt;/doc&gt;
     &lt;link href=&quot;https://github.com/example/online-bookstore-api/issues&quot; rel=&quot;issue&quot;/&gt;
 
-    &lt;!-- Ontology --&gt;
-    &lt;descriptor id=&quot;id&quot; def=&quot;https://schema.org/identifier&quot; title=&quot;識別子&quot;/&gt;
-    &lt;descriptor id=&quot;title&quot; def=&quot;https://schema.org/name&quot; title=&quot;タイトル&quot;/&gt;
-    &lt;descriptor id=&quot;author&quot; def=&quot;https://schema.org/author&quot; title=&quot;著者&quot;/&gt;
-    &lt;descriptor id=&quot;isbn&quot; def=&quot;https://schema.org/isbn&quot; title=&quot;ISBN&quot;/&gt;
-    &lt;descriptor id=&quot;price&quot; def=&quot;https://schema.org/price&quot; title=&quot;価格&quot;/&gt;
-    &lt;descriptor id=&quot;category&quot; def=&quot;https://schema.org/category&quot; title=&quot;カテゴリー&quot;/&gt;
-    &lt;descriptor id=&quot;quantity&quot; def=&quot;https://schema.org/quantityValue&quot; title=&quot;数量&quot;/&gt;
-    &lt;descriptor id=&quot;totalAmount&quot; def=&quot;https://schema.org/totalPrice&quot; title=&quot;合計金額&quot;/&gt;
-    &lt;descriptor id=&quot;userName&quot; def=&quot;https://schema.org/name&quot; title=&quot;ユーザー名&quot;/&gt;
-    &lt;descriptor id=&quot;userEmail&quot; def=&quot;https://schema.org/email&quot; title=&quot;メールアドレス&quot;/&gt;
-    &lt;descriptor id=&quot;shippingAddress&quot; def=&quot;https://schema.org/address&quot; title=&quot;配送先住所&quot;/&gt;
-    &lt;descriptor id=&quot;paymentMethod&quot; def=&quot;https://schema.org/paymentMethod&quot; title=&quot;支払い方法&quot;/&gt;
+    &lt;!-- Ontology (既存の記述はそのまま、変更なし) --&gt;
+    &lt;descriptor id=&quot;id&quot; def=&quot;https://schema.org/identifier&quot; title=&quot;Identifier&quot; tag=&quot;core&quot;&gt;
+        &lt;doc&gt;Unique identifier for each resource. UUID or auto-generated integer.&lt;/doc&gt;
+    &lt;/descriptor&gt;
+    &lt;descriptor id=&quot;title&quot; def=&quot;https://schema.org/name&quot; title=&quot;Title&quot; tag=&quot;catalog&quot;&gt;
+        &lt;doc&gt;Title of book or category name. String with a maximum of 200 characters.&lt;/doc&gt;
+    &lt;/descriptor&gt;
+    &lt;descriptor id=&quot;author&quot; def=&quot;https://schema.org/author&quot; title=&quot;Author&quot; tag=&quot;catalog&quot;&gt;
+        &lt;doc&gt;Name of the book&#039;s author. For multiple authors, names are comma-separated.&lt;/doc&gt;
+    &lt;/descriptor&gt;
+    &lt;descriptor id=&quot;isbn&quot; def=&quot;https://schema.org/isbn&quot; title=&quot;ISBN&quot; tag=&quot;catalog&quot;&gt;
+        &lt;doc&gt;International Standard Book Number. Formatted as ISBN-13 with hyphens.&lt;/doc&gt;
+    &lt;/descriptor&gt;
+    &lt;descriptor id=&quot;price&quot; def=&quot;https://schema.org/price&quot; title=&quot;Price&quot; tag=&quot;commerce&quot;&gt;
+        &lt;doc&gt;Sales price of the book. Pre-tax amount in JPY currency.&lt;/doc&gt;
+    &lt;/descriptor&gt;
+    &lt;descriptor id=&quot;category&quot; def=&quot;https://schema.org/category&quot; title=&quot;Category&quot; tag=&quot;catalog&quot;&gt;
+        &lt;doc&gt;Genre or category of the book. Books may belong to multiple categories.&lt;/doc&gt;
+    &lt;/descriptor&gt;
+    &lt;descriptor id=&quot;quantity&quot; def=&quot;https://schema.org/quantityValue&quot; title=&quot;Quantity&quot; tag=&quot;commerce&quot;&gt;
+        &lt;doc&gt;Quantity of books in the cart. Integer value greater than or equal to 1.&lt;/doc&gt;
+    &lt;/descriptor&gt;
+    &lt;descriptor id=&quot;totalAmount&quot; def=&quot;https://schema.org/totalPrice&quot; title=&quot;Total Amount&quot; tag=&quot;commerce&quot;&gt;
+        &lt;doc&gt;Total amount for an order or cart contents. Displayed with tax included.&lt;/doc&gt;
+    &lt;/descriptor&gt;
+    &lt;descriptor id=&quot;userName&quot; def=&quot;https://schema.org/name&quot; title=&quot;User Name&quot; tag=&quot;customer&quot;&gt;
+        &lt;doc&gt;Name of the customer. First and last name separated by a space.&lt;/doc&gt;
+    &lt;/descriptor&gt;
+    &lt;descriptor id=&quot;userEmail&quot; def=&quot;https://schema.org/email&quot; title=&quot;Email Address&quot; tag=&quot;customer&quot;&gt;
+        &lt;doc&gt;Customer&#039;s contact email address. Used for sending order confirmation emails.&lt;/doc&gt;
+    &lt;/descriptor&gt;
+    &lt;descriptor id=&quot;shippingAddress&quot; def=&quot;https://schema.org/address&quot; title=&quot;Shipping Address&quot; tag=&quot;shipping&quot;&gt;
+        &lt;doc&gt;Delivery address for products. Includes postal code, prefecture, city, street address, and building name.&lt;/doc&gt;
+    &lt;/descriptor&gt;
+    &lt;descriptor id=&quot;paymentMethod&quot; def=&quot;https://schema.org/paymentMethod&quot; title=&quot;Payment Method&quot; tag=&quot;payment&quot;&gt;
+        &lt;doc&gt;Method of payment for the order. Options include credit card, cash on delivery, bank transfer, etc.&lt;/doc&gt;
+    &lt;/descriptor&gt;
+    &lt;descriptor id=&quot;query&quot; title=&quot;Search Query&quot; tag=&quot;catalog&quot;&gt;
+        &lt;doc&gt;Keywords or conditions used for book searches. Can search by title, author name, ISBN, etc.&lt;/doc&gt;
+    &lt;/descriptor&gt;
 
     &lt;!-- Taxonomy --&gt;
-    &lt;descriptor id=&quot;Home&quot; title=&quot;ホーム画面&quot;&gt;
+    &lt;descriptor id=&quot;Home&quot; title=&quot;Home Screen&quot; tag=&quot;navigation&quot;&gt;
+        &lt;doc&gt;Starting point of the application. Displays site-wide navigation and promotional information.&lt;/doc&gt;
         &lt;descriptor href=&quot;#goToCatalog&quot;/&gt;
         &lt;descriptor href=&quot;#goToCart&quot;/&gt;
     &lt;/descriptor&gt;
 
-    &lt;descriptor id=&quot;Catalog&quot; def=&quot;https://schema.org/CollectionPage&quot; title=&quot;書籍カタログ&quot; tag=&quot;collection&quot;&gt;
+    &lt;descriptor id=&quot;Catalog&quot; def=&quot;https://schema.org/CollectionPage&quot; title=&quot;Book Catalog&quot; tag=&quot;catalog&quot;&gt;
+        &lt;doc&gt;Screen displaying all books. Provides category filtering, keyword search, and sorting functions. Default display is ordered by recent additions.&lt;/doc&gt;
         &lt;descriptor href=&quot;#goListBooks&quot;/&gt;
         &lt;descriptor href=&quot;#goSearchBooks&quot;/&gt;
         &lt;descriptor href=&quot;#goGetCategories&quot;/&gt;
@@ -910,7 +954,8 @@ const setupDocClick = () => {
         &lt;descriptor href=&quot;#Book&quot;/&gt;
     &lt;/descriptor&gt;
 
-    &lt;descriptor id=&quot;Book&quot; def=&quot;https://schema.org/Book&quot; title=&quot;書籍&quot; tag=&quot;item&quot;&gt;
+    &lt;descriptor id=&quot;Book&quot; def=&quot;https://schema.org/Book&quot; title=&quot;Book&quot; tag=&quot;catalog&quot;&gt;
+        &lt;doc&gt;Screen displaying individual book information. Shows detailed information, reviews, and related books. Items can be added to cart from this screen.&lt;/doc&gt;
         &lt;descriptor href=&quot;#id&quot;/&gt;
         &lt;descriptor href=&quot;#title&quot;/&gt;
         &lt;descriptor href=&quot;#author&quot;/&gt;
@@ -921,12 +966,14 @@ const setupDocClick = () => {
         &lt;descriptor href=&quot;#goToCatalog&quot;/&gt;
     &lt;/descriptor&gt;
 
-    &lt;descriptor id=&quot;Category&quot; def=&quot;https://schema.org/Category&quot; title=&quot;カテゴリー&quot; tag=&quot;item&quot;&gt;
+    &lt;descriptor id=&quot;Category&quot; def=&quot;https://schema.org/Category&quot; title=&quot;Category&quot; tag=&quot;catalog&quot;&gt;
+        &lt;doc&gt;Book genre classification. May have a hierarchical structure with parent and child categories.&lt;/doc&gt;
         &lt;descriptor href=&quot;#id&quot;/&gt;
         &lt;descriptor href=&quot;#title&quot;/&gt;
     &lt;/descriptor&gt;
 
-    &lt;descriptor id=&quot;ShoppingCart&quot; def=&quot;https://schema.org/ShoppingCart&quot; title=&quot;ショッピングカート&quot; tag=&quot;collection&quot;&gt;
+    &lt;descriptor id=&quot;ShoppingCart&quot; def=&quot;https://schema.org/ShoppingCart&quot; title=&quot;Shopping Cart&quot; tag=&quot;cart&quot;&gt;
+        &lt;doc&gt;Cart containing books the user intends to purchase. Allows quantity changes, deletion, and total amount confirmation. Managed on a session basis.&lt;/doc&gt;
         &lt;descriptor href=&quot;#goListCartItems&quot;/&gt;
         &lt;descriptor href=&quot;#doUpdateQuantity&quot;/&gt;
         &lt;descriptor href=&quot;#doRemoveFromCart&quot;/&gt;
@@ -934,76 +981,97 @@ const setupDocClick = () => {
         &lt;descriptor href=&quot;#goToCatalog&quot;/&gt;
     &lt;/descriptor&gt;
 
-    &lt;descriptor id=&quot;Checkout&quot; title=&quot;決済画面&quot;&gt;
+    &lt;descriptor id=&quot;Checkout&quot; title=&quot;Checkout Screen&quot; tag=&quot;checkout&quot;&gt;
+        &lt;doc&gt;Purchase procedure screen. Input user information, delivery destination, and proceed to payment. Displays final confirmation before order is placed.&lt;/doc&gt;
         &lt;descriptor href=&quot;#doUserInfo&quot;/&gt;
         &lt;descriptor href=&quot;#doShippingInfo&quot;/&gt;
-        &lt;descriptor href=&quot;#doPaymentInfo&quot;/&gt;
-        &lt;descriptor href=&quot;#doPlaceOrder&quot;/&gt;
+        &lt;descriptor href=&quot;#goToPayment&quot;/&gt;
         &lt;descriptor href=&quot;#goToCart&quot;/&gt;
     &lt;/descriptor&gt;
 
-    &lt;descriptor id=&quot;OrderConfirmation&quot; title=&quot;注文確認画面&quot;&gt;
+    &lt;descriptor id=&quot;Payment&quot; title=&quot;Payment Screen&quot; tag=&quot;payment&quot;&gt;
+        &lt;doc&gt;Screen for entering payment information, confirming the order, and displaying order completion details. Handles payment method selection, payment validation, order placement, and shows order number, total amount, and estimated delivery date upon completion. A confirmation email is sent automatically.&lt;/doc&gt;
+        &lt;descriptor href=&quot;#paymentMethod&quot;/&gt;
+        &lt;descriptor href=&quot;#doPaymentInfo&quot;/&gt;
+        &lt;descriptor href=&quot;#doPlaceOrder&quot;/&gt;
         &lt;descriptor href=&quot;#goOrderDetails&quot;/&gt;
         &lt;descriptor href=&quot;#goToHome&quot;/&gt;
+        &lt;descriptor href=&quot;#goToCart&quot;/&gt;
     &lt;/descriptor&gt;
 
     &lt;!-- Choreography --&gt;
-    &lt;descriptor id=&quot;goToHome&quot; type=&quot;safe&quot; rt=&quot;#Home&quot; title=&quot;ホーム画面に移動&quot;/&gt;
-    &lt;descriptor id=&quot;goToCatalog&quot; type=&quot;safe&quot; rt=&quot;#Catalog&quot; title=&quot;カタログ画面に移動&quot;/&gt;
-    &lt;descriptor id=&quot;goToBookDetails&quot; type=&quot;safe&quot; rt=&quot;#Book&quot; title=&quot;書籍詳細画面に移動&quot;&gt;
+    &lt;descriptor id=&quot;goToHome&quot; type=&quot;safe&quot; rt=&quot;#Home&quot; title=&quot;Go to Home Screen&quot;&gt;
+        &lt;doc&gt;Navigate to the application&#039;s home screen. Accessible from any screen.&lt;/doc&gt;
+    &lt;/descriptor&gt;
+    &lt;descriptor id=&quot;goToCatalog&quot; type=&quot;safe&quot; rt=&quot;#Catalog&quot; title=&quot;Go to Catalog Screen&quot;&gt;
+        &lt;doc&gt;Navigate to the book catalog list screen. All books are displayed.&lt;/doc&gt;
+    &lt;/descriptor&gt;
+    &lt;descriptor id=&quot;goToBookDetails&quot; type=&quot;safe&quot; rt=&quot;#Book&quot; title=&quot;Go to Book Details Screen&quot;&gt;
+        &lt;doc&gt;Navigate to the detailed information screen for the selected book. Book ID must be specified.&lt;/doc&gt;
         &lt;descriptor href=&quot;#id&quot;/&gt;
     &lt;/descriptor&gt;
-    &lt;descriptor id=&quot;goToCart&quot; type=&quot;safe&quot; rt=&quot;#ShoppingCart&quot; title=&quot;カート画面に移動&quot;/&gt;
-    &lt;descriptor id=&quot;goToCheckout&quot; type=&quot;safe&quot; rt=&quot;#Checkout&quot; title=&quot;決済画面に移動&quot;/&gt;
-
-    &lt;descriptor id=&quot;goListBooks&quot; type=&quot;safe&quot; rt=&quot;#Catalog&quot; rel=&quot;collection&quot; title=&quot;書籍一覧の取得&quot;&gt;
-        &lt;doc&gt;カタログ内のすべての書籍一覧を取得する。ページネーションやソート順の指定が可能。&lt;/doc&gt;
+    &lt;descriptor id=&quot;goToCart&quot; type=&quot;safe&quot; rt=&quot;#ShoppingCart&quot; title=&quot;Go to Cart Screen&quot;&gt;
+        &lt;doc&gt;Navigate to the screen displaying the contents of the current shopping cart.&lt;/doc&gt;
     &lt;/descriptor&gt;
-    &lt;descriptor id=&quot;goSearchBooks&quot; type=&quot;safe&quot; rt=&quot;#Catalog&quot; rel=&quot;collection&quot; title=&quot;書籍の検索&quot;&gt;
-        &lt;doc&gt;指定された検索クエリに基づいて書籍を検索する。&lt;/doc&gt;
+    &lt;descriptor id=&quot;goToCheckout&quot; type=&quot;safe&quot; rt=&quot;#Checkout&quot; title=&quot;Go to Checkout Screen&quot;&gt;
+        &lt;doc&gt;Navigate to the screen to confirm cart contents and proceed with purchase. Cannot transition if cart is empty.&lt;/doc&gt;
+    &lt;/descriptor&gt;
+    &lt;descriptor id=&quot;goToPayment&quot; type=&quot;safe&quot; rt=&quot;#Payment&quot; title=&quot;Go to Payment Screen&quot;&gt;
+        &lt;doc&gt;Navigate to the payment screen to input payment information and complete the order.&lt;/doc&gt;
+    &lt;/descriptor&gt;
+
+    &lt;descriptor id=&quot;goListBooks&quot; type=&quot;safe&quot; rt=&quot;#Catalog&quot; rel=&quot;collection&quot; title=&quot;Get Book List&quot; tag=&quot;catalog&quot;&gt;
+        &lt;doc&gt;Retrieve list of all books in the catalog. Can specify pagination (default 20 items/page) and sort order (newest, price, popularity, etc.).&lt;/doc&gt;
+    &lt;/descriptor&gt;
+    &lt;descriptor id=&quot;goSearchBooks&quot; type=&quot;safe&quot; rt=&quot;#Catalog&quot; rel=&quot;collection&quot; title=&quot;Search Books&quot; tag=&quot;catalog&quot;&gt;
+        &lt;doc&gt;Search for books based on specified search query. Can search across multiple fields including title, author name, content description, ISBN, etc.&lt;/doc&gt;
         &lt;descriptor href=&quot;#query&quot;/&gt;
     &lt;/descriptor&gt;
-    &lt;descriptor id=&quot;query&quot; title=&quot;検索クエリ&quot;&gt;
-        &lt;doc&gt;検索に使用するキーワードや条件。&lt;/doc&gt;
+    &lt;descriptor id=&quot;goGetCategories&quot; type=&quot;safe&quot; rt=&quot;#Catalog&quot; rel=&quot;collection&quot; title=&quot;Get Category List&quot; tag=&quot;catalog&quot;&gt;
+        &lt;doc&gt;Retrieve list of all available book categories. For hierarchical categories, parent-child relationships are also returned.&lt;/doc&gt;
     &lt;/descriptor&gt;
-    &lt;descriptor id=&quot;goGetCategories&quot; type=&quot;safe&quot; rt=&quot;#Catalog&quot; rel=&quot;collection&quot; title=&quot;カテゴリー一覧の取得&quot;&gt;
-        &lt;doc&gt;利用可能なすべての書籍カテゴリーの一覧を取得する。&lt;/doc&gt;
-    &lt;/descriptor&gt;
-    &lt;descriptor id=&quot;goGetBookDetails&quot; type=&quot;safe&quot; rt=&quot;#Book&quot; rel=&quot;item&quot; title=&quot;書籍詳細の取得&quot;&gt;
-        &lt;doc&gt;指定された書籍IDに基づいて、特定の書籍の詳細情報を取得する。&lt;/doc&gt;
+    &lt;descriptor id=&quot;goGetBookDetails&quot; type=&quot;safe&quot; rt=&quot;#Book&quot; rel=&quot;item&quot; title=&quot;Get Book Details&quot; tag=&quot;catalog&quot;&gt;
+        &lt;doc&gt;Retrieve detailed information for a specific book based on the specified book ID. Includes stock status and related book information.&lt;/doc&gt;
         &lt;descriptor href=&quot;#id&quot;/&gt;
     &lt;/descriptor&gt;
 
-    &lt;descriptor id=&quot;doAddToCart&quot; type=&quot;unsafe&quot; rt=&quot;#ShoppingCart&quot; rel=&quot;collection&quot; title=&quot;カートに追加&quot;&gt;
-        &lt;doc&gt;指定された書籍をショッピングカートに追加する。&lt;/doc&gt;
+    &lt;descriptor id=&quot;doAddToCart&quot; type=&quot;unsafe&quot; rt=&quot;#ShoppingCart&quot; rel=&quot;collection&quot; title=&quot;Add to Cart&quot; tag=&quot;cart&quot;&gt;
+        &lt;doc&gt;Add the specified book to the shopping cart. If already in the cart, quantity is increased. Orders exceeding stock will result in an error.&lt;/doc&gt;
         &lt;descriptor href=&quot;#id&quot;/&gt;
         &lt;descriptor href=&quot;#quantity&quot;/&gt;
     &lt;/descriptor&gt;
-    &lt;descriptor id=&quot;goListCartItems&quot; type=&quot;safe&quot; rt=&quot;#ShoppingCart&quot; rel=&quot;collection&quot; title=&quot;カート内アイテム一覧の取得&quot;/&gt;
-    &lt;descriptor id=&quot;doUpdateQuantity&quot; type=&quot;idempotent&quot; rt=&quot;#ShoppingCart&quot; title=&quot;カート内アイテムの数量更新&quot;&gt;
+    &lt;descriptor id=&quot;goListCartItems&quot; type=&quot;safe&quot; rt=&quot;#ShoppingCart&quot; rel=&quot;collection&quot; title=&quot;Get Cart Items List&quot; tag=&quot;cart&quot;&gt;
+        &lt;doc&gt;Retrieve all products in the current shopping cart, including their quantities, subtotals, and total amount.&lt;/doc&gt;
+    &lt;/descriptor&gt;
+    &lt;descriptor id=&quot;doUpdateQuantity&quot; type=&quot;idempotent&quot; rt=&quot;#ShoppingCart&quot; title=&quot;Update Cart Item Quantity&quot; tag=&quot;cart&quot;&gt;
+        &lt;doc&gt;Update the quantity of a specific product in the cart. Values less than or equal to 0 cannot be specified. Quantities exceeding stock will result in an error.&lt;/doc&gt;
         &lt;descriptor href=&quot;#id&quot;/&gt;
         &lt;descriptor href=&quot;#quantity&quot;/&gt;
     &lt;/descriptor&gt;
-    &lt;descriptor id=&quot;doRemoveFromCart&quot; type=&quot;idempotent&quot; rt=&quot;#ShoppingCart&quot; title=&quot;カートからアイテムを削除&quot;&gt;
+    &lt;descriptor id=&quot;doRemoveFromCart&quot; type=&quot;idempotent&quot; rt=&quot;#ShoppingCart&quot; title=&quot;Remove Item from Cart&quot; tag=&quot;cart&quot;&gt;
+        &lt;doc&gt;Completely remove the specified item from the cart. If the item does not exist in the cart, no changes are made.&lt;/doc&gt;
         &lt;descriptor href=&quot;#id&quot;/&gt;
     &lt;/descriptor&gt;
 
-    &lt;descriptor id=&quot;doUserInfo&quot; type=&quot;unsafe&quot; rt=&quot;#Checkout&quot; title=&quot;ユーザー情報の入力&quot;&gt;
+    &lt;descriptor id=&quot;doUserInfo&quot; type=&quot;unsafe&quot; rt=&quot;#Checkout&quot; title=&quot;Input User Information&quot; tag=&quot;customer&quot;&gt;
+        &lt;doc&gt;Input customer&#039;s name and email address. Email address is validated using regular expressions.&lt;/doc&gt;
         &lt;descriptor href=&quot;#userName&quot;/&gt;
         &lt;descriptor href=&quot;#userEmail&quot;/&gt;
     &lt;/descriptor&gt;
-    &lt;descriptor id=&quot;doShippingInfo&quot; type=&quot;unsafe&quot; rt=&quot;#Checkout&quot; title=&quot;配送情報の入力&quot;&gt;
+    &lt;descriptor id=&quot;doShippingInfo&quot; type=&quot;unsafe&quot; rt=&quot;#Checkout&quot; title=&quot;Input Shipping Information&quot; tag=&quot;shipping&quot;&gt;
+        &lt;doc&gt;Input product delivery address. Features automatic address input using postal code lookup.&lt;/doc&gt;
         &lt;descriptor href=&quot;#shippingAddress&quot;/&gt;
     &lt;/descriptor&gt;
-    &lt;descriptor id=&quot;doPaymentInfo&quot; type=&quot;unsafe&quot; rt=&quot;#Checkout&quot; title=&quot;支払い情報の入力&quot;&gt;
+    &lt;descriptor id=&quot;doPaymentInfo&quot; type=&quot;unsafe&quot; rt=&quot;#Payment&quot; title=&quot;Input Payment Information&quot; tag=&quot;payment&quot;&gt;
+        &lt;doc&gt;Select order payment method and input necessary payment information. When credit card is selected, card information is input and validated.&lt;/doc&gt;
         &lt;descriptor href=&quot;#paymentMethod&quot;/&gt;
     &lt;/descriptor&gt;
-    &lt;descriptor id=&quot;doPlaceOrder&quot; type=&quot;unsafe&quot; rt=&quot;#OrderConfirmation&quot; title=&quot;注文の確定&quot;&gt;
-        &lt;doc&gt;ユーザーの入力情報を基に注文を確定し、注文確認画面に遷移する。&lt;/doc&gt;
+    &lt;descriptor id=&quot;doPlaceOrder&quot; type=&quot;unsafe&quot; rt=&quot;#Payment&quot; title=&quot;Place Order&quot; tag=&quot;order&quot;&gt;
+        &lt;doc&gt;Confirm order based on user input information, process payment, and display order confirmation details on the payment screen. Payment processing is executed, inventory is secured, and a confirmation email is sent. This operation cannot be reversed.&lt;/doc&gt;
     &lt;/descriptor&gt;
 
-    &lt;descriptor id=&quot;goOrderDetails&quot; type=&quot;safe&quot; rt=&quot;#OrderConfirmation&quot; title=&quot;注文詳細の表示&quot;&gt;
-        &lt;doc&gt;確定した注文の詳細情報を表示する。&lt;/doc&gt;
+    &lt;descriptor id=&quot;goOrderDetails&quot; type=&quot;safe&quot; rt=&quot;#Payment&quot; title=&quot;Display Order Details&quot; tag=&quot;order&quot;&gt;
+        &lt;doc&gt;Display detailed information for the confirmed order on the payment screen. Includes order number, list of purchased products, total amount, delivery destination, payment method, etc.&lt;/doc&gt;
     &lt;/descriptor&gt;
 &lt;/alps&gt;
 </code></pre>
