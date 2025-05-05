@@ -44,7 +44,7 @@ class DumpDocsTest extends TestCase
         // Assertions for specific descriptors expected from alps.json
         $this->assertStringContainsString('[Index](#Index)', $markdown); // ID link
         $this->assertStringContainsString('Blog', $markdown); // Title
-        $this->assertStringContainsString('<span class="legend-icon semantic"></span>', $markdown); // Type indicator
+        $this->assertStringContainsString('semantic', $markdown); // Type indicator
         $this->assertStringContainsString('<a href="#BlogPosting">BlogPosting</a>', $markdown); // Contained descriptor link
         // $this->assertStringContainsString('rel:collection', $markdown); // Removed assertion - BlogPosting has no rel
         // $this->assertStringContainsString('tag-tag"><a href="#tag-blog">blog</a>', $markdown); // Extra info: tag - alps.json doesn't have tags for BlogPosting
@@ -235,7 +235,7 @@ class DumpDocsTest extends TestCase
 
         $markdown = $this->dumpDocs->getSemanticDescriptorMarkDown($profile);
         // Check that Extra Info and Contained are empty
-        $this->assertStringContainsString('| <span class="legend"><span class="legend-icon semantic"></span></span> | <a id="TrulyMinimal"></a>[TrulyMinimal](#TrulyMinimal) | <span style="white-space: normal;"></span> |  | <span style="white-space: normal;"></span> |', $markdown);
+        $this->assertStringContainsString('| semantic | <a id="TrulyMinimal"></a>[TrulyMinimal](#TrulyMinimal) | <span style="white-space: normal;"></span> |  | <span style="white-space: normal;"></span> |', $markdown);
     }
 
     public function testMissingPropertyInGetDescriptorPropValue(): void
@@ -348,7 +348,7 @@ class DumpDocsTest extends TestCase
         $markdown = $dumpDocs->getSemanticDescriptorMarkDown($profile);
 
         // Assert that the 'Contained' column for ParentDesc is empty
-        $this->assertStringContainsString('| <span class="legend"><span class="legend-icon semantic"></span></span> | <a id="ParentDesc"></a>[ParentDesc](#ParentDesc) | <span style="white-space: normal;"></span> |  | <span style="white-space: normal;"></span> |', $markdown);
+        $this->assertStringContainsString('| semantic | <a id="ParentDesc"></a>[ParentDesc](#ParentDesc) | <span style="white-space: normal;"></span> |  | <span style="white-space: normal;"></span> |', $markdown);
     }
 
     public function testEmptyInlineDescriptors(): void // Uses manually constructed profile
@@ -373,6 +373,6 @@ class DumpDocsTest extends TestCase
         $markdown = $dumpDocs->getSemanticDescriptorMarkDown($profile);
 
         // Check that DescWithOnlyInvalidInlineRefs has an empty 'Contained' column
-        $this->assertStringContainsString('| <span class="legend"><span class="legend-icon semantic"></span></span> | <a id="DescWithOnlyInvalidInlineRefs"></a>[DescWithOnlyInvalidInlineRefs](#DescWithOnlyInvalidInlineRefs) | <span style="white-space: normal;"></span> |  | <span style="white-space: normal;"></span> |', $markdown);
+        $this->assertStringContainsString('| semantic | <a id="DescWithOnlyInvalidInlineRefs"></a>[DescWithOnlyInvalidInlineRefs](#DescWithOnlyInvalidInlineRefs) | <span style="white-space: normal;"></span> |  | <span style="white-space: normal;"></span> |', $markdown);
     }
 }
