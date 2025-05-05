@@ -113,12 +113,7 @@ EOT;
             return [null, ''];
         }
 
-        $inlineDescriptors = '';
-        foreach ($props as $prop) {
-            $inlineDescriptors .= sprintf('(%s)<br />', $prop);
-        }
-
-        return [$descriptor->id, $this->template($descriptor, $inlineDescriptors, $labelName)];
+        return [$descriptor->id, $this->template($descriptor, $labelName)];
     }
 
     /**
@@ -188,7 +183,7 @@ EOT;
         return $descriptor instanceof SemanticDescriptor;
     }
 
-    private function template(AbstractDescriptor $descriptor, string $props, LabelNameInterface $labelName): string
+    private function template(AbstractDescriptor $descriptor, LabelNameInterface $labelName): string
     {
         $base = <<<'EOT'
     %s [margin=0.1, label="%s", shape=box, URL="%s" target="_parent"
