@@ -121,21 +121,34 @@ const setupTagClick = () => {
     });
 }
 const setupDocClick = () => {
+    // Define constants for better maintainability
+    const MAX_LENGTH = 140;
+    const TRUNCATE_LENGTH = 70;
     document.querySelectorAll('.doc-tag').forEach(el => {
         const full = el.dataset.full;
-        if (!full || full.length <= 140) {
-            return;
-        }
-
-        const short = full.slice(0, 70) + '...';
+        if (!full || full.length <= MAX_LENGTH) return;
+        const short = full.slice(0, TRUNCATE_LENGTH) + '...';
         el.innerText = short;
         el.classList.add('expandable');
-
-        el.addEventListener('click', () => {
+        el.classList.add('clickable');
+        // Make element keyboard accessible
+        el.setAttribute('tabindex', '0');
+        el.setAttribute('role', 'button');
+        el.setAttribute('aria-expanded', 'false');
+        el.setAttribute('aria-label', 'Expand to read more');
+        const toggleExpansion = () => {
             const expanded = el.classList.toggle('expanded');
             el.innerText = expanded ? full : short;
+            el.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+            el.setAttribute('aria-label', expanded ? 'Collapse text' : 'Expand to read more');
+        };
+        el.addEventListener('click', toggleExpansion);
+        el.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                toggleExpansion();
+            }
         });
     });
 };
-
 
