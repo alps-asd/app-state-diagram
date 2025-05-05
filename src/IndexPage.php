@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Koriym\AppStateDiagram;
 
 use function array_keys;
+use function assert;
 use function basename;
 use function count;
 use function dirname;
@@ -12,6 +13,7 @@ use function file_get_contents;
 use function htmlspecialchars;
 use function implode;
 use function nl2br;
+use function preg_replace;
 use function sprintf;
 use function str_replace;
 use function strtoupper;
@@ -102,7 +104,10 @@ EOT;
             return;
         }
 
-        $html = (new MdToHtml())($index->htmlTitle, $md);
+        // HTML format
+        $legendTypeMd = $this->getLegendTypeMd($md);
+        assert($legendTypeMd !== '', 'Regexp failed');
+        $html = (new MdToHtml())($index->htmlTitle, $legendTypeMd);
         $escapedDotId = str_replace("\n", '', $index->dotId);
         $escapedDotName = str_replace("\n", '', $index->dotName);
         $plusHeaderHtml = str_replace(
@@ -111,6 +116,14 @@ EOT;
             $html
         );
         $this->content = str_replace(['{{ dotId }}', '{{ dotName }}', '{{ dotName }}'], [$escapedDotId, $escapedDotName], $plusHeaderHtml);
+    }
+
+    private function getLegendTypeMd(string $md): string
+    {
+        $pattern = '/^(\|\s*)(semantic|safe|unsafe|idempotent)(\s*\|)/m';
+        $replacement = '$1<span class="legend"><span class="legend-icon $2"></span></span>$3';
+
+        return (string) preg_replace($pattern, $replacement, $md);
     }
 
     private function getMarkdownImage(string $profile): string
