@@ -290,6 +290,10 @@ final class MdToHtml
       gap: 4px; 
     }
     
+    .meta-container br {
+        display: none;
+    }
+    
     .meta-item {
         display: flex;
         align-items: center;
