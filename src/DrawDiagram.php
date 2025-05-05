@@ -9,8 +9,6 @@ use Koriym\AppStateDiagram\Exception\MissingHashSignInHrefException;
 use stdClass;
 
 use function assert;
-use function end;
-use function explode;
 use function in_array;
 use function is_int;
 use function is_iterable;
