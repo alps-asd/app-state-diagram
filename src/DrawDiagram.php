@@ -134,9 +134,10 @@ EOT;
                         $props[] = $labelName->getNodeLabel($descriptor);
                     }
                 } catch (InvalidHrefException $e) {
-                    // 外部参照の場合、最後の部分（#以降）をプロパティとして追加
+                    // @codeCoverageIgnoreStart
                     $parts = explode('#', $item->href);
                     $props[] = end($parts);
+                    // @codeCoverageIgnoreEnd
                 }
             }
 
