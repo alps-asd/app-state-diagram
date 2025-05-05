@@ -12,6 +12,7 @@ use function file_get_contents;
 use function htmlspecialchars;
 use function implode;
 use function nl2br;
+use function preg_replace;
 use function sprintf;
 use function str_replace;
 use function strtoupper;
@@ -102,7 +103,11 @@ EOT;
             return;
         }
 
-        $html = (new MdToHtml())($index->htmlTitle, $md);
+        // HTML format
+        $pattern = '/^(\|\s*)(semantic|safe|unsafe|idempotent)(\s*\|)/m';
+        $replacement = '$1<span class="legend"><span class="legend-icon $2"></span></span>$3';
+        $legendIdMd = preg_replace($pattern, $replacement, $md);
+        $html = (new MdToHtml())($index->htmlTitle, $legendIdMd);
         $escapedDotId = str_replace("\n", '', $index->dotId);
         $escapedDotName = str_replace("\n", '', $index->dotName);
         $plusHeaderHtml = str_replace(
