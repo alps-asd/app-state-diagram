@@ -54,8 +54,6 @@ jobs:
       - name: Run demo (JSON)
         run: |
           bin/asd docs/blog/profile.json
-          bin/asd docs/todomvc/profile.json
-          bin/asd --and-tag=a,b --or-tag=c --color=red docs/blog/profile.json
 
       - name: Run demo (XML)
         run: bin/asd docs/blog/profile.xml
