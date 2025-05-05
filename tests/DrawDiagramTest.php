@@ -41,7 +41,7 @@ class DrawDiagramTest extends TestCase
     {
         $alpsFile = __DIR__ . '/Fake/extern_href.json';
         $dot = ($this->drawDiagram)(new Profile($alpsFile, new LabelName()), new LabelName());
-        $this->assertStringContainsString('(min)', $dot);
+        $this->assertStringContainsString('State3 [', $dot);
     }
 
     public function testMultipleLink(): void

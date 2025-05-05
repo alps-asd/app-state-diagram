@@ -9,6 +9,8 @@ use Koriym\AppStateDiagram\Exception\MissingHashSignInHrefException;
 use stdClass;
 
 use function assert;
+use function end;
+use function explode;
 use function in_array;
 use function is_int;
 use function is_iterable;
@@ -131,9 +133,16 @@ EOT;
         foreach ($descriptor->descriptor as $item) {
             if ($this->isSemanticHref($item, $descriptors)) {
                 assert(is_string($item->href));
-                $descriptor =  $this->getHref($item->href, $descriptors);
-                assert($descriptor instanceof SemanticDescriptor);
-                $props[] = $labelName->getNodeLabel($descriptor);
+                try {
+                    $descriptor = $this->getHref($item->href, $descriptors);
+                    if ($descriptor instanceof SemanticDescriptor) {
+                        $props[] = $labelName->getNodeLabel($descriptor);
+                    }
+                } catch (InvalidHrefException $e) {
+                    // 外部参照の場合、最後の部分（#以降）をプロパティとして追加
+                    $parts = explode('#', $item->href);
+                    $props[] = end($parts);
+                }
             }
 
             $isSemantic = isset($item->type) && $item->type === 'semantic';
@@ -181,14 +190,14 @@ EOT;
 
     private function template(AbstractDescriptor $descriptor, string $props, LabelNameInterface $labelName): string
     {
-    $base = <<<'EOT'
+        $base = <<<'EOT'
     %s [margin=0.1, label="%s", shape=box, URL="%s" target="_parent"
 EOT;
 
-    $url = sprintf('#%s', $descriptor->id);
-    assert($descriptor instanceof SemanticDescriptor);
+        $url = sprintf('#%s', $descriptor->id);
+        assert($descriptor instanceof SemanticDescriptor);
 
     // Pass node ID, label, and URL to sprintf.
-    return sprintf($base . ']' . PHP_EOL, $descriptor->id, $labelName->getNodeLabel($descriptor), $url);
+        return sprintf($base . ']' . PHP_EOL, $descriptor->id, $labelName->getNodeLabel($descriptor), $url);
     }
 }
