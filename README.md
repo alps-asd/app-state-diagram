@@ -5,11 +5,11 @@
 [![Continuous Integration](https://github.com/alps-asd/app-state-diagram/actions/workflows/continuous-integration.yml/badge.svg)](https://github.com/alps-asd/app-state-diagram/actions/workflows/continuous-integration.yml)
 
 [![Release (app-state-diagram)](https://github.com/alps-asd/app-state-diagram/actions/workflows/release-app-state-diagram.yml/badge.svg)](https://github.com/alps-asd/app-state-diagram/actions/workflows/release-app-state-diagram.yml)
-[![Release (asd-action)](https://github.com/alps-asd/app-state-diagram/actions/workflows/release-asd-action.yml/badge.svg)](https://github.com/alps-asd/app-state-diagram/actions/workflows/release-asd-action.yml) 
+[![Release (asd-action)](https://github.com/alps-asd/app-state-diagram/actions/workflows/release-asd-action.yml/badge.svg)](https://github.com/alps-asd/app-state-diagram/actions/workflows/release-asd-action.yml)
 
 <img src="https://www.app-state-diagram.com/images/logo.png" width="120px" alt="logo">
 
-**app-state-diagram** is a tool that visualizes state transitions and information structures of RESTful applications. It generates interactive state diagrams and hyperlinked documentation from ALPS profiles written in XML or JSON.
+**app-state-diagram** is a tool that visualizes state transitions and information structures of RESTful applications. It generates interactive state diagrams and hyperlinked documentation from ALPS (Application-Level Profile Semantics) profiles written in XML or JSON.
 
 [![App State Diagram for Mini Commerce Application](https://www.app-state-diagram.com/app-state-diagram/mini-commerce/alps.svg)](https://www.app-state-diagram.com/app-state-diagram/mini-commerce/index.html)
 
@@ -19,6 +19,16 @@
 - **Clear Information Semantics**: See how data flows and what each element means
 - **Enhanced Team Communication**: Both technical and business teams can discuss using the same visual representation
 - **Design Consistency**: Represent application structures uniformly and discover design issues early
+
+## Information Architecture Perspective
+
+app-state-diagram embodies the three key aspects of Information Architecture (IA):
+
+- **Ontology**: Defines the semantic meaning of application elements and their relationships
+- **Taxonomy**: Organizes information into structured hierarchies and classifications
+- **Choreography**: Describes interaction patterns and rules for state transitions
+
+By focusing on these IA principles, app-state-diagram helps create a shared understanding of application semantics across organizational boundaries, independent of specific implementation technologies.
 
 ## Quick Start
 
