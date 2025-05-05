@@ -6,5 +6,3 @@ parameters:
   excludePaths:
     analyseAndScan:
       - src/IndexPage.php
-  ignoreErrors:
-      - '#PHPDoc tag @SuppressWarnings has invalid value#'
