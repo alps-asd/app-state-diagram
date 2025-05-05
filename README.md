@@ -1,6 +1,5 @@
 # app-state-diagram
 
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/alps-asd/app-state-diagram/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/alps-asd/app-state-diagram/?branch=master)
 [![codecov](https://codecov.io/gh/alps-asd/app-state-diagram/branch/master/graph/badge.svg?token=FIVDUG18AZ)](https://codecov.io/gh/koriym/app-state-diagram)
 [![Type Coverage](https://shepherd.dev/github/alps-asd/app-state-diagram/coverage.svg)](https://shepherd.dev/github/alps-asd/app-state-diagram)
 [![Continuous Integration](https://github.com/alps-asd/app-state-diagram/actions/workflows/continuous-integration.yml/badge.svg)](https://github.com/alps-asd/app-state-diagram/actions/workflows/continuous-integration.yml)
