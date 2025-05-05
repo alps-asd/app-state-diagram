@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Koriym\AppStateDiagram;
 
 use function array_keys;
+use function assert;
 use function basename;
 use function count;
 use function dirname;
@@ -105,6 +106,7 @@ EOT;
 
         // HTML format
         $legendTypeMd = $this->getLegendTypeMd($md);
+        assert($legendTypeMd !== '', 'Regexp failed');
         $html = (new MdToHtml())($index->htmlTitle, $legendTypeMd);
         $escapedDotId = str_replace("\n", '', $index->dotId);
         $escapedDotName = str_replace("\n", '', $index->dotName);
