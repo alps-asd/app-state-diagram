@@ -4,7 +4,7 @@ This is a sample ALPS profile demonstrating the semantic descriptors and operati
 
 <!-- Container for the ASDs -->
 
-[<img src="profile.svg" alt="application state diagram">](profile.title.svg)
+[<img src="alps.svg" alt="application state diagram">](alps.title.svg)
 
 
 
