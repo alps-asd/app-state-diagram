@@ -106,7 +106,7 @@ EOT;
         // HTML format
         $pattern = '/^(\|\s*)(semantic|safe|unsafe|idempotent)(\s*\|)/m';
         $replacement = '$1<span class="legend"><span class="legend-icon $2"></span></span>$3';
-        $legendIdMd = preg_replace($pattern, $replacement, $md);
+        $legendIdMd = (string) preg_replace($pattern, $replacement, $md);
         $html = (new MdToHtml())($index->htmlTitle, $legendIdMd);
         $escapedDotId = str_replace("\n", '', $index->dotId);
         $escapedDotName = str_replace("\n", '', $index->dotName);
