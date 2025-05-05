@@ -128,16 +128,9 @@ EOT;
         foreach ($descriptor->descriptor as $item) {
             if ($this->isSemanticHref($item, $descriptors)) {
                 assert(is_string($item->href));
-                try {
-                    $descriptor = $this->getHref($item->href, $descriptors);
-                    if ($descriptor instanceof SemanticDescriptor) {
-                        $props[] = $labelName->getNodeLabel($descriptor);
-                    }
-                } catch (InvalidHrefException $e) {
-                    // @codeCoverageIgnoreStart
-                    $parts = explode('#', $item->href);
-                    $props[] = end($parts);
-                    // @codeCoverageIgnoreEnd
+                $descriptor = $this->getHref($item->href, $descriptors);
+                if ($descriptor instanceof SemanticDescriptor) {
+                    $props[] = $labelName->getNodeLabel($descriptor);
                 }
             }
 
