@@ -181,13 +181,14 @@ EOT;
 
     private function template(AbstractDescriptor $descriptor, string $props, LabelNameInterface $labelName): string
     {
-        $base = <<<'EOT'
-    %s [margin=0.02, label=<<table cellspacing="0" cellpadding="5" border="0"><tr><td>%s<br />%s</td></tr></table>>,shape=box URL="%s" target="_parent"
+    $base = <<<'EOT'
+    %s [margin=0.1, label="%s", shape=box, URL="%s" target="_parent"
 EOT;
 
-        $url = sprintf('#%s', $descriptor->id);
-        assert($descriptor instanceof SemanticDescriptor);
+    $url = sprintf('#%s', $descriptor->id);
+    assert($descriptor instanceof SemanticDescriptor);
 
-        return sprintf($base . ']' . PHP_EOL, $descriptor->id, $labelName->getNodeLabel($descriptor), $props, $url);
+    // Pass node ID, label, and URL to sprintf.
+    return sprintf($base . ']' . PHP_EOL, $descriptor->id, $labelName->getNodeLabel($descriptor), $url);
     }
 }
