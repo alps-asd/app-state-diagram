@@ -38,5 +38,3 @@ jobs:
             org.opencontainers.image.version=${{ github.ref_name }}
             org.opencontainers.image.revision=${{ github.sha }}
             org.opencontainers.image.created=${{ github.event.release.created_at }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
