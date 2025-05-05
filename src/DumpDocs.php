@@ -252,7 +252,7 @@ final class DumpDocs
             return '';
         }
 
-        return '<span class="meta-container">' . implode('<br>', $filteredExtras) . '</span>';
+        return '<span class="meta-container">' . implode('', $filteredExtras) . '</span>';
     }
 
     private function buildMarkdownTableRow(AbstractDescriptor $descriptor): string

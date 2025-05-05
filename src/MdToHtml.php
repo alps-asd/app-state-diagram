@@ -293,7 +293,7 @@ final class MdToHtml
     .meta-item {
         display: flex;
         align-items: center;
-        line-height: 1.0;
+        line-height: normal;
     }
     
     .meta-label {
