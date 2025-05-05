@@ -290,10 +290,14 @@ final class MdToHtml
       gap: 4px; 
     }
     
+    .meta-container br {
+        display: none;
+    }
+    
     .meta-item {
         display: flex;
         align-items: center;
-        line-height: 1.0;
+        line-height: normal;
     }
     
     .meta-label {
@@ -340,11 +344,16 @@ final class MdToHtml
     } 
     
     .doc-tag { 
-      background-color: #E6FFFA; /* 薄いティール */
-      border-color: #B2F5EA; /* やや濃いめのティール */
-      color: #319795; /* 濃いティール */
-      border: 1px solid #B2F5EA;
-      overflow: visible !important; 
+      background-color: #FFFBEA;  /* やや控えめなクリーム色 */
+      border-color: #FFE8A1;      /* 柔らかい縁取りの黄色 */
+      color: #8A6D1B;             /* 落ち着いた茶系 */
+      border: 1px solid #FFE8A1;
+      padding: 3px 8px;
+      font-size: 0.8em;
+      border-radius: 4px;
+    }
+    .doc-tag.clickable {
+      cursor: pointer;
     }
     /* テーブルセル内でのメタ情報の折り返し */
     .markdown-body table td:nth-child(5) {

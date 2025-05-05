@@ -285,10 +285,14 @@
       gap: 4px; 
     }
     
+    .meta-container br {
+        display: none;
+    }
+    
     .meta-item {
         display: flex;
         align-items: center;
-        line-height: 1.0;
+        line-height: normal;
     }
     
     .meta-label {
@@ -335,11 +339,16 @@
     } 
     
     .doc-tag { 
-      background-color: #E6FFFA; /* 薄いティール */
-      border-color: #B2F5EA; /* やや濃いめのティール */
-      color: #319795; /* 濃いティール */
-      border: 1px solid #B2F5EA;
-      overflow: visible !important; 
+      background-color: #FFFBEA;  /* やや控えめなクリーム色 */
+      border-color: #FFE8A1;      /* 柔らかい縁取りの黄色 */
+      color: #8A6D1B;             /* 落ち着いた茶系 */
+      border: 1px solid #FFE8A1;
+      padding: 3px 8px;
+      font-size: 0.8em;
+      border-radius: 4px;
+    }
+    .doc-tag.clickable {
+      cursor: pointer;
     }
     /* テーブルセル内でのメタ情報の折り返し */
     .markdown-body table td:nth-child(5) {
@@ -473,6 +482,38 @@ const setupTagClick = () => {
         });
     });
 }
+const setupDocClick = () => {
+    // Define constants for better maintainability
+    const MAX_LENGTH = 140;
+    const TRUNCATE_LENGTH = 70;
+    document.querySelectorAll('.doc-tag').forEach(el => {
+        const full = el.dataset.full;
+        if (!full || full.length <= MAX_LENGTH) return;
+        const short = full.slice(0, TRUNCATE_LENGTH) + '...';
+        el.innerText = short;
+        el.classList.add('expandable');
+        el.classList.add('clickable');
+        // Make element keyboard accessible
+        el.setAttribute('tabindex', '0');
+        el.setAttribute('role', 'button');
+        el.setAttribute('aria-expanded', 'false');
+        el.setAttribute('aria-label', 'Expand to read more');
+        const toggleExpansion = () => {
+            const expanded = el.classList.toggle('expanded');
+            el.innerText = expanded ? full : short;
+            el.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+            el.setAttribute('aria-label', expanded ? 'Collapse text' : 'Expand to read more');
+        };
+        el.addEventListener('click', toggleExpansion);
+        el.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                toggleExpansion();
+            }
+        });
+    });
+};
+
 </script></head>
 <body>
     <div class="markdown-body">
@@ -499,6 +540,7 @@ const setupTagClick = () => {
             setupModeSwitch('asd-show-name', 'asd-graph-name', 'asd-graph-id');
             applySmoothScrollToLinks(document.querySelectorAll('a[href^="#"]'));
             setupTagClick();
+            setupDocClick(); 
             
         } catch (error) {
                console.error("Error in main process:", error);
@@ -549,154 +591,154 @@ const setupTagClick = () => {
 </thead>
 <tbody>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon unsafe"></span></span></td>
+  <td align="center">unsafe</td>
   <td align="left"><a id="add"></a><a href="#add">add</a></td>
   <td align="left"><span style="white-space: normal;"></span></td>
   <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#title">title</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#completed">completed</a></td>
   <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#TodoItem">TodoItem</a></span></span></span></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon idempotent"></span></span></td>
+  <td align="center">idempotent</td>
   <td align="left"><a id="clearCompleted"></a><a href="#clearCompleted">clearCompleted</a></td>
   <td align="left"><span style="white-space: normal;"></span></td>
   <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#id">id</a></td>
   <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#TodoItem">TodoItem</a></span></span></span></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="completed"></a><a href="#completed">completed</a></td>
   <td align="left"><span style="white-space: normal;"></span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">def:</span><span class="meta-tag def-tag"><a href="http://mamund.site44.com/alps/def/completed.txt" target="_blank">mamund.site44.com/alps/def/...</a></span></span></span></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon idempotent"></span></span></td>
+  <td align="center">idempotent</td>
   <td align="left"><a id="edit"></a><a href="#edit">edit</a></td>
   <td align="left"><span style="white-space: normal;"></span></td>
   <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#id">id</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#title">title</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#completed">completed</a></td>
   <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#TodoItem">TodoItem</a></span></span></span></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon safe"></span></span></td>
+  <td align="center">safe</td>
   <td align="left"><a id="goFirst"></a><a href="#goFirst">goFirst</a></td>
   <td align="left"><span style="white-space: normal;"></span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#TodoList">TodoList</a></span></span></span></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon safe"></span></span></td>
+  <td align="center">safe</td>
   <td align="left"><a id="goHome"></a><a href="#goHome">goHome</a></td>
   <td align="left"><span style="white-space: normal;"></span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#Home">Home</a></span></span></span></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon safe"></span></span></td>
+  <td align="center">safe</td>
   <td align="left"><a id="goLast"></a><a href="#goLast">goLast</a></td>
   <td align="left"><span style="white-space: normal;"></span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#TodoList">TodoList</a></span></span></span></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon safe"></span></span></td>
+  <td align="center">safe</td>
   <td align="left"><a id="goNext"></a><a href="#goNext">goNext</a></td>
   <td align="left"><span style="white-space: normal;"></span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#TodoList">TodoList</a></span></span></span></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon safe"></span></span></td>
+  <td align="center">safe</td>
   <td align="left"><a id="goPrevious"></a><a href="#goPrevious">goPrevious</a></td>
   <td align="left"><span style="white-space: normal;"></span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#TodoList">TodoList</a></span></span></span></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon safe"></span></span></td>
+  <td align="center">safe</td>
   <td align="left"><a id="goRelated"></a><a href="#goRelated">goRelated</a></td>
   <td align="left"><span style="white-space: normal;"></span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#Related">Related</a></span></span></span></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="Home"></a><a href="#Home">Home</a></td>
   <td align="left"><span style="white-space: normal;"></span></td>
   <td align="left"><span class="type-indicator-small safe" title="Safe"></span><a href="#listAll">listAll</a><br><span class="type-indicator-small safe" title="Safe"></span><a href="#goRelated">goRelated</a></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="id"></a><a href="#id">id</a></td>
   <td align="left"><span style="white-space: normal;"></span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">def:</span><span class="meta-tag def-tag"><a href="http://schema.org/identifier" target="_blank">schema.org/identifier</a></span></span></span></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon safe"></span></span></td>
+  <td align="center">safe</td>
   <td align="left"><a id="listActive"></a><a href="#listActive">listActive</a></td>
   <td align="left"><span style="white-space: normal;"></span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#TodoList">TodoList</a></span></span></span></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon safe"></span></span></td>
+  <td align="center">safe</td>
   <td align="left"><a id="listAll"></a><a href="#listAll">listAll</a></td>
   <td align="left"><span style="white-space: normal;"></span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#TodoList">TodoList</a></span></span></span></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon safe"></span></span></td>
+  <td align="center">safe</td>
   <td align="left"><a id="listCompleted"></a><a href="#listCompleted">listCompleted</a></td>
   <td align="left"><span style="white-space: normal;"></span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#TodoList">TodoList</a></span></span></span></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon idempotent"></span></span></td>
+  <td align="center">idempotent</td>
   <td align="left"><a id="markCompleted"></a><a href="#markCompleted">markCompleted</a></td>
   <td align="left"><span style="white-space: normal;"></span></td>
   <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#id">id</a></td>
   <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#TodoItem">TodoItem</a></span></span></span></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon safe"></span></span></td>
+  <td align="center">safe</td>
   <td align="left"><a id="read"></a><a href="#read">read</a></td>
   <td align="left"><span style="white-space: normal;"></span></td>
   <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#id">id</a></td>
   <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#TodoItem">TodoItem</a></span></span></span></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="Related"></a><a href="#Related">Related</a></td>
   <td align="left"><span style="white-space: normal;"></span></td>
   <td align="left"><span class="type-indicator-small safe" title="Safe"></span><a href="#goHome">goHome</a><br><span class="type-indicator-small safe" title="Safe"></span><a href="#listAll">listAll</a><br><span class="type-indicator-small safe" title="Safe"></span><a href="#listActive">listActive</a><br><span class="type-indicator-small safe" title="Safe"></span><a href="#listCompleted">listCompleted</a><br><span class="type-indicator-small safe" title="Safe"></span><a href="#read">read</a><br><span class="type-indicator-small unsafe" title="Unsafe"></span><a href="#add">add</a><br><span class="type-indicator-small idempotent" title="Idempotent"></span><a href="#edit">edit</a><br><span class="type-indicator-small idempotent" title="Idempotent"></span><a href="#remove">remove</a></td>
   <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">def:</span><span class="meta-tag def-tag"><a href="https://tools.ietf.org/html/rfc4287#section-7.1" target="_blank">tools.ietf.org/html/rfc4287...</a></span></span></span></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon idempotent"></span></span></td>
+  <td align="center">idempotent</td>
   <td align="left"><a id="remove"></a><a href="#remove">remove</a></td>
   <td align="left"><span style="white-space: normal;"></span></td>
   <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#id">id</a></td>
   <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#TodoList">TodoList</a></span></span></span></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="title"></a><a href="#title">title</a></td>
   <td align="left"><span style="white-space: normal;"></span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">def:</span><span class="meta-tag def-tag"><a href="http://schema.org/title" target="_blank">schema.org/title</a></span></span></span></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="TodoItem"></a><a href="#TodoItem">TodoItem</a></td>
   <td align="left"><span style="white-space: normal;"></span></td>
   <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#id">id</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#title">title</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#completed">completed</a><br><span class="type-indicator-small safe" title="Safe"></span><a href="#listAll">listAll</a><br><span class="type-indicator-small safe" title="Safe"></span><a href="#goRelated">goRelated</a><br><span class="type-indicator-small idempotent" title="Idempotent"></span><a href="#edit">edit</a><br><span class="type-indicator-small idempotent" title="Idempotent"></span><a href="#remove">remove</a><br><span class="type-indicator-small idempotent" title="Idempotent"></span><a href="#markCompleted">markCompleted</a><br><span class="type-indicator-small idempotent" title="Idempotent"></span><a href="#clearCompleted">clearCompleted</a></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="TodoList"></a><a href="#TodoList">TodoList</a></td>
   <td align="left"><span style="white-space: normal;"></span></td>
   <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#id">id</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#title">title</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#completed">completed</a><br><span class="type-indicator-small safe" title="Safe"></span><a href="#read">read</a><br><span class="type-indicator-small safe" title="Safe"></span><a href="#listAll">listAll</a><br><span class="type-indicator-small safe" title="Safe"></span><a href="#listActive">listActive</a><br><span class="type-indicator-small safe" title="Safe"></span><a href="#listCompleted">listCompleted</a><br><span class="type-indicator-small safe" title="Safe"></span><a href="#goFirst">goFirst</a><br><span class="type-indicator-small safe" title="Safe"></span><a href="#goNext">goNext</a><br><span class="type-indicator-small safe" title="Safe"></span><a href="#goPrevious">goPrevious</a><br><span class="type-indicator-small safe" title="Safe"></span><a href="#goLast">goLast</a><br><span class="type-indicator-small safe" title="Safe"></span><a href="#goHome">goHome</a><br><span class="type-indicator-small safe" title="Safe"></span><a href="#goRelated">goRelated</a><br><span class="type-indicator-small unsafe" title="Unsafe"></span><a href="#add">add</a></td>

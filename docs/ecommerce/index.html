@@ -285,10 +285,14 @@
       gap: 4px; 
     }
     
+    .meta-container br {
+        display: none;
+    }
+    
     .meta-item {
         display: flex;
         align-items: center;
-        line-height: 1.0;
+        line-height: normal;
     }
     
     .meta-label {
@@ -335,11 +339,16 @@
     } 
     
     .doc-tag { 
-      background-color: #E6FFFA; /* 薄いティール */
-      border-color: #B2F5EA; /* やや濃いめのティール */
-      color: #319795; /* 濃いティール */
-      border: 1px solid #B2F5EA;
-      overflow: visible !important; 
+      background-color: #FFFBEA;  /* やや控えめなクリーム色 */
+      border-color: #FFE8A1;      /* 柔らかい縁取りの黄色 */
+      color: #8A6D1B;             /* 落ち着いた茶系 */
+      border: 1px solid #FFE8A1;
+      padding: 3px 8px;
+      font-size: 0.8em;
+      border-radius: 4px;
+    }
+    .doc-tag.clickable {
+      cursor: pointer;
     }
     /* テーブルセル内でのメタ情報の折り返し */
     .markdown-body table td:nth-child(5) {
@@ -473,6 +482,38 @@ const setupTagClick = () => {
         });
     });
 }
+const setupDocClick = () => {
+    // Define constants for better maintainability
+    const MAX_LENGTH = 140;
+    const TRUNCATE_LENGTH = 70;
+    document.querySelectorAll('.doc-tag').forEach(el => {
+        const full = el.dataset.full;
+        if (!full || full.length <= MAX_LENGTH) return;
+        const short = full.slice(0, TRUNCATE_LENGTH) + '...';
+        el.innerText = short;
+        el.classList.add('expandable');
+        el.classList.add('clickable');
+        // Make element keyboard accessible
+        el.setAttribute('tabindex', '0');
+        el.setAttribute('role', 'button');
+        el.setAttribute('aria-expanded', 'false');
+        el.setAttribute('aria-label', 'Expand to read more');
+        const toggleExpansion = () => {
+            const expanded = el.classList.toggle('expanded');
+            el.innerText = expanded ? full : short;
+            el.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+            el.setAttribute('aria-label', expanded ? 'Collapse text' : 'Expand to read more');
+        };
+        el.addEventListener('click', toggleExpansion);
+        el.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                toggleExpansion();
+            }
+        });
+    });
+};
+
 </script></head>
 <body>
     <div class="markdown-body">
@@ -510,6 +551,7 @@ const setupTagClick = () => {
             setupModeSwitch('asd-show-name', 'asd-graph-name', 'asd-graph-id');
             applySmoothScrollToLinks(document.querySelectorAll('a[href^="#"]'));
             setupTagClick();
+            setupDocClick(); 
             
         } catch (error) {
                console.error("Error in main process:", error);
@@ -560,1162 +602,1162 @@ const setupTagClick = () => {
 </thead>
 <tbody>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="Address"></a><a href="#Address">Address</a></td>
   <td align="left"><span style="white-space: normal;">住所情報</span></td>
   <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#street">street</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#city">city</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#state">state</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#postalCode">postalCode</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#country">country</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#phoneNumber">phoneNumber</a></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="address"></a><a href="#address">address</a></td>
   <td align="left"><span style="white-space: normal;">一般住所</span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="Affiliate"></a><a href="#Affiliate">Affiliate</a></td>
   <td align="left"><span style="white-space: normal;">アフィリエイト情報</span></td>
   <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#affiliateId">affiliateId</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#name">name</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#email">email</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#website">website</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#earnings">earnings</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#clickCount">clickCount</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#conversionRate">conversionRate</a></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="affiliateId"></a><a href="#affiliateId">affiliateId</a></td>
   <td align="left"><span style="white-space: normal;">アフィリエイトの一意の識別子</span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="altText"></a><a href="#altText">altText</a></td>
   <td align="left"><span style="white-space: normal;">代替テキスト</span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="amount"></a><a href="#amount">amount</a></td>
   <td align="left"><span style="white-space: normal;">金額</span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="autoRenew"></a><a href="#autoRenew">autoRenew</a></td>
   <td align="left"><span style="white-space: normal;">自動更新</span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="availableQuantity"></a><a href="#availableQuantity">availableQuantity</a></td>
   <td align="left"><span style="white-space: normal;">利用可能な数量</span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="baseCost"></a><a href="#baseCost">baseCost</a></td>
   <td align="left"><span style="white-space: normal;">基本コスト</span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="billingAddress"></a><a href="#billingAddress">billingAddress</a></td>
   <td align="left"><span style="white-space: normal;">請求先住所</span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="businessAddress"></a><a href="#businessAddress">businessAddress</a></td>
   <td align="left"><span style="white-space: normal;">事業所住所</span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="capacity"></a><a href="#capacity">capacity</a></td>
   <td align="left"><span style="white-space: normal;">容量</span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="Cart"></a><a href="#Cart">Cart</a></td>
   <td align="left"><span style="white-space: normal;">ショッピングカート</span></td>
   <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#userId">userId</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#CartItem">CartItem</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#totalAmount">totalAmount</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#updatedAt">updatedAt</a></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="CartItem"></a><a href="#CartItem">CartItem</a></td>
   <td align="left"><span style="white-space: normal;">カート項目</span></td>
   <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#productId">productId</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#quantity">quantity</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#price">price</a></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="Category"></a><a href="#Category">Category</a></td>
   <td align="left"><span style="white-space: normal;">カテゴリー</span></td>
   <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#name">name</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#description">description</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#parentCategory">parentCategory</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#isActive">isActive</a></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="category"></a><a href="#category">category</a></td>
   <td align="left"><span style="white-space: normal;">カテゴリー</span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="city"></a><a href="#city">city</a></td>
   <td align="left"><span style="white-space: normal;">都市名</span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="clickCount"></a><a href="#clickCount">clickCount</a></td>
   <td align="left"><span style="white-space: normal;">クリック数</span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="comment"></a><a href="#comment">comment</a></td>
   <td align="left"><span style="white-space: normal;">コメント</span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="commissionRate"></a><a href="#commissionRate">commissionRate</a></td>
   <td align="left"><span style="white-space: normal;">手数料率</span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="confirmNewPassword"></a><a href="#confirmNewPassword">confirmNewPassword</a></td>
   <td align="left"><span style="white-space: normal;">新しいパスワードの確認</span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="contactInfo"></a><a href="#contactInfo">contactInfo</a></td>
   <td align="left"><span style="white-space: normal;">連絡先情報</span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="conversionRate"></a><a href="#conversionRate">conversionRate</a></td>
   <td align="left"><span style="white-space: normal;">コンバージョン率</span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="country"></a><a href="#country">country</a></td>
   <td align="left"><span style="white-space: normal;">国名</span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="couponCode"></a><a href="#couponCode">couponCode</a></td>
   <td align="left"><span style="white-space: normal;">クーポンコード</span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="createdAt"></a><a href="#createdAt">createdAt</a></td>
   <td align="left"><span style="white-space: normal;">作成日時</span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="currency"></a><a href="#currency">currency</a></td>
   <td align="left"><span style="white-space: normal;">通貨</span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="currentPassword"></a><a href="#currentPassword">currentPassword</a></td>
   <td align="left"><span style="white-space: normal;">現在のパスワード</span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="description"></a><a href="#description">description</a></td>
   <td align="left"><span style="white-space: normal;">説明</span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="dimensions"></a><a href="#dimensions">dimensions</a></td>
   <td align="left"><span style="white-space: normal;">寸法</span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="Discount"></a><a href="#Discount">Discount</a></td>
   <td align="left"><span style="white-space: normal;">割引情報</span></td>
   <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#discountId">discountId</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#name">name</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#description">description</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#discountType">discountType</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#discountAmount">discountAmount</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#validFrom">validFrom</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#validTo">validTo</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#couponCode">couponCode</a></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="discountAmount"></a><a href="#discountAmount">discountAmount</a></td>
   <td align="left"><span style="white-space: normal;">割引額</span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="discountId"></a><a href="#discountId">discountId</a></td>
   <td align="left"><span style="white-space: normal;">割引の一意の識別子</span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="discountType"></a><a href="#discountType">discountType</a></td>
   <td align="left"><span style="white-space: normal;">割引の種類</span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon unsafe"></span></span></td>
+  <td align="center">unsafe</td>
   <td align="left"><a id="doAddReview"></a><a href="#doAddReview">doAddReview</a></td>
   <td align="left"><span style="white-space: normal;">レビュー追加</span></td>
   <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#productId">productId</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#rating">rating</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#comment">comment</a></td>
   <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#UserProductDetailPage">UserProductDetailPage</a></span></span></span></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon unsafe"></span></span></td>
+  <td align="center">unsafe</td>
   <td align="left"><a id="doAddToCart"></a><a href="#doAddToCart">doAddToCart</a></td>
   <td align="left"><span style="white-space: normal;">カートに追加</span></td>
   <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#productId">productId</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#quantity">quantity</a></td>
-  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#UserCartPage">UserCartPage</a></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag" title="指定された製品を指定された数量だけユーザーのショッピングカートに追加します。この操作は、Eコマースプラットフォームの中核的な機能の一つであり、ユーザーの購買意図を捕捉する重要なポイントです。実行時には、リアルタイムの在庫確認、価格の再計算、関連商品の推奨などの処理が行われます。また、ユーザーの過去の行動に基づいて、クロスセリングやアップセリングの機会を識別します。カートの状態変化は、在庫管理システムに即時に反映され、他の顧客の購買体験に影響を与えないようにします。パフォーマンスとユーザーエクスペリエンスの観点から、この操作は高速で信頼性が高く、ユーザーに明確なフィードバックを提供する必要があります。">指定された製品を指定された数量だけユーザーのショッピングカートに追加します...</span></span></span></span></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#UserCartPage">UserCartPage</a></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag clickable" data-full="指定された製品を指定された数量だけユーザーのショッピングカートに追加します。この操作は、Eコマースプラットフォームの中核的な機能の一つであり、ユーザーの購買意図を捕捉する重要なポイントです。実行時には、リアルタイムの在庫確認、価格の再計算、関連商品の推奨などの処理が行われます。また、ユーザーの過去の行動に基づいて、クロスセリングやアップセリングの機会を識別します。カートの状態変化は、在庫管理システムに即時に反映され、他の顧客の購買体験に影響を与えないようにします。パフォーマンスとユーザーエクスペリエンスの観点から、この操作は高速で信頼性が高く、ユーザーに明確なフィードバックを提供する必要があります。" title="指定された製品を指定された数量だけユーザーのショッピングカートに追加します。この操作は、Eコマースプラットフォームの中核的な機能の一つであり、ユーザーの購買意図を捕捉する重要なポイントです。実行時には、リアルタイムの在庫確認、価格の再計算、関連商品の推奨などの処理が行われます。また、ユーザーの過去の行動に基づいて、クロスセリングやアップセリングの機会を識別します。カートの状態変化は、在庫管理システムに即時に反映され、他の顧客の購買体験に影響を与えないようにします。パフォーマンスとユーザーエクスペリエンスの観点から、この操作は高速で信頼性が高く、ユーザーに明確なフィードバックを提供する必要があります。">指定された製品を指定された数量だけユーザーのショッピングカートに追加します。この操作は、Eコマースプラットフォームの中核的な機能の一つであり、ユーザーの購買意図を捕捉する重要なポイントです。実行時には、リアルタイムの在庫確認、価格の再計算、関連商品の推奨などの処理が行われます。また、ユーザーの過去の行動に基づいて、クロスセリングやアップセリングの機会を識別します。カートの状態変化は、在庫管理システムに即時に反映され、他の顧客の購買体験に影響を与えないようにします。パフォーマンスとユーザーエクスペリエンスの観点から、この操作は高速で信頼性が高く、ユーザーに明確なフィードバックを提供する必要があります。</span></span></span></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon idempotent"></span></span></td>
+  <td align="center">idempotent</td>
   <td align="left"><a id="doDeleteReview"></a><a href="#doDeleteReview">doDeleteReview</a></td>
   <td align="left"><span style="white-space: normal;">レビュー削除</span></td>
   <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#reviewId">reviewId</a></td>
   <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#UserProductDetailPage">UserProductDetailPage</a></span></span></span></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon unsafe"></span></span></td>
+  <td align="center">unsafe</td>
   <td align="left"><a id="doLogin"></a><a href="#doLogin">doLogin</a></td>
   <td align="left"><span style="white-space: normal;">ログイン</span></td>
   <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#email">email</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#currentPassword">currentPassword</a></td>
   <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#UserHomePage">UserHomePage</a></span></span></span></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon safe"></span></span></td>
+  <td align="center">safe</td>
   <td align="left"><a id="doLogout"></a><a href="#doLogout">doLogout</a></td>
   <td align="left"><span style="white-space: normal;">ログアウト</span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#LoginPage">LoginPage</a></span></span></span></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon safe"></span></span></td>
+  <td align="center">safe</td>
   <td align="left"><a id="doPaginateOrders"></a><a href="#doPaginateOrders">doPaginateOrders</a></td>
   <td align="left"><span style="white-space: normal;">注文リストのページネーション</span></td>
   <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#pageNumber">pageNumber</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#pageSize">pageSize</a></td>
   <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#UserOrderHistoryPage">UserOrderHistoryPage</a></span></span></span></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon safe"></span></span></td>
+  <td align="center">safe</td>
   <td align="left"><a id="doPaginateProducts"></a><a href="#doPaginateProducts">doPaginateProducts</a></td>
   <td align="left"><span style="white-space: normal;">製品リストのページネーション</span></td>
   <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#pageNumber">pageNumber</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#pageSize">pageSize</a></td>
   <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#UserProductListPage">UserProductListPage</a></span></span></span></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon unsafe"></span></span></td>
+  <td align="center">unsafe</td>
   <td align="left"><a id="doPlaceOrder"></a><a href="#doPlaceOrder">doPlaceOrder</a></td>
   <td align="left"><span style="white-space: normal;">注文確定</span></td>
   <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#shippingAddress">shippingAddress</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#paymentMethod">paymentMethod</a></td>
   <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#UserOrderDetailPage">UserOrderDetailPage</a></span></span></span></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon unsafe"></span></span></td>
+  <td align="center">unsafe</td>
   <td align="left"><a id="doRegister"></a><a href="#doRegister">doRegister</a></td>
   <td align="left"><span style="white-space: normal;">ユーザー登録</span></td>
   <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#name">name</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#email">email</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#currentPassword">currentPassword</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#confirmNewPassword">confirmNewPassword</a></td>
   <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#UserHomePage">UserHomePage</a></span></span></span></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon idempotent"></span></span></td>
+  <td align="center">idempotent</td>
   <td align="left"><a id="doRemoveCartItem"></a><a href="#doRemoveCartItem">doRemoveCartItem</a></td>
   <td align="left"><span style="white-space: normal;">カート内アイテム削除</span></td>
   <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#productId">productId</a></td>
   <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#UserCartPage">UserCartPage</a></span></span></span></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon unsafe"></span></span></td>
+  <td align="center">unsafe</td>
   <td align="left"><a id="doRequestRefund"></a><a href="#doRequestRefund">doRequestRefund</a></td>
   <td align="left"><span style="white-space: normal;">払い戻しリクエスト</span></td>
   <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#orderId">orderId</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#reason">reason</a></td>
   <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#UserOrderDetailPage">UserOrderDetailPage</a></span></span></span></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon unsafe"></span></span></td>
+  <td align="center">unsafe</td>
   <td align="left"><a id="doRequestReturn"></a><a href="#doRequestReturn">doRequestReturn</a></td>
   <td align="left"><span style="white-space: normal;">返品リクエスト</span></td>
   <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#orderId">orderId</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#reason">reason</a></td>
   <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#UserOrderDetailPage">UserOrderDetailPage</a></span></span></span></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon safe"></span></span></td>
+  <td align="center">safe</td>
   <td align="left"><a id="doSearchProducts"></a><a href="#doSearchProducts">doSearchProducts</a></td>
   <td align="left"><span style="white-space: normal;">製品検索</span></td>
   <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#searchKeyword">searchKeyword</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#category">category</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#subcategory">subcategory</a></td>
   <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#UserProductListPage">UserProductListPage</a></span></span></span></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon idempotent"></span></span></td>
+  <td align="center">idempotent</td>
   <td align="left"><a id="doUpdateCartItem"></a><a href="#doUpdateCartItem">doUpdateCartItem</a></td>
   <td align="left"><span style="white-space: normal;">カート内アイテム更新</span></td>
   <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#productId">productId</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#quantity">quantity</a></td>
   <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#UserCartPage">UserCartPage</a></span></span></span></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon idempotent"></span></span></td>
+  <td align="center">idempotent</td>
   <td align="left"><a id="doUpdateReview"></a><a href="#doUpdateReview">doUpdateReview</a></td>
   <td align="left"><span style="white-space: normal;">レビュー更新</span></td>
   <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#reviewId">reviewId</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#rating">rating</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#comment">comment</a></td>
   <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#UserProductDetailPage">UserProductDetailPage</a></span></span></span></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon idempotent"></span></span></td>
+  <td align="center">idempotent</td>
   <td align="left"><a id="doUpdateUserProfile"></a><a href="#doUpdateUserProfile">doUpdateUserProfile</a></td>
   <td align="left"><span style="white-space: normal;">ユーザープロフィール更新</span></td>
   <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#name">name</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#email">email</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#phoneNumber">phoneNumber</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#address">address</a></td>
   <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#UserProfilePage">UserProfilePage</a></span></span></span></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="earnings"></a><a href="#earnings">earnings</a></td>
   <td align="left"><span style="white-space: normal;">収益</span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="email"></a><a href="#email">email</a></td>
   <td align="left"><span style="white-space: normal;">ユーザーのメールアドレス</span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">ユーザーの主要な連絡手段。アカウント認証と重要な通知に使用されます。一意である必要があり、適切な形式検証が必要です。マーケティングコミュニケーションやトランザクション通知の送信先としても機能し、ユーザーエンゲージメントの重要な要素です。</span></span></span></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="endDate"></a><a href="#endDate">endDate</a></td>
   <td align="left"><span style="white-space: normal;">終了日</span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="estimatedDeliveryDate"></a><a href="#estimatedDeliveryDate">estimatedDeliveryDate</a></td>
   <td align="left"><span style="white-space: normal;">予想配達日</span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="expiryDate"></a><a href="#expiryDate">expiryDate</a></td>
   <td align="left"><span style="white-space: normal;">有効期限</span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="format"></a><a href="#format">format</a></td>
   <td align="left"><span style="white-space: normal;">フォーマット</span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="freeShippingThreshold"></a><a href="#freeShippingThreshold">freeShippingThreshold</a></td>
   <td align="left"><span style="white-space: normal;">送料無料の閾値</span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="FulfillmentCenter"></a><a href="#FulfillmentCenter">FulfillmentCenter</a></td>
   <td align="left"><span style="white-space: normal;">フルフィルメントセンター</span></td>
   <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#name">name</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#address">address</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#capacity">capacity</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#operatingHours">operatingHours</a></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="fullName"></a><a href="#fullName">fullName</a></td>
   <td align="left"><span style="white-space: normal;">ユーザーのフルネーム</span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon safe"></span></span></td>
+  <td align="center">safe</td>
   <td align="left"><a id="goToLogin"></a><a href="#goToLogin">goToLogin</a></td>
   <td align="left"><span style="white-space: normal;">ログインページへ移動</span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#LoginPage">LoginPage</a></span></span></span></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon safe"></span></span></td>
+  <td align="center">safe</td>
   <td align="left"><a id="goToRegister"></a><a href="#goToRegister">goToRegister</a></td>
   <td align="left"><span style="white-space: normal;">登録ページへ移動</span></td>
   <td align="left"></td>
-  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#RegisterPage">RegisterPage</a></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag" title="ユーザーを新規アカウント作成ページにナビゲートします。このトランジションは、新規ユーザー獲得プロセスの開始点であり、コンバージョンファネルの重要なステップです。ユーザーエクスペリエンスを最適化し、登録の完了率を高めるために、このページへの遷移はスムーズで直感的である必要があります。また、ユーザーの現在のコンテキスト（例：閲覧していた製品ページ）を保持し、登録後にシームレスに元のコンテキストに戻れるようにすることが重要です。">ユーザーを新規アカウント作成ページにナビゲートします。このトランジションは...</span></span></span></span></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#RegisterPage">RegisterPage</a></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag clickable" data-full="ユーザーを新規アカウント作成ページにナビゲートします。このトランジションは、新規ユーザー獲得プロセスの開始点であり、コンバージョンファネルの重要なステップです。ユーザーエクスペリエンスを最適化し、登録の完了率を高めるために、このページへの遷移はスムーズで直感的である必要があります。また、ユーザーの現在のコンテキスト（例：閲覧していた製品ページ）を保持し、登録後にシームレスに元のコンテキストに戻れるようにすることが重要です。" title="ユーザーを新規アカウント作成ページにナビゲートします。このトランジションは、新規ユーザー獲得プロセスの開始点であり、コンバージョンファネルの重要なステップです。ユーザーエクスペリエンスを最適化し、登録の完了率を高めるために、このページへの遷移はスムーズで直感的である必要があります。また、ユーザーの現在のコンテキスト（例：閲覧していた製品ページ）を保持し、登録後にシームレスに元のコンテキストに戻れるようにすることが重要です。">ユーザーを新規アカウント作成ページにナビゲートします。このトランジションは、新規ユーザー獲得プロセスの開始点であり、コンバージョンファネルの重要なステップです。ユーザーエクスペリエンスを最適化し、登録の完了率を高めるために、このページへの遷移はスムーズで直感的である必要があります。また、ユーザーの現在のコンテキスト（例：閲覧していた製品ページ）を保持し、登録後にシームレスに元のコンテキストに戻れるようにすることが重要です。</span></span></span></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon safe"></span></span></td>
+  <td align="center">safe</td>
   <td align="left"><a id="goToUserCart"></a><a href="#goToUserCart">goToUserCart</a></td>
   <td align="left"><span style="white-space: normal;">ユーザーカートへ移動</span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#UserCartPage">UserCartPage</a></span></span></span></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon safe"></span></span></td>
+  <td align="center">safe</td>
   <td align="left"><a id="goToUserCheckout"></a><a href="#goToUserCheckout">goToUserCheckout</a></td>
   <td align="left"><span style="white-space: normal;">ユーザーチェックアウトへ移動</span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#UserCheckoutPage">UserCheckoutPage</a></span></span></span></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon safe"></span></span></td>
+  <td align="center">safe</td>
   <td align="left"><a id="goToUserHome"></a><a href="#goToUserHome">goToUserHome</a></td>
   <td align="left"><span style="white-space: normal;">ユーザーホームへ移動</span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#UserHomePage">UserHomePage</a></span></span></span></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon safe"></span></span></td>
+  <td align="center">safe</td>
   <td align="left"><a id="goToUserOrderDetail"></a><a href="#goToUserOrderDetail">goToUserOrderDetail</a></td>
   <td align="left"><span style="white-space: normal;">ユーザー注文詳細へ移動</span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#UserOrderDetailPage">UserOrderDetailPage</a></span></span></span></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon safe"></span></span></td>
+  <td align="center">safe</td>
   <td align="left"><a id="goToUserOrderHistory"></a><a href="#goToUserOrderHistory">goToUserOrderHistory</a></td>
   <td align="left"><span style="white-space: normal;">ユーザー注文履歴へ移動</span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#UserOrderHistoryPage">UserOrderHistoryPage</a></span></span></span></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon safe"></span></span></td>
+  <td align="center">safe</td>
   <td align="left"><a id="goToUserProductDetail"></a><a href="#goToUserProductDetail">goToUserProductDetail</a></td>
   <td align="left"><span style="white-space: normal;">ユーザー製品詳細へ移動</span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#UserProductDetailPage">UserProductDetailPage</a></span></span></span></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon safe"></span></span></td>
+  <td align="center">safe</td>
   <td align="left"><a id="goToUserProductList"></a><a href="#goToUserProductList">goToUserProductList</a></td>
   <td align="left"><span style="white-space: normal;">ユーザー製品リストへ移動</span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#UserProductListPage">UserProductListPage</a></span></span></span></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon safe"></span></span></td>
+  <td align="center">safe</td>
   <td align="left"><a id="goToUserProfile"></a><a href="#goToUserProfile">goToUserProfile</a></td>
   <td align="left"><span style="white-space: normal;">ユーザープロフィールへ移動</span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#UserProfilePage">UserProfilePage</a></span></span></span></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon safe"></span></span></td>
+  <td align="center">safe</td>
   <td align="left"><a id="goToUserReturnRefund"></a><a href="#goToUserReturnRefund">goToUserReturnRefund</a></td>
   <td align="left"><span style="white-space: normal;">返品/払い戻しページへ移動</span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#UserReturnRefundPage">UserReturnRefundPage</a></span></span></span></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon safe"></span></span></td>
+  <td align="center">safe</td>
   <td align="left"><a id="goToUserReview"></a><a href="#goToUserReview">goToUserReview</a></td>
   <td align="left"><span style="white-space: normal;">ユーザーレビューページへ移動</span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#UserReviewPage">UserReviewPage</a></span></span></span></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="height"></a><a href="#height">height</a></td>
   <td align="left"><span style="white-space: normal;">高さ</span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="helpfulVotes"></a><a href="#helpfulVotes">helpfulVotes</a></td>
   <td align="left"><span style="white-space: normal;">役立つ投票数</span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="Image"></a><a href="#Image">Image</a></td>
   <td align="left"><span style="white-space: normal;">画像情報</span></td>
   <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#imageId">imageId</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#url">url</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#altText">altText</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#width">width</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#height">height</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#size">size</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#format">format</a></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="imageId"></a><a href="#imageId">imageId</a></td>
   <td align="left"><span style="white-space: normal;">画像の一意の識別子</span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="Inventory"></a><a href="#Inventory">Inventory</a></td>
   <td align="left"><span style="white-space: normal;">在庫</span></td>
   <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#productId">productId</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#quantity">quantity</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#isInStock">isInStock</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#lowStockThreshold">lowStockThreshold</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#reservedQuantity">reservedQuantity</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#availableQuantity">availableQuantity</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#updatedAt">updatedAt</a></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="inventory"></a><a href="#inventory">inventory</a></td>
   <td align="left"><span style="white-space: normal;">在庫数</span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="isActive"></a><a href="#isActive">isActive</a></td>
   <td align="left"><span style="white-space: normal;">アクティブかどうか</span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="isCustomizable"></a><a href="#isCustomizable">isCustomizable</a></td>
   <td align="left"><span style="white-space: normal;">カスタマイズ可能かどうか</span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="isDefault"></a><a href="#isDefault">isDefault</a></td>
   <td align="left"><span style="white-space: normal;">デフォルトかどうか</span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="isInStock"></a><a href="#isInStock">isInStock</a></td>
   <td align="left"><span style="white-space: normal;">在庫があるかどうか</span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="isRead"></a><a href="#isRead">isRead</a></td>
   <td align="left"><span style="white-space: normal;">既読かどうか</span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="leadTime"></a><a href="#leadTime">leadTime</a></td>
   <td align="left"><span style="white-space: normal;">リードタイム</span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="LoginPage"></a><a href="#LoginPage">LoginPage</a></td>
   <td align="left"><span style="white-space: normal;">ログインページ</span></td>
   <td align="left"><span class="type-indicator-small safe" title="Safe"></span><a href="#goToRegister">goToRegister</a><br><span class="type-indicator-small unsafe" title="Unsafe"></span><a href="#doLogin">doLogin</a></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="lowStockThreshold"></a><a href="#lowStockThreshold">lowStockThreshold</a></td>
   <td align="left"><span style="white-space: normal;">在庫低下警告のしきい値</span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="Marketplace"></a><a href="#Marketplace">Marketplace</a></td>
   <td align="left"><span style="white-space: normal;">マーケットプレイス情報</span></td>
   <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#marketplaceId">marketplaceId</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#name">name</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#description">description</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#commissionRate">commissionRate</a></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="marketplaceId"></a><a href="#marketplaceId">marketplaceId</a></td>
   <td align="left"><span style="white-space: normal;">マーケットプレイスの一意の識別子</span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="message"></a><a href="#message">message</a></td>
   <td align="left"><span style="white-space: normal;">メッセージ</span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="minimumOrderQuantity"></a><a href="#minimumOrderQuantity">minimumOrderQuantity</a></td>
   <td align="left"><span style="white-space: normal;">最小注文数量</span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="Money"></a><a href="#Money">Money</a></td>
   <td align="left"><span style="white-space: normal;">金額</span></td>
   <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#amount">amount</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#currency">currency</a></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="name"></a><a href="#name">name</a></td>
   <td align="left"><span style="white-space: normal;">名前（製品名、カテゴリー名など）</span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">製品の表示名。SEO最適化と製品検索のために重要。多言語サポートを考慮する必要があります。顧客が製品を識別し、理解するための主要な要素であり、検索結果や製品リストでの表示に使用されます。わかりやすく、魅力的で、かつ正確である必要があります。</span></span></span></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="newPassword"></a><a href="#newPassword">newPassword</a></td>
   <td align="left"><span style="white-space: normal;">新しいパスワード</span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="Notification"></a><a href="#Notification">Notification</a></td>
   <td align="left"><span style="white-space: normal;">通知情報</span></td>
   <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#notificationId">notificationId</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#userId">userId</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#message">message</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#isRead">isRead</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#createdAt">createdAt</a></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="notificationId"></a><a href="#notificationId">notificationId</a></td>
   <td align="left"><span style="white-space: normal;">通知の一意の識別子</span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="operatingHours"></a><a href="#operatingHours">operatingHours</a></td>
   <td align="left"><span style="white-space: normal;">営業時間</span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="Order"></a><a href="#Order">Order</a></td>
   <td align="left"><span style="white-space: normal;">注文</span></td>
   <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#orderId">orderId</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#userId">userId</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#OrderItem">OrderItem</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#totalAmount">totalAmount</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#status">status</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#shippingAddress">shippingAddress</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#billingAddress">billingAddress</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#paymentMethod">paymentMethod</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#ShippingMethod">ShippingMethod</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#trackingNumber">trackingNumber</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#createdAt">createdAt</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#updatedAt">updatedAt</a></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="orderId"></a><a href="#orderId">orderId</a></td>
   <td align="left"><span style="white-space: normal;">注文の一意の識別子</span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="OrderItem"></a><a href="#OrderItem">OrderItem</a></td>
   <td align="left"><span style="white-space: normal;">注文項目</span></td>
   <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#productId">productId</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#quantity">quantity</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#price">price</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#discountId">discountId</a></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="pageNumber"></a><a href="#pageNumber">pageNumber</a></td>
   <td align="left"><span style="white-space: normal;">ページ番号</span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="pageSize"></a><a href="#pageSize">pageSize</a></td>
   <td align="left"><span style="white-space: normal;">ページ番号</span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="parentCategory"></a><a href="#parentCategory">parentCategory</a></td>
   <td align="left"><span style="white-space: normal;">親カテゴリー</span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="PaymentMethod"></a><a href="#PaymentMethod">PaymentMethod</a></td>
   <td align="left"><span style="white-space: normal;">支払い方法</span></td>
   <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#paymentMethod">paymentMethod</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#name">name</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#description">description</a></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="paymentMethod"></a><a href="#paymentMethod">paymentMethod</a></td>
   <td align="left"><span style="white-space: normal;">支払い方法</span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="paymentTerms"></a><a href="#paymentTerms">paymentTerms</a></td>
   <td align="left"><span style="white-space: normal;">支払い条件</span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="performanceMetrics"></a><a href="#performanceMetrics">performanceMetrics</a></td>
   <td align="left"><span style="white-space: normal;">パフォーマンス指標</span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="phoneNumber"></a><a href="#phoneNumber">phoneNumber</a></td>
   <td align="left"><span style="white-space: normal;">電話番号</span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="plan"></a><a href="#plan">plan</a></td>
   <td align="left"><span style="white-space: normal;">プラン</span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="postalCode"></a><a href="#postalCode">postalCode</a></td>
   <td align="left"><span style="white-space: normal;">郵便番号</span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="price"></a><a href="#price">price</a></td>
   <td align="left"><span style="white-space: normal;">価格</span></td>
   <td align="left"></td>
-  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag" title="製品の現在の価格。動的価格設定アルゴリズム、プロモーション、税金計算と連携します。異なる通貨と価格帯をサポートする必要があります。顧客の購買決定に直接影響を与え、競争力と収益性のバランスを取るための重要な要素です。価格履歴の追跡や、マーケットプレイス全体の価格動向分析にも使用されます。">製品の現在の価格。動的価格設定アルゴリズム、プロモーション、税金計算と連携...</span></span></span></span></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag clickable" data-full="製品の現在の価格。動的価格設定アルゴリズム、プロモーション、税金計算と連携します。異なる通貨と価格帯をサポートする必要があります。顧客の購買決定に直接影響を与え、競争力と収益性のバランスを取るための重要な要素です。価格履歴の追跡や、マーケットプレイス全体の価格動向分析にも使用されます。" title="製品の現在の価格。動的価格設定アルゴリズム、プロモーション、税金計算と連携します。異なる通貨と価格帯をサポートする必要があります。顧客の購買決定に直接影響を与え、競争力と収益性のバランスを取るための重要な要素です。価格履歴の追跡や、マーケットプレイス全体の価格動向分析にも使用されます。">製品の現在の価格。動的価格設定アルゴリズム、プロモーション、税金計算と連携します。異なる通貨と価格帯をサポートする必要があります。顧客の購買決定に直接影響を与え、競争力と収益性のバランスを取るための重要な要素です。価格履歴の追跡や、マーケットプレイス全体の価格動向分析にも使用されます。</span></span></span></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="Product"></a><a href="#Product">Product</a></td>
   <td align="left"><span style="white-space: normal;">製品情報</span></td>
   <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#productId">productId</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#name">name</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#description">description</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#price">price</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#category">category</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#subcategory">subcategory</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#inventory">inventory</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#weight">weight</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#dimensions">dimensions</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#isCustomizable">isCustomizable</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#createdAt">createdAt</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#updatedAt">updatedAt</a></td>
-  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag" title="プラットフォーム上で販売される個々の商品やサービスを表します。物理的な商品、デジタル製品、サービスなど、多様な製品タイプをサポートします。製品情報の正確性と完全性は、顧客の購買決定とプラットフォームの信頼性に直接影響します。検索エンジン、推奨システム、在庫管理システムなど、多くのコンポーネントと相互作用する中心的なエンティティです。">プラットフォーム上で販売される個々の商品やサービスを表します。物理的な商品...</span></span></span></span></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag clickable" data-full="プラットフォーム上で販売される個々の商品やサービスを表します。物理的な商品、デジタル製品、サービスなど、多様な製品タイプをサポートします。製品情報の正確性と完全性は、顧客の購買決定とプラットフォームの信頼性に直接影響します。検索エンジン、推奨システム、在庫管理システムなど、多くのコンポーネントと相互作用する中心的なエンティティです。" title="プラットフォーム上で販売される個々の商品やサービスを表します。物理的な商品、デジタル製品、サービスなど、多様な製品タイプをサポートします。製品情報の正確性と完全性は、顧客の購買決定とプラットフォームの信頼性に直接影響します。検索エンジン、推奨システム、在庫管理システムなど、多くのコンポーネントと相互作用する中心的なエンティティです。">プラットフォーム上で販売される個々の商品やサービスを表します。物理的な商品、デジタル製品、サービスなど、多様な製品タイプをサポートします。製品情報の正確性と完全性は、顧客の購買決定とプラットフォームの信頼性に直接影響します。検索エンジン、推奨システム、在庫管理システムなど、多くのコンポーネントと相互作用する中心的なエンティティです。</span></span></span></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="productId"></a><a href="#productId">productId</a></td>
   <td align="left"><span style="white-space: normal;">製品の一意の識別子</span></td>
   <td align="left"></td>
-  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag" title="製品の一意の識別子。SKU（Stock Keeping Unit）と連携し、在庫管理システムとの整合性を保ちます。注文処理、在庫追跡、製品検索など、多くのシステム機能で使用される重要な参照ポイントです。グローバルユニークである必要があり、マルチベンダー環境での製品の一意性を保証します。">製品の一意の識別子。SKU（Stock Keeping Unit）と連携し...</span></span></span></span></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag clickable" data-full="製品の一意の識別子。SKU（Stock Keeping Unit）と連携し、在庫管理システムとの整合性を保ちます。注文処理、在庫追跡、製品検索など、多くのシステム機能で使用される重要な参照ポイントです。グローバルユニークである必要があり、マルチベンダー環境での製品の一意性を保証します。" title="製品の一意の識別子。SKU（Stock Keeping Unit）と連携し、在庫管理システムとの整合性を保ちます。注文処理、在庫追跡、製品検索など、多くのシステム機能で使用される重要な参照ポイントです。グローバルユニークである必要があり、マルチベンダー環境での製品の一意性を保証します。">製品の一意の識別子。SKU（Stock Keeping Unit）と連携し、在庫管理システムとの整合性を保ちます。注文処理、在庫追跡、製品検索など、多くのシステム機能で使用される重要な参照ポイントです。グローバルユニークである必要があり、マルチベンダー環境での製品の一意性を保証します。</span></span></span></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="profileImage"></a><a href="#profileImage">profileImage</a></td>
   <td align="left"><span style="white-space: normal;">ユーザーのプロファイル画像URL</span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="Promotion"></a><a href="#Promotion">Promotion</a></td>
   <td align="left"><span style="white-space: normal;">プロモーション</span></td>
   <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#name">name</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#description">description</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#discountType">discountType</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#discountAmount">discountAmount</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#validFrom">validFrom</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#validTo">validTo</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#couponCode">couponCode</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#isActive">isActive</a></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="quantity"></a><a href="#quantity">quantity</a></td>
   <td align="left"><span style="white-space: normal;">数量</span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">カートに追加する製品の数量。この値は、在庫の可用性チェックや価格計算に使用されます。また、バルク購入や数量割引の適用条件としても機能します。</span></span></span></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="Rating"></a><a href="#Rating">Rating</a></td>
   <td align="left"><span style="white-space: normal;">評価</span></td>
   <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#rating">rating</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#reviewCount">reviewCount</a></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="rating"></a><a href="#rating">rating</a></td>
   <td align="left"><span style="white-space: normal;">評価</span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="reason"></a><a href="#reason">reason</a></td>
   <td align="left"><span style="white-space: normal;">理由</span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="RegisterPage"></a><a href="#RegisterPage">RegisterPage</a></td>
   <td align="left"><span style="white-space: normal;">ユーザー登録ページ</span></td>
   <td align="left"><span class="type-indicator-small safe" title="Safe"></span><a href="#goToLogin">goToLogin</a><br><span class="type-indicator-small unsafe" title="Unsafe"></span><a href="#doRegister">doRegister</a></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="registrationDate"></a><a href="#registrationDate">registrationDate</a></td>
   <td align="left"><span style="white-space: normal;">登録日時</span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="reservedQuantity"></a><a href="#reservedQuantity">reservedQuantity</a></td>
   <td align="left"><span style="white-space: normal;">予約済みの数量</span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="Review"></a><a href="#Review">Review</a></td>
   <td align="left"><span style="white-space: normal;">レビュー情報</span></td>
   <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#reviewId">reviewId</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#userId">userId</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#productId">productId</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#rating">rating</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#comment">comment</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#reviewDate">reviewDate</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#helpfulVotes">helpfulVotes</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#verifiedPurchase">verifiedPurchase</a></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="reviewCount"></a><a href="#reviewCount">reviewCount</a></td>
   <td align="left"><span style="white-space: normal;">レビューカウント</span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="reviewDate"></a><a href="#reviewDate">reviewDate</a></td>
   <td align="left"><span style="white-space: normal;">レビュー日</span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="reviewId"></a><a href="#reviewId">reviewId</a></td>
   <td align="left"><span style="white-space: normal;">レビューの一意の識別子</span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="role"></a><a href="#role">role</a></td>
   <td align="left"><span style="white-space: normal;">システムにおけるユーザーの役割</span></td>
   <td align="left"></td>
-  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag" title="システム内でのユーザーの権限レベルを定義します。例：CUSTOMER, SELLER, AFFILIATE, ADMIN。役割ベースのアクセス制御（RBAC）システムと連携し、ユーザーが実行できる操作と表示できる情報を決定します。プラットフォームのセキュリティとユーザー体験のカスタマイズに不可欠です。">システム内でのユーザーの権限レベルを定義します。例：CUSTOMER, S...</span></span></span></span></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag clickable" data-full="システム内でのユーザーの権限レベルを定義します。例：CUSTOMER, SELLER, AFFILIATE, ADMIN。役割ベースのアクセス制御（RBAC）システムと連携し、ユーザーが実行できる操作と表示できる情報を決定します。プラットフォームのセキュリティとユーザー体験のカスタマイズに不可欠です。" title="システム内でのユーザーの権限レベルを定義します。例：CUSTOMER, SELLER, AFFILIATE, ADMIN。役割ベースのアクセス制御（RBAC）システムと連携し、ユーザーが実行できる操作と表示できる情報を決定します。プラットフォームのセキュリティとユーザー体験のカスタマイズに不可欠です。">システム内でのユーザーの権限レベルを定義します。例：CUSTOMER, SELLER, AFFILIATE, ADMIN。役割ベースのアクセス制御（RBAC）システムと連携し、ユーザーが実行できる操作と表示できる情報を決定します。プラットフォームのセキュリティとユーザー体験のカスタマイズに不可欠です。</span></span></span></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="searchKeyword"></a><a href="#searchKeyword">searchKeyword</a></td>
   <td align="left"><span style="white-space: normal;">検索キーワード</span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="Seller"></a><a href="#Seller">Seller</a></td>
   <td align="left"><span style="white-space: normal;">販売者情報</span></td>
   <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#sellerId">sellerId</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#name">name</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#email">email</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#phoneNumber">phoneNumber</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#businessAddress">businessAddress</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#taxInformation">taxInformation</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#performanceMetrics">performanceMetrics</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#createdAt">createdAt</a></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="sellerId"></a><a href="#sellerId">sellerId</a></td>
   <td align="left"><span style="white-space: normal;">販売者の一意の識別子</span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="shippingAddress"></a><a href="#shippingAddress">shippingAddress</a></td>
   <td align="left"><span style="white-space: normal;">配送先住所</span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="ShippingMethod"></a><a href="#ShippingMethod">ShippingMethod</a></td>
   <td align="left"><span style="white-space: normal;">配送方法</span></td>
   <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#name">name</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#description">description</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#baseCost">baseCost</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#estimatedDeliveryDate">estimatedDeliveryDate</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#freeShippingThreshold">freeShippingThreshold</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#isActive">isActive</a></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="size"></a><a href="#size">size</a></td>
   <td align="left"><span style="white-space: normal;">サイズ</span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="startDate"></a><a href="#startDate">startDate</a></td>
   <td align="left"><span style="white-space: normal;">開始日</span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="state"></a><a href="#state">state</a></td>
   <td align="left"><span style="white-space: normal;">州または県名</span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="status"></a><a href="#status">status</a></td>
   <td align="left"><span style="white-space: normal;">状態（注文状態など）</span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="street"></a><a href="#street">street</a></td>
   <td align="left"><span style="white-space: normal;">通り名と番号</span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="subcategory"></a><a href="#subcategory">subcategory</a></td>
   <td align="left"><span style="white-space: normal;">サブカテゴリー</span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="Subscription"></a><a href="#Subscription">Subscription</a></td>
   <td align="left"><span style="white-space: normal;">サブスクリプション情報</span></td>
   <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#subscriptionId">subscriptionId</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#userId">userId</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#plan">plan</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#startDate">startDate</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#endDate">endDate</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#status">status</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#autoRenew">autoRenew</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#price">price</a></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="subscriptionId"></a><a href="#subscriptionId">subscriptionId</a></td>
   <td align="left"><span style="white-space: normal;">サブスクリプションの一意の識別子</span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="Supplier"></a><a href="#Supplier">Supplier</a></td>
   <td align="left"><span style="white-space: normal;">供給者情報</span></td>
   <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#supplierId">supplierId</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#name">name</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#contactInfo">contactInfo</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#rating">rating</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#paymentTerms">paymentTerms</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#leadTime">leadTime</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#minimumOrderQuantity">minimumOrderQuantity</a></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="supplierId"></a><a href="#supplierId">supplierId</a></td>
   <td align="left"><span style="white-space: normal;">供給者の一意の識別子</span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="taxInformation"></a><a href="#taxInformation">taxInformation</a></td>
   <td align="left"><span style="white-space: normal;">税務情報</span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="totalAmount"></a><a href="#totalAmount">totalAmount</a></td>
   <td align="left"><span style="white-space: normal;">合計金額</span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="trackingNumber"></a><a href="#trackingNumber">trackingNumber</a></td>
   <td align="left"><span style="white-space: normal;">追跡番号</span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="updatedAt"></a><a href="#updatedAt">updatedAt</a></td>
   <td align="left"><span style="white-space: normal;">更新日時</span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="url"></a><a href="#url">url</a></td>
   <td align="left"><span style="white-space: normal;">URL</span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="User"></a><a href="#User">User</a></td>
   <td align="left"><span style="white-space: normal;">ユーザー情報</span></td>
   <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#userId">userId</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#username">username</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#email">email</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#fullName">fullName</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#profileImage">profileImage</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#role">role</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#createdAt">createdAt</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#updatedAt">updatedAt</a></td>
   <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">プラットフォーム上の個々のアカウントを表します。顧客、販売者、アフィリエイト、管理者など、様々な役割を持つユーザーを含みます。ユーザーの行動追跡、認証、パーソナライゼーション、権限管理の基盤となる重要なエンティティです。</span></span></span></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="UserCartPage"></a><a href="#UserCartPage">UserCartPage</a></td>
   <td align="left"><span style="white-space: normal;">ユーザーカートページ</span></td>
   <td align="left"><span class="type-indicator-small safe" title="Safe"></span><a href="#goToUserCheckout">goToUserCheckout</a><br><span class="type-indicator-small safe" title="Safe"></span><a href="#goToUserHome">goToUserHome</a><br><span class="type-indicator-small idempotent" title="Idempotent"></span><a href="#doUpdateCartItem">doUpdateCartItem</a><br><span class="type-indicator-small idempotent" title="Idempotent"></span><a href="#doRemoveCartItem">doRemoveCartItem</a></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="UserCheckoutPage"></a><a href="#UserCheckoutPage">UserCheckoutPage</a></td>
   <td align="left"><span style="white-space: normal;">ユーザーチェックアウトページ</span></td>
   <td align="left"><span class="type-indicator-small safe" title="Safe"></span><a href="#goToUserCart">goToUserCart</a><br><span class="type-indicator-small safe" title="Safe"></span><a href="#goToUserHome">goToUserHome</a><br><span class="type-indicator-small unsafe" title="Unsafe"></span><a href="#doPlaceOrder">doPlaceOrder</a></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="UserHomePage"></a><a href="#UserHomePage">UserHomePage</a></td>
   <td align="left"><span style="white-space: normal;">ユーザーホームページ</span></td>
   <td align="left"><span class="type-indicator-small safe" title="Safe"></span><a href="#goToUserProductList">goToUserProductList</a><br><span class="type-indicator-small safe" title="Safe"></span><a href="#goToUserCart">goToUserCart</a><br><span class="type-indicator-small safe" title="Safe"></span><a href="#goToUserOrderHistory">goToUserOrderHistory</a><br><span class="type-indicator-small safe" title="Safe"></span><a href="#goToUserProfile">goToUserProfile</a><br><span class="type-indicator-small safe" title="Safe"></span><a href="#doLogout">doLogout</a></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="userId"></a><a href="#userId">userId</a></td>
   <td align="left"><span style="white-space: normal;">ユーザーの一意の識別子</span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">ユーザーの一意の識別子。UUIDを使用し、予測不可能で安全な値を保証します。システム全体でユーザーを一意に識別するために使用され、セキュリティとデータ整合性の基盤となります。</span></span></span></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="username"></a><a href="#username">username</a></td>
   <td align="left"><span style="white-space: normal;">ユーザーのユーザー名</span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="UserOrderDetailPage"></a><a href="#UserOrderDetailPage">UserOrderDetailPage</a></td>
   <td align="left"><span style="white-space: normal;">ユーザー注文詳細ページ</span></td>
   <td align="left"><span class="type-indicator-small safe" title="Safe"></span><a href="#goToUserOrderHistory">goToUserOrderHistory</a><br><span class="type-indicator-small safe" title="Safe"></span><a href="#goToUserHome">goToUserHome</a><br><span class="type-indicator-small safe" title="Safe"></span><a href="#goToUserReturnRefund">goToUserReturnRefund</a></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="UserOrderHistoryPage"></a><a href="#UserOrderHistoryPage">UserOrderHistoryPage</a></td>
   <td align="left"><span style="white-space: normal;">ユーザー注文履歴ページ</span></td>
   <td align="left"><span class="type-indicator-small safe" title="Safe"></span><a href="#goToUserOrderDetail">goToUserOrderDetail</a><br><span class="type-indicator-small safe" title="Safe"></span><a href="#goToUserHome">goToUserHome</a><br><span class="type-indicator-small safe" title="Safe"></span><a href="#doPaginateOrders">doPaginateOrders</a></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="UserProductDetailPage"></a><a href="#UserProductDetailPage">UserProductDetailPage</a></td>
   <td align="left"><span style="white-space: normal;">ユーザー製品詳細ページ</span></td>
   <td align="left"><span class="type-indicator-small safe" title="Safe"></span><a href="#goToUserProductList">goToUserProductList</a><br><span class="type-indicator-small safe" title="Safe"></span><a href="#goToUserCart">goToUserCart</a><br><span class="type-indicator-small safe" title="Safe"></span><a href="#goToUserReview">goToUserReview</a><br><span class="type-indicator-small unsafe" title="Unsafe"></span><a href="#doAddToCart">doAddToCart</a></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="UserProductListPage"></a><a href="#UserProductListPage">UserProductListPage</a></td>
   <td align="left"><span style="white-space: normal;">ユーザー製品リストページ</span></td>
   <td align="left"><span class="type-indicator-small safe" title="Safe"></span><a href="#goToUserProductDetail">goToUserProductDetail</a><br><span class="type-indicator-small safe" title="Safe"></span><a href="#goToUserHome">goToUserHome</a><br><span class="type-indicator-small safe" title="Safe"></span><a href="#doSearchProducts">doSearchProducts</a><br><span class="type-indicator-small safe" title="Safe"></span><a href="#doPaginateProducts">doPaginateProducts</a></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="UserProfilePage"></a><a href="#UserProfilePage">UserProfilePage</a></td>
   <td align="left"><span style="white-space: normal;">ユーザープロフィールページ</span></td>
   <td align="left"><span class="type-indicator-small safe" title="Safe"></span><a href="#goToUserHome">goToUserHome</a><br><span class="type-indicator-small idempotent" title="Idempotent"></span><a href="#doUpdateUserProfile">doUpdateUserProfile</a></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="UserReturnRefundPage"></a><a href="#UserReturnRefundPage">UserReturnRefundPage</a></td>
   <td align="left"><span style="white-space: normal;">返品/払い戻しページ</span></td>
   <td align="left"><span class="type-indicator-small safe" title="Safe"></span><a href="#goToUserOrderDetail">goToUserOrderDetail</a><br><span class="type-indicator-small unsafe" title="Unsafe"></span><a href="#doRequestReturn">doRequestReturn</a><br><span class="type-indicator-small unsafe" title="Unsafe"></span><a href="#doRequestRefund">doRequestRefund</a></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="UserReviewPage"></a><a href="#UserReviewPage">UserReviewPage</a></td>
   <td align="left"><span style="white-space: normal;">ユーザーレビューページ</span></td>
   <td align="left"><span class="type-indicator-small safe" title="Safe"></span><a href="#goToUserProductDetail">goToUserProductDetail</a><br><span class="type-indicator-small unsafe" title="Unsafe"></span><a href="#doAddReview">doAddReview</a><br><span class="type-indicator-small idempotent" title="Idempotent"></span><a href="#doUpdateReview">doUpdateReview</a><br><span class="type-indicator-small idempotent" title="Idempotent"></span><a href="#doDeleteReview">doDeleteReview</a></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="validFrom"></a><a href="#validFrom">validFrom</a></td>
   <td align="left"><span style="white-space: normal;">有効開始日</span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="validTo"></a><a href="#validTo">validTo</a></td>
   <td align="left"><span style="white-space: normal;">有効終了日</span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="verifiedPurchase"></a><a href="#verifiedPurchase">verifiedPurchase</a></td>
   <td align="left"><span style="white-space: normal;">確認済み購入</span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="website"></a><a href="#website">website</a></td>
   <td align="left"><span style="white-space: normal;">ウェブサイト</span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="weight"></a><a href="#weight">weight</a></td>
   <td align="left"><span style="white-space: normal;">重量</span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="width"></a><a href="#width">width</a></td>
   <td align="left"><span style="white-space: normal;">幅</span></td>
   <td align="left"></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="Wishlist"></a><a href="#Wishlist">Wishlist</a></td>
   <td align="left"><span style="white-space: normal;">ウィッシュリスト</span></td>
   <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#userId">userId</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#WishlistItem">WishlistItem</a></td>
   <td align="left"><span style="white-space: normal;"></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="center">semantic</td>
   <td align="left"><a id="WishlistItem"></a><a href="#WishlistItem">WishlistItem</a></td>
   <td align="left"><span style="white-space: normal;">ウィッシュリスト項目</span></td>
   <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#productId">productId</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#updatedAt">updatedAt</a></td>

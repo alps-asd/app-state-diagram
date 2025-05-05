@@ -27,7 +27,8 @@ final class Option
     /** @param array<string, string|bool> $options */
     private function getMode(array $options): string
     {
-        $isMarkdown = isset($options['mode']) && $options['mode'] === DumpDocs::MODE_MARKDOWN;
+        $isMarkdown = (isset($options['mode']) && $options['mode'] === DumpDocs::MODE_MARKDOWN)
+            || (isset($options['m']) && $options['m'] === DumpDocs::MODE_MARKDOWN);
 
         return $isMarkdown ? DumpDocs::MODE_MARKDOWN : DumpDocs::MODE_HTML;
     }

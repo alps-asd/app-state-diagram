@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Koriym\AppStateDiagram;
 
 use function array_keys;
+use function basename;
 use function count;
 use function dirname;
 use function file_get_contents;
@@ -40,8 +41,9 @@ final class IndexPage
 <script src="https://alps-asd.github.io/app-state-diagram/assets/js/table.js"></script>
 {$indexJs}
 EOT;
-        $legend = IndexPageElements::LEGEND;
-        $asd = $config->outputMode === DumpDocs::MODE_MARKDOWN ? '[<img src="profile.svg" alt="application state diagram">](profile.title.svg)' : <<< EOTJS
+        $legend = $config->outputMode === DumpDocs::MODE_MARKDOWN ? '' : IndexPageElements::LEGEND;
+        $tags = $config->outputMode === DumpDocs::MODE_MARKDOWN ? '' : $index->tags;
+        $asd = $config->outputMode === DumpDocs::MODE_MARKDOWN ? $this->getMarkdownImage($config->profile) : <<< EOTJS
 <div id="svg-container">
     <div id="asd-graph-id" style="text-align: center; "></div>
     <div id="asd-graph-name" style="text-align: center; display: none;"></div>
@@ -58,6 +60,7 @@ EOT;
             setupModeSwitch('asd-show-name', 'asd-graph-name', 'asd-graph-id');
             applySmoothScrollToLinks(document.querySelectorAll('a[href^="#"]'));
             setupTagClick();
+            setupDocClick(); 
             {$index->setUpTagEvents}
         } catch (error) {
                console.error("Error in main process:", error);
@@ -80,7 +83,7 @@ EOTJS;
 <!-- Container for the ASDs -->
 
 {$asd}
-{$index->tags}
+{$tags}
 {$legend}
 
 {$index->semanticMd}
@@ -108,6 +111,19 @@ EOT;
             $html
         );
         $this->content = str_replace(['{{ dotId }}', '{{ dotName }}', '{{ dotName }}'], [$escapedDotId, $escapedDotName], $plusHeaderHtml);
+    }
+
+    private function getMarkdownImage(string $profile): string
+    {
+        $baseProfile = basename($profile);
+        $imageFile = str_replace(['.xml', '.json'], '.svg', $baseProfile);
+        $imageTitleFile = str_replace(['.xml', '.json'], '.title.svg', $baseProfile);
+
+        return sprintf(
+            '[<img src="%s" alt="application state diagram">](%s)',
+            $imageFile,
+            $imageTitleFile
+        );
     }
 
     /** @param array<string, list<string>> $tags */

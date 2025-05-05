@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<alps
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://alps-io.github.io/schemas/alps.xsd">
+    <title>app-state-diagram</title>
+    <doc>This is a sample ALPS profile demonstrating the semantic descriptors and operations for a basic e-commerce system. It includes product listing, shopping cart management, and checkout process, serving as an educational example for ALPS implementation in online shopping contexts.</doc>
+
+    <!-- Ontology -->
+    <descriptor id="id" def="https://schema.org/identifier" title="identifier"/>
+    <descriptor id="name" def="https://schema.org/name" title="name"/>
+    <descriptor id="description" def="https://schema.org/description" title="description"/>
+    <descriptor id="price" def="https://schema.org/price" title="price"/>
+    <descriptor id="quantity" def="https://schema.org/Quantity" title="quantity"/>
+    <descriptor id="email" def="https://schema.org/email" title="email"/>
+    <descriptor id="address" def="https://schema.org/address" title="address"/>
+
+    <!-- Taxonomy -->
+    <descriptor id="ProductList" def="https://schema.org/ItemList" title="Product List" tag="collection">
+        <doc>Displays a list of available products that the user can browse or select from.</doc>
+        <descriptor href="#id"/>
+        <descriptor href="#name"/>
+        <descriptor href="#description"/>
+        <descriptor href="#goProductDetail"/>
+        <descriptor href="#goCart"/>
+        <descriptor href="#goProductList"/>
+    </descriptor>
+
+    <descriptor id="ProductDetail" def="https://schema.org/Product" title="Product Detail" tag="item">
+        <doc>Shows detailed information about a single product, such as description and price.</doc>
+        <descriptor href="#id"/>
+        <descriptor href="#name"/>
+        <descriptor href="#description"/>
+        <descriptor href="#price"/>
+        <descriptor href="#goProductList"/>
+        <descriptor href="#doAddToCart"/>
+    </descriptor>
+
+    <descriptor id="Cart" def="https://schema.org/Cart" title="Shopping Cart" tag="collection">
+        <doc>Displays the user's shopping cart, allowing updates or checkout initiation.</doc>
+        <descriptor href="#id"/>
+        <descriptor href="#goProductList"/>
+        <descriptor href="#goCheckout"/>
+        <descriptor href="#doUpdateQuantity"/>
+        <descriptor href="#doRemoveItem"/>
+    </descriptor>
+
+    <descriptor id="Checkout" title="Checkout" tag="collection">
+        <doc>Captures user information and prepares for payment after shopping is complete.</doc>
+        <descriptor href="#email"/>
+        <descriptor href="#address"/>
+        <descriptor href="#goPayment"/>
+    </descriptor>
+
+    <descriptor id="Payment" def="https://schema.org/PayAction" title="Payment" tag="item">
+        <doc>Handles the final payment process for the placed order.</doc>
+        <descriptor href="#doPayment"/>
+    </descriptor>
+
+    <!-- Choreography -->
+    <descriptor id="goProductList" type="safe" rt="#ProductList" title="View product list">
+        <doc>Returns the list of all available products.</doc>
+        <descriptor href="#id"/>
+    </descriptor>
+
+    <descriptor id="goProductDetail" type="safe" rt="#ProductDetail" title="View product details">
+        <doc>Returns detailed view of a selected product.</doc>
+        <descriptor href="#id"/>
+    </descriptor>
+
+    <descriptor id="goCart" type="safe" rt="#Cart" title="View shopping cart">
+        <doc>Displays the current items in the user's shopping cart.</doc>
+    </descriptor>
+
+    <descriptor id="goCheckout" type="safe" rt="#Checkout" title="Proceed to checkout">
+        <doc>Initiates the checkout process after confirming cart items.</doc>
+    </descriptor>
+
+    <descriptor id="goPayment" type="safe" rt="#Payment" title="Proceed to payment">
+        <doc>Redirects user to the payment screen after entering delivery details.</doc>
+    </descriptor>
+
+    <descriptor id="doAddToCart" type="unsafe" rt="#Cart" title="Add product to cart">
+        <doc>Adds selected product and quantity to the shopping cart.</doc>
+        <descriptor href="#id"/>
+        <descriptor href="#quantity"/>
+    </descriptor>
+
+    <descriptor id="doUpdateQuantity" type="idempotent" rt="#Cart" title="Update item quantity">
+        <doc>Updates the quantity of a product already in the cart.</doc>
+        <descriptor href="#id"/>
+        <descriptor href="#quantity"/>
+    </descriptor>
+
+    <descriptor id="doRemoveItem" type="idempotent" rt="#Cart" title="Remove item from cart">
+        <doc>Removes a specific product from the shopping cart.</doc>
+        <descriptor href="#id"/>
+    </descriptor>
+
+    <descriptor id="doPayment" type="idempotent" rt="#ProductList" title="Complete payment">
+        <doc>Processes the final payment and returns user to the product list.</doc>
+    </descriptor>
+</alps>
