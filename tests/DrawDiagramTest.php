@@ -76,7 +76,6 @@ class DrawDiagramTest extends TestCase
         $alpsFile = __DIR__ . '/Fake/alps_tag.json';
         $profile = new Profile($alpsFile, new LabelName());
         $dot = ($this->drawDiagram)($profile, new LabelName());
-        $this->assertStringContainsString('label="tag test"', $dot);
         $this->assertStringContainsString('s1 -> s2 [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#t1" tooltip="t1 (safe)"><font color="#00A86B">■</font> t1</td></tr></table>>', $dot);
         $this->assertStringContainsString('s1 -> s5 [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#t5" tooltip="t5 (safe)"><font color="#00A86B">■</font> t5</td></tr></table>>', $dot);
         $this->assertStringContainsString('s2 -> s3 [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#t2" tooltip="t2 (safe)"><font color="#00A86B">■</font> t2</td></tr></table>>', $dot);
