@@ -30,17 +30,24 @@ const applySmoothScrollToLinks = (links) => {
     links.forEach(link => {
         link.addEventListener('click', (e) => {
             e.preventDefault();
-            const targetName = link.getAttribute('href').slice(1);
+            const href = link.getAttribute('href') || link.getAttribute('xlink:href');
+            if (!href) {
+                console.error("No href found for link:", link);
+                return;
+            }
+            const targetName = href.startsWith('#') ? href.slice(1) : href;
             const targetElement = document.querySelector(`[id="${targetName}"]`);
             if (!targetElement) {
-                console.error("Target element not found for link:", link.getAttribute('href'));
+                console.error("Target element not found for link:", href);
                 return;
             }
             smoothScrollTo(targetElement);
+
+            // URLを更新
+            history.pushState(null, null, href);
         });
     });
 };
-
 
 // Renders the graph and applies smooth scroll to links
 const renderGraph = (graphId, dotString) => {
