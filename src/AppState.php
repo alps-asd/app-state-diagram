@@ -55,7 +55,7 @@ final class AppState implements Stringable
     #[Override]
     public function __toString(): string
     {
-        $base = '    %s [label = <%s> URL="#%s" target="_parent"';
+        $base = '    %s [label="%s" URL="#%s" target="_parent"';
         $dot = '';
 
         foreach ($this->states as $descriptor) {

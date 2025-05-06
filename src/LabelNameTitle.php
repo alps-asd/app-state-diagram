@@ -21,8 +21,7 @@ final class LabelNameTitle implements LabelNameInterface
     public function getLinkLabel(TransDescriptor $trans): string
     {
         $title = $trans->title ?: $trans->id;
-        $title = str_replace(' ', '&nbsp;', $title);
 
-        return $title;
+        return str_replace(' ', '&nbsp;', $title);
     }
 }

@@ -50,9 +50,12 @@
         "bin": "echo 'bin not installed'",
         "docs" : [
             "bin/asd docs/bookstore/alps.xml",
+            "bin/asd docs/bookstore/ja/alps.xml",
             "bin/asd docs/amazon/alps.json",
             "bin/asd docs/lms/alps.xml",
-            "bin/asd --mode=markdown docs/bookstore/alps.xml"
+            "bin/asd docs/lms/ja/alps.xml",
+            "bin/asd --mode=markdown docs/bookstore/alps.xml",
+            "bin/asd --mode=markdown docs/bookstore/ja/alps.xml"
         ],
         "md" : "bin/asd -c docs/blog/asd.md.xml docs/blog/profile.xml",
         "test": ["./vendor/bin/phpunit"],
