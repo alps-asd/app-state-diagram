@@ -37,7 +37,6 @@ digraph application_state_diagram {
   graph [
     labelloc="t";
     fontname="Helvetica"
-    URL="index.html" target="_parent"
   ];
   node [shape = box, style = "bold,filled" fillcolor="lightgray", margin="0.3,0.1"];
 
