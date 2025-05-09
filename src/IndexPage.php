@@ -40,7 +40,6 @@ final class IndexPage
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="https://unpkg.com/@hpcc-js/wasm/dist/graphviz.umd.js" type="javascript/worker"></script>
     <script src="https://unpkg.com/d3-graphviz@5.6.0/build/d3-graphviz.min.js"></script>
-<script src="https://alps-asd.github.io/app-state-diagram/assets/js/table.js"></script>
 {$indexJs}
 EOT;
         $legend = $config->outputMode === DumpDocs::MODE_MARKDOWN ? '' : IndexPageElements::LEGEND;
