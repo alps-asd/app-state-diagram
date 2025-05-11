@@ -90,13 +90,168 @@ final class MdToHtml
             cursor: help;
             position: relative;
         }
+        
+        /* 1. Profile折りたたみスタイル */
+        .profile-section {
+            border: 1px solid #e1e4e8;
+            border-radius: 6px;
+            margin-top: 20px;
+        }
+
+        .profile-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            background-color: #f6f8fa;
+            border-bottom: 1px solid #e1e4e8;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .profile-header:hover {
+            background-color: #f1f3f4;
+        }
+
+        .profile-toggle {
+            display: inline-block;
+            margin-right: 8px;
+            transition: transform 0.2s ease;
+        }
+
+        .profile-toggle.expanded {
+            transform: rotate(90deg);
+        }
+
+        .profile-content {
+            display: none;
+            padding: 16px;
+        }
+
+        .profile-content.visible {
+            display: block;
+        }
+
+        /* 2. コピーボタンスタイル */
+        .copy-button {
+            margin-left: 16px;
+            padding: 4px 12px;
+            border: 1px solid #d0d7de;
+            border-radius: 4px;
+            background: white;
+            color: #586069;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: normal;
+        }
+
+        .copy-button:hover {
+            background: #f3f4f6;
+            border-color: #0969da;
+        }
+
+        .copy-button.copied {
+            color: #2ea043;
+            border-color: #2ea043;
+        }
+
+        /* 3. グラフズームコントロールスタイル */
+        .zoom-controls {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            display: flex;
+            flex-direction: row;
+            gap: 3px;
+            z-index: 100;
+        }
+
+        .zoom-button {
+            min-width: 26px;
+            height: 26px;
+            border: 1px solid #d0d7de;
+            border-radius: 3px;
+            background: white;
+            cursor: pointer;
+            font-size: 14px;
+            opacity: 0.8;
+            padding: 0 4px;
+        }
+
+        .zoom-button:hover {
+            opacity: 1;
+            background: #f6f8fa;
+        }
+
+        .zoom-button:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        /* 4. 検索ボックススタイル */
+        .search-container {
+            margin: 20px 0;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 8px 12px 8px 36px;
+            border: 1px solid #d0d7de;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #586069;
+        }
+
+        .search-clear {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #586069;
+            display: none;
+        }
+
+        .search-clear.visible {
+            display: block;
+        }
+
+        /* テーブル行のハイライト */
+        table tr.highlight {
+            background-color: #fff5b1;
+        }
+
+        table tr.hidden {
+            display: none;
+        }
+
+        /* レスポンシブ対応の改善 */
+        @media (max-width: 768px) {
+            .zoom-controls {
+                left: 5px;
+                bottom: 5px;
+            }
+
+            .profile-header {
+                padding: 8px 12px;
+            }
+        }
 #svg-container {
             /* 既存のスタイルも維持 */
             height: auto;
             display: flex;
             justify-content: flex-start; /* SVGが小さい場合に左寄せ */
-            align-items: center;
+            align-items: flex-start; /* 上部から表示開始（中央揃えではなく） */
             overflow-x: auto; /* SVGがコンテナ幅を超える場合に水平スクロールを表示 */
+            overflow-y: hidden; /* 縦方向のスクロールは不要 */
 
             width: 100vw;
             max-width: none; /* 親要素(.markdown-body)のmax-width制限を解除 */
@@ -112,11 +267,20 @@ final class MdToHtml
 
             padding-left: 24px;
             padding-right: 24px;
+            position: relative; /* 子要素の絶対位置指定のための基準点 */
+        }
+        #asd-graph-id, #asd-graph-name {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            overflow: auto; /* スクロール可能にする */
         }
         #svg-container svg {
             max-width: none;
             display: block;
             margin: 0;
+            transform-origin: top left; /* 変形の基準点を左上に設定 */
+            transition: transform 0.2s ease; /* ズーム変更時のアニメーション */
         }        
         .asd-view-selector {
             display: flex;

@@ -61,11 +61,250 @@ EOT;
             setupModeSwitch('asd-show-name', 'asd-graph-name', 'asd-graph-id');
             applySmoothScrollToLinks(document.querySelectorAll('a[href^="#"]'));
             setupTagClick();
-            setupDocClick(); 
+            setupDocClick();
             {$index->setUpTagEvents}
+
+            // 新機能の初期化
+            enhanceProfileSection();
+            setupSearch();
+
+            // SVGが確実に読み込まれた後にズーム機能を設定（重要）
+            setTimeout(() => {
+                setupGraphZoom();
+            }, 1000);
         } catch (error) {
                console.error("Error in main process:", error);
         }});
+        
+    // Profile折りたたみ機能のためのDOM構造を作成
+    function enhanceProfileSection() {
+        const profileHeader = document.querySelector('h2:last-of-type');
+        const profilePre = profileHeader.nextElementSibling;
+        
+        if (profileHeader && profilePre && profilePre.tagName === 'PRE') {
+            // プロファイルセクションの構造を変更
+            const section = document.createElement('div');
+            section.className = 'profile-section';
+            
+            const header = document.createElement('div');
+            header.className = 'profile-header';
+            header.innerHTML = `
+                <div>
+                    <span class="profile-toggle">▶</span>
+                    <span>Profile</span>
+                </div>
+                <button class="copy-button">Copy</button>
+            `;
+            
+            const content = document.createElement('div');
+            content.className = 'profile-content';
+            content.appendChild(profilePre.cloneNode(true));
+            
+            section.appendChild(header);
+            section.appendChild(content);
+            
+            // 元のh2とpreを置き換える
+            profileHeader.replaceWith(section);
+            profilePre.remove();
+            
+            // 折りたたみとコピー機能をセットアップ
+            setupProfileCollapse();
+            setupCopyButton();
+        }
+    }
+
+    // Profile折りたたみ機能
+    function setupProfileCollapse() {
+        const profileHeader = document.querySelector('.profile-header');
+        const profileContent = document.querySelector('.profile-content');
+        const profileToggle = document.querySelector('.profile-toggle');
+        
+        if (!profileHeader || !profileContent || !profileToggle) return;
+        
+        // 初期状態は折りたたんだ状態
+        profileContent.classList.remove('visible');
+        
+        profileHeader.addEventListener('click', (e) => {
+            // コピーボタンがクリックされた場合は折りたたみ処理をスキップ
+            if (e.target.classList.contains('copy-button')) return;
+            
+            profileContent.classList.toggle('visible');
+            profileToggle.classList.toggle('expanded');
+        });
+    }
+
+    // コピー機能
+    function setupCopyButton() {
+        const copyButton = document.querySelector('.copy-button');
+        if (!copyButton) return;
+        
+        copyButton.addEventListener('click', async (e) => {
+            e.stopPropagation(); // 親要素のクリックイベントを防ぐ
+            
+            const profileContent = document.querySelector('.profile-content pre code');
+            if (!profileContent) return;
+            
+            try {
+                await navigator.clipboard.writeText(profileContent.textContent);
+                copyButton.textContent = 'Copied!';
+                copyButton.classList.add('copied');
+                setTimeout(() => {
+                    copyButton.textContent = 'Copy';
+                    copyButton.classList.remove('copied');
+                }, 2000);
+            } catch (err) {
+                console.error('Failed to copy: ', err);
+            }
+        });
+    }
+
+    // 検索機能
+    function setupSearch() {
+        // 検索ボックスを追加
+        const semanticHeader = document.querySelector('h2:nth-of-type(1)');
+        if (!semanticHeader) return;
+        
+        const searchContainer = document.createElement('div');
+        searchContainer.className = 'search-container';
+        searchContainer.innerHTML = `
+            <svg class="search-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M7.333 12.667A5.333 5.333 0 1 0 7.333 2a5.333 5.333 0 0 0 0 10.667zm5.334 1L10 11" 
+                      stroke="currentColor" stroke-width="1.33" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <input type="text" class="search-input" placeholder="Search semantic descriptors...">
+            <span class="search-clear">×</span>
+        `;
+        
+        // h2の下にテーブルがあるので、その間に挿入
+        const table = semanticHeader.nextElementSibling;
+        if (table && table.tagName === 'TABLE') {
+            semanticHeader.after(searchContainer);
+        }
+        
+        const searchInput = searchContainer.querySelector('.search-input');
+        const searchClear = searchContainer.querySelector('.search-clear');
+        const tableRows = document.querySelectorAll('table tbody tr');
+        
+        searchInput.addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase();
+            searchClear.classList.toggle('visible', query.length > 0);
+            
+            tableRows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                const isVisible = query === '' || text.includes(query);
+                row.classList.toggle('hidden', !isVisible);
+                
+                // ハイライト表示
+                if (query !== '' && isVisible) {
+                    row.classList.add('highlight');
+                } else {
+                    row.classList.remove('highlight');
+                }
+            });
+        });
+        
+        searchClear.addEventListener('click', () => {
+            searchInput.value = '';
+            searchClear.classList.remove('visible');
+            tableRows.forEach(row => {
+                row.classList.remove('hidden', 'highlight');
+            });
+        });
+    }
+
+    // グラフズーム機能のセットアップ（+/-ボタンのみ）
+    let currentScale = 1;
+    const minScale = 0.1;
+    const maxScale = 3;
+
+    function setupGraphZoom() {
+        console.log("Setting up zoom controls...");
+        const containers = ['#asd-graph-id', '#asd-graph-name'];
+
+        containers.forEach(containerId => {
+            const container = document.querySelector(containerId);
+            if (!container) {
+                console.log(`Container \${containerId} not found`);
+                return;
+            }
+
+            // すでにズームコントロールがあるか確認
+            if (container.querySelector('.zoom-controls')) {
+                console.log(`Zoom controls already exist in \${containerId}`);
+                return;
+            }
+
+            // SVGを探す
+            let svg = container.querySelector('svg');
+
+            // SVGが見つからない場合は監視して再試行
+            if (!svg) {
+                console.log(`SVG not found in \${containerId}, setting up observer`);
+                // SVG要素が追加されるのを監視
+                const observer = new MutationObserver((mutations, obs) => {
+                    mutations.forEach(mutation => {
+                        if (mutation.addedNodes.length) {
+                            svg = container.querySelector('svg');
+                            if (svg) {
+                                console.log(`SVG found in \${containerId} after waiting`);
+                                obs.disconnect(); // 監視を停止
+                                addZoomControls(container, svg);
+                            }
+                        }
+                    });
+                });
+
+                observer.observe(container, { childList: true, subtree: true });
+                return;
+            }
+
+            console.log(`SVG found immediately \${containerId}`);
+            addZoomControls(container, svg);
+        });
+    }
+
+    function addZoomControls(container, svg) {
+        // ズームコントロールを追加
+        const zoomControls = document.createElement('div');
+        zoomControls.className = 'zoom-controls';
+        zoomControls.innerHTML = `
+            <button class="zoom-button" data-zoom="in">+</button>
+            <button class="zoom-button" data-zoom="out">−</button>
+            <button class="zoom-button" data-zoom="reset">1:1</button>
+        `;
+        container.style.position = 'relative';
+        container.appendChild(zoomControls);
+
+        // ズームイン
+        zoomControls.querySelector('[data-zoom="in"]').addEventListener('click', () => {
+            currentScale = Math.min(currentScale * 1.2, maxScale);
+            updateZoom(svg, zoomControls);
+        });
+
+        // ズームアウト
+        zoomControls.querySelector('[data-zoom="out"]').addEventListener('click', () => {
+            currentScale = Math.max(currentScale / 1.2, minScale);
+            updateZoom(svg, zoomControls);
+        });
+
+        // リセット
+        zoomControls.querySelector('[data-zoom="reset"]').addEventListener('click', () => {
+            currentScale = 1;
+            updateZoom(svg, zoomControls);
+        });
+    }
+
+    function updateZoom(svg, zoomControls) {
+        // transform-originはCSSで設定済み（top left）
+        svg.style.transform = `scale(\${currentScale})`;
+        
+        // ボタン状態の更新
+        const zoomIn = zoomControls.querySelector('[data-zoom="in"]');
+        const zoomOut = zoomControls.querySelector('[data-zoom="out"]');
+        
+        zoomIn.disabled = currentScale >= maxScale;
+        zoomOut.disabled = currentScale <= minScale;
+    }
 </script>
 <div class="asd-view-selector">
     <span class="selector-label">View:</span>
