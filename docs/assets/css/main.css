@@ -32,3 +32,49 @@
     width: 100%;
     height: 100%;
 }
+
+/* 検索機能のスタイル */
+.search-container {
+    margin: 20px 0;
+    position: relative;
+}
+
+.search-input {
+    width: 100%;
+    padding: 8px 12px 8px 36px;
+    border: 1px solid #d0d7de;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.search-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #586069;
+}
+
+.search-clear {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #586069;
+    display: none;
+}
+
+.search-clear.visible {
+    display: block;
+}
+
+/* 非表示行のスタイル */
+table tr.hidden {
+    display: none;
+}
+
+/* 検索機能のスタイル - セル単位でハイライト */
+table td.highlight {
+    background-color: #fff5b1; /* 黄色いハイライト背景 */
+}

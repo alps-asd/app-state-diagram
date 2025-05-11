@@ -188,17 +188,31 @@ EOT;
         searchInput.addEventListener('input', (e) => {
             const query = e.target.value.toLowerCase();
             searchClear.classList.toggle('visible', query.length > 0);
-            
+
             tableRows.forEach(row => {
+                // すべての行のテキストを検索対象とする
                 const text = row.textContent.toLowerCase();
                 const isVisible = query === '' || text.includes(query);
                 row.classList.toggle('hidden', !isVisible);
-                
-                // ハイライト表示
+
+                // マッチしたセルのみにhighlightクラスを追加
                 if (query !== '' && isVisible) {
-                    row.classList.add('highlight');
+                    // すべてのセルを確認
+                    const cells = row.querySelectorAll('td');
+                    cells.forEach(cell => {
+                        const cellText = cell.textContent.toLowerCase();
+                        if (cellText.includes(query)) {
+                            cell.classList.add('highlight');
+                        } else {
+                            cell.classList.remove('highlight');
+                        }
+                    });
                 } else {
-                    row.classList.remove('highlight');
+                    // ハイライトをクリア
+                    const cells = row.querySelectorAll('td');
+                    cells.forEach(cell => {
+                        cell.classList.remove('highlight');
+                    });
                 }
             });
         });
@@ -207,7 +221,13 @@ EOT;
             searchInput.value = '';
             searchClear.classList.remove('visible');
             tableRows.forEach(row => {
-                row.classList.remove('hidden', 'highlight');
+                row.classList.remove('hidden');
+
+                // すべてのセルからハイライトを削除
+                const cells = row.querySelectorAll('td');
+                cells.forEach(cell => {
+                    cell.classList.remove('highlight');
+                });
             });
         });
     }

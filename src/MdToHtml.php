@@ -224,13 +224,18 @@ final class MdToHtml
             display: block;
         }
 
-        /* テーブル行のハイライト */
+        /* テーブル行と検索セルのハイライト */
         table tr.highlight {
             background-color: #fff5b1;
         }
 
         table tr.hidden {
             display: none;
+        }
+
+        /* 検索結果のセルハイライト - !importantでスタイルを強制適用 */
+        table td.highlight {
+            background-color: #fff5b1 !important; /* 黄色いハイライト */
         }
 
         /* レスポンシブ対応の改善 */
