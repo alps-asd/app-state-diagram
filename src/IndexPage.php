@@ -183,7 +183,7 @@ EOT;
         
         const searchInput = searchContainer.querySelector('.search-input');
         const searchClear = searchContainer.querySelector('.search-clear');
-        const tableRows = document.querySelectorAll('table tbody tr');
+        const tableRows = table.querySelectorAll('tbody tr');
         
         searchInput.addEventListener('input', (e) => {
             const query = e.target.value.toLowerCase();
