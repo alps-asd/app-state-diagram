@@ -37,7 +37,7 @@ final class IndexPage
     {
         $index = $this->getElements($config);
         $indexJsFile = dirname(__DIR__, 1) . '/docs/assets/js/main.js1';
-        $indexJs = file_exists($indexJsFile) ?
+        $indexJs = file_exists($indexJsFile) && file_exists(__DIR__ . '/.develop') ?
             sprintf('<script>%s</script>', (string) file_get_contents($indexJsFile)) :
             '<script src="https://www.app-state-diagram.com/app-state-diagram/assets/js/main.js"></script>'; // @codeCoverageIgnore
         $header = <<<EOT
@@ -144,7 +144,7 @@ EOT;
                         if (mutation.addedNodes.length) {
                             svg = container.querySelector('svg');
                             if (svg) {
-                                console.log(`SVG found in \${containerId} after waiting`);
+                                console.log('SVG found in ' + containerId + ' after waiting');
                                 obs.disconnect(); // 監視を停止
                                 // 初期ズームを適用
                                 svg.style.transform = `scale(\${currentScale})`;
