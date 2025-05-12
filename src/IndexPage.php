@@ -9,6 +9,7 @@ use function assert;
 use function basename;
 use function count;
 use function dirname;
+use function file_exists;
 use function file_get_contents;
 use function htmlspecialchars;
 use function implode;
@@ -35,13 +36,16 @@ final class IndexPage
     public function __construct(Config $config)
     {
         $index = $this->getElements($config);
-        $indexJsFile = dirname(__DIR__, 1) . '/docs/assets/js/asd@0.1.0.js';
-        $indexJs = sprintf('<script>%s</script>', (string) file_get_contents($indexJsFile));
+        $indexJsFile = dirname(__DIR__, 1) . '/docs/assets/js/main.js1';
+        $indexJs = file_exists($indexJsFile) ?
+            sprintf('<script>%s</script>', (string) file_get_contents($indexJsFile)) :
+            '<script src="https://www.app-state-diagram.com/app-state-diagram/assets/js/main.js"></script>'; // @codeCoverageIgnore
         $header = <<<EOT
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="https://unpkg.com/@hpcc-js/wasm/dist/graphviz.umd.js" type="javascript/worker"></script>
     <script src="https://unpkg.com/d3-graphviz@5.6.0/build/d3-graphviz.min.js"></script>
 {$indexJs}
+
 EOT;
         $legend = $config->outputMode === DumpDocs::MODE_MARKDOWN ? '' : IndexPageElements::LEGEND;
         $tags = $config->outputMode === DumpDocs::MODE_MARKDOWN ? '' : $index->tags;
@@ -68,11 +72,7 @@ EOT;
             // 新機能の初期化
             enhanceProfileSection();
             setupSearch();
-
-            // SVGが確実に読み込まれた後にズーム機能を設定（重要）
-            setTimeout(() => {
-                setupGraphZoom();
-            }, 1000);
+            setupGraphZoom();
         } catch (error) {
                console.error("Error in main process:", error);
         }});
