@@ -31,6 +31,7 @@ final class IndexPage
     /** @var string */
     public $file;
 
+    /** @SuppressWarnings(PHPMD.ExcessiveMethodLength)  */
     public function __construct(Config $config)
     {
         $index = $this->getElements($config);
