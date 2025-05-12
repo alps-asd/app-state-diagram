@@ -49,28 +49,6 @@ EOT;
 <div id="svg-container">
     <div id="asd-graph-id" style="text-align: center; "></div>
     <div id="asd-graph-name" style="text-align: center; display: none;"></div>
-    <style>
-        .zoom-controls, .global-zoom-controls {
-            display: inline-block;
-            vertical-align: middle;
-            position: static !important; /* absoluteを上書き */
-        }
-        .zoom-button {
-            margin: 0 2px;
-        }
-        #svg-container svg {
-            transform-origin: bottom left;
-        }
-        #zoom-controls-container {
-            display: flex;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-        .selector-label {
-            min-width: 40px;
-            margin-right: 10px;
-        }
-    </style>
 </div>
 <script>
     document.addEventListener('DOMContentLoaded', async function() {

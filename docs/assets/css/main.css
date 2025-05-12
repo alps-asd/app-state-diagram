@@ -517,3 +517,23 @@ table .legend {
     padding-left: 4px !important;
     vertical-align: middle;
 }
+.zoom-controls, .global-zoom-controls {
+    display: inline-block;
+    vertical-align: middle;
+    position: static !important; /* absoluteを上書き */
+}
+.zoom-button {
+    margin: 0 2px;
+}
+#svg-container svg {
+    transform-origin: bottom left;
+}
+#zoom-controls-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+.selector-label {
+    min-width: 40px;
+    margin-right: 10px;
+}

@@ -9,6 +9,7 @@ use Michelf\MarkdownExtra;
 use function dirname;
 use function file_exists;
 use function file_get_contents;
+use function sprintf;
 
 final class MdToHtml
 {
