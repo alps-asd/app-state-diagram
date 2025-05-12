@@ -1,0 +1,21 @@
+# Exclude build/test files from archive.
+/tests                           export-ignore
+/vendor-bin                      export-ignore
+/.gitattributes                  export-ignore
+/.gitignore                      export-ignore
+/codecov.yml                     export-ignore
+/phpcs.xml                       export-ignore
+/phpmd.xml                       export-ignore
+/phpstan.neon                    export-ignore
+/psalm.xml                       export-ignore
+/phpunit.xml.dist                export-ignore
+/.develop                        export-ignore
+
+# Configure diff output for .php and .phar files.
+*.php diff=php
+*.phar -diff
+
+# No show diffs
+/vendor-bin/**/composer.lock binary
+
+* text eol=lf

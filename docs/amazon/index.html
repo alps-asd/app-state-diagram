@@ -3,359 +3,546 @@
     <title>大規模マルチベンダーEコマースALPSプラットフォーム</title>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/3.0.1/github-markdown.min.css">
-    <style>
-        body {
-            background-color: white;
-        }
-        .markdown-body {
-          margin: 0;
-          max-width: none;
-          padding: 0 24px; 
-        }
-    
-        @media (max-width: 767px) {
-            .markdown-body {
-                padding: 0 16px;
-            }
-        }
-        
-        /* テーブルレイアウトの改善 */
-        .markdown-body table {
-            table-layout: fixed;
-            width: 100%;
-            max-width: 1200px;
-        }
-        .markdown-body table th:nth-child(1) {
-            width: 2%;
-        }
-        .markdown-body table th:nth-child(2) {
-            width: 15%;
-        }
-        .markdown-body table th:nth-child(3) {
-            width: 30%;
-        }
-        .markdown-body table th:nth-child(4) {
-            width: 25%;
-        }
-        .markdown-body table th:nth-child(5) {
-            width: 28%;
-        }
-        .markdown-body table td {
-            word-wrap: break-word;
-            overflow-wrap: break-word;
-        }
-        .doc-tooltip {
-            text-decoration: none;
-            border-bottom: 1px dotted #666;
-            cursor: pointer;
-            position: relative;
-            display: inline-block;
-        }
-        .doc-tooltip .tooltip-text {
-            visibility: hidden;
-            width: 300px;
-            background-color: #f8f8f8;
-            color: #333;
-            text-align: left;
-            border-radius: 3px;
-            padding: 8px 12px;
-            position: absolute;
-            z-index: 1;
-            bottom: 125%;
-            left: 50%;
-            margin-left: -150px;
-            opacity: 0;
-            transition: opacity 0.3s;
-            border: 1px solid #ddd;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-            font-size: inherit;
-            line-height: 1.5;
-            white-space: normal;
-            word-wrap: break-word;
-        }
-        .doc-tooltip:hover .tooltip-text {
-            visibility: visible;
-            opacity: 1;
-        }
-        
-        /* 互換性のためのスタイル */
-        .markdown-body abbr {
-            text-decoration: none;
-            border-bottom: 1px dotted #666;
-            cursor: help;
-            position: relative;
-        }
+    <style>body {
+    background-color: white;
+}
+.markdown-body {
+    margin: 0;
+    max-width: none;
+    padding: 0 24px;
+}
+
+@media (max-width: 767px) {
+    .markdown-body {
+        padding: 0 16px;
+    }
+}
+
+/* テーブルレイアウトの改善 */
+.markdown-body table {
+    table-layout: fixed;
+    width: 100%;
+    max-width: 1200px;
+}
+.markdown-body table th:nth-child(1) {
+    width: 2%;
+}
+.markdown-body table th:nth-child(2) {
+    width: 15%;
+}
+.markdown-body table th:nth-child(3) {
+    width: 30%;
+}
+.markdown-body table th:nth-child(4) {
+    width: 25%;
+}
+.markdown-body table th:nth-child(5) {
+    width: 28%;
+}
+.markdown-body table td {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+.doc-tooltip {
+    text-decoration: none;
+    border-bottom: 1px dotted #666;
+    cursor: pointer;
+    position: relative;
+    display: inline-block;
+}
+.doc-tooltip .tooltip-text {
+    visibility: hidden;
+    width: 300px;
+    background-color: #f8f8f8;
+    color: #333;
+    text-align: left;
+    border-radius: 3px;
+    padding: 8px 12px;
+    position: absolute;
+    z-index: 1;
+    bottom: 125%;
+    left: 50%;
+    margin-left: -150px;
+    opacity: 0;
+    transition: opacity 0.3s;
+    border: 1px solid #ddd;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    font-size: inherit;
+    line-height: 1.5;
+    white-space: normal;
+    word-wrap: break-word;
+}
+.doc-tooltip:hover .tooltip-text {
+    visibility: visible;
+    opacity: 1;
+}
+
+/* 互換性のためのスタイル */
+.markdown-body abbr {
+    text-decoration: none;
+    border-bottom: 1px dotted #666;
+    cursor: help;
+    position: relative;
+}
+
+/* 1. Profile折りたたみスタイル */
+.profile-section {
+    border: 1px solid #e1e4e8;
+    border-radius: 6px;
+    margin-top: 20px;
+}
+
+.profile-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    background-color: #f6f8fa;
+    border-bottom: 1px solid #e1e4e8;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.profile-header:hover {
+    background-color: #f1f3f4;
+}
+
+.profile-toggle {
+    display: inline-block;
+    margin-right: 8px;
+    transition: transform 0.2s ease;
+}
+
+.profile-toggle.expanded {
+    transform: rotate(90deg);
+}
+
+.profile-content {
+    display: none;
+    padding: 16px;
+}
+
+.profile-content.visible {
+    display: block;
+}
+
+/* 2. コピーボタンスタイル */
+.copy-button {
+    margin-left: 16px;
+    padding: 4px 12px;
+    border: 1px solid #d0d7de;
+    border-radius: 4px;
+    background: white;
+    color: #586069;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: normal;
+}
+
+.copy-button:hover {
+    background: #f3f4f6;
+    border-color: #0969da;
+}
+
+.copy-button.copied {
+    color: #2ea043;
+    border-color: #2ea043;
+}
+
+/* 3. グラフズームコントロールスタイル */
+.zoom-controls {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    display: flex;
+    flex-direction: row;
+    gap: 3px;
+    z-index: 100;
+}
+
+.zoom-button {
+    min-width: 26px;
+    height: 26px;
+    border: 1px solid #d0d7de;
+    border-radius: 3px;
+    background: white;
+    cursor: pointer;
+    font-size: 14px;
+    opacity: 0.8;
+    padding: 0 4px;
+}
+
+.zoom-button:hover {
+    opacity: 1;
+    background: #f6f8fa;
+}
+
+.zoom-button:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+/* 4. 検索ボックススタイル */
+.search-container {
+    margin: 20px 0;
+    position: relative;
+}
+
+.search-input {
+    width: 100%;
+    padding: 8px 12px 8px 36px;
+    border: 1px solid #d0d7de;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.search-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #586069;
+}
+
+.search-clear {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #586069;
+    display: none;
+}
+
+.search-clear.visible {
+    display: block;
+}
+
+/* テーブル行と検索セルのハイライト */
+table tr.highlight {
+    background-color: #fff5b1;
+}
+
+table tr.hidden {
+    display: none;
+}
+
+/* 検索結果のセルハイライト - !importantでスタイルを強制適用 */
+table td.highlight {
+    background-color: #fff5b1 !important; /* 黄色いハイライト */
+}
+
+/* レスポンシブ対応の改善 */
+@media (max-width: 768px) {
+    .zoom-controls {
+        left: 5px;
+        bottom: 5px;
+    }
+
+    .profile-header {
+        padding: 8px 12px;
+    }
+}
 #svg-container {
-            /* 既存のスタイルも維持 */
-            height: auto;
-            display: flex;
-            justify-content: flex-start; /* SVGが小さい場合に左寄せ */
-            align-items: center;
-            overflow-x: auto; /* SVGがコンテナ幅を超える場合に水平スクロールを表示 */
+    /* 既存のスタイルも維持 */
+    height: auto;
+    display: flex;
+    justify-content: flex-start; /* SVGが小さい場合に左寄せ */
+    align-items: flex-start; /* 上部から表示開始（中央揃えではなく） */
+    overflow-x: scroll; /* 常に水平スクロールバーを表示 */
+    overflow-y: hidden; /* 縦方向のスクロールは不要 */
 
-            width: 100vw;
-            max-width: none; /* 親要素(.markdown-body)のmax-width制限を解除 */
-            box-sizing: border-box; /* paddingやborderを幅計算に含める */
+    width: 100vw;
+    max-width: none; /* 親要素(.markdown-body)のmax-width制限を解除 */
+    box-sizing: border-box; /* paddingやborderを幅計算に含める */
 
-            /*
-             * .markdown-body の margin: 0 auto による中央揃えを打ち消し、
-             * 左端に合わせるためのネガティブマージン。
-             * calc(50% - 50vw) は、中央からビューポート幅の半分だけ左にずらす計算。
-             */
-            margin-left: calc(50% - 50vw);
-            margin-right: calc(50% - 50vw); /* 同様に右マージンも設定（厳密には不要な場合も）*/
+    /*
+     * .markdown-body の margin: 0 auto による中央揃えを打ち消し、
+     * 左端に合わせるためのネガティブマージン。
+     * calc(50% - 50vw) は、中央からビューポート幅の半分だけ左にずらす計算。
+     */
+    margin-left: calc(50% - 50vw);
+    margin-right: calc(50% - 50vw); /* 同様に右マージンも設定（厳密には不要な場合も）*/
 
-            padding-left: 24px;
-            padding-right: 24px;
-        }
-        #svg-container svg {
-            max-width: none;
-            display: block;
-            margin: 0;
-        }        
-        .asd-view-selector {
-            display: flex;
-            align-items: center;
-            margin-top: 40px;
-            margin-bottom: 10px;
-        }
-        .asd-view-selector label {
-            margin-right: 10px;
-        }
-        .asd-view-selector input[type="radio"] {
-            margin-right: 5px;
-        }
-        .selector-container {
-            display: flex;
-            flex-wrap: wrap; 
-            align-items: center;
-            gap: 8px 12px;
-            margin-bottom: 10px;
-        }
-        .selector-label {
-            min-width: 40px;
-            margin-right: 10px;
-        }
-        .selector-options {
-            display: flex;
-        }
-        .selector-option {
-            margin-right: 15px;
-        }
-        input[type="radio"],
-        input[type="checkbox"] {
-            margin-right: 2px;
-            vertical-align: middle;
-        }
-        
-        /* Sematic Descriptor List */
-        .descriptor-list {
-            max-width: 100%;
-            margin: 0;
-            padding: 20px;
-        }
-        .descriptor-list ul {
-            list-style-type: none;
-            padding: 0;
-            margin: 0;
-            width: 100%;
-        }
-        .descriptor-list li {
-            margin-bottom: 5px;
-            display: flex;
-            align-items: center;
-        }
-        .descriptor-list .indicator {
-            width: 16px;
-            height: 16px;
-            display: inline-block;
-            margin-right: 8px;
-            border: 1px solid #000;
-        }
-        .descriptor-list .semantic { 
-            background-color: #FFFFFF; 
-        }
-        .descriptor-list .safe { 
-            background-color: #00A86B;
-            background-image: linear-gradient(45deg, #008000 25%, transparent 25%, transparent 75%, #008000 75%, #008000), 
-                              linear-gradient(45deg, #008000 25%, transparent 25%, transparent 75%, #008000 75%, #008000);
-            background-size: 8px 8px;
-            background-position: 0 0, 4px 4px;
-        }
-        .descriptor-list .unsafe { 
-            background-color: #FF4136;
-            background-image: repeating-linear-gradient(45deg, #FF4136, #FF4136 4px, #FF725C 4px, #FF725C 8px);
-        }
-        
-        .descriptor-list .idempotent { 
-            background-color: #FFDC00;
-            background-image: radial-gradient(#FFB700 20%, transparent 20%),
-                              radial-gradient(#FFB700 20%, transparent 20%);
-            background-size: 8px 8px;
-            background-position: 0 0, 4px 4px;
-        }
-        .descriptor-list .item-name {
-            color: #000;
-            text-decoration: none;
-        }
-        
-        .legend {
-            background-color: #ffffff;
-            border-radius: 8px;
-            padding: 10px;
-            display: inline-flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-bottom: 20px;
-        }        
-        table .legend {
-            background-color: transparent;
-            padding: 0;
-            margin: 0;
-            display: inline-flex;
-            align-items: center;
-        }
-        .legend-item {
-            display: flex;
-            align-items: center;
-            font-size: 14px;
-            color: #333;
-        }
-        .legend-icon {
-            width: 16px;
-            height: 16px;
-            border: 1px solid #000;
-            margin-right: 8px;
-        }
-        .legend .semantic { background-color: #FFFFFF; }
-        .legend .safe { 
-            background-color: #00A86B;
-            background-image: linear-gradient(45deg, #008000 25%, transparent 25%, transparent 75%, #008000 75%, #008000), 
-                              linear-gradient(45deg, #008000 25%, transparent 25%, transparent 75%, #008000 75%, #008000);
-            background-size: 8px 8px;
-            background-position: 0 0, 4px 4px;
-        }
-        .legend .unsafe { 
-            background-color: #FF4136;
-            background-image: repeating-linear-gradient(45deg, #FF4136, #FF4136 4px, #FF725C 4px, #FF725C 8px);
-        }
-        .legend .idempotent { 
-            background-color: #FFDC00;
-            background-image: radial-gradient(#FFB700 20%, transparent 20%),
-                              radial-gradient(#FFB700 20%, transparent 20%);
-            background-size: 8px 8px;
-            background-position: 0 0, 4px 4px;
-        }
-        .type-indicator-small {
-            display: inline-block;
-            width: 10px;
-            height: 10px;
-            margin-right: 4px;
-            border: 1px solid #000;
-            vertical-align: middle;
-        }
-        
-        .type-indicator-small.semantic {
-            background-color: #FFFFFF;
-        }
-        
-        .type-indicator-small.safe {
-            background-color: #00A86B;
-            background-image: linear-gradient(45deg, #008000 25%, transparent 25%, transparent 75%, #008000 75%, #008000),
-                               linear-gradient(45deg, #008000 25%, transparent 25%, transparent 75%, #008000 75%, #008000);
-            background-size: 6px 6px;
-            background-position: 0 0, 3px 3px;
-        }
-        
-        .type-indicator-small.unsafe {
-            background-color: #FF4136;
-            background-image: repeating-linear-gradient(45deg, #FF4136, #FF4136 3px, #FF725C 3px, #FF725C 6px);
-        }
-        
-        .type-indicator-small.idempotent {
-            background-color: #FFDC00;
-            background-image: radial-gradient(#FFB700 20%, transparent 20%),
-                              radial-gradient(#FFB700 20%, transparent 20%);
-            background-size: 6px 6px;
-            background-position: 0 0, 3px 3px;
-        }
-    .meta-container {
-      display: flex;
-      flex-direction: column;
-      gap: 4px; 
-    }
-    
-    .meta-container br {
-        display: none;
-    }
-    
-    .meta-item {
-        display: flex;
-        align-items: center;
-        line-height: normal;
-    }
-    
-    .meta-label {
-        font-size: 0.85em;
-        color: #777;
-        width: 45px;
-        text-align: right;
-        padding-right: 10px;
-        flex-shrink: 0;
-    }
-    
-    .meta-values {
-      display: inline-flex;
-      flex-wrap: wrap;
-    }
-    
-    .meta-tag {
-        display: inline-block;
-        padding: 3px 10px;
-        border-radius: 4px;
-        font-size: 0.8em;
-        background-color: #f7f7f7;
-        border: 1px solid #e0e0e0;
-        color: #3b71ca;
-        margin: 0 8px 4px 0;
-    }
+    padding-left: 24px;
+    padding-right: 0px;
+    position: relative; /* 子要素の絶対位置指定のための基準点 */
+}
+#asd-graph-id, #asd-graph-name {
+    position: relative;
+    flex-shrink: 0;
+    display: block;
+}
+#svg-container svg {
+    max-width: none;
+    display: block;
+    margin: 0;
+    transform-origin: bottom left; /* 変形の基準点を左上に設定 */
+    transition: transform 0.2s ease; /* ズーム変更時のアニメーション */
+}
+.asd-view-selector {
+    display: flex;
+    align-items: center;
+    margin-top: 40px;
+    margin-bottom: 10px;
+}
+.asd-view-selector label {
+    margin-right: 10px;
+}
+.asd-view-selector input[type="radio"] {
+    margin-right: 5px;
+}
+.selector-container {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 12px;
+    margin-bottom: 10px;
+}
+.selector-label {
+    min-width: 40px;
+    margin-right: 10px;
+}
+.selector-options {
+    display: flex;
+}
+.selector-option {
+    margin-right: 15px;
+}
+input[type="radio"],
+input[type="checkbox"] {
+    margin-right: 2px;
+    vertical-align: middle;
+}
 
-    .def-tag { 
-      background-color: #EAF5FF; /* 薄いブルー */ 
-      border-color: #B8DFFF; /* やや濃いめ */ 
-      color: #0366D6; /* リンク色っぽいブルー */ 
-    } 
-    
-    .rt-tag { 
-      background-color: #FFF5E6; /* 薄いオレンジ */ 
-      border-color: #FFE1B3; 
-      color: #D97506; /* 濃いオレンジ */ 
-    } 
-    
-    .tag-tag { 
-      background-color: #E6FFED; /* 薄いグリーン */ 
-      border-color: #C6EFC7; 
-      color: #22863A; /* 濃いグリーン */ 
-    } 
-    
-    .doc-tag { 
-      background-color: #FFFBEA;  /* やや控えめなクリーム色 */
-      border-color: #FFE8A1;      /* 柔らかい縁取りの黄色 */
-      color: #8A6D1B;             /* 落ち着いた茶系 */
-      border: 1px solid #FFE8A1;
-      padding: 3px 8px;
-      font-size: 0.8em;
-      border-radius: 4px;
-    }
-    .doc-tag.clickable {
-      cursor: pointer;
-    }
-    /* テーブルセル内でのメタ情報の折り返し */
-    .markdown-body table td:nth-child(5) {
-        padding-left: 4px !important;
-        vertical-align: middle;
-    }
-    </style>
+/* Sematic Descriptor List */
+.descriptor-list {
+    max-width: 100%;
+    margin: 0;
+    padding: 20px;
+}
+.descriptor-list ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+}
+.descriptor-list li {
+    margin-bottom: 5px;
+    display: flex;
+    align-items: center;
+}
+.descriptor-list .indicator {
+    width: 16px;
+    height: 16px;
+    display: inline-block;
+    margin-right: 8px;
+    border: 1px solid #000;
+}
+.descriptor-list .semantic {
+    background-color: #FFFFFF;
+}
+.descriptor-list .safe {
+    background-color: #00A86B;
+    background-image: linear-gradient(45deg, #008000 25%, transparent 25%, transparent 75%, #008000 75%, #008000),
+    linear-gradient(45deg, #008000 25%, transparent 25%, transparent 75%, #008000 75%, #008000);
+    background-size: 8px 8px;
+    background-position: 0 0, 4px 4px;
+}
+.descriptor-list .unsafe {
+    background-color: #FF4136;
+    background-image: repeating-linear-gradient(45deg, #FF4136, #FF4136 4px, #FF725C 4px, #FF725C 8px);
+}
+
+.descriptor-list .idempotent {
+    background-color: #FFDC00;
+    background-image: radial-gradient(#FFB700 20%, transparent 20%),
+    radial-gradient(#FFB700 20%, transparent 20%);
+    background-size: 8px 8px;
+    background-position: 0 0, 4px 4px;
+}
+.descriptor-list .item-name {
+    color: #000;
+    text-decoration: none;
+}
+
+.legend {
+    background-color: #ffffff;
+    border-radius: 8px;
+    padding: 10px;
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+table .legend {
+    background-color: transparent;
+    padding: 0;
+    margin: 0;
+    display: inline-flex;
+    align-items: center;
+}
+.legend-item {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    color: #333;
+}
+.legend-icon {
+    width: 16px;
+    height: 16px;
+    border: 1px solid #000;
+    margin-right: 8px;
+}
+.legend .semantic { background-color: #FFFFFF; }
+.legend .safe {
+    background-color: #00A86B;
+    background-image: linear-gradient(45deg, #008000 25%, transparent 25%, transparent 75%, #008000 75%, #008000),
+    linear-gradient(45deg, #008000 25%, transparent 25%, transparent 75%, #008000 75%, #008000);
+    background-size: 8px 8px;
+    background-position: 0 0, 4px 4px;
+}
+.legend .unsafe {
+    background-color: #FF4136;
+    background-image: repeating-linear-gradient(45deg, #FF4136, #FF4136 4px, #FF725C 4px, #FF725C 8px);
+}
+.legend .idempotent {
+    background-color: #FFDC00;
+    background-image: radial-gradient(#FFB700 20%, transparent 20%),
+    radial-gradient(#FFB700 20%, transparent 20%);
+    background-size: 8px 8px;
+    background-position: 0 0, 4px 4px;
+}
+.type-indicator-small {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    margin-right: 4px;
+    border: 1px solid #000;
+    vertical-align: middle;
+}
+
+.type-indicator-small.semantic {
+    background-color: #FFFFFF;
+}
+
+.type-indicator-small.safe {
+    background-color: #00A86B;
+    background-image: linear-gradient(45deg, #008000 25%, transparent 25%, transparent 75%, #008000 75%, #008000),
+    linear-gradient(45deg, #008000 25%, transparent 25%, transparent 75%, #008000 75%, #008000);
+    background-size: 6px 6px;
+    background-position: 0 0, 3px 3px;
+}
+
+.type-indicator-small.unsafe {
+    background-color: #FF4136;
+    background-image: repeating-linear-gradient(45deg, #FF4136, #FF4136 3px, #FF725C 3px, #FF725C 6px);
+}
+
+.type-indicator-small.idempotent {
+    background-color: #FFDC00;
+    background-image: radial-gradient(#FFB700 20%, transparent 20%),
+    radial-gradient(#FFB700 20%, transparent 20%);
+    background-size: 6px 6px;
+    background-position: 0 0, 3px 3px;
+}
+.meta-container {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.meta-container br {
+    display: none;
+}
+
+.meta-item {
+    display: flex;
+    align-items: center;
+    line-height: normal;
+}
+
+.meta-label {
+    font-size: 0.85em;
+    color: #777;
+    width: 45px;
+    text-align: right;
+    padding-right: 10px;
+    flex-shrink: 0;
+}
+
+.meta-values {
+    display: inline-flex;
+    flex-wrap: wrap;
+}
+
+.meta-tag {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 4px;
+    font-size: 0.8em;
+    background-color: #f7f7f7;
+    border: 1px solid #e0e0e0;
+    color: #3b71ca;
+    margin: 0 8px 4px 0;
+}
+
+.def-tag {
+    background-color: #EAF5FF; /* 薄いブルー */
+    border-color: #B8DFFF; /* やや濃いめ */
+    color: #0366D6; /* リンク色っぽいブルー */
+}
+
+.rt-tag {
+    background-color: #FFF5E6; /* 薄いオレンジ */
+    border-color: #FFE1B3;
+    color: #D97506; /* 濃いオレンジ */
+}
+
+.tag-tag {
+    background-color: #E6FFED; /* 薄いグリーン */
+    border-color: #C6EFC7;
+    color: #22863A; /* 濃いグリーン */
+}
+
+.doc-tag {
+    background-color: #FFFBEA;  /* やや控えめなクリーム色 */
+    border-color: #FFE8A1;      /* 柔らかい縁取りの黄色 */
+    color: #8A6D1B;             /* 落ち着いた茶系 */
+    border: 1px solid #FFE8A1;
+    padding: 3px 8px;
+    font-size: 0.8em;
+    border-radius: 4px;
+}
+.doc-tag.clickable {
+    cursor: pointer;
+}
+/* テーブルセル内でのメタ情報の折り返し */
+.markdown-body table td:nth-child(5) {
+    padding-left: 4px !important;
+    vertical-align: middle;
+}
+.zoom-controls, .global-zoom-controls {
+    display: inline-block;
+    vertical-align: middle;
+    position: static !important; /* absoluteを上書き */
+}
+.zoom-button {
+    margin: 0 2px;
+}
+#svg-container svg {
+    transform-origin: bottom left;
+}
+#zoom-controls-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+.selector-label {
+    min-width: 40px;
+    margin-right: 10px;
+}
+</style>
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="https://unpkg.com/@hpcc-js/wasm/dist/graphviz.umd.js" type="javascript/worker"></script>
     <script src="https://unpkg.com/d3-graphviz@5.6.0/build/d3-graphviz.min.js"></script>
@@ -414,7 +601,6 @@ const applySmoothScrollToLinks = (links) => {
 const renderGraph = (graphId, dotString) => {
     d3.select(graphId).graphviz()
         .zoom(false)
-        .fit(true)
         .renderDot(dotString).on('end', () => {
             applySmoothScrollToLinks(document.querySelectorAll('svg a[*|href^="#"]'));
     });
@@ -520,6 +706,162 @@ const setupDocClick = () => {
     });
 };
 
+// Profile折りたたみ機能
+function setupProfileCollapse() {
+    const profileHeader = document.querySelector('.profile-header');
+    const profileContent = document.querySelector('.profile-content');
+    const profileToggle = document.querySelector('.profile-toggle');
+
+    if (!profileHeader || !profileContent || !profileToggle) return;
+
+    // 初期状態は折りたたんだ状態
+    profileContent.classList.remove('visible');
+
+    profileHeader.addEventListener('click', (e) => {
+        // コピーボタンがクリックされた場合は折りたたみ処理をスキップ
+        if (e.target.classList.contains('copy-button')) return;
+
+        profileContent.classList.toggle('visible');
+        profileToggle.classList.toggle('expanded');
+    });
+}
+
+// コピー機能
+function setupCopyButton() {
+    const copyButton = document.querySelector('.copy-button');
+    if (!copyButton) return;
+
+    copyButton.addEventListener('click', async (e) => {
+        e.stopPropagation(); // 親要素のクリックイベントを防ぐ
+
+        const profileContent = document.querySelector('.profile-content pre code');
+        if (!profileContent) return;
+
+        try {
+            await navigator.clipboard.writeText(profileContent.textContent);
+            copyButton.textContent = 'Copied!';
+            copyButton.classList.add('copied');
+            setTimeout(() => {
+                copyButton.textContent = 'Copy';
+                copyButton.classList.remove('copied');
+            }, 2000);
+        } catch (err) {
+            console.error('Failed to copy: ', err);
+        }
+    });
+}
+
+// 検索機能
+function setupSearch() {
+    // 検索ボックスを追加
+    const semanticHeader = document.querySelector('h2:nth-of-type(1)');
+    if (!semanticHeader) return;
+
+    const searchContainer = document.createElement('div');
+    searchContainer.className = 'search-container';
+    searchContainer.innerHTML = `
+            <svg class="search-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M7.333 12.667A5.333 5.333 0 1 0 7.333 2a5.333 5.333 0 0 0 0 10.667zm5.334 1L10 11" 
+                      stroke="currentColor" stroke-width="1.33" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <input type="text" class="search-input" placeholder="Search semantic descriptors...">
+            <span class="search-clear">×</span>
+        `;
+
+    // h2の下にテーブルがあるので、その間に挿入
+    const table = semanticHeader.nextElementSibling;
+    if (table && table.tagName === 'TABLE') {
+        semanticHeader.after(searchContainer);
+    }
+
+    const searchInput = searchContainer.querySelector('.search-input');
+    const searchClear = searchContainer.querySelector('.search-clear');
+    const tableRows = table.querySelectorAll('tbody tr');
+
+    searchInput.addEventListener('input', (e) => {
+        const query = e.target.value.toLowerCase();
+        searchClear.classList.toggle('visible', query.length > 0);
+
+        tableRows.forEach(row => {
+            // すべての行のテキストを検索対象とする
+            const text = row.textContent.toLowerCase();
+            const isVisible = query === '' || text.includes(query);
+            row.classList.toggle('hidden', !isVisible);
+
+            // マッチしたセルのみにhighlightクラスを追加
+            if (query !== '' && isVisible) {
+                // すべてのセルを確認
+                const cells = row.querySelectorAll('td');
+                cells.forEach(cell => {
+                    const cellText = cell.textContent.toLowerCase();
+                    if (cellText.includes(query)) {
+                        cell.classList.add('highlight');
+                    } else {
+                        cell.classList.remove('highlight');
+                    }
+                });
+            } else {
+                // ハイライトをクリア
+                const cells = row.querySelectorAll('td');
+                cells.forEach(cell => {
+                    cell.classList.remove('highlight');
+                });
+            }
+        });
+    });
+
+    searchClear.addEventListener('click', () => {
+        searchInput.value = '';
+        searchClear.classList.remove('visible');
+        tableRows.forEach(row => {
+            row.classList.remove('hidden');
+
+            // すべてのセルからハイライトを削除
+            const cells = row.querySelectorAll('td');
+            cells.forEach(cell => {
+                cell.classList.remove('highlight');
+            });
+        });
+    });
+}
+
+// Profile折りたたみ機能のためのDOM構造を作成
+function enhanceProfileSection() {
+    const profileHeader = document.querySelector('h2:last-of-type');
+    const profilePre = profileHeader.nextElementSibling;
+
+    if (profileHeader && profilePre && profilePre.tagName === 'PRE') {
+        // プロファイルセクションの構造を変更
+        const section = document.createElement('div');
+        section.className = 'profile-section';
+
+        const header = document.createElement('div');
+        header.className = 'profile-header';
+        header.innerHTML = `
+                <div>
+                    <span class="profile-toggle">▶</span>
+                    <span>Profile</span>
+                </div>
+                <button class="copy-button">Copy</button>
+            `;
+
+        const content = document.createElement('div');
+        content.className = 'profile-content';
+        content.appendChild(profilePre.cloneNode(true));
+
+        section.appendChild(header);
+        section.appendChild(content);
+
+        // 元のh2とpreを置き換える
+        profileHeader.replaceWith(section);
+        profilePre.remove();
+
+        // 折りたたみとコピー機能をセットアップ
+        setupProfileCollapse();
+        setupCopyButton();
+    }
+}
+
 </script></head>
 <body>
     <div class="markdown-body">
@@ -557,12 +899,131 @@ const setupDocClick = () => {
             setupModeSwitch('asd-show-name', 'asd-graph-name', 'asd-graph-id');
             applySmoothScrollToLinks(document.querySelectorAll('a[href^="#"]'));
             setupTagClick();
-            setupDocClick(); 
+            setupDocClick();
             
+
+            // 新機能の初期化
+            enhanceProfileSection();
+            setupSearch();
+
+            // SVGが確実に読み込まれた後にズーム機能を設定（重要）
+            setTimeout(() => {
+                setupGraphZoom();
+            }, 1000);
         } catch (error) {
                console.error("Error in main process:", error);
         }});
+        
+    // グラフズーム機能のセットアップ（+/-ボタンのみ）
+    let currentScale = 1;
+    const minScale = 0.1;
+    const maxScale = 3;
+
+    function setupGraphZoom() {
+        console.log("Setting up zoom controls...");
+        const zoomControlsContainer = document.querySelector('#zoom-controls-container');
+        if (!zoomControlsContainer) {
+            console.log('Zoom controls container not found');
+            return;
+        }
+
+        // グローバルなズームコントロールを追加
+        const zoomControls = document.createElement('div');
+        zoomControls.className = 'zoom-controls global-zoom-controls';
+        zoomControls.innerHTML = `
+            <button class="zoom-button" data-zoom="in">+</button>
+            <button class="zoom-button" data-zoom="out">−</button>
+            <button class="zoom-button" data-zoom="reset">1:1</button>
+        `;
+        zoomControlsContainer.appendChild(zoomControls);
+        
+        // SVG要素の監視と初期設定
+        setupSvgObservers();
+        
+        // ズームイン
+        zoomControls.querySelector('[data-zoom="in"]').addEventListener('click', () => {
+            currentScale = Math.min(currentScale * 1.2, maxScale);
+            updateAllSvgZoom(zoomControls);
+        });
+    
+        // ズームアウト
+        zoomControls.querySelector('[data-zoom="out"]').addEventListener('click', () => {
+            currentScale = Math.max(currentScale / 1.2, minScale);
+            updateAllSvgZoom(zoomControls);
+        });
+    
+        // リセット
+        zoomControls.querySelector('[data-zoom="reset"]').addEventListener('click', () => {
+            currentScale = 1;
+            updateAllSvgZoom(zoomControls);
+        });
+    }
+    
+    function setupSvgObservers() {
+        const containers = ['#asd-graph-id', '#asd-graph-name'];
+        
+        containers.forEach(containerId => {
+            const container = document.querySelector(containerId);
+            if (!container) {
+                console.log(`Container ${containerId} not found`);
+                return;
+            }
+            
+            // SVGを探す
+            let svg = container.querySelector('svg');
+            
+            // SVGが見つからない場合は監視して再試行
+            if (!svg) {
+                console.log(`SVG not found in ${containerId}, setting up observer`);
+                // SVG要素が追加されるのを監視
+                const observer = new MutationObserver((mutations, obs) => {
+                    mutations.forEach(mutation => {
+                        if (mutation.addedNodes.length) {
+                            svg = container.querySelector('svg');
+                            if (svg) {
+                                console.log(`SVG found in ${containerId} after waiting`);
+                                obs.disconnect(); // 監視を停止
+                                // 初期ズームを適用
+                                svg.style.transform = `scale(${currentScale})`;
+                            }
+                        }
+                    });
+                });
+                
+                observer.observe(container, { childList: true, subtree: true });
+            } else {
+                console.log(`SVG found immediately ${containerId}`);
+                // 初期ズームを適用
+                svg.style.transform = `scale(${currentScale})`;
+            }
+        });
+    }
+    
+    function updateAllSvgZoom(zoomControls) {
+        // 両方のコンテナのSVGを取得して同じスケールを適用
+        const containers = ['#asd-graph-id', '#asd-graph-name'];
+        
+        containers.forEach(containerId => {
+            const container = document.querySelector(containerId);
+            if (!container) return;
+            
+            const svg = container.querySelector('svg');
+            if (svg) {
+                // transform-originはCSSで設定済み（top left）
+                svg.style.transform = `scale(${currentScale})`;
+            }
+        });
+        
+        // ボタン状態の更新
+        const zoomIn = zoomControls.querySelector('[data-zoom="in"]');
+        const zoomOut = zoomControls.querySelector('[data-zoom="out"]');
+        
+        zoomIn.disabled = currentScale >= maxScale;
+        zoomOut.disabled = currentScale <= minScale;
+    }
 </script>
+
+<div id="zoom-controls-container" style="margin-bottom: 10px;"></div>
 
 <div class="asd-view-selector">
     <span class="selector-label">View:</span>
