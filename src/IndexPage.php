@@ -36,8 +36,9 @@ final class IndexPage
     public function __construct(Config $config)
     {
         $index = $this->getElements($config);
-        $indexJsFile = dirname(__DIR__, 1) . '/docs/assets/js/main.js1';
-        $indexJs = file_exists($indexJsFile) && file_exists(__DIR__ . '/.develop') ?
+        $indexJsFile = dirname(__DIR__, 1) . '/docs/assets/js/main.js';
+        $isDevelop = file_exists($indexJsFile) && file_exists(dirname(__DIR__) . '/.develop');
+        $indexJs = $isDevelop ?
             sprintf('<script>%s</script>', (string) file_get_contents($indexJsFile)) :
             '<script src="https://www.app-state-diagram.com/app-state-diagram/assets/js/main.js"></script>'; // @codeCoverageIgnore
         $header = <<<EOT
