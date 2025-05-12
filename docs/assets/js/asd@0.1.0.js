@@ -276,3 +276,41 @@ function setupSearch() {
         });
     });
 }
+
+// Profile折りたたみ機能のためのDOM構造を作成
+function enhanceProfileSection() {
+    const profileHeader = document.querySelector('h2:last-of-type');
+    const profilePre = profileHeader.nextElementSibling;
+
+    if (profileHeader && profilePre && profilePre.tagName === 'PRE') {
+        // プロファイルセクションの構造を変更
+        const section = document.createElement('div');
+        section.className = 'profile-section';
+
+        const header = document.createElement('div');
+        header.className = 'profile-header';
+        header.innerHTML = `
+                <div>
+                    <span class="profile-toggle">▶</span>
+                    <span>Profile</span>
+                </div>
+                <button class="copy-button">Copy</button>
+            `;
+
+        const content = document.createElement('div');
+        content.className = 'profile-content';
+        content.appendChild(profilePre.cloneNode(true));
+
+        section.appendChild(header);
+        section.appendChild(content);
+
+        // 元のh2とpreを置き換える
+        profileHeader.replaceWith(section);
+        profilePre.remove();
+
+        // 折りたたみとコピー機能をセットアップ
+        setupProfileCollapse();
+        setupCopyButton();
+    }
+}
+
