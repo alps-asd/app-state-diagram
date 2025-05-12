@@ -255,7 +255,7 @@ final class MdToHtml
             display: flex;
             justify-content: flex-start; /* SVGが小さい場合に左寄せ */
             align-items: flex-start; /* 上部から表示開始（中央揃えではなく） */
-            overflow-x: auto; /* SVGがコンテナ幅を超える場合に水平スクロールを表示 */
+            overflow-x: scroll; /* 常に水平スクロールバーを表示 */
             overflow-y: hidden; /* 縦方向のスクロールは不要 */
 
             width: 100vw;
@@ -276,15 +276,14 @@ final class MdToHtml
         }
         #asd-graph-id, #asd-graph-name {
             position: relative;
-            width: 100%;
-            height: 100%;
-            overflow: auto; /* スクロール可能にする */
+            flex-shrink: 0;
+            display: block;
         }
         #svg-container svg {
             max-width: none;
             display: block;
             margin: 0;
-            transform-origin: top left; /* 変形の基準点を左上に設定 */
+            transform-origin: bottom left; /* 変形の基準点を左上に設定 */
             transition: transform 0.2s ease; /* ズーム変更時のアニメーション */
         }        
         .asd-view-selector {
