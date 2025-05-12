@@ -21,7 +21,7 @@ final class MdToHtml
         $inclineCss = dirname(__DIR__) . '/docs/assets/css/main.css';
         $style = file_exists($inclineCss)
             ? sprintf('<style>%s</style>', (string) file_get_contents($inclineCss))
-            : '<link rel="stylesheet" href="https://www.app-state-diagram.com/app-state-diagram/assets/css/main.css">';
+            : '<link rel="stylesheet" href="https://www.app-state-diagram.com/app-state-diagram/assets/css/main.css">'; // @codeCoverageIgnore
         $htmlDiv = MarkdownExtra::defaultTransform($markdown);
 
         return /** @lang HTML */<<<EOT
