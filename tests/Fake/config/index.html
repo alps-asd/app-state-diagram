@@ -946,6 +946,32 @@ function enhanceProfileSection() {
             currentScale = 1;
             updateAllSvgZoom(zoomControls);
         });
+
+        // Keyboard accessibility
+        const zoomInButton = zoomControls.querySelector('[data-zoom="in"]');
+        const zoomOutButton = zoomControls.querySelector('[data-zoom="out"]');
+        const zoomResetButton = zoomControls.querySelector('[data-zoom="reset"]');
+
+        zoomInButton.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                zoomInButton.click();
+            }
+        });
+
+        zoomOutButton.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                zoomOutButton.click();
+            }
+        });
+
+        zoomResetButton.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                zoomResetButton.click();
+            }
+        });
     }
     
     function setupSvgObservers() {
