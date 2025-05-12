@@ -271,7 +271,7 @@ final class MdToHtml
             margin-right: calc(50% - 50vw); /* 同様に右マージンも設定（厳密には不要な場合も）*/
 
             padding-left: 24px;
-            padding-right: 24px;
+            padding-right: 0px;
             position: relative; /* 子要素の絶対位置指定のための基準点 */
         }
         #asd-graph-id, #asd-graph-name {
