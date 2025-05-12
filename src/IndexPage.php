@@ -49,14 +49,25 @@ EOT;
     <div id="asd-graph-id" style="text-align: center; "></div>
     <div id="asd-graph-name" style="text-align: center; display: none;"></div>
     <style>
-        .global-zoom-controls {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            z-index: 1000;
-            border-radius: 4px;
-            padding: 5px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        .zoom-controls, .global-zoom-controls {
+            display: inline-block;
+            vertical-align: middle;
+            position: static !important; /* absoluteを上書き */
+        }
+        .zoom-button {
+            margin: 0 2px;
+        }
+        #svg-container svg {
+            transform-origin: bottom left;
+        }
+        #zoom-controls-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .selector-label {
+            min-width: 40px;
+            margin-right: 10px;
         }
     </style>
 </div>
@@ -250,12 +261,12 @@ EOT;
 
     function setupGraphZoom() {
         console.log("Setting up zoom controls...");
-        const svgContainer = document.querySelector('#svg-container');
-        if (!svgContainer) {
-            console.log('SVG container not found');
+        const zoomControlsContainer = document.querySelector('#zoom-controls-container');
+        if (!zoomControlsContainer) {
+            console.log('Zoom controls container not found');
             return;
         }
-        
+
         // グローバルなズームコントロールを追加
         const zoomControls = document.createElement('div');
         zoomControls.className = 'zoom-controls global-zoom-controls';
@@ -264,8 +275,7 @@ EOT;
             <button class="zoom-button" data-zoom="out">−</button>
             <button class="zoom-button" data-zoom="reset">1:1</button>
         `;
-        svgContainer.style.position = 'relative';
-        svgContainer.appendChild(zoomControls);
+        zoomControlsContainer.appendChild(zoomControls);
         
         // SVG要素の監視と初期設定
         setupSvgObservers();
@@ -352,6 +362,7 @@ EOT;
         zoomOut.disabled = currentScale <= minScale;
     }
 </script>
+<div id="zoom-controls-container" style="margin-bottom: 10px;"></div>
 <div class="asd-view-selector">
     <span class="selector-label">View:</span>
     <input type="radio" id="asd-show-id" checked name="asd-view-selector">
