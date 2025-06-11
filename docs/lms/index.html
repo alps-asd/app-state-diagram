@@ -517,34 +517,29 @@ table .legend {
 .doc-tag.clickable {
     cursor: pointer;
 }
+
 /* テーブルセル内でのメタ情報の折り返し */
 .markdown-body table td:nth-child(5) {
     padding-left: 4px !important;
     vertical-align: middle;
 }
+
 .zoom-controls, .global-zoom-controls {
     display: inline-block;
     vertical-align: middle;
     position: static !important; /* absoluteを上書き */
 }
+
 .zoom-button {
     margin: 0 2px;
 }
+
 #svg-container svg {
     transform-origin: bottom left;
 }
-#zoom-controls-container {
-    display: flex;
-    align-items: center;
-    margin-bottom: 10px;
-}
-.selector-label {
-    min-width: 40px;
-    margin-right: 10px;
-}
 </style>
     <script src="https://d3js.org/d3.v7.min.js"></script>
-    <script src="https://unpkg.com/@hpcc-js/wasm/dist/graphviz.umd.js" type="javascript/worker"></script>
+    <script src="https://unpkg.com/@hpcc-js/wasm@2.21.0/dist/graphviz.umd.js" type="javascript/worker"></script>
     <script src="https://unpkg.com/d3-graphviz@5.6.0/build/d3-graphviz.min.js"></script>
 <script>// Applies smooth scroll to links
 const ease = (t, b, c, d) => {
@@ -862,7 +857,8 @@ function enhanceProfileSection() {
     }
 }
 
-</script></head>
+</script>
+</head>
 <body>
     <div class="markdown-body">
         <h1>Learning Management System (LMS)</h1>
@@ -894,11 +890,7 @@ function enhanceProfileSection() {
             // 新機能の初期化
             enhanceProfileSection();
             setupSearch();
-
-            // SVGが確実に読み込まれた後にズーム機能を設定（重要）
-            setTimeout(() => {
-                setupGraphZoom();
-            }, 1000);
+            setupGraphZoom();
         } catch (error) {
                console.error("Error in main process:", error);
         }});
@@ -970,7 +962,7 @@ function enhanceProfileSection() {
                         if (mutation.addedNodes.length) {
                             svg = container.querySelector('svg');
                             if (svg) {
-                                console.log(`SVG found in ${containerId} after waiting`);
+                                console.log('SVG found in ' + containerId + ' after waiting');
                                 obs.disconnect(); // 監視を停止
                                 // 初期ズームを適用
                                 svg.style.transform = `scale(${currentScale})`;
