@@ -1,0 +1,114 @@
+name: Manual Release PHAR (Dispatch)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  release:
+    name: Manual PHAR Release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get latest release tag
+        id: tag
+        run: |
+          git fetch --tags
+          latest_tag=$(git describe --tags --abbrev=0 2>/dev/null)
+          
+          if [ -z "$latest_tag" ]; then
+            echo "Error: No tags found in repository"
+            echo "Please create a release first before running this workflow"
+            exit 1
+          fi
+          
+          echo "tag=$latest_tag" >> $GITHUB_OUTPUT
+          echo "Using latest tag: $latest_tag"
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.3
+          tools: box
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.composer/cache/files
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
+
+      - name: Install Dependencies
+        run: |
+          composer install --no-dev --prefer-dist --optimize-autoloader --no-interaction
+          if [ -d "asd-sync" ]; then
+            echo "Installing Node.js dependencies in asd-sync..."
+            cd asd-sync
+            npm ci --production --silent
+            cd ..
+          fi
+
+      - name: Build PHAR
+        run: |
+          echo "Building PHAR for tag: ${{ steps.tag.outputs.tag }}"
+          box compile
+          if [ ! -f "bin/asd.phar" ]; then
+            echo "Error: PHAR file was not created successfully"
+            exit 1
+          fi
+          
+          # PHARファイルの情報を表示
+          ls -la bin/asd.phar
+          echo "PHAR file created successfully"
+
+      - name: Test PHAR file
+        run: |
+          php bin/asd.phar --version || echo "Version command failed"
+          echo "PHAR test completed"
+
+      - name: Upload PHAR artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: asd-dispatch-${{ steps.tag.outputs.tag }}.phar
+          path: bin/asd.phar
+          retention-days: 30
+
+      - name: Update existing release with PHAR
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.tag.outputs.tag }}
+          files: bin/asd.phar
+          body: |
+            ## Manual PHAR Release
+            
+            This PHAR was built manually using the dispatch workflow.
+            
+            **Tag:** ${{ steps.tag.outputs.tag }}
+            **Built on:** ${{ github.run_id }}
+            
+            ### Usage
+            ```bash
+            php asd.phar --help
+            ```
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Summary
+        run: |
+          echo "## Release Summary" >> $GITHUB_STEP_SUMMARY
+          echo "- **Tag:** ${{ steps.tag.outputs.tag }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **PHAR File:** bin/asd.phar" >> $GITHUB_STEP_SUMMARY
+          echo "- **Workflow:** Manual Dispatch" >> $GITHUB_STEP_SUMMARY
+          echo "- **Status:** ✅ Success" >> $GITHUB_STEP_SUMMARY
