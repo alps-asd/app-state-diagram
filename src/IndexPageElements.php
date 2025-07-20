@@ -29,7 +29,7 @@ final class IndexPageElements
 </div>
 ';
 
-    /** @SuppressWarnings(PHPMD.ExcessiveParameterList) */
+    /** @SuppressWarnings("PHPMD.ExcessiveParameterList") */
     public function __construct(
         public readonly Profile $profile,
         public readonly string $dotId,

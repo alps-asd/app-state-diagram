@@ -36,7 +36,7 @@ final class Profile extends AbstractProfile
     /**
      * @throws ParsingException
      *
-     * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
+     * @SuppressWarnings("PHPMD.BooleanArgumentFlag")
      */
     public function __construct(
         public string $alpsFile,
