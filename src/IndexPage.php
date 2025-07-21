@@ -38,14 +38,15 @@ final class IndexPage
         $header = $this->generateHtmlHeader();
         $legend = $config->outputMode === DumpDocs::MODE_MARKDOWN ? '' : IndexPageElements::LEGEND;
         $tags = $config->outputMode === DumpDocs::MODE_MARKDOWN ? '' : $index->tags;
-        $asd = $config->outputMode === DumpDocs::MODE_MARKDOWN ? 
-            $this->getMarkdownImage($config->profile) : 
+        $asd = $config->outputMode === DumpDocs::MODE_MARKDOWN ?
+            $this->getMarkdownImage($config->profile) :
             $this->generateSvgContainer($index->setUpTagEvents);
 
         $this->file = sprintf('%s/index.%s', dirname($index->profile->alpsFile), $index->ext);
-        
+
         if ($index->mode === DumpDocs::MODE_MARKDOWN) {
             $this->content = $this->generateMarkdownContent($index, $asd, $tags, $legend);
+
             return;
         }
 
@@ -369,17 +370,17 @@ EOT;
         $md = $this->generateMarkdownContent($index, $asd, $tags, $legend);
         $legendTypeMd = $this->getLegendTypeMd($md);
         assert($legendTypeMd !== '', 'Regexp failed');
-        
+
         $html = (new MdToHtml())($index->htmlTitle, $legendTypeMd);
         $escapedDotId = str_replace("\n", '', $index->dotId);
         $escapedDotName = str_replace("\n", '', $index->dotName);
-        
+
         $plusHeaderHtml = str_replace(
             '</head>',
             $header . '</head>',
             $html
         );
-        
+
         return str_replace(['{{ dotId }}', '{{ dotName }}', '{{ dotName }}'], [$escapedDotId, $escapedDotName], $plusHeaderHtml);
     }
 }
