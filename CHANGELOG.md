@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.13.4] - 2025-08-05
+
+### Fixed
+- Fixed `asd -w` watch mode for Homebrew installation ([#214](https://github.com/alps-asd/app-state-diagram/pull/214))
+- Resolved "No such file or directory" error when using watch mode in PHAR installations
+- Added fallback to version-independent `/opt/homebrew/opt/asd/libexec/asd-sync` path
+- Improved error messages with expected path information for better debugging
+
 ## [0.13.3] - 2025-08-05
 
 ### Changed
