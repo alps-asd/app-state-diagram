@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Koriym\AppStateDiagram;
 
-/** @SuppressWarnings(PHPMD.UnusedLocalVariable) */
+/** @SuppressWarnings("PHPMD.UnusedLocalVariable") */
 final class NullDescriptor extends AbstractDescriptor
 {
     public function __construct()

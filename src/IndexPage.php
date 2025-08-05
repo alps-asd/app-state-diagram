@@ -32,209 +32,25 @@ final class IndexPage
     /** @var string */
     public $file;
 
-    /** @SuppressWarnings(PHPMD.ExcessiveMethodLength)  */
     public function __construct(Config $config)
     {
         $index = $this->getElements($config);
-        $indexJsFile = dirname(__DIR__, 1) . '/docs/assets/js/main.js';
-        $isDevelop = file_exists($indexJsFile) && file_exists(dirname(__DIR__) . '/.develop');
-        $indexJs = $isDevelop ?
-            sprintf('<script>%s</script>', (string) file_get_contents($indexJsFile)) :
-            '<script src="https://www.app-state-diagram.com/app-state-diagram/assets/js/main.js"></script>'; // @codeCoverageIgnore
-        $header = <<<EOT
-    <script src="https://d3js.org/d3.v7.min.js"></script>
-    <script src="https://unpkg.com/@hpcc-js/wasm@2.21.0/dist/graphviz.umd.js" type="javascript/worker"></script>
-    <script src="https://unpkg.com/d3-graphviz@5.6.0/build/d3-graphviz.min.js"></script>
-{$indexJs}
-
-EOT;
+        $header = $this->generateHtmlHeader();
         $legend = $config->outputMode === DumpDocs::MODE_MARKDOWN ? '' : IndexPageElements::LEGEND;
         $tags = $config->outputMode === DumpDocs::MODE_MARKDOWN ? '' : $index->tags;
-        $asd = $config->outputMode === DumpDocs::MODE_MARKDOWN ? $this->getMarkdownImage($config->profile) : <<< EOTJS
-<div id="svg-container">
-    <div id="asd-graph-id" style="text-align: center; "></div>
-    <div id="asd-graph-name" style="text-align: center; display: none;"></div>
-</div>
-<script>
-    document.addEventListener('DOMContentLoaded', async function() {
-        try {
-            await Promise.all([
-                    renderGraph("#asd-graph-id", '{{ dotId }}'),
-                    renderGraph("#asd-graph-name", '{{ dotName }}')
-            ]);
-            setupTagTrigger();
-            setupModeSwitch('asd-show-id', 'asd-graph-id', 'asd-graph-name');
-            setupModeSwitch('asd-show-name', 'asd-graph-name', 'asd-graph-id');
-            applySmoothScrollToLinks(document.querySelectorAll('a[href^="#"]'));
-            setupTagClick();
-            setupDocClick();
-            {$index->setUpTagEvents}
+        $asd = $config->outputMode === DumpDocs::MODE_MARKDOWN ?
+            $this->getMarkdownImage($config->profile) :
+            $this->generateSvgContainer($index->setUpTagEvents);
 
-            // 新機能の初期化
-            enhanceProfileSection();
-            setupSearch();
-            setupGraphZoom();
-        } catch (error) {
-               console.error("Error in main process:", error);
-        }});
-        
-    // グラフズーム機能のセットアップ（+/-ボタンのみ）
-    let currentScale = 1;
-    const minScale = 0.1;
-    const maxScale = 3;
-
-    function setupGraphZoom() {
-        console.log("Setting up zoom controls...");
-        const zoomControlsContainer = document.querySelector('#zoom-controls-container');
-        if (!zoomControlsContainer) {
-            console.log('Zoom controls container not found');
-            return;
-        }
-
-        // グローバルなズームコントロールを追加
-        const zoomControls = document.createElement('div');
-        zoomControls.className = 'zoom-controls global-zoom-controls';
-        zoomControls.innerHTML = `
-            <button class="zoom-button" data-zoom="in">+</button>
-            <button class="zoom-button" data-zoom="out">−</button>
-            <button class="zoom-button" data-zoom="reset">1:1</button>
-        `;
-        zoomControlsContainer.appendChild(zoomControls);
-        
-        // SVG要素の監視と初期設定
-        setupSvgObservers();
-        
-        // ズームイン
-        zoomControls.querySelector('[data-zoom="in"]').addEventListener('click', () => {
-            currentScale = Math.min(currentScale * 1.2, maxScale);
-            updateAllSvgZoom(zoomControls);
-        });
-    
-        // ズームアウト
-        zoomControls.querySelector('[data-zoom="out"]').addEventListener('click', () => {
-            currentScale = Math.max(currentScale / 1.2, minScale);
-            updateAllSvgZoom(zoomControls);
-        });
-    
-        // リセット
-        zoomControls.querySelector('[data-zoom="reset"]').addEventListener('click', () => {
-            currentScale = 1;
-            updateAllSvgZoom(zoomControls);
-        });
-    }
-    
-    function setupSvgObservers() {
-        const containers = ['#asd-graph-id', '#asd-graph-name'];
-        
-        containers.forEach(containerId => {
-            const container = document.querySelector(containerId);
-            if (!container) {
-                console.log(`Container \${containerId} not found`);
-                return;
-            }
-            
-            // SVGを探す
-            let svg = container.querySelector('svg');
-            
-            // SVGが見つからない場合は監視して再試行
-            if (!svg) {
-                console.log(`SVG not found in \${containerId}, setting up observer`);
-                // SVG要素が追加されるのを監視
-                const observer = new MutationObserver((mutations, obs) => {
-                    mutations.forEach(mutation => {
-                        if (mutation.addedNodes.length) {
-                            svg = container.querySelector('svg');
-                            if (svg) {
-                                console.log('SVG found in ' + containerId + ' after waiting');
-                                obs.disconnect(); // 監視を停止
-                                // 初期ズームを適用
-                                svg.style.transform = `scale(\${currentScale})`;
-                            }
-                        }
-                    });
-                });
-                
-                observer.observe(container, { childList: true, subtree: true });
-            } else {
-                console.log(`SVG found immediately \${containerId}`);
-                // 初期ズームを適用
-                svg.style.transform = `scale(\${currentScale})`;
-            }
-        });
-    }
-    
-    function updateAllSvgZoom(zoomControls) {
-        // 両方のコンテナのSVGを取得して同じスケールを適用
-        const containers = ['#asd-graph-id', '#asd-graph-name'];
-        
-        containers.forEach(containerId => {
-            const container = document.querySelector(containerId);
-            if (!container) return;
-            
-            const svg = container.querySelector('svg');
-            if (svg) {
-                // transform-originはCSSで設定済み（top left）
-                svg.style.transform = `scale(\${currentScale})`;
-            }
-        });
-        
-        // ボタン状態の更新
-        const zoomIn = zoomControls.querySelector('[data-zoom="in"]');
-        const zoomOut = zoomControls.querySelector('[data-zoom="out"]');
-        
-        zoomIn.disabled = currentScale >= maxScale;
-        zoomOut.disabled = currentScale <= minScale;
-    }
-</script>
-<div id="zoom-controls-container" style="margin-bottom: 10px;"></div>
-<div class="asd-view-selector">
-    <span class="selector-label">View:</span>
-    <input type="radio" id="asd-show-id" checked name="asd-view-selector">
-    <label for="asd-show-id">id</label>
-    <input type="radio" id="asd-show-name" name="asd-view-selector">
-    <label for="asd-show-name">title</label>
-</div>
-EOTJS;
-
-        $md = <<<EOT
-# {$index->htmlTitle}
-
-{$index->htmlDoc}
-
-<!-- Container for the ASDs -->
-
-{$asd}
-{$tags}
-{$legend}
-
-{$index->semanticMd}
-{$index->linkRelations}
-
-
----
-
-## Profile
-<pre><code>{$index->alpsProfile}</code></pre>
-EOT;
         $this->file = sprintf('%s/index.%s', dirname($index->profile->alpsFile), $index->ext);
+
         if ($index->mode === DumpDocs::MODE_MARKDOWN) {
-            $this->content = $md;
+            $this->content = $this->generateMarkdownContent($index, $asd, $tags, $legend);
 
             return;
         }
 
-        // HTML format
-        $legendTypeMd = $this->getLegendTypeMd($md);
-        assert($legendTypeMd !== '', 'Regexp failed');
-        $html = (new MdToHtml())($index->htmlTitle, $legendTypeMd);
-        $escapedDotId = str_replace("\n", '', $index->dotId);
-        $escapedDotName = str_replace("\n", '', $index->dotName);
-        $plusHeaderHtml = str_replace(
-            '</head>',
-            $header . '</head>',
-            $html
-        );
-        $this->content = str_replace(['{{ dotId }}', '{{ dotName }}', '{{ dotName }}'], [$escapedDotId, $escapedDotName], $plusHeaderHtml);
+        $this->content = $this->generateHtmlContent($index, $asd, $tags, $legend, $header);
     }
 
     private function getLegendTypeMd(string $md): string
@@ -357,5 +173,141 @@ EOT;
             $htmlDoc,
             $setUpTagEvents
         );
+    }
+
+    private function generateHtmlHeader(): string
+    {
+        $indexJsFile = dirname(__DIR__, 1) . '/docs/assets/js/main.js';
+        $zoomJsFile = dirname(__DIR__, 1) . '/docs/assets/js/zoom.js';
+        $isDevelop = file_exists($indexJsFile) && file_exists(dirname(__DIR__) . '/.develop');
+
+        $indexJs = $isDevelop ?
+            sprintf('<script>%s</script>', (string) file_get_contents($indexJsFile)) :
+            '<script src="https://www.app-state-diagram.com/app-state-diagram/assets/js/main.js"></script>'; // @codeCoverageIgnore
+
+        $zoomJs = $isDevelop ?
+            sprintf('<script>%s</script>', (string) file_get_contents($zoomJsFile)) :
+            '<script src="https://www.app-state-diagram.com/app-state-diagram/assets/js/zoom.js"></script>'; // @codeCoverageIgnore
+
+        return <<<EOT
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://unpkg.com/@hpcc-js/wasm@2.21.0/dist/graphviz.umd.js" type="javascript/worker"></script>
+    <script src="https://unpkg.com/d3-graphviz@5.6.0/build/d3-graphviz.min.js"></script>
+{$indexJs}
+{$zoomJs}
+
+EOT;
+    }
+
+    private function generateSvgContainer(string $setUpTagEvents): string
+    {
+        $htmlContainer = $this->generateSvgHtmlContainer();
+        $mainScript = $this->generateMainScript($setUpTagEvents);
+        $controls = $this->generateViewControls();
+
+        return $htmlContainer . $mainScript . $controls;
+    }
+
+    private function generateMarkdownContent(IndexPageElements $index, string $asd, string $tags, string $legend): string
+    {
+        return <<<EOT
+# {$index->htmlTitle}
+
+{$index->htmlDoc}
+
+<!-- Container for the ASDs -->
+
+{$asd}
+{$tags}
+{$legend}
+
+{$index->semanticMd}
+{$index->linkRelations}
+
+
+---
+
+## Profile
+<pre><code>{$index->alpsProfile}</code></pre>
+EOT;
+    }
+
+    private function generateHtmlContent(IndexPageElements $index, string $asd, string $tags, string $legend, string $header): string
+    {
+        $md = $this->generateMarkdownContent($index, $asd, $tags, $legend);
+        $legendTypeMd = $this->getLegendTypeMd($md);
+        assert($legendTypeMd !== '', 'Regexp failed');
+
+        $html = (new MdToHtml())($index->htmlTitle, $legendTypeMd);
+        $escapedDotId = str_replace("\n", '', $index->dotId);
+        $escapedDotName = str_replace("\n", '', $index->dotName);
+
+        $plusHeaderHtml = str_replace(
+            '</head>',
+            $header . '</head>',
+            $html
+        );
+
+        return str_replace(['{{ dotId }}', '{{ dotName }}', '{{ dotName }}'], [$escapedDotId, $escapedDotName], $plusHeaderHtml);
+    }
+
+    private function generateSvgHtmlContainer(): string
+    {
+        return <<<'EOT'
+<div id="svg-container">
+	<div id="asd-graph-id" style="text-align: center; "></div>
+	<div id="asd-graph-name" style="text-align: center; display: none;"></div>
+</div>
+EOT;
+    }
+
+    /**
+     * Generates the main JavaScript for graph rendering and interaction setup.
+     *
+     * @param string $setUpTagEvents Tag event setup JavaScript code
+     *
+     * @return string JavaScript code wrapped in script tags
+     */
+    private function generateMainScript(string $setUpTagEvents): string
+    {
+        return <<<EOT
+<script>
+    document.addEventListener('DOMContentLoaded', async function() {
+        try {
+            await Promise.all([
+                    renderGraph("#asd-graph-id", '{{ dotId }}'),
+                    renderGraph("#asd-graph-name", '{{ dotName }}')
+            ]);
+            setupTagTrigger();
+            setupModeSwitch('asd-show-id', 'asd-graph-id', 'asd-graph-name');
+            setupModeSwitch('asd-show-name', 'asd-graph-name', 'asd-graph-id');
+            applySmoothScrollToLinks(document.querySelectorAll('a[href^="#"]'));
+            setupTagClick();
+            setupDocClick();
+            {$setUpTagEvents}
+
+            // Initialize new features
+            enhanceProfileSection();
+            setupSearch();
+            setupGraphZoom();
+        } catch (error) {
+               console.error("Error in main process:", error);
+        }});
+</script>
+EOT;
+    }
+
+    private function generateViewControls(): string
+    {
+        return <<<'EOT'
+<div id="zoom-controls-container" style="margin-bottom: 10px;"></div>
+<div class="asd-view-selector">
+	<span class="selector-label">View:</span>
+	<input type="radio" id="asd-show-id" checked name="asd-view-selector">
+	<label for="asd-show-id">id</label>
+	<input type="radio" id="asd-show-name" name="asd-view-selector">
+	<label for="asd-show-name">title</label>
+</div>
+EOT;
     }
 }
