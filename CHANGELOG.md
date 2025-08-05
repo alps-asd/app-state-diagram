@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.13.3] - 2025-08-05
+
 ### Changed
 - Refactored IndexPage constructor to improve maintainability ([#212](https://github.com/alps-asd/app-state-diagram/pull/212))
 - Externalized zoom JavaScript to separate file for better code organization
@@ -18,6 +20,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Claude PR Assistant workflow for pull request assistance
 - GitHub Actions workflow for manual PHAR release dispatch
 - Enhanced development tooling with Claude AI integration
+- CLAUDE.md with comprehensive development guidance and architecture documentation
+- CHANGELOG.md following Keep a Changelog format
 
 ### Fixed
 - Code style issues and formatting inconsistencies
