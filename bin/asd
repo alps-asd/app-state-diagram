@@ -40,6 +40,7 @@ try {
 }
 if ($config->watch) {
     $pharRunning = Phar::running(false);
+    $actualPath = dirname(__DIR__) . '/asd-sync';
     
     if ($pharRunning !== '') {
         // PHAR execution: use version-independent opt path for better compatibility
@@ -55,9 +56,6 @@ if ($config->watch) {
                 $actualPath = $optPath;
             }
         }
-    } else {
-        // Development environment
-        $actualPath = dirname(__DIR__) . '/asd-sync';
     }
     
     if (!is_dir($actualPath)) {
