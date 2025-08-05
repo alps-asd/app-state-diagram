@@ -39,13 +39,47 @@ try {
     exit(1);
 }
 if ($config->watch) {
-
-    $actualPath = Phar::running(false) !== '' ?
-                dirname(Phar::running(false),2) . '/asd-sync':
-                dirname(__DIR__) . '/asd-sync';
+    $pharRunning = Phar::running(false);
+    if ($pharRunning !== '') {
+        // PHAR実行時：asdwと同じ仕組みを使用
+        // PHARファイルのlibexecディレクトリ内のasd-syncを探す
+        $pharDir = dirname($pharRunning);
+        $actualPath = $pharDir . '/asd-sync';
+        
+        // Homebrewのlibexec構造: /opt/homebrew/Cellar/asd/x.x.x/libexec/asd-sync
+        if (!is_dir($actualPath) && basename($pharDir) === 'libexec') {
+            $actualPath = $pharDir . '/asd-sync';
+        }
+        
+        // まだ見つからない場合は他の可能性を探す
+        if (!is_dir($actualPath)) {
+            $possiblePaths = [
+                dirname($pharDir) . '/libexec/asd-sync',
+                dirname(dirname($pharDir)) . '/libexec/asd-sync'
+            ];
+            foreach ($possiblePaths as $path) {
+                if (is_dir($path)) {
+                    $actualPath = $path;
+                    break;
+                }
+            }
+        }
+    } else {
+        // 通常の開発環境での実行
+        $actualPath = dirname(__DIR__) . '/asd-sync';
+    }
+    
+    if (!is_dir($actualPath)) {
+        echo "Error: asd-sync directory not found. Watch mode requires Node.js components.\n";
+        echo "Try using 'asdw' command instead if you installed via Homebrew.\n";
+        exit(1);
+    }
+    
     chdir($actualPath);
-    $isFirstRun = ! is_dir(dirname(__DIR__) . '/asd-sync/node_modules');
+    $nodeModulesPath = $actualPath . '/node_modules';
+    $isFirstRun = !is_dir($nodeModulesPath);
     if ($isFirstRun) {
+        echo "Installing Node.js dependencies...\n";
         passthru('npm install');
     }
 
