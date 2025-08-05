@@ -40,37 +40,29 @@ try {
 }
 if ($config->watch) {
     $pharRunning = Phar::running(false);
+    
     if ($pharRunning !== '') {
-        // PHAR実行時：asdwと同じ仕組みを使用
-        // PHARファイルのlibexecディレクトリ内のasd-syncを探す
+        // PHAR execution: use version-independent opt path for better compatibility
+        // PHAR path: "/opt/homebrew/Cellar/asd/x.x.x/libexec/asd.phar"
+        // Target:    "/opt/homebrew/opt/asd/libexec/asd-sync" (version-independent)
         $pharDir = dirname($pharRunning);
         $actualPath = $pharDir . '/asd-sync';
         
-        // Homebrewのlibexec構造: /opt/homebrew/Cellar/asd/x.x.x/libexec/asd-sync
-        if (!is_dir($actualPath) && basename($pharDir) === 'libexec') {
-            $actualPath = $pharDir . '/asd-sync';
-        }
-        
-        // まだ見つからない場合は他の可能性を探す
+        // Try version-independent opt path if not found in Cellar
         if (!is_dir($actualPath)) {
-            $possiblePaths = [
-                dirname($pharDir) . '/libexec/asd-sync',
-                dirname(dirname($pharDir)) . '/libexec/asd-sync'
-            ];
-            foreach ($possiblePaths as $path) {
-                if (is_dir($path)) {
-                    $actualPath = $path;
-                    break;
-                }
+            $optPath = '/opt/homebrew/opt/asd/libexec/asd-sync';
+            if (is_dir($optPath)) {
+                $actualPath = $optPath;
             }
         }
     } else {
-        // 通常の開発環境での実行
+        // Development environment
         $actualPath = dirname(__DIR__) . '/asd-sync';
     }
     
     if (!is_dir($actualPath)) {
         echo "Error: asd-sync directory not found. Watch mode requires Node.js components.\n";
+        echo "Expected path: $actualPath\n";
         echo "Try using 'asdw' command instead if you installed via Homebrew.\n";
         exit(1);
     }
