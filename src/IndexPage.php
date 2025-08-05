@@ -284,7 +284,7 @@ EOT;
             setupDocClick();
             {$setUpTagEvents}
 
-            // 新機能の初期化
+            // Initialize new features
             enhanceProfileSection();
             setupSearch();
             setupGraphZoom();
