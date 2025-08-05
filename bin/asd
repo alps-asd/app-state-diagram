@@ -39,13 +39,37 @@ try {
     exit(1);
 }
 if ($config->watch) {
-
-    $actualPath = Phar::running(false) !== '' ?
-                dirname(Phar::running(false),2) . '/asd-sync':
-                dirname(__DIR__) . '/asd-sync';
+    $pharRunning = Phar::running(false);
+    $actualPath = dirname(__DIR__) . '/asd-sync';
+    
+    if ($pharRunning !== '') {
+        // PHAR execution: use version-independent opt path for better compatibility
+        // PHAR path: "/opt/homebrew/Cellar/asd/x.x.x/libexec/asd.phar"
+        // Target:    "/opt/homebrew/opt/asd/libexec/asd-sync" (version-independent)
+        $pharDir = dirname($pharRunning);
+        $actualPath = $pharDir . '/asd-sync';
+        
+        // Try version-independent opt path if not found in Cellar
+        if (!is_dir($actualPath)) {
+            $optPath = '/opt/homebrew/opt/asd/libexec/asd-sync';
+            if (is_dir($optPath)) {
+                $actualPath = $optPath;
+            }
+        }
+    }
+    
+    if (!is_dir($actualPath)) {
+        echo "Error: asd-sync directory not found. Watch mode requires Node.js components.\n";
+        echo "Expected path: $actualPath\n";
+        echo "Try using 'asdw' command instead if you installed via Homebrew.\n";
+        exit(1);
+    }
+    
     chdir($actualPath);
-    $isFirstRun = ! is_dir(dirname(__DIR__) . '/asd-sync/node_modules');
+    $nodeModulesPath = $actualPath . '/node_modules';
+    $isFirstRun = !is_dir($nodeModulesPath);
     if ($isFirstRun) {
+        echo "Installing Node.js dependencies...\n";
         passthru('npm install');
     }
 
