@@ -263,7 +263,9 @@ EOT;
 
     /**
      * Generates the main JavaScript for graph rendering and interaction setup.
+     *
      * @param string $setUpTagEvents Tag event setup JavaScript code
+     *
      * @return string JavaScript code wrapped in script tags
      */
     private function generateMainScript(string $setUpTagEvents): string
