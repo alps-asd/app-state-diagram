@@ -22,6 +22,7 @@ final class PutDiagramTest extends TestCase
         ob_start();
         $putDiagram($config);
         $output = ob_get_clean();
+        $this->assertIsString($output);
 
         // Verify output contains expected messages
         $this->assertStringContainsString('ASD generated.', $output);
@@ -54,6 +55,7 @@ final class PutDiagramTest extends TestCase
         ob_start();
         $putDiagram($config);
         $output = ob_get_clean();
+        $this->assertIsString($output);
 
         // Verify output contains expected messages
         $this->assertStringContainsString('ASD generated.', $output);

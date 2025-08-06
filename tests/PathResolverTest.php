@@ -7,7 +7,6 @@ namespace Koriym\AppStateDiagram;
 use PHPUnit\Framework\TestCase;
 use ReflectionMethod;
 
-use function method_exists;
 
 final class PathResolverTest extends TestCase
 {
@@ -23,9 +22,6 @@ final class PathResolverTest extends TestCase
 
     public function testPathResolverHasProperErrorHandling(): void
     {
-        // Verify the method exists and has proper error handling capability
-        $this->assertTrue(method_exists(PathResolver::class, 'getDotJsPath'));
-
         // Verify it's a static method
         $reflection = new ReflectionMethod(PathResolver::class, 'getDotJsPath');
         $this->assertTrue($reflection->isStatic());
