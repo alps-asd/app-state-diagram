@@ -22,5 +22,4 @@ final class PathResolver
         // PHAR execution: asd-sync should be adjacent to PHAR
         return dirname($pharRunning) . '/asd-sync/dot.js'; // @codeCoverageIgnore
     }
-
 }

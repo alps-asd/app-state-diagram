@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Koriym\AppStateDiagram;
 
-use RuntimeException;
-
 use function count;
 use function file_put_contents;
 use function passthru;
@@ -61,15 +59,11 @@ final class PutDiagram
     private function convert(string $dotFile, string $dot): void
     {
         file_put_contents($dotFile, $dot);
-        try {
-            $dotJsPath = PathResolver::getDotJsPath();
-            $cmd = sprintf('node %s %s', $dotJsPath, $dotFile);
-            passthru($cmd, $status);
-            if ($status !== 0) {
-                echo 'Warning: Graphviz error' . PHP_EOL; // @codeCoverageIgnore
-            }
-        } catch (RuntimeException $e) {
-            echo 'Error: ' . $e->getMessage() . PHP_EOL; // @codeCoverageIgnore
+        $dotJsPath = PathResolver::getDotJsPath();
+        $cmd = sprintf('node %s %s', $dotJsPath, $dotFile);
+        passthru($cmd, $status);
+        if ($status !== 0) {
+            echo 'Warning: Graphviz error' . PHP_EOL; // @codeCoverageIgnore
         }
 
         @unlink($dotFile);

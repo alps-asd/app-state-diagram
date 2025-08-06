@@ -7,7 +7,6 @@ namespace Koriym\AppStateDiagram;
 use PHPUnit\Framework\TestCase;
 use ReflectionMethod;
 
-
 final class PathResolverTest extends TestCase
 {
     public function testGetDotJsPathInDevelopmentMode(): void
