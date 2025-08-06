@@ -15,7 +15,7 @@ jobs:
         with:
           repository: alps-asd/homebrew-asd
           ref: 1.x
-          token: ${{ secrets.HOMEBREW_GITHUB_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Set Git user information
         run: |
