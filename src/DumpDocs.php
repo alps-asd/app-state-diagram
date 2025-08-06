@@ -35,6 +35,7 @@ final class DumpDocs
 {
     public const MODE_HTML = 'html';
     public const MODE_MARKDOWN = 'markdown';
+    public const MODE_SVG = 'svg';
 
     /** @var array<string, AbstractDescriptor> */
     private $descriptors = [];

@@ -55,10 +55,11 @@ asd path/to/your/profile.json
 
 #### Options
 
-- `--mode=html|markdown`: Set output mode (default: html)
+- `--mode=html|markdown|svg`: Set output mode (default: html)
   ```bash
-  asd --mode=markdown profile.json  # Generate markdown documentation
   asd --mode=html profile.json      # Generate interactive HTML (default)
+  asd --mode=markdown profile.json  # Generate markdown documentation
+  asd --mode=svg profile.json       # Generate SVG files only
   ```
 
 - `--watch` or `-w`: Enable watch mode with live browser sync
