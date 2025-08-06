@@ -27,14 +27,7 @@ final class PathResolver
 
         // Non-PHAR execution (development)
         if ($pharRunning === '') {
-            if (file_exists($defaultPath)) {
-                return $defaultPath;
-            }
-
-            throw new RuntimeException(sprintf(
-                'dot.js not found at expected path: %s',
-                $defaultPath
-            ));
+            return $defaultPath;
         }
 
         // PHAR execution: try multiple strategies
