@@ -69,10 +69,12 @@ final class PutDiagramTest extends TestCase
 
         // Verify SVG content is valid
         $svgContent = file_get_contents($expectedSvgFile);
+        $this->assertIsString($svgContent);
         $this->assertStringContainsString('<svg', $svgContent);
         $this->assertStringContainsString('</svg>', $svgContent);
 
         $titleSvgContent = file_get_contents($expectedTitleSvgFile);
+        $this->assertIsString($titleSvgContent);
         $this->assertStringContainsString('<svg', $titleSvgContent);
         $this->assertStringContainsString('</svg>', $titleSvgContent);
 
