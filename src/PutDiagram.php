@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace Koriym\AppStateDiagram;
 
+use RuntimeException;
+
 use function count;
-use function dirname;
 use function file_put_contents;
 use function passthru;
 use function sprintf;
@@ -60,37 +61,17 @@ final class PutDiagram
     private function convert(string $dotFile, string $dot): void
     {
         file_put_contents($dotFile, $dot);
-        $dotJsPath = $this->getDotJsPath();
-        $cmd = sprintf('node %s %s', $dotJsPath, $dotFile);
-        passthru($cmd, $status);
-        if ($status !== 0) {
-            echo 'Warning: Graphviz error' . PHP_EOL; // @codeCoverageIgnore
+        try {
+            $dotJsPath = PathResolver::getDotJsPath();
+            $cmd = sprintf('node %s %s', $dotJsPath, $dotFile);
+            passthru($cmd, $status);
+            if ($status !== 0) {
+                echo 'Warning: Graphviz error' . PHP_EOL; // @codeCoverageIgnore
+            }
+        } catch (RuntimeException $e) {
+            echo 'Error: ' . $e->getMessage() . PHP_EOL;
         }
 
         @unlink($dotFile);
-    }
-
-    private function getDotJsPath(): string
-    {
-        $pharRunning = \Phar::running(false);
-        $defaultPath = dirname(__DIR__) . '/asd-sync/dot.js';
-        
-        if ($pharRunning === '') {
-            return $defaultPath;
-        }
-        
-        // PHAR execution: use version-independent opt path for better compatibility
-        $pharDir = dirname($pharRunning);
-        $asdSyncPath = $pharDir . '/asd-sync/dot.js';
-        
-        // Try version-independent opt path if not found in Cellar
-        if (!file_exists($asdSyncPath)) {
-            $optPath = '/opt/homebrew/opt/asd/libexec/asd-sync/dot.js';
-            if (file_exists($optPath)) {
-                return $optPath;
-            }
-        }
-        
-        return $asdSyncPath;
     }
 }

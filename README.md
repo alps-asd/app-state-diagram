@@ -77,6 +77,14 @@ asd path/to/your/profile.json
   asd --config=custom.xml profile.json
   ```
 
+#### Environment Variables
+
+- `ASD_SYNC_PATH`: Override asd-sync directory path (useful for custom installations)
+  ```bash
+  export ASD_SYNC_PATH=/custom/path/to/asd-sync
+  asd --mode=markdown profile.json
+  ```
+
 ## Examples
 
 See these live demos:
