@@ -54,6 +54,34 @@ class ConfigLoadTest extends TestCase
         $this->assertSame(3001, $config->port);
     }
 
+    public function testInvalidPortValue(): void
+    {
+        $options = ['port' => '999']; // Below min_range 1024
+        $config = ConfigFactory::fromCommandLine(1, [__DIR__ . '/Fake/alps.json'], $options);
+        $this->assertSame(3000, $config->port); // Should default to 3000
+    }
+
+    public function testInvalidPortValueHigh(): void
+    {
+        $options = ['port' => '99999']; // Above max_range 49151
+        $config = ConfigFactory::fromCommandLine(1, [__DIR__ . '/Fake/alps.json'], $options);
+        $this->assertSame(3000, $config->port); // Should default to 3000
+    }
+
+    public function testModeMarkdown(): void
+    {
+        $options = ['mode' => DumpDocs::MODE_MARKDOWN];
+        $config = ConfigFactory::fromCommandLine(1, [__DIR__ . '/Fake/alps.json'], $options);
+        $this->assertSame(DumpDocs::MODE_MARKDOWN, $config->outputMode);
+    }
+
+    public function testModeSvg(): void
+    {
+        $options = ['mode' => DumpDocs::MODE_SVG];
+        $config = ConfigFactory::fromCommandLine(1, [__DIR__ . '/Fake/alps.json'], $options);
+        $this->assertSame(DumpDocs::MODE_SVG, $config->outputMode);
+    }
+
     public function testInvalidProfile(): void
     {
         $this->expectException(AlpsFileNotReadableException::class);

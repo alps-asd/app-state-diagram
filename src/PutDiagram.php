@@ -26,6 +26,13 @@ final class PutDiagram
     public function __invoke(Config $config): void
     {
         $profile = new Profile($config->profile, new LabelName());
+
+        if ($config->outputMode === DumpDocs::MODE_SVG) {
+            $this->drawSvgOnly($config, $profile);
+
+            return;
+        }
+
         $index = new IndexPage($config);
         if ($config->outputMode === DumpDocs::MODE_MARKDOWN) {
             $this->drawMarkdown($config, $profile);
@@ -46,6 +53,24 @@ final class PutDiagram
         $htmlIndex = new IndexPage($indexConfig);
         file_put_contents($htmlIndex->file, $htmlIndex->content);
         echo "ASD generated. {$htmlIndex->file}" . PHP_EOL;
+    }
+
+    public function drawSvgOnly(Config $config, Profile $profile): void
+    {
+        $titleProfile = new Profile($config->profile, new LabelNameTitle());
+
+        // Generate main SVG (with IDs)
+        $this->draw('', new LabelName(), $profile);
+
+        // Generate title SVG (with human-readable names)
+        $this->draw('.title', new LabelNameTitle(), $titleProfile);
+
+        $svgFile = str_replace(['.xml', '.json'], '.svg', $profile->alpsFile);
+        $titleSvgFile = str_replace(['.xml', '.json'], '.title.svg', $profile->alpsFile);
+
+        echo "SVG generated. {$svgFile}" . PHP_EOL;
+        echo "SVG generated. {$titleSvgFile}" . PHP_EOL;
+        echo sprintf('Descriptors(%s), Links(%s)', count($profile->descriptors), count($profile->links)) . PHP_EOL;
     }
 
     private function draw(string $fileId, LabelNameInterface $labelName, AbstractProfile $profile): void
