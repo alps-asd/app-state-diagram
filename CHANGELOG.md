@@ -7,6 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.14.0] - 2025-08-06
+
+### Added
+- **SVG-only mode** with `--mode=svg` option ([#217](https://github.com/alps-asd/app-state-diagram/pull/217))
+  - Generates standalone SVG diagrams without HTML documentation
+  - Creates both ID-based (`profile.svg`) and title-based (`profile.title.svg`) versions
+  - Perfect for embedding in external documentation, presentations, and web pages
+  - Maintains 100% test coverage with comprehensive test suite
+
+### Improved
+- Enhanced README documentation with clear SVG mode usage examples
+- Improved CLI option descriptions for better user experience
+- Added detailed design rationale for dual SVG output approach
+
+### Changed
+- Updated code style to use single-line format for single-element arrays
+- Improved test coverage to achieve 100% line and method coverage (90 tests, 156 assertions)
+
 ## [0.13.4] - 2025-08-05
 
 ### Fixed
