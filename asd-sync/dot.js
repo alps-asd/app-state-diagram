@@ -10,7 +10,19 @@ if (!filePath) {
     process.exit(1);
 }
 
-const dotString = fs.readFileSync(filePath, 'utf8');
+// Basic path validation to prevent directory traversal
+if (filePath.includes('..') || !path.isAbsolute(filePath)) {
+    console.error('Invalid file path. Only absolute paths without ".." are allowed.');
+    process.exit(1);
+}
+
+let dotString;
+try {
+    dotString = fs.readFileSync(filePath, 'utf8');
+} catch (error) {
+    console.error(`Error reading file "${filePath}":`, error.message);
+    process.exit(1);
+}
 
 const viz = new Viz({ Module, render });
 
@@ -19,9 +31,15 @@ const outputFileName = path.join(path.dirname(filePath), path.basename(filePath,
 
 viz.renderString(dotString, { engine: 'dot', format: 'svg' })
     .then(svg => {
-        fs.writeFileSync(outputFileName, svg);
-        console.log(`Output SVG file: ${outputFileName}`);
+        try {
+            fs.writeFileSync(outputFileName, svg);
+            console.log(`Output SVG file: ${outputFileName}`);
+        } catch (error) {
+            console.error(`Error writing file "${outputFileName}":`, error.message);
+            process.exit(1);
+        }
     })
     .catch(error => {
-        console.error(error);
+        console.error('Error rendering DOT string:', error.message || error);
+        process.exit(1);
     });

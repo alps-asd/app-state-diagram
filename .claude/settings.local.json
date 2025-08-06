@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(composer test)",
+      "Bash(composer install:*)",
+      "Bash(./vendor/bin/phpunit:*)",
+      "Bash(ls:*)",
+      "Bash(composer coverage:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(composer cs:*)",
+      "Bash(composer sa:*)",
+      "Bash(php:*)",
+      "Bash(git stash:*)"
+    ],
+    "deny": []
+  }
+}

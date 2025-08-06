@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Koriym\AppStateDiagram;
 
-use function dirname;
 use function file_put_contents;
 use function passthru;
 use function sprintf;
@@ -61,7 +60,8 @@ final class Diagram
     private function convert(string $dotFile, string $dot): void
     {
         file_put_contents($dotFile, $dot);
-        $cmd = sprintf('node %s %s', dirname(__DIR__) . '/asd-sync/dot.js', $dotFile);
+        $dotJsPath = PathResolver::getDotJsPath();
+        $cmd = sprintf('node %s %s', $dotJsPath, $dotFile);
         passthru($cmd, $status);
         if ($status !== 0) {
             echo 'Warning: Graphviz error' . PHP_EOL; // @codeCoverageIgnore

@@ -46,6 +46,32 @@ After installation, run:
 asd --watch path/to/your/profile.json
 ```
 
+### CLI Usage
+
+Basic usage:
+```bash
+asd path/to/your/profile.json
+```
+
+#### Options
+
+- `--mode=html|markdown`: Set output mode (default: html)
+  ```bash
+  asd --mode=markdown profile.json  # Generate markdown documentation
+  asd --mode=html profile.json      # Generate interactive HTML (default)
+  ```
+
+- `--watch` or `-w`: Enable watch mode with live browser sync
+  ```bash
+  asd --watch profile.json          # Start development server
+  asd --watch --port=3001 profile.json  # Custom port
+  ```
+
+- `--port`: Set development server port (default: 3000, only with `--watch`)
+  ```bash
+  asd --watch --port=8080 profile.json
+  ```
+
 ## Examples
 
 See these live demos:
