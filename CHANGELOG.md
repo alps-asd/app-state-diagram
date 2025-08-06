@@ -7,16 +7,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.14.1] - 2025-08-06
-
-### Fixed
-- Improved SVG mode output messages to distinguish between ID-based and title-based diagrams
-- Added automated Homebrew formula update workflow for streamlined release process
-
-### Added
-- Automated Homebrew formula update workflow on releases
-- Manual workflow dispatch option for formula updates
-
 ## [0.14.0] - 2025-08-06
 
 ### Added
@@ -25,11 +15,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Creates both ID-based (`profile.svg`) and title-based (`profile.title.svg`) versions
   - Perfect for embedding in external documentation, presentations, and web pages
   - Maintains 100% test coverage with comprehensive test suite
+- **Automated Homebrew formula update workflow** for streamlined release process
+  - Automatic updates on GitHub releases
+  - Manual workflow dispatch option available
 
 ### Improved
 - Enhanced README documentation with clear SVG mode usage examples
 - Improved CLI option descriptions for better user experience
 - Added detailed design rationale for dual SVG output approach
+- **Enhanced SVG output messages** to distinguish between ID-based and title-based diagrams
 
 ### Changed
 - Updated code style to use single-line format for single-element arrays
