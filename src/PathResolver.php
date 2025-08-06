@@ -87,7 +87,7 @@ final class PathResolver
             'dot.js not found. Tried paths: %s, %s, %s. ' .
             'Set ASD_SYNC_PATH environment variable to override.',
             $adjacentPath,
-            $envPath ? rtrim($envPath, '/') . '/dot.js' : 'N/A (ASD_SYNC_PATH not set)',
+            $envPath !== false ? rtrim($envPath, '/') . '/dot.js' : 'N/A (ASD_SYNC_PATH not set)',
             implode(', ', $commonPaths)
         ));
     }
@@ -102,14 +102,13 @@ final class PathResolver
 
         // Try to get brew prefix
         $brewCmd = is_executable('/opt/homebrew/bin/brew') ? '/opt/homebrew/bin/brew' : 'brew';
-        $output = '';
         $exitCode = 0;
 
         ob_start();
         passthru("$brewCmd --prefix 2>/dev/null", $exitCode);
         $output = ob_get_clean();
 
-        if ($exitCode === 0 && ! empty($output)) {
+        if ($exitCode === 0 && $output !== false && $output !== '') {
             return rtrim($output);
         }
 
