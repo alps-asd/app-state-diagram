@@ -37,7 +37,7 @@ jobs:
       - name: Get current formula file
         id: get_formula
         run: |
-          CONTENT=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+          CONTENT=$(curl -s -H "Authorization: token ${{ secrets.HOMEBREW_GITHUB_TOKEN }}" \
             https://api.github.com/repos/alps-asd/homebrew-asd/contents/asd.rb?ref=1.x)
           echo "$CONTENT" | jq -r .content | base64 -d > current_formula.rb
           SHA=$(echo "$CONTENT" | jq -r .sha)
@@ -53,7 +53,7 @@ jobs:
         run: |
           UPDATED_CONTENT=$(base64 -w 0 current_formula.rb)
           curl -X PUT \
-            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Authorization: token ${{ secrets.HOMEBREW_GITHUB_TOKEN }}" \
             -H "Content-Type: application/json" \
             https://api.github.com/repos/alps-asd/homebrew-asd/contents/asd.rb \
             -d "{
