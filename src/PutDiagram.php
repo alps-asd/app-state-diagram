@@ -60,12 +60,37 @@ final class PutDiagram
     private function convert(string $dotFile, string $dot): void
     {
         file_put_contents($dotFile, $dot);
-        $cmd = sprintf('node %s %s', dirname(__DIR__) . '/asd-sync/dot.js', $dotFile);
+        $dotJsPath = $this->getDotJsPath();
+        $cmd = sprintf('node %s %s', $dotJsPath, $dotFile);
         passthru($cmd, $status);
         if ($status !== 0) {
             echo 'Warning: Graphviz error' . PHP_EOL; // @codeCoverageIgnore
         }
 
         @unlink($dotFile);
+    }
+
+    private function getDotJsPath(): string
+    {
+        $pharRunning = \Phar::running(false);
+        $defaultPath = dirname(__DIR__) . '/asd-sync/dot.js';
+        
+        if ($pharRunning === '') {
+            return $defaultPath;
+        }
+        
+        // PHAR execution: use version-independent opt path for better compatibility
+        $pharDir = dirname($pharRunning);
+        $asdSyncPath = $pharDir . '/asd-sync/dot.js';
+        
+        // Try version-independent opt path if not found in Cellar
+        if (!file_exists($asdSyncPath)) {
+            $optPath = '/opt/homebrew/opt/asd/libexec/asd-sync/dot.js';
+            if (file_exists($optPath)) {
+                return $optPath;
+            }
+        }
+        
+        return $asdSyncPath;
     }
 }
