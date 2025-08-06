@@ -59,8 +59,14 @@ asd path/to/your/profile.json
   ```bash
   asd --mode=html profile.json      # Generate interactive HTML (default)
   asd --mode=markdown profile.json  # Generate markdown documentation
-  asd --mode=svg profile.json       # Generate SVG files only
+  asd --mode=svg profile.json       # Generate SVG diagrams for embedding
   ```
+  
+  **SVG mode** generates two standalone SVG files:
+  - `profile.svg` - Main diagram with descriptor IDs
+  - `profile.title.svg` - Diagram with human-readable titles
+  
+  Perfect for embedding in documentation, presentations, or web pages.
 
 - `--watch` or `-w`: Enable watch mode with live browser sync
   ```bash
