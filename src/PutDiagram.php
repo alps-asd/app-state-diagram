@@ -68,8 +68,8 @@ final class PutDiagram
         $svgFile = str_replace(['.xml', '.json'], '.svg', $profile->alpsFile);
         $titleSvgFile = str_replace(['.xml', '.json'], '.title.svg', $profile->alpsFile);
 
-        echo "SVG generated. {$svgFile}" . PHP_EOL;
-        echo "SVG generated. {$titleSvgFile}" . PHP_EOL;
+        echo "SVG (ID-based) generated: {$svgFile}" . PHP_EOL;
+        echo "SVG (Title-based) generated: {$titleSvgFile}" . PHP_EOL;
         echo sprintf('Descriptors(%s), Links(%s)', count($profile->descriptors), count($profile->links)) . PHP_EOL;
     }
 

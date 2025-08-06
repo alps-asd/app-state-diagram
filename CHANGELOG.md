@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.14.1] - 2025-08-06
+
+### Fixed
+- Improved SVG mode output messages to distinguish between ID-based and title-based diagrams
+- Added automated Homebrew formula update workflow for streamlined release process
+
+### Added
+- Automated Homebrew formula update workflow on releases
+- Manual workflow dispatch option for formula updates
+
 ## [0.14.0] - 2025-08-06
 
 ### Added
