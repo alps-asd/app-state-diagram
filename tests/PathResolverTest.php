@@ -19,9 +19,9 @@ final class PathResolverTest extends TestCase
         $this->assertFileExists($dotJsPath);
     }
 
-    public function testPathResolverHasProperErrorHandling(): void
+    public function testPathResolverMethodSignature(): void
     {
-        // Verify it's a static method
+        // Verify it's a static public method
         $reflection = new ReflectionMethod(PathResolver::class, 'getDotJsPath');
         $this->assertTrue($reflection->isStatic());
         $this->assertTrue($reflection->isPublic());
