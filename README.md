@@ -72,11 +72,6 @@ asd path/to/your/profile.json
   asd --watch --port=8080 profile.json
   ```
 
-- `--config` or `-c`: Specify configuration file
-  ```bash
-  asd --config=custom.xml profile.json
-  ```
-
 ## Examples
 
 See these live demos:
