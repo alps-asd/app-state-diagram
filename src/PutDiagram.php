@@ -69,7 +69,7 @@ final class PutDiagram
                 echo 'Warning: Graphviz error' . PHP_EOL; // @codeCoverageIgnore
             }
         } catch (RuntimeException $e) {
-            echo 'Error: ' . $e->getMessage() . PHP_EOL;
+            echo 'Error: ' . $e->getMessage() . PHP_EOL; // @codeCoverageIgnore
         }
 
         @unlink($dotFile);
