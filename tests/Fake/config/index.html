@@ -538,8 +538,16 @@ table .legend {
     transform-origin: bottom left;
 }
 </style>
+<style>
+    .center-text {
+        text-align: center;
+    }
+    .hidden {
+        display: none;
+    }
+</style>
     <script src="https://d3js.org/d3.v7.min.js"></script>
-    <script src="https://unpkg.com/@hpcc-js/wasm@2.21.0/dist/graphviz.umd.js" type="javascript/worker"></script>
+    <script src="https://unpkg.com/@hpcc-js/wasm@2.21.0/dist/graphviz.umd.js"></script>
     <script src="https://unpkg.com/d3-graphviz@5.6.0/build/d3-graphviz.min.js"></script>
 <script>// Applies smooth scroll to links
 const ease = (t, b, c, d) => {
@@ -975,8 +983,8 @@ function updateAllSvgZoom(zoomControls) {
 <!-- Container for the ASDs -->
 
 <div id="svg-container">
-    <div id="asd-graph-id" style="text-align: center; "></div>
-    <div id="asd-graph-name" style="text-align: center; display: none;"></div>
+    <div id="asd-graph-id" class="center-text"></div>
+    <div id="asd-graph-name" class="center-text hidden"></div>
 </div>
 
 <script>
@@ -1007,9 +1015,9 @@ function updateAllSvgZoom(zoomControls) {
 
 <div class="asd-view-selector">
     <span class="selector-label">View:</span>
-    <input type="radio" id="asd-show-id" checked name="asd-view-selector">
+    <input type="radio" id="asd-show-id" checked name="asd-view-selector" value="id">
     <label for="asd-show-id">id</label>
-    <input type="radio" id="asd-show-name" name="asd-view-selector">
+    <input type="radio" id="asd-show-name" name="asd-view-selector" value="name">
     <label for="asd-show-name">title</label>
 </div>
 

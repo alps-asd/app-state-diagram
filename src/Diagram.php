@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Koriym\AppStateDiagram;
 
+use function file_exists;
 use function file_put_contents;
 use function passthru;
 use function sprintf;
@@ -31,11 +32,14 @@ final class Diagram
             return $this->drawMarkdown($config, $profile);
         }
 
-        return $index;
+        if ($config->outputMode === DumpDocs::MODE_SVG) {
+            (new PutDiagram())->drawSvgOnly($config, $profile);
 
-//        file_put_contents($index->file, $index->content);
-//        echo "ASD generated. {$index->file}" . PHP_EOL;
-//        echo sprintf('Descriptors(%s), Links(%s)', count($profile->descriptors), count($profile->links)) . PHP_EOL;
+            // Return IndexPage for API consistency (not used for SVG-only output)
+            return $index;
+        }
+
+        return $index;
     }
 
     public function drawMarkdown(Config $config, Profile $profile): IndexPage
@@ -53,7 +57,7 @@ final class Diagram
     {
         $dot = ($this->draw)($profile, $labelName);
         $extention = $fileId . '.dot';
-        $dotFile = str_replace(['.xml', '.json'], $extention, $profile->alpsFile);
+        $dotFile = str_replace(DumpDocs::ALPS_FILE_EXTENSIONS, $extention, $profile->alpsFile);
         $this->convert($dotFile, $dot);
     }
 
@@ -67,6 +71,8 @@ final class Diagram
             echo 'Warning: Graphviz error' . PHP_EOL; // @codeCoverageIgnore
         }
 
-        @unlink($dotFile);
+        if (file_exists($dotFile)) {
+            unlink($dotFile);
+        }
     }
 }

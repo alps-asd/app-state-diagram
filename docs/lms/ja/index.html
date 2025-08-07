@@ -538,8 +538,16 @@ table .legend {
     transform-origin: bottom left;
 }
 </style>
+<style>
+    .center-text {
+        text-align: center;
+    }
+    .hidden {
+        display: none;
+    }
+</style>
     <script src="https://d3js.org/d3.v7.min.js"></script>
-    <script src="https://unpkg.com/@hpcc-js/wasm@2.21.0/dist/graphviz.umd.js" type="javascript/worker"></script>
+    <script src="https://unpkg.com/@hpcc-js/wasm@2.21.0/dist/graphviz.umd.js"></script>
     <script src="https://unpkg.com/d3-graphviz@5.6.0/build/d3-graphviz.min.js"></script>
 <script>// Applies smooth scroll to links
 const ease = (t, b, c, d) => {
@@ -858,6 +866,113 @@ function enhanceProfileSection() {
 }
 
 </script>
+<script>// グラフズーム機能のセットアップ（+/-ボタンのみ）
+let currentScale = 1;
+const minScale = 0.1;
+const maxScale = 3;
+
+function setupGraphZoom() {
+    console.log("Setting up zoom controls...");
+    const zoomControlsContainer = document.querySelector('#zoom-controls-container');
+    if (!zoomControlsContainer) {
+        console.log('Zoom controls container not found');
+        return;
+    }
+
+    // グローバルなズームコントロールを追加
+    const zoomControls = document.createElement('div');
+    zoomControls.className = 'zoom-controls global-zoom-controls';
+    zoomControls.innerHTML = `
+        <button class="zoom-button" data-zoom="in">+</button>
+        <button class="zoom-button" data-zoom="out">−</button>
+        <button class="zoom-button" data-zoom="reset">1:1</button>
+    `;
+    zoomControlsContainer.appendChild(zoomControls);
+    
+    // SVG要素の監視と初期設定
+    setupSvgObservers();
+    
+    // ズームイン
+    zoomControls.querySelector('[data-zoom="in"]').addEventListener('click', () => {
+        currentScale = Math.min(currentScale * 1.2, maxScale);
+        updateAllSvgZoom(zoomControls);
+    });
+
+    // ズームアウト
+    zoomControls.querySelector('[data-zoom="out"]').addEventListener('click', () => {
+        currentScale = Math.max(currentScale / 1.2, minScale);
+        updateAllSvgZoom(zoomControls);
+    });
+
+    // リセット
+    zoomControls.querySelector('[data-zoom="reset"]').addEventListener('click', () => {
+        currentScale = 1;
+        updateAllSvgZoom(zoomControls);
+    });
+}
+
+function setupSvgObservers() {
+    const containers = ['#asd-graph-id', '#asd-graph-name'];
+    
+    containers.forEach(containerId => {
+        const container = document.querySelector(containerId);
+        if (!container) {
+            console.log(`Container ${containerId} not found`);
+            return;
+        }
+        
+        // SVGを探す
+        let svg = container.querySelector('svg');
+        
+        // SVGが見つからない場合は監視して再試行
+        if (!svg) {
+            console.log(`SVG not found in ${containerId}, setting up observer`);
+            // SVG要素が追加されるのを監視
+            const observer = new MutationObserver((mutations, obs) => {
+                mutations.forEach(mutation => {
+                    if (mutation.addedNodes.length) {
+                        svg = container.querySelector('svg');
+                        if (svg) {
+                            console.log('SVG found in ' + containerId + ' after waiting');
+                            obs.disconnect(); // 監視を停止
+                            // 初期ズームを適用
+                            svg.style.transform = `scale(${currentScale})`;
+                        }
+                    }
+                });
+            });
+            
+            observer.observe(container, { childList: true, subtree: true });
+        } else {
+            console.log(`SVG found immediately ${containerId}`);
+            // 初期ズームを適用
+            svg.style.transform = `scale(${currentScale})`;
+        }
+    });
+}
+
+function updateAllSvgZoom(zoomControls) {
+    // 両方のコンテナのSVGを取得して同じスケールを適用
+    const containers = ['#asd-graph-id', '#asd-graph-name'];
+    
+    containers.forEach(containerId => {
+        const container = document.querySelector(containerId);
+        if (!container) return;
+        
+        const svg = container.querySelector('svg');
+        if (svg) {
+            // transform-originはCSSで設定済み（top left）
+            svg.style.transform = `scale(${currentScale})`;
+        }
+    });
+    
+    // ボタン状態の更新
+    const zoomIn = zoomControls.querySelector('[data-zoom="in"]');
+    const zoomOut = zoomControls.querySelector('[data-zoom="out"]');
+    
+    zoomIn.disabled = currentScale >= maxScale;
+    zoomOut.disabled = currentScale <= minScale;
+}</script>
 </head>
 <body>
     <div class="markdown-body">
@@ -868,8 +983,8 @@ function enhanceProfileSection() {
 <!-- Container for the ASDs -->
 
 <div id="svg-container">
-    <div id="asd-graph-id" style="text-align: center; "></div>
-    <div id="asd-graph-name" style="text-align: center; display: none;"></div>
+    <div id="asd-graph-id" class="center-text"></div>
+    <div id="asd-graph-name" class="center-text hidden"></div>
 </div>
 
 <script>
@@ -887,130 +1002,22 @@ function enhanceProfileSection() {
             setupDocClick();
             setupTagEventListener('アクセシビリティ', ['Settings', 'accessibilityFeature', 'contentAccessibility', 'doUpdateSettings', 'language'], 'LightGreen'); setupTagEventListener('アクセス', ['offlineContent'], 'SkyBlue'); setupTagEventListener('アラート', ['notification'], 'LightCoral'); setupTagEventListener('エンゲージメント', ['contentViewed', 'loginFrequency', 'timeSpent'], 'LightSalmon'); setupTagEventListener('オーサリング', ['AssignmentCreation', 'ContentCreation', 'CourseCreation', 'CourseEdit', 'doCreateContent', 'doCreateCourse', 'doCreateModule', 'doDeleteContent', 'doDeleteModule', 'doUpdateContent', 'doUpdateCourse', 'doUpdateModule', 'goPreviewContent'], 'Khaki'); setupTagEventListener('カタログ', ['CourseList'], 'Plum'); setupTagEventListener('コア', ['assignmentId', 'contentId', 'courseId', 'discussionId', 'gradeId', 'groupId', 'messageId', 'moduleId', 'notificationId', 'postId', 'reportId', 'rubricId', 'submissionId', 'webinarId'], 'Wheat'); setupTagEventListener('コアユーザー', ['user', 'userEmail', 'userId', 'userName', 'userPassword', 'userPreferences', 'userRole'], 'LightGreen'); setupTagEventListener('コミュニケーション', ['AnnouncementCreation', 'DiscussionDetail', 'DiscussionList', 'MessageCenter', 'MessageDetail', 'RecordingView', 'WebinarDetail', 'WebinarSchedule', 'WebinarView', 'discussion', 'discussionDescription', 'discussionId', 'discussionTitle', 'doAttachFile', 'doCreateAnnouncement', 'doCreateDiscussion', 'doCreatePost', 'doCreateWebinar', 'doDeleteWebinar', 'doEnableNotifications', 'doJoinWebinar', 'doReplyToMessage', 'doReplyToPost', 'doUpdateWebinar', 'goAnnouncementCreation', 'goCreateDiscussion', 'goCreateMessage', 'goDiscussionDetail', 'goDiscussionList', 'goFilterDiscussions', 'goFilterMessages', 'goMessageCenter', 'goMessageDetail', 'goNotifications', 'goViewRecording', 'goWebinarDetail', 'goWebinarSchedule', 'message', 'messageAttachments', 'messageContent', 'messageDate', 'messageId', 'messageRecipient', 'messageSender', 'notification', 'notificationContent', 'notificationDate', 'notificationId', 'notificationStatus', 'notificationType', 'post', 'postAuthor', 'postContent', 'postDate', 'postId', 'posts', 'replies', 'webinar', 'webinarDate', 'webinarDescription', 'webinarDuration', 'webinarId', 'webinarRecording', 'webinarTitle', 'webinarUrl'], 'SkyBlue'); setupTagEventListener('コラボレーション', ['DiscussionDetail', 'DiscussionList', 'GroupDetail', 'GroupManagement', 'discussion', 'doAddGroupMember', 'doCreateDiscussion', 'doCreateGroup', 'doCreatePost', 'doDeleteGroup', 'doRemoveGroupMember', 'doReplyToPost', 'doUpdateGroup', 'goGroupDetail', 'goGroupManagement', 'group', 'groupId', 'groupMembers', 'groupName', 'groupWorkspace', 'post'], 'LightCoral'); setupTagEventListener('コンテンツ', ['CourseDetail', 'ModuleDetail', 'content', 'contentDescription', 'contentTitle', 'course', 'courseDescription', 'courseTitle', 'difficultyLevel', 'module', 'moduleDescription', 'moduleTitle', 'prerequisites'], 'LightSalmon'); setupTagEventListener('コンテンツ作成', ['ContentCreation', 'ContentDetail', 'doCreateContent', 'doDeleteContent', 'doSaveDraftContent', 'doUpdateContent', 'goContentDetail', 'goCreateContent', 'goPreviewContent'], 'Khaki'); setupTagEventListener('コース管理', ['AssignmentList', 'CourseCreation', 'CourseDetail', 'CourseEdit', 'CourseList', 'ModuleDetail', 'ModuleList', 'doCreateCourse', 'doCreateModule', 'doDeleteCourse', 'doDeleteModule', 'doPublishCourse', 'doSaveDraftCourse', 'doUpdateCourse', 'doUpdateModule', 'goCourseDetail', 'goCourseList', 'goCreateCourse', 'goEditCourse', 'goFilterCourses', 'goModuleDetail', 'goModuleList'], 'Plum'); setupTagEventListener('スケジュール', ['dueDate', 'endDate', 'startDate', 'webinarDate', 'webinarDuration'], 'Wheat'); setupTagEventListener('セキュリティ', ['adminPermissions', 'doResetPassword', 'userPassword'], 'LightGreen'); setupTagEventListener('ダッシュボード', ['Home'], 'SkyBlue'); setupTagEventListener('ナビゲーション', ['Home', 'goAnalyticsDashboard', 'goAnnouncementCreation', 'goAssignmentDetail', 'goAssignmentList', 'goClassProgress', 'goContentDetail', 'goCourseDetail', 'goCourseList', 'goCreateAssignment', 'goCreateContent', 'goCreateCourse', 'goCreateDiscussion', 'goCreateMessage', 'goDiscussionDetail', 'goDiscussionList', 'goEditCourse', 'goEnrolledCourses', 'goFilterAssignments', 'goFilterCourses', 'goFilterDiscussions', 'goFilterMessages', 'goFilterStudents', 'goFilterSubmissions', 'goGradebook', 'goGroupDetail', 'goGroupManagement', 'goHome', 'goLogin', 'goMessageCenter', 'goMessageDetail', 'goModuleDetail', 'goModuleList', 'goNotifications', 'goProgressDashboard', 'goRegister', 'goReportCenter', 'goReportDetail', 'goSettings', 'goStudentProgress', 'goSubmissionDetail', 'goSubmissionList', 'goUserDetail', 'goUserList', 'goUserProfile', 'goWebinarDetail', 'goWebinarSchedule'], 'LightCoral'); setupTagEventListener('パフォーマンス', ['assignmentCompletionTime'], 'LightSalmon'); setupTagEventListener('パーソナライズ', ['Settings', 'UserProfile', 'doUpdateProfile', 'doUpdateSettings', 'goSettings', 'userPreferences'], 'Khaki'); setupTagEventListener('パーソナル', ['MessageCenter', 'MessageDetail', 'doReplyToMessage', 'message'], 'Plum'); setupTagEventListener('メディア', ['RecordingView', 'WebinarView', 'content', 'contentData', 'contentType', 'doAttachFile', 'goViewRecording', 'messageAttachments', 'webinarRecording'], 'Wheat'); setupTagEventListener('モバイル', ['offlineContent'], 'LightGreen'); setupTagEventListener('モバイルアクセス', ['MobileAccess', 'doDownloadContent', 'doEnableNotifications'], 'SkyBlue'); setupTagEventListener('ユーザー', ['administrator', 'groupMembers', 'instructor', 'messageRecipient', 'messageSender', 'postAuthor', 'student'], 'LightCoral'); setupTagEventListener('ユーザー管理', ['Login', 'Register', 'UserDetail', 'UserList', 'UserProfile', 'doCreateUser', 'doDeleteUser', 'doRegister', 'doResetPassword', 'doUpdateProfile', 'doUpdateUser', 'goRegister', 'goUserProfile'], 'LightSalmon'); setupTagEventListener('ローカライズ', ['language'], 'Khaki'); setupTagEventListener('ワークフロー', ['contentStatus', 'doPublishCourse', 'doSaveDraftContent', 'doSaveDraftCourse', 'submissionStatus'], 'Plum'); setupTagEventListener('分析', ['AnalyticsDashboard', 'ReportCenter', 'ReportDetail', 'analytics', 'assignmentCompletionTime', 'contentViewed', 'doExportAnalytics', 'doExportReport', 'doGenerateReport', 'goAnalyticsDashboard', 'goFilterAnalytics', 'goReportCenter', 'goReportDetail', 'loginFrequency', 'report', 'reportData', 'reportDate', 'reportId', 'reportTitle', 'reportType', 'timeSpent'], 'Wheat'); setupTagEventListener('分類', ['courseCategory'], 'LightGreen'); setupTagEventListener('同期', ['WebinarDetail', 'WebinarSchedule', 'WebinarView', 'doCreateWebinar', 'doDeleteWebinar', 'doJoinWebinar', 'doUpdateWebinar', 'webinar'], 'SkyBlue'); setupTagEventListener('学生', ['EnrolledCourses', 'ProgressDashboard', 'doEnrollCourse', 'doSubmitAssignment', 'doUnenrollCourse', 'submission'], 'LightCoral'); setupTagEventListener('指導', ['instructor', 'instructorExpertise', 'taughtCourses'], 'LightSalmon'); setupTagEventListener('採点', ['Gradebook', 'SubmissionDetail', 'SubmissionList'], 'Khaki'); setupTagEventListener('教育', ['assignment', 'assignmentDescription', 'assignmentId', 'assignmentTitle', 'assignmentType', 'content', 'contentAccessibility', 'contentData', 'contentDescription', 'contentId', 'contentStatus', 'contentTitle', 'contentType', 'course', 'courseCategory', 'courseDescription', 'courseId', 'courseStatus', 'courseTitle', 'difficultyLevel', 'dueDate', 'endDate', 'enrolledCourses', 'enrollmentCapacity', 'feedback', 'grade', 'gradeId', 'gradeValue', 'gradedDate', 'grades', 'instructor', 'instructorExpertise', 'maxScore', 'module', 'moduleDescription', 'moduleId', 'moduleOrder', 'moduleTitle', 'prerequisites', 'progress', 'rubric', 'rubricCriteria', 'rubricId', 'rubricTitle', 'startDate', 'student', 'submission', 'submissionContent', 'submissionDate', 'submissionId', 'submissionStatus', 'taughtCourses', 'weightage'], 'Plum'); setupTagEventListener('構造', ['ModuleList', 'module', 'moduleOrder'], 'Wheat'); setupTagEventListener('登録', ['EnrolledCourses', 'Register', 'doEnrollCourse', 'doUnenrollCourse', 'enrolledCourses', 'goEnrolledCourses'], 'LightGreen'); setupTagEventListener('管理', ['ContentDetail', 'courseStatus', 'doDeleteCourse', 'enrollmentCapacity', 'report'], 'SkyBlue'); setupTagEventListener('管理ツール', ['ReportCenter', 'ReportDetail', 'UserDetail', 'UserList', 'doCreateUser', 'doDeleteUser', 'doExportReport', 'doGenerateReport', 'doUpdateUser', 'goUserDetail', 'goUserList'], 'LightCoral'); setupTagEventListener('管理者', ['adminPermissions', 'administrator'], 'LightSalmon'); setupTagEventListener('統合', ['External'], 'Khaki'); setupTagEventListener('評価', ['AssignmentCreation', 'AssignmentDetail', 'AssignmentList', 'Gradebook', 'SubmissionDetail', 'SubmissionList', 'assignment', 'assignmentDescription', 'assignmentTitle', 'assignmentType', 'doCalculateOverallGrades', 'doCreateAssignment', 'doCreateRubric', 'doDeleteAssignment', 'doExportGrades', 'doExtendDeadline', 'doGradeSubmission', 'doProvideFeedback', 'doSubmitAssignment', 'doUpdateAssignment', 'feedback', 'goAssignmentDetail', 'goAssignmentList', 'goCreateAssignment', 'goFilterAssignments', 'goFilterSubmissions', 'goGradebook', 'goSubmissionDetail', 'goSubmissionList', 'grade', 'grade', 'gradeValue', 'grades', 'maxScore', 'rubric', 'rubric', 'rubricCriteria', 'rubricTitle', 'submission', 'submissionContent', 'weightage'], 'Plum'); setupTagEventListener('認可', ['userRole'], 'Wheat'); setupTagEventListener('認証', ['Login', 'doLogin', 'doLogout', 'goLogin'], 'LightGreen'); setupTagEventListener('講師ツール', ['AnalyticsDashboard', 'AnnouncementCreation', 'ClassProgress', 'Gradebook', 'GroupManagement', 'StudentProgress', 'SubmissionDetail', 'SubmissionList', 'WebinarSchedule', 'doAddGroupMember', 'doCalculateOverallGrades', 'doCreateAnnouncement', 'doCreateAssignment', 'doCreateGroup', 'doCreateRubric', 'doCreateWebinar', 'doDeleteAssignment', 'doDeleteGroup', 'doDeleteWebinar', 'doExportAnalytics', 'doExportGrades', 'doExtendDeadline', 'doGradeSubmission', 'doProvideFeedback', 'doRemoveGroupMember', 'doUpdateAssignment', 'doUpdateGroup', 'doUpdateWebinar', 'goFilterAnalytics', 'goFilterStudents'], 'SkyBlue'); setupTagEventListener('追跡', ['analytics', 'gradedDate', 'messageDate', 'notificationDate', 'postDate', 'progress', 'reportDate', 'submissionDate'], 'LightCoral'); setupTagEventListener('連絡先', ['userEmail'], 'LightSalmon'); setupTagEventListener('進捗追跡', ['ClassProgress', 'ProgressDashboard', 'StudentProgress', 'goClassProgress', 'goProgressDashboard', 'goStudentProgress'], 'Khaki'); 
 
-            // 新機能の初期化
+            // Initialize new features
             enhanceProfileSection();
             setupSearch();
             setupGraphZoom();
         } catch (error) {
                console.error("Error in main process:", error);
         }});
-        
-    // グラフズーム機能のセットアップ（+/-ボタンのみ）
-    let currentScale = 1;
-    const minScale = 0.1;
-    const maxScale = 3;
-
-    function setupGraphZoom() {
-        console.log("Setting up zoom controls...");
-        const zoomControlsContainer = document.querySelector('#zoom-controls-container');
-        if (!zoomControlsContainer) {
-            console.log('Zoom controls container not found');
-            return;
-        }
-
-        // グローバルなズームコントロールを追加
-        const zoomControls = document.createElement('div');
-        zoomControls.className = 'zoom-controls global-zoom-controls';
-        zoomControls.innerHTML = `
-            <button class="zoom-button" data-zoom="in">+</button>
-            <button class="zoom-button" data-zoom="out">−</button>
-            <button class="zoom-button" data-zoom="reset">1:1</button>
-        `;
-        zoomControlsContainer.appendChild(zoomControls);
-        
-        // SVG要素の監視と初期設定
-        setupSvgObservers();
-        
-        // ズームイン
-        zoomControls.querySelector('[data-zoom="in"]').addEventListener('click', () => {
-            currentScale = Math.min(currentScale * 1.2, maxScale);
-            updateAllSvgZoom(zoomControls);
-        });
-    
-        // ズームアウト
-        zoomControls.querySelector('[data-zoom="out"]').addEventListener('click', () => {
-            currentScale = Math.max(currentScale / 1.2, minScale);
-            updateAllSvgZoom(zoomControls);
-        });
-    
-        // リセット
-        zoomControls.querySelector('[data-zoom="reset"]').addEventListener('click', () => {
-            currentScale = 1;
-            updateAllSvgZoom(zoomControls);
-        });
-    }
-    
-    function setupSvgObservers() {
-        const containers = ['#asd-graph-id', '#asd-graph-name'];
-        
-        containers.forEach(containerId => {
-            const container = document.querySelector(containerId);
-            if (!container) {
-                console.log(`Container ${containerId} not found`);
-                return;
-            }
-            
-            // SVGを探す
-            let svg = container.querySelector('svg');
-            
-            // SVGが見つからない場合は監視して再試行
-            if (!svg) {
-                console.log(`SVG not found in ${containerId}, setting up observer`);
-                // SVG要素が追加されるのを監視
-                const observer = new MutationObserver((mutations, obs) => {
-                    mutations.forEach(mutation => {
-                        if (mutation.addedNodes.length) {
-                            svg = container.querySelector('svg');
-                            if (svg) {
-                                console.log('SVG found in ' + containerId + ' after waiting');
-                                obs.disconnect(); // 監視を停止
-                                // 初期ズームを適用
-                                svg.style.transform = `scale(${currentScale})`;
-                            }
-                        }
-                    });
-                });
-                
-                observer.observe(container, { childList: true, subtree: true });
-            } else {
-                console.log(`SVG found immediately ${containerId}`);
-                // 初期ズームを適用
-                svg.style.transform = `scale(${currentScale})`;
-            }
-        });
-    }
-    
-    function updateAllSvgZoom(zoomControls) {
-        // 両方のコンテナのSVGを取得して同じスケールを適用
-        const containers = ['#asd-graph-id', '#asd-graph-name'];
-        
-        containers.forEach(containerId => {
-            const container = document.querySelector(containerId);
-            if (!container) return;
-            
-            const svg = container.querySelector('svg');
-            if (svg) {
-                // transform-originはCSSで設定済み（top left）
-                svg.style.transform = `scale(${currentScale})`;
-            }
-        });
-        
-        // ボタン状態の更新
-        const zoomIn = zoomControls.querySelector('[data-zoom="in"]');
-        const zoomOut = zoomControls.querySelector('[data-zoom="out"]');
-        
-        zoomIn.disabled = currentScale >= maxScale;
-        zoomOut.disabled = currentScale <= minScale;
-    }
 </script>
 
 <div id="zoom-controls-container" style="margin-bottom: 10px;"></div>
 
 <div class="asd-view-selector">
     <span class="selector-label">View:</span>
-    <input type="radio" id="asd-show-id" checked name="asd-view-selector">
+    <input type="radio" id="asd-show-id" checked name="asd-view-selector" value="id">
     <label for="asd-show-id">id</label>
-    <input type="radio" id="asd-show-name" name="asd-view-selector">
+    <input type="radio" id="asd-show-name" name="asd-view-selector" value="name">
     <label for="asd-show-name">title</label>
 </div>
 

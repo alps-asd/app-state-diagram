@@ -64,8 +64,8 @@ final class IndexPage
     private function getMarkdownImage(string $profile): string
     {
         $baseProfile = basename($profile);
-        $imageFile = str_replace(['.xml', '.json'], '.svg', $baseProfile);
-        $imageTitleFile = str_replace(['.xml', '.json'], '.title.svg', $baseProfile);
+        $imageFile = str_replace(DumpDocs::ALPS_FILE_EXTENSIONS, '.svg', $baseProfile);
+        $imageTitleFile = str_replace(DumpDocs::ALPS_FILE_EXTENSIONS, '.title.svg', $baseProfile);
 
         return sprintf(
             '[<img src="%s" alt="application state diagram">](%s)',
@@ -190,8 +190,16 @@ final class IndexPage
             '<script src="https://www.app-state-diagram.com/app-state-diagram/assets/js/zoom.js"></script>'; // @codeCoverageIgnore
 
         return <<<EOT
+<style>
+    .center-text {
+        text-align: center;
+    }
+    .hidden {
+        display: none;
+    }
+</style>
     <script src="https://d3js.org/d3.v7.min.js"></script>
-    <script src="https://unpkg.com/@hpcc-js/wasm@2.21.0/dist/graphviz.umd.js" type="javascript/worker"></script>
+    <script src="https://unpkg.com/@hpcc-js/wasm@2.21.0/dist/graphviz.umd.js"></script>
     <script src="https://unpkg.com/d3-graphviz@5.6.0/build/d3-graphviz.min.js"></script>
 {$indexJs}
 {$zoomJs}
@@ -255,8 +263,8 @@ EOT;
     {
         return <<<'EOT'
 <div id="svg-container">
-	<div id="asd-graph-id" style="text-align: center; "></div>
-	<div id="asd-graph-name" style="text-align: center; display: none;"></div>
+	<div id="asd-graph-id" class="center-text"></div>
+	<div id="asd-graph-name" class="center-text hidden"></div>
 </div>
 EOT;
     }
@@ -303,9 +311,9 @@ EOT;
 <div id="zoom-controls-container" style="margin-bottom: 10px;"></div>
 <div class="asd-view-selector">
 	<span class="selector-label">View:</span>
-	<input type="radio" id="asd-show-id" checked name="asd-view-selector">
+	<input type="radio" id="asd-show-id" checked name="asd-view-selector" value="id">
 	<label for="asd-show-id">id</label>
-	<input type="radio" id="asd-show-name" name="asd-view-selector">
+	<input type="radio" id="asd-show-name" name="asd-view-selector" value="name">
 	<label for="asd-show-name">title</label>
 </div>
 EOT;

@@ -11,7 +11,8 @@
       "Bash(composer cs:*)",
       "Bash(composer sa:*)",
       "Bash(php:*)",
-      "Bash(git stash:*)"
+      "Bash(git stash:*)",
+      "Bash(composer tests:*)"
     ],
     "deny": []
   }

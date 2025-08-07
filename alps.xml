@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<alps version="1.0"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://alps-io.github.io/schemas/alps.xsd">
+    <title>ALPS Book Store</title>
+    <doc>ALPS profile for managing an online bookstore catalog and defining the user purchase flow. This profile provides semantic definitions for both RESTful APIs and UI.</doc>
+    <link href="https://github.com/example/online-bookstore-api/issues" rel="issue"/>
+
+    <!-- Ontology (既存の記述はそのまま、変更なし) -->
+    <descriptor id="id" def="https://schema.org/identifier" title="Identifier" tag="core">
+        <doc>Unique identifier for each resource. UUID or auto-generated integer.</doc>
+    </descriptor>
+    <descriptor id="title" def="https://schema.org/name" title="Title" tag="catalog">
+        <doc>Title of book or category name. String with a maximum of 200 characters.</doc>
+    </descriptor>
+    <descriptor id="author" def="https://schema.org/author" title="Author" tag="catalog">
+        <doc>Name of the book's author. For multiple authors, names are comma-separated.</doc>
+    </descriptor>
+    <descriptor id="isbn" def="https://schema.org/isbn" title="ISBN" tag="catalog">
+        <doc>International Standard Book Number. Formatted as ISBN-13 with hyphens.</doc>
+    </descriptor>
+    <descriptor id="price" def="https://schema.org/price" title="Price" tag="commerce">
+        <doc>Sales price of the book. Pre-tax amount in JPY currency.</doc>
+    </descriptor>
+    <descriptor id="category" def="https://schema.org/category" title="Category" tag="catalog">
+        <doc>Genre or category of the book. Books may belong to multiple categories.</doc>
+    </descriptor>
+    <descriptor id="quantity" def="https://schema.org/quantityValue" title="Quantity" tag="commerce">
+        <doc>Quantity of books in the cart. Integer value greater than or equal to 1.</doc>
+    </descriptor>
+    <descriptor id="totalAmount" def="https://schema.org/totalPrice" title="Total Amount" tag="commerce">
+        <doc>Total amount for an order or cart contents. Displayed with tax included.</doc>
+    </descriptor>
+    <descriptor id="userName" def="https://schema.org/name" title="User Name" tag="customer">
+        <doc>Name of the customer. First and last name separated by a space.</doc>
+    </descriptor>
+    <descriptor id="userEmail" def="https://schema.org/email" title="Email Address" tag="customer">
+        <doc>Customer's contact email address. Used for sending order confirmation emails.</doc>
+    </descriptor>
+    <descriptor id="shippingAddress" def="https://schema.org/address" title="Shipping Address" tag="shipping">
+        <doc>Delivery address for products. Includes postal code, prefecture, city, street address, and building name.</doc>
+    </descriptor>
+    <descriptor id="paymentMethod" def="https://schema.org/paymentMethod" title="Payment Method" tag="payment">
+        <doc>Method of payment for the order. Options include credit card, cash on delivery, bank transfer, etc.</doc>
+    </descriptor>
+    <descriptor id="query" title="Search Query" tag="catalog">
+        <doc>Keywords or conditions used for book searches. Can search by title, author name, ISBN, etc.</doc>
+    </descriptor>
+
+    <!-- Taxonomy -->
+    <descriptor id="Home" title="Home Screen" tag="navigation">
+        <doc>Starting point of the application. Displays site-wide navigation and promotional information.</doc>
+        <descriptor href="#goToCatalog"/>
+        <descriptor href="#goToCart"/>
+    </descriptor>
+
+    <descriptor id="Catalog" def="https://schema.org/CollectionPage" title="Book Catalog" tag="catalog">
+        <doc>Screen displaying all books. Provides category filtering, keyword search, and sorting functions. Default display is ordered by recent additions.</doc>
+        <descriptor href="#goListBooks"/>
+        <descriptor href="#goSearchBooks"/>
+        <descriptor href="#goGetCategories"/>
+        <descriptor href="#goBookDetails"/>
+        <descriptor href="#goToCart"/>
+        <descriptor href="#Book"/>
+    </descriptor>
+
+    <descriptor id="Book" def="https://schema.org/Book" title="Book" tag="catalog">
+        <doc>Screen displaying individual book information. Shows detailed information, reviews, and related books. Items can be added to cart from this screen.</doc>
+        <descriptor href="#id"/>
+        <descriptor href="#title"/>
+        <descriptor href="#author"/>
+        <descriptor href="#isbn"/>
+        <descriptor href="#price"/>
+        <descriptor href="#category"/>
+        <descriptor href="#doAddToCart"/>
+        <descriptor href="#goToCatalog"/>
+    </descriptor>
+
+    <descriptor id="Category" def="https://schema.org/Category" title="Category" tag="catalog">
+        <doc>Book genre classification. May have a hierarchical structure with parent and child categories.</doc>
+        <descriptor href="#id"/>
+        <descriptor href="#title"/>
+    </descriptor>
+
+    <descriptor id="ShoppingCart" def="https://schema.org/ShoppingCart" title="Shopping Cart" tag="cart">
+        <doc>Cart containing books the user intends to purchase. Allows quantity changes, deletion, and total amount confirmation. Managed on a session basis.</doc>
+        <descriptor href="#goListCartItems"/>
+        <descriptor href="#doUpdateQuantity"/>
+        <descriptor href="#doRemoveFromCart"/>
+        <descriptor href="#goToCheckout"/>
+        <descriptor href="#goToCatalog"/>
+    </descriptor>
+
+    <descriptor id="Checkout" title="Checkout Screen" tag="checkout">
+        <doc>Purchase procedure screen. Input user information, delivery destination, and proceed to payment. Displays final confirmation before order is placed.</doc>
+        <descriptor href="#doUserInfo"/>
+        <descriptor href="#doShippingInfo"/>
+        <descriptor href="#goToPayment"/>
+        <descriptor href="#goToCart"/>
+    </descriptor>
+
+    <descriptor id="Payment" title="Payment Screen" tag="payment">
+        <doc>Screen for entering payment information, confirming the order, and displaying order completion details. Handles payment method selection, payment validation, order placement, and shows order number, total amount, and estimated delivery date upon completion. A confirmation email is sent automatically.</doc>
+        <descriptor href="#paymentMethod"/>
+        <descriptor href="#doPaymentInfo"/>
+        <descriptor href="#doPlaceOrder"/>
+        <descriptor href="#goOrderDetails"/>
+        <descriptor href="#goToHome"/>
+        <descriptor href="#goToCart"/>
+    </descriptor>
+
+    <!-- Choreography -->
+    <descriptor id="goToHome" type="safe" rt="#Home" title="Go to Home Screen">
+        <doc>Navigate to the application's home screen. Accessible from any screen.</doc>
+    </descriptor>
+    <descriptor id="goToCatalog" type="safe" rt="#Catalog" title="Go to Catalog Screen">
+        <doc>Navigate to the book catalog list screen. All books are displayed.</doc>
+    </descriptor>
+    <descriptor id="goToCart" type="safe" rt="#ShoppingCart" title="Go to Cart Screen">
+        <doc>Navigate to the screen displaying the contents of the current shopping cart.</doc>
+    </descriptor>
+    <descriptor id="goToCheckout" type="safe" rt="#Checkout" title="Go to Checkout Screen">
+        <doc>Navigate to the screen to confirm cart contents and proceed with purchase. Cannot transition if cart is empty.</doc>
+    </descriptor>
+    <descriptor id="goToPayment" type="safe" rt="#Payment" title="Go to Payment Screen">
+        <doc>Navigate to the payment screen to input payment information and complete the order.</doc>
+    </descriptor>
+
+    <descriptor id="goListBooks" type="safe" rt="#Catalog" rel="collection" title="Get Book List" tag="catalog">
+        <doc>Retrieve list of all books in the catalog. Can specify pagination (default 20 items/page) and sort order (newest, price, popularity, etc.).</doc>
+    </descriptor>
+    <descriptor id="goSearchBooks" type="safe" rt="#Catalog" rel="collection" title="Search Books" tag="catalog">
+        <doc>Search for books based on specified search query. Can search across multiple fields including title, author name, content description, ISBN, etc.</doc>
+        <descriptor href="#query"/>
+    </descriptor>
+    <descriptor id="goGetCategories" type="safe" rt="#Catalog" rel="collection" title="Get Category List" tag="catalog">
+        <doc>Retrieve list of all available book categories. For hierarchical categories, parent-child relationships are also returned.</doc>
+    </descriptor>
+    <descriptor id="goBookDetails" type="safe" rt="#Book" rel="item" title="Get Book Details" tag="catalog">
+        <doc>Retrieve detailed information for a specific book based on the specified book ID. Includes stock status and related book information.</doc>
+        <descriptor href="#id"/>
+    </descriptor>
+
+    <descriptor id="doAddToCart" type="unsafe" rt="#ShoppingCart" rel="collection" title="Add to Cart" tag="cart">
+        <doc>Add the specified book to the shopping cart. If already in the cart, quantity is increased. Orders exceeding stock will result in an error.</doc>
+        <descriptor href="#id"/>
+        <descriptor href="#quantity"/>
+    </descriptor>
+    <descriptor id="goListCartItems" type="safe" rt="#ShoppingCart" rel="collection" title="Get Cart Items List" tag="cart">
+        <doc>Retrieve all products in the current shopping cart, including their quantities, subtotals, and total amount.</doc>
+    </descriptor>
+    <descriptor id="doUpdateQuantity" type="idempotent" rt="#ShoppingCart" title="Update Cart Item Quantity" tag="cart">
+        <doc>Update the quantity of a specific product in the cart. Values less than or equal to 0 cannot be specified. Quantities exceeding stock will result in an error.</doc>
+        <descriptor href="#id"/>
+        <descriptor href="#quantity"/>
+    </descriptor>
+    <descriptor id="doRemoveFromCart" type="idempotent" rt="#ShoppingCart" title="Remove Item from Cart" tag="cart">
+        <doc>Completely remove the specified item from the cart. If the item does not exist in the cart, no changes are made.</doc>
+        <descriptor href="#id"/>
+    </descriptor>
+
+    <descriptor id="doUserInfo" type="unsafe" rt="#Checkout" title="Input User Information" tag="customer">
+        <doc>Input customer's name and email address. Email address is validated using regular expressions.</doc>
+        <descriptor href="#userName"/>
+        <descriptor href="#userEmail"/>
+    </descriptor>
+    <descriptor id="doShippingInfo" type="unsafe" rt="#Checkout" title="Input Shipping Information" tag="shipping">
+        <doc>Input product delivery address. Features automatic address input using postal code lookup.</doc>
+        <descriptor href="#shippingAddress"/>
+    </descriptor>
+    <descriptor id="doPaymentInfo" type="unsafe" rt="#Payment" title="Input Payment Information" tag="payment">
+        <doc>Select order payment method and input necessary payment information. When credit card is selected, card information is input and validated.</doc>
+        <descriptor href="#paymentMethod"/>
+    </descriptor>
+    <descriptor id="doPlaceOrder" type="unsafe" rt="#Payment" title="Place Order" tag="order">
+        <doc>Confirm order based on user input information, process payment, and display order confirmation details on the payment screen. Payment processing is executed, inventory is secured, and a confirmation email is sent. This operation cannot be reversed.</doc>
+    </descriptor>
+
+    <descriptor id="goOrderDetails" type="safe" rt="#Payment" title="Display Order Details" tag="order">
+        <doc>Display detailed information for the confirmed order on the payment screen. Includes order number, list of purchased products, total amount, delivery destination, payment method, etc.</doc>
+    </descriptor>
+</alps>

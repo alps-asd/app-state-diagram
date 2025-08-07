@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.14.1] - 2025-08-07
+
+### Fixed
+- Fixed `--mode=svg` option not working properly in Diagram class
+- Fixed PHAR path resolution for Node.js dot.js processing in SVG mode
+- SVG mode now correctly generates SVG files without HTML output
+
 ## [0.14.0] - 2025-08-06
 
 ### Added
