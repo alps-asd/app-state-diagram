@@ -36,6 +36,7 @@ final class DumpDocs
     public const MODE_HTML = 'html';
     public const MODE_MARKDOWN = 'markdown';
     public const MODE_SVG = 'svg';
+    public const ALPS_FILE_EXTENSIONS = ['.xml', '.json'];
 
     /** @var array<string, AbstractDescriptor> */
     private $descriptors = [];

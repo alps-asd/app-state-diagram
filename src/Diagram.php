@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Koriym\AppStateDiagram;
 
-use function count;
 use function file_put_contents;
 use function passthru;
 use function sprintf;
@@ -33,17 +32,13 @@ final class Diagram
         }
 
         if ($config->outputMode === DumpDocs::MODE_SVG) {
-            $this->drawSvgOnly($config, $profile);
+            (new PutDiagram())->drawSvgOnly($config, $profile);
 
             // Return IndexPage for API consistency (not used for SVG-only output)
             return $index;
         }
 
         return $index;
-
-//        file_put_contents($index->file, $index->content);
-//        echo "ASD generated. {$index->file}" . PHP_EOL;
-//        echo sprintf('Descriptors(%s), Links(%s)', count($profile->descriptors), count($profile->links)) . PHP_EOL;
     }
 
     public function drawMarkdown(Config $config, Profile $profile): IndexPage
@@ -57,29 +52,12 @@ final class Diagram
         return new IndexPage($indexConfig);
     }
 
-    public function drawSvgOnly(Config $config, Profile $profile): void
-    {
-        $titleProfile = new Profile($config->profile, new LabelNameTitle());
-
-        // Generate main SVG (with IDs)
-        $this->draw('', new LabelName(), $profile);
-
-        // Generate title SVG (with human-readable names)
-        $this->draw('.title', new LabelNameTitle(), $titleProfile);
-
-        $svgFile = str_replace(['.xml', '.json'], '.svg', $profile->alpsFile);
-        $titleSvgFile = str_replace(['.xml', '.json'], '.title.svg', $profile->alpsFile);
-
-        echo "SVG (ID-based) generated: {$svgFile}" . PHP_EOL;
-        echo "SVG (Title-based) generated: {$titleSvgFile}" . PHP_EOL;
-        echo sprintf('Descriptors(%s), Links(%s)', count($profile->descriptors), count($profile->links)) . PHP_EOL;
-    }
 
     private function draw(string $fileId, LabelNameInterface $labelName, AbstractProfile $profile): void
     {
         $dot = ($this->draw)($profile, $labelName);
         $extention = $fileId . '.dot';
-        $dotFile = str_replace(['.xml', '.json'], $extention, $profile->alpsFile);
+        $dotFile = str_replace(DumpDocs::ALPS_FILE_EXTENSIONS, $extention, $profile->alpsFile);
         $this->convert($dotFile, $dot);
     }
 
@@ -93,6 +71,8 @@ final class Diagram
             echo 'Warning: Graphviz error' . PHP_EOL; // @codeCoverageIgnore
         }
 
-        @unlink($dotFile);
+        if (file_exists($dotFile)) {
+            unlink($dotFile);
+        }
     }
 }

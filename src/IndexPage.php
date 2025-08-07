@@ -64,8 +64,8 @@ final class IndexPage
     private function getMarkdownImage(string $profile): string
     {
         $baseProfile = basename($profile);
-        $imageFile = str_replace(['.xml', '.json'], '.svg', $baseProfile);
-        $imageTitleFile = str_replace(['.xml', '.json'], '.title.svg', $baseProfile);
+        $imageFile = str_replace(DumpDocs::ALPS_FILE_EXTENSIONS, '.svg', $baseProfile);
+        $imageTitleFile = str_replace(DumpDocs::ALPS_FILE_EXTENSIONS, '.title.svg', $baseProfile);
 
         return sprintf(
             '[<img src="%s" alt="application state diagram">](%s)',
