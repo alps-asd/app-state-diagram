@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Koriym\AppStateDiagram;
 
+use function file_exists;
 use function file_put_contents;
 use function passthru;
 use function sprintf;
@@ -51,7 +52,6 @@ final class Diagram
 
         return new IndexPage($indexConfig);
     }
-
 
     private function draw(string $fileId, LabelNameInterface $labelName, AbstractProfile $profile): void
     {

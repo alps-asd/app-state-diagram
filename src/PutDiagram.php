@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Koriym\AppStateDiagram;
 
 use function count;
+use function file_exists;
 use function file_put_contents;
 use function passthru;
 use function sprintf;
