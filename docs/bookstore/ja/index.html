@@ -538,8 +538,16 @@ table .legend {
     transform-origin: bottom left;
 }
 </style>
+<style>
+    .center-text {
+        text-align: center;
+    }
+    .hidden {
+        display: none;
+    }
+</style>
     <script src="https://d3js.org/d3.v7.min.js"></script>
-    <script src="https://unpkg.com/@hpcc-js/wasm@2.21.0/dist/graphviz.umd.js" type="javascript/worker"></script>
+    <script src="https://unpkg.com/@hpcc-js/wasm@2.21.0/dist/graphviz.umd.js"></script>
     <script src="https://unpkg.com/d3-graphviz@5.6.0/build/d3-graphviz.min.js"></script>
 <script>// Applies smooth scroll to links
 const ease = (t, b, c, d) => {
@@ -858,6 +866,113 @@ function enhanceProfileSection() {
 }
 
 </script>
+<script>// グラフズーム機能のセットアップ（+/-ボタンのみ）
+let currentScale = 1;
+const minScale = 0.1;
+const maxScale = 3;
+
+function setupGraphZoom() {
+    console.log("Setting up zoom controls...");
+    const zoomControlsContainer = document.querySelector('#zoom-controls-container');
+    if (!zoomControlsContainer) {
+        console.log('Zoom controls container not found');
+        return;
+    }
+
+    // グローバルなズームコントロールを追加
+    const zoomControls = document.createElement('div');
+    zoomControls.className = 'zoom-controls global-zoom-controls';
+    zoomControls.innerHTML = `
+        <button class="zoom-button" data-zoom="in">+</button>
+        <button class="zoom-button" data-zoom="out">−</button>
+        <button class="zoom-button" data-zoom="reset">1:1</button>
+    `;
+    zoomControlsContainer.appendChild(zoomControls);
+    
+    // SVG要素の監視と初期設定
+    setupSvgObservers();
+    
+    // ズームイン
+    zoomControls.querySelector('[data-zoom="in"]').addEventListener('click', () => {
+        currentScale = Math.min(currentScale * 1.2, maxScale);
+        updateAllSvgZoom(zoomControls);
+    });
+
+    // ズームアウト
+    zoomControls.querySelector('[data-zoom="out"]').addEventListener('click', () => {
+        currentScale = Math.max(currentScale / 1.2, minScale);
+        updateAllSvgZoom(zoomControls);
+    });
+
+    // リセット
+    zoomControls.querySelector('[data-zoom="reset"]').addEventListener('click', () => {
+        currentScale = 1;
+        updateAllSvgZoom(zoomControls);
+    });
+}
+
+function setupSvgObservers() {
+    const containers = ['#asd-graph-id', '#asd-graph-name'];
+    
+    containers.forEach(containerId => {
+        const container = document.querySelector(containerId);
+        if (!container) {
+            console.log(`Container ${containerId} not found`);
+            return;
+        }
+        
+        // SVGを探す
+        let svg = container.querySelector('svg');
+        
+        // SVGが見つからない場合は監視して再試行
+        if (!svg) {
+            console.log(`SVG not found in ${containerId}, setting up observer`);
+            // SVG要素が追加されるのを監視
+            const observer = new MutationObserver((mutations, obs) => {
+                mutations.forEach(mutation => {
+                    if (mutation.addedNodes.length) {
+                        svg = container.querySelector('svg');
+                        if (svg) {
+                            console.log('SVG found in ' + containerId + ' after waiting');
+                            obs.disconnect(); // 監視を停止
+                            // 初期ズームを適用
+                            svg.style.transform = `scale(${currentScale})`;
+                        }
+                    }
+                });
+            });
+            
+            observer.observe(container, { childList: true, subtree: true });
+        } else {
+            console.log(`SVG found immediately ${containerId}`);
+            // 初期ズームを適用
+            svg.style.transform = `scale(${currentScale})`;
+        }
+    });
+}
+
+function updateAllSvgZoom(zoomControls) {
+    // 両方のコンテナのSVGを取得して同じスケールを適用
+    const containers = ['#asd-graph-id', '#asd-graph-name'];
+    
+    containers.forEach(containerId => {
+        const container = document.querySelector(containerId);
+        if (!container) return;
+        
+        const svg = container.querySelector('svg');
+        if (svg) {
+            // transform-originはCSSで設定済み（top left）
+            svg.style.transform = `scale(${currentScale})`;
+        }
+    });
+    
+    // ボタン状態の更新
+    const zoomIn = zoomControls.querySelector('[data-zoom="in"]');
+    const zoomOut = zoomControls.querySelector('[data-zoom="out"]');
+    
+    zoomIn.disabled = currentScale >= maxScale;
+    zoomOut.disabled = currentScale <= minScale;
+}</script>
 </head>
 <body>
     <div class="markdown-body">
@@ -868,8 +983,8 @@ function enhanceProfileSection() {
 <!-- Container for the ASDs -->
 
 <div id="svg-container">
-    <div id="asd-graph-id" style="text-align: center; "></div>
-    <div id="asd-graph-name" style="text-align: center; display: none;"></div>
+    <div id="asd-graph-id" class="center-text"></div>
+    <div id="asd-graph-name" class="center-text hidden"></div>
 </div>
 
 <script>
@@ -887,130 +1002,22 @@ function enhanceProfileSection() {
             setupDocClick();
             setupTagEventListener('cart', ['ShoppingCart', 'doAddToCart', 'doRemoveFromCart', 'doUpdateQuantity', 'goListCartItems'], 'LightGreen'); setupTagEventListener('catalog', ['Book', 'Catalog', 'Category', 'author', 'category', 'goGetBookDetails', 'goGetCategories', 'goListBooks', 'goSearchBooks', 'isbn', 'query', 'title'], 'SkyBlue'); setupTagEventListener('checkout', ['Checkout'], 'LightCoral'); setupTagEventListener('commerce', ['price', 'quantity', 'totalAmount'], 'LightSalmon'); setupTagEventListener('core', ['id'], 'Khaki'); setupTagEventListener('customer', ['doUserInfo', 'userEmail', 'userName'], 'Plum'); setupTagEventListener('navigation', ['Home'], 'Wheat'); setupTagEventListener('order', ['OrderConfirmation', 'doPlaceOrder', 'goOrderDetails'], 'LightGreen'); setupTagEventListener('payment', ['doPaymentInfo', 'paymentMethod'], 'SkyBlue'); setupTagEventListener('shipping', ['doShippingInfo', 'shippingAddress'], 'LightCoral'); 
 
-            // 新機能の初期化
+            // Initialize new features
             enhanceProfileSection();
             setupSearch();
             setupGraphZoom();
         } catch (error) {
                console.error("Error in main process:", error);
         }});
-        
-    // グラフズーム機能のセットアップ（+/-ボタンのみ）
-    let currentScale = 1;
-    const minScale = 0.1;
-    const maxScale = 3;
-
-    function setupGraphZoom() {
-        console.log("Setting up zoom controls...");
-        const zoomControlsContainer = document.querySelector('#zoom-controls-container');
-        if (!zoomControlsContainer) {
-            console.log('Zoom controls container not found');
-            return;
-        }
-
-        // グローバルなズームコントロールを追加
-        const zoomControls = document.createElement('div');
-        zoomControls.className = 'zoom-controls global-zoom-controls';
-        zoomControls.innerHTML = `
-            <button class="zoom-button" data-zoom="in">+</button>
-            <button class="zoom-button" data-zoom="out">−</button>
-            <button class="zoom-button" data-zoom="reset">1:1</button>
-        `;
-        zoomControlsContainer.appendChild(zoomControls);
-        
-        // SVG要素の監視と初期設定
-        setupSvgObservers();
-        
-        // ズームイン
-        zoomControls.querySelector('[data-zoom="in"]').addEventListener('click', () => {
-            currentScale = Math.min(currentScale * 1.2, maxScale);
-            updateAllSvgZoom(zoomControls);
-        });
-    
-        // ズームアウト
-        zoomControls.querySelector('[data-zoom="out"]').addEventListener('click', () => {
-            currentScale = Math.max(currentScale / 1.2, minScale);
-            updateAllSvgZoom(zoomControls);
-        });
-    
-        // リセット
-        zoomControls.querySelector('[data-zoom="reset"]').addEventListener('click', () => {
-            currentScale = 1;
-            updateAllSvgZoom(zoomControls);
-        });
-    }
-    
-    function setupSvgObservers() {
-        const containers = ['#asd-graph-id', '#asd-graph-name'];
-        
-        containers.forEach(containerId => {
-            const container = document.querySelector(containerId);
-            if (!container) {
-                console.log(`Container ${containerId} not found`);
-                return;
-            }
-            
-            // SVGを探す
-            let svg = container.querySelector('svg');
-            
-            // SVGが見つからない場合は監視して再試行
-            if (!svg) {
-                console.log(`SVG not found in ${containerId}, setting up observer`);
-                // SVG要素が追加されるのを監視
-                const observer = new MutationObserver((mutations, obs) => {
-                    mutations.forEach(mutation => {
-                        if (mutation.addedNodes.length) {
-                            svg = container.querySelector('svg');
-                            if (svg) {
-                                console.log('SVG found in ' + containerId + ' after waiting');
-                                obs.disconnect(); // 監視を停止
-                                // 初期ズームを適用
-                                svg.style.transform = `scale(${currentScale})`;
-                            }
-                        }
-                    });
-                });
-                
-                observer.observe(container, { childList: true, subtree: true });
-            } else {
-                console.log(`SVG found immediately ${containerId}`);
-                // 初期ズームを適用
-                svg.style.transform = `scale(${currentScale})`;
-            }
-        });
-    }
-    
-    function updateAllSvgZoom(zoomControls) {
-        // 両方のコンテナのSVGを取得して同じスケールを適用
-        const containers = ['#asd-graph-id', '#asd-graph-name'];
-        
-        containers.forEach(containerId => {
-            const container = document.querySelector(containerId);
-            if (!container) return;
-            
-            const svg = container.querySelector('svg');
-            if (svg) {
-                // transform-originはCSSで設定済み（top left）
-                svg.style.transform = `scale(${currentScale})`;
-            }
-        });
-        
-        // ボタン状態の更新
-        const zoomIn = zoomControls.querySelector('[data-zoom="in"]');
-        const zoomOut = zoomControls.querySelector('[data-zoom="out"]');
-        
-        zoomIn.disabled = currentScale >= maxScale;
-        zoomOut.disabled = currentScale <= minScale;
-    }
 </script>
 
 <div id="zoom-controls-container" style="margin-bottom: 10px;"></div>
 
 <div class="asd-view-selector">
     <span class="selector-label">View:</span>
-    <input type="radio" id="asd-show-id" checked name="asd-view-selector">
+    <input type="radio" id="asd-show-id" checked name="asd-view-selector" value="id">
     <label for="asd-show-id">id</label>
-    <input type="radio" id="asd-show-name" name="asd-view-selector">
+    <input type="radio" id="asd-show-name" name="asd-view-selector" value="name">
     <label for="asd-show-name">title</label>
 </div>
 

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<alps
+<alps version="1.0"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="https://alps-io.github.io/schemas/alps.xsd">
     <title>ALPS Book Store</title>
@@ -59,7 +59,7 @@
         <descriptor href="#goListBooks"/>
         <descriptor href="#goSearchBooks"/>
         <descriptor href="#goGetCategories"/>
-        <descriptor href="#goToBookDetails"/>
+        <descriptor href="#goBookDetails"/>
         <descriptor href="#goToCart"/>
         <descriptor href="#Book"/>
     </descriptor>
@@ -116,10 +116,6 @@
     <descriptor id="goToCatalog" type="safe" rt="#Catalog" title="Go to Catalog Screen">
         <doc>Navigate to the book catalog list screen. All books are displayed.</doc>
     </descriptor>
-    <descriptor id="goToBookDetails" type="safe" rt="#Book" title="Go to Book Details Screen">
-        <doc>Navigate to the detailed information screen for the selected book. Book ID must be specified.</doc>
-        <descriptor href="#id"/>
-    </descriptor>
     <descriptor id="goToCart" type="safe" rt="#ShoppingCart" title="Go to Cart Screen">
         <doc>Navigate to the screen displaying the contents of the current shopping cart.</doc>
     </descriptor>
@@ -140,7 +136,7 @@
     <descriptor id="goGetCategories" type="safe" rt="#Catalog" rel="collection" title="Get Category List" tag="catalog">
         <doc>Retrieve list of all available book categories. For hierarchical categories, parent-child relationships are also returned.</doc>
     </descriptor>
-    <descriptor id="goGetBookDetails" type="safe" rt="#Book" rel="item" title="Get Book Details" tag="catalog">
+    <descriptor id="goBookDetails" type="safe" rt="#Book" rel="item" title="Get Book Details" tag="catalog">
         <doc>Retrieve detailed information for a specific book based on the specified book ID. Includes stock status and related book information.</doc>
         <descriptor href="#id"/>
     </descriptor>
