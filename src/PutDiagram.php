@@ -83,7 +83,10 @@ final class PutDiagram
 
     private function convert(string $dotFile, string $dot): void
     {
-        file_put_contents($dotFile, $dot);
+        file_put_contents(
+            $dotFile,
+            $dot
+        );
         $dotJsPath = PathResolver::getDotJsPath();
         $cmd = sprintf('node %s %s', $dotJsPath, $dotFile);
         passthru($cmd, $status);

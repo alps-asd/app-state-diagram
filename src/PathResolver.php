@@ -19,7 +19,10 @@ final class PathResolver
             return dirname(__DIR__) . '/asd-sync/dot.js';
         }
 
-        // PHAR execution: asd-sync should be adjacent to PHAR
-        return dirname($pharRunning) . '/asd-sync/dot.js'; // @codeCoverageIgnore
+        // PHAR execution: asd-sync is in the parent directory of bin/
+        $pharDir = dirname($pharRunning);
+        $projectDir = dirname($pharDir);
+
+        return $projectDir . '/asd-sync/dot.js'; // @codeCoverageIgnore
     }
 }
