@@ -19,12 +19,39 @@ foreach ([__DIR__ . '/../../../autoload.php', __DIR__ . '/../vendor/autoload.php
 if ($argc === 1) {
     echo <<<EOT
 usage: asd [options] alps_file
+
+Options:
+  -c, --config <path>     Use custom config file
+  -e, --echo              Output to stdout instead of file
+  -w, --watch             Watch mode with live reload
+  -m, --mode <mode>       Output mode (html|markdown|svg)
+  --port <port>           Port for watch mode (default: 3000)
+  -v, --version           Show version information
+  -h, --help              Show this help message
+
 @see https://github.com/alps-asd/app-state-diagram#usage
 
 EOT;
     exit(0);
 }
-$options = getopt('c:e::w::m::', ['config:', 'echo::', 'watch::', 'mode::', 'port::']);
+$options = getopt('c:e::w::m::v', ['config:', 'echo::', 'watch::', 'mode::', 'port::', 'version']);
+// Handle --version option
+if (isset($options['v']) || isset($options['version'])) {
+    $pharRunning = Phar::running(false);
+    
+    if ($pharRunning !== '') {
+        // Try to extract version from Homebrew Cellar path
+        if (preg_match('#/Cellar/asd/([^/]+)/#', $pharRunning, $matches)) {
+            echo "asd version {$matches[1]} (Homebrew)\n";
+        } else {
+            echo "asd (PHAR version - version info not available)\n";
+        }
+    } else {
+        echo "asd (development version - version info not available)\n";
+    }
+    exit(0);
+}
+
 if ($argc === 1) {
     $options['c'] = getcwd();
 }
