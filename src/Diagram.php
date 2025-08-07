@@ -34,7 +34,7 @@ final class Diagram
 
         if ($config->outputMode === DumpDocs::MODE_SVG) {
             $this->drawSvgOnly($config, $profile);
-
+            // Return IndexPage for API consistency (not used for SVG-only output)
             return $index;
         }
 
