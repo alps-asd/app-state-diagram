@@ -33,7 +33,7 @@ viz.renderString(dotString, { engine: 'dot', format: 'svg' })
     .then(svg => {
         try {
             fs.writeFileSync(outputFileName, svg);
-            console.log(`Output SVG file: ${outputFileName}`);
+            // SVG file written successfully (message handled by parent process)
         } catch (error) {
             console.error(`Error writing file "${outputFileName}":`, error.message);
             process.exit(1);
