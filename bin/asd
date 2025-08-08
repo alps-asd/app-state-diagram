@@ -78,9 +78,12 @@ if ($config->watch) {
         
         // Try version-independent opt path if not found in Cellar
         if (!is_dir($actualPath)) {
-            $optPath = '/opt/homebrew/opt/asd/libexec/asd-sync';
-            if (is_dir($optPath)) {
-                $actualPath = $optPath;
+            $homebrewPrefix = trim(shell_exec('brew --prefix 2>/dev/null') ?? '');
+            if ($homebrewPrefix !== '') {
+                $optPath = $homebrewPrefix . '/opt/asd/libexec/asd-sync';
+                if (is_dir($optPath)) {
+                    $actualPath = $optPath;
+                }
             }
         }
     }
@@ -88,7 +91,6 @@ if ($config->watch) {
     if (!is_dir($actualPath)) {
         echo "Error: asd-sync directory not found. Watch mode requires Node.js components.\n";
         echo "Expected path: $actualPath\n";
-        echo "Try using 'asdw' command instead if you installed via Homebrew.\n";
         exit(1);
     }
     
