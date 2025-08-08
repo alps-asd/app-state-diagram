@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.14.2] - 2025-08-08
+
+### Fixed
+- Fixed Homebrew path resolution for cross-platform compatibility
+- Replace hardcoded `/opt/homebrew` paths with dynamic `brew --prefix` detection
+- Support both ARM (`/opt/homebrew`) and Intel (`/usr/local`) Mac architectures
+- Add fallback path resolution in PathResolver.php for libexec directory structure
+- Remove asdw command references as path fix makes it obsolete
+
 ## [0.14.1] - 2025-08-07
 
 ### Fixed
