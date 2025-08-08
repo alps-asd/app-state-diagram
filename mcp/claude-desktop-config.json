@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "alps-tools": {
+      "command": "php",
+      "args": ["/Users/akihito/git/app-state-diagram/mcp/asd-mcp.php"],
+      "description": "ALPS validation and SVG generation tools"
+    }
+  }
+}

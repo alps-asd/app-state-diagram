@@ -1,0 +1,267 @@
+{
+  "name": "mcp-server-generator",
+  "version": "1.0.0",
+  "description": "Meta MCP Server that generates custom MCP servers using the PHP skeleton template",
+  "author": "Semantic Logger Project",
+  "license": "MIT",
+  "server": {
+    "command": "php",
+    "args": ["mcp-server-generator.php"],
+    "description": "Generates custom MCP servers based on user specifications"
+  },
+  "capabilities": {
+    "tools": [
+      {
+        "name": "generateMcpServer",
+        "description": "Generate a complete MCP server from specifications",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "serverName": {
+              "type": "string",
+              "description": "Name of the MCP server (kebab-case recommended)"
+            },
+            "serverDescription": {
+              "type": "string", 
+              "description": "Brief description of what the server does"
+            },
+            "tools": {
+              "type": "array",
+              "description": "Array of tool specifications",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Tool name (camelCase)"
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "What the tool does"
+                  },
+                  "parameters": {
+                    "type": "array",
+                    "description": "Tool parameters",
+                    "items": {
+                      "type": "object", 
+                      "properties": {
+                        "name": {
+                          "type": "string",
+                          "description": "Parameter name"
+                        },
+                        "type": {
+                          "type": "string",
+                          "enum": ["string", "integer", "boolean", "array", "object"],
+                          "description": "Parameter type"
+                        },
+                        "description": {
+                          "type": "string",
+                          "description": "Parameter description"
+                        },
+                        "required": {
+                          "type": "boolean",
+                          "default": false,
+                          "description": "Whether parameter is required"
+                        },
+                        "default": {
+                          "description": "Default value for optional parameters"
+                        }
+                      },
+                      "required": ["name", "type", "description"]
+                    }
+                  },
+                  "implementation": {
+                    "type": "string",
+                    "description": "Basic implementation logic or placeholder code"
+                  }
+                },
+                "required": ["name", "description", "parameters"]
+              }
+            },
+            "outputFile": {
+              "type": "string",
+              "default": "generated-mcp-server.php",
+              "description": "Output filename for the generated server"
+            }
+          },
+          "required": ["serverName", "serverDescription", "tools"]
+        }
+      },
+      {
+        "name": "addToolToServer", 
+        "description": "Add a new tool to an existing MCP server file",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "serverFile": {
+              "type": "string",
+              "description": "Path to the existing MCP server PHP file"
+            },
+            "toolSpec": {
+              "type": "object",
+              "description": "New tool specification (same format as in generateMcpServer)",
+              "properties": {
+                "name": {"type": "string"},
+                "description": {"type": "string"}, 
+                "parameters": {"type": "array"},
+                "implementation": {"type": "string"}
+              },
+              "required": ["name", "description", "parameters"]
+            }
+          },
+          "required": ["serverFile", "toolSpec"]
+        }
+      },
+      {
+        "name": "validateMcpServer",
+        "description": "Validate MCP server PHP code for syntax and MCP compliance",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "serverFile": {
+              "type": "string", 
+              "description": "Path to MCP server PHP file to validate"
+            },
+            "checkSyntax": {
+              "type": "boolean",
+              "default": true,
+              "description": "Check PHP syntax"
+            },
+            "checkMcpCompliance": {
+              "type": "boolean", 
+              "default": true,
+              "description": "Check MCP protocol compliance"
+            }
+          },
+          "required": ["serverFile"]
+        }
+      },
+      {
+        "name": "generateClaudeConfig",
+        "description": "Generate Claude Desktop configuration for MCP server",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "serverName": {
+              "type": "string",
+              "description": "MCP server name for config"
+            },
+            "serverPath": {
+              "type": "string",
+              "description": "Full path to the MCP server PHP file"
+            },
+            "description": {
+              "type": "string",
+              "description": "Server description for config"
+            }
+          },
+          "required": ["serverName", "serverPath"]
+        }
+      },
+      {
+        "name": "listServerTemplates",
+        "description": "List available MCP server templates and examples",
+        "inputSchema": {
+          "type": "object",
+          "properties": {}
+        }
+      },
+      {
+        "name": "testMcpServer",
+        "description": "Generate test script for MCP server validation",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "serverFile": {
+              "type": "string",
+              "description": "Path to MCP server to test"
+            },
+            "testAll": {
+              "type": "boolean", 
+              "default": true,
+              "description": "Test all tools automatically"
+            }
+          },
+          "required": ["serverFile"]
+        }
+      }
+    ]
+  },
+  "examples": [
+    {
+      "name": "File Operations Server",
+      "description": "Generate an MCP server for file operations",
+      "tool": "generateMcpServer",
+      "input": {
+        "serverName": "file-ops-server",
+        "serverDescription": "MCP server for file and directory operations", 
+        "tools": [
+          {
+            "name": "readFile",
+            "description": "Read contents of a file",
+            "parameters": [
+              {
+                "name": "filePath",
+                "type": "string", 
+                "description": "Path to file to read",
+                "required": true
+              }
+            ]
+          },
+          {
+            "name": "listDirectory", 
+            "description": "List contents of directory",
+            "parameters": [
+              {
+                "name": "dirPath", 
+                "type": "string",
+                "description": "Directory path to list",
+                "required": true
+              },
+              {
+                "name": "includeHidden",
+                "type": "boolean",
+                "description": "Include hidden files",
+                "default": false
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "API Client Server",
+      "description": "Generate MCP server for REST API interactions",
+      "tool": "generateMcpServer", 
+      "input": {
+        "serverName": "rest-api-client",
+        "serverDescription": "MCP server for REST API calls and data processing",
+        "tools": [
+          {
+            "name": "httpGet",
+            "description": "Make HTTP GET request",
+            "parameters": [
+              {
+                "name": "url",
+                "type": "string",
+                "description": "URL to request", 
+                "required": true
+              },
+              {
+                "name": "headers",
+                "type": "object",
+                "description": "Request headers",
+                "default": {}
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "keywords": ["mcp", "server", "generator", "meta", "php", "template", "code-generation"],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/koriym/Koriym.SemanticLogger"
+  }
+}
