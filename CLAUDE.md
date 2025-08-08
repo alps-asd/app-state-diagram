@@ -102,11 +102,9 @@ The `--watch` option starts a Node.js server that monitors profile changes and r
 
 **Homebrew Installation Notes:**
 - Watch mode path resolution handles both Cellar and opt directory structures
-- Primary path: `/opt/homebrew/Cellar/asd/x.x.x/libexec/asd-sync`
-- Fallback path: `/opt/homebrew/opt/asd/libexec/asd-sync` (version-independent)
-- Both `asd -w` and `asdw` commands should work identically
+- Uses dynamic Homebrew prefix detection via `brew --prefix`
+- Supports both ARM (`/opt/homebrew`) and Intel (`/usr/local`) architectures
 
 **Troubleshooting Watch Mode:**
-- If `asd -w` fails with "No such file or directory", try `asdw` command
 - Error messages show expected path for debugging
 - Ensure Node.js dependencies are installed in the asd-sync directory
