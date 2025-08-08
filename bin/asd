@@ -6,6 +6,7 @@ declare(strict_types=1);
 use Koriym\AppStateDiagram\ConfigFactory;
 use Koriym\AppStateDiagram\Diagram;
 use Koriym\AppStateDiagram\Exception\AlpsFileNotReadableException;
+use Koriym\AppStateDiagram\PathResolver;
 use Koriym\AppStateDiagram\PutDiagram;
 use Koriym\DataFile\Exception\DataFileNotFoundException;
 
@@ -78,8 +79,8 @@ if ($config->watch) {
         
         // Try version-independent opt path if not found in Cellar
         if (!is_dir($actualPath)) {
-            $homebrewPrefix = trim(shell_exec('brew --prefix 2>/dev/null') ?? '');
-            if ($homebrewPrefix !== '') {
+            $homebrewPrefix = PathResolver::getHomebrewPrefix();
+            if ($homebrewPrefix !== null) {
                 $optPath = $homebrewPrefix . '/opt/asd/libexec/asd-sync';
                 if (is_dir($optPath)) {
                     $actualPath = $optPath;
