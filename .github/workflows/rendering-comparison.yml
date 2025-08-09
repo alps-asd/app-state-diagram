@@ -1,0 +1,245 @@
+name: Rendering Comparison
+
+on:
+  workflow_dispatch:
+    inputs:
+      sample_profile:
+        description: 'Profile file to test (relative path from repo root)'
+        required: false
+        default: 'docs/blog/profile.json'
+        type: string
+
+jobs:
+  render-comparison:
+    name: Compare JavaScript vs Native Dot Rendering
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          ini-values: zend.assertions=1
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: '**/package-lock.json'
+
+      - name: Install PHP dependencies
+        run: composer install --no-dev --no-interaction --no-progress
+
+      - name: Create test profiles with Japanese text
+        run: |
+          # Create Japanese test profile
+          cat > japanese-test.json << 'EOF'
+          {
+            "alps": {
+              "version": "1.0",
+              "descriptor": [
+                {
+                  "id": "home",
+                  "type": "semantic",
+                  "label": "ホーム画面"
+                },
+                {
+                  "id": "login",
+                  "type": "semantic",
+                  "label": "ログイン画面"
+                },
+                {
+                  "id": "profile",
+                  "type": "semantic", 
+                  "label": "プロフィール設定画面"
+                },
+                {
+                  "id": "dashboard",
+                  "type": "semantic",
+                  "label": "ダッシュボード画面"
+                },
+                {
+                  "id": "confirmation",
+                  "type": "semantic",
+                  "label": "設定変更確認画面"
+                },
+                {
+                  "id": "start",
+                  "type": "safe",
+                  "rt": "#home"
+                },
+                {
+                  "id": "goLogin",
+                  "type": "safe", 
+                  "rt": "#login"
+                },
+                {
+                  "id": "doLogin",
+                  "type": "unsafe",
+                  "rt": "#dashboard"
+                },
+                {
+                  "id": "viewProfile",
+                  "type": "safe",
+                  "rt": "#profile"
+                },
+                {
+                  "id": "confirmChanges",
+                  "type": "safe",
+                  "rt": "#confirmation"
+                },
+                {
+                  "id": "saveProfile", 
+                  "type": "unsafe",
+                  "rt": "#dashboard"
+                }
+              ]
+            }
+          }
+          EOF
+
+          # Create extreme Japanese test profile
+          cat > extreme-japanese-test.json << 'EOF'
+          {
+            "alps": {
+              "version": "1.0", 
+              "descriptor": [
+                {
+                  "id": "extremely-long-japanese-label",
+                  "type": "semantic",
+                  "label": "非常に長い日本語のラベルテストケースでフォントメトリクスの問題を再現するためのサンプル"
+                },
+                {
+                  "id": "mixed-text-sample",
+                  "type": "semantic",
+                  "label": "複雑な漢字とひらがなカタカナ混合テキスト表示確認用サンプルデータ"
+                },
+                {
+                  "id": "start",
+                  "type": "safe",
+                  "rt": "#extremely-long-japanese-label"
+                },
+                {
+                  "id": "navigate",
+                  "type": "safe",
+                  "rt": "#mixed-text-sample"
+                }
+              ]
+            }
+          }
+          EOF
+
+      - name: Generate SVGs without native dot (JavaScript only)
+        run: |
+          echo "=== Generating SVGs with JavaScript rendering only ==="
+          mkdir -p output/js-only
+          
+          # Test with standard profile
+          bin/asd ${{ inputs.sample_profile }} --mode=svg
+          cp *.svg output/js-only/ 2>/dev/null || true
+          rm -f *.svg
+          
+          # Test with Japanese profile
+          bin/asd japanese-test.json --mode=svg
+          mv japanese-test.svg output/js-only/japanese-test-js.svg 2>/dev/null || true
+          mv japanese-test.title.svg output/js-only/japanese-test.title-js.svg 2>/dev/null || true
+          
+          # Test with extreme Japanese profile
+          bin/asd extreme-japanese-test.json --mode=svg
+          mv extreme-japanese-test.svg output/js-only/extreme-japanese-test-js.svg 2>/dev/null || true
+          mv extreme-japanese-test.title.svg output/js-only/extreme-japanese-test.title-js.svg 2>/dev/null || true
+
+      - name: Install Graphviz
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y graphviz
+          dot -V
+
+      - name: Generate SVGs with native dot
+        run: |
+          echo "=== Generating SVGs with native dot rendering ==="
+          mkdir -p output/native-dot
+          
+          # Test with standard profile  
+          bin/asd ${{ inputs.sample_profile }} --mode=svg
+          cp *.svg output/native-dot/ 2>/dev/null || true
+          rm -f *.svg
+          
+          # Test with Japanese profile
+          bin/asd japanese-test.json --mode=svg
+          mv japanese-test.svg output/native-dot/japanese-test-native.svg 2>/dev/null || true
+          mv japanese-test.title.svg output/native-dot/japanese-test.title-native.svg 2>/dev/null || true
+          
+          # Test with extreme Japanese profile
+          bin/asd extreme-japanese-test.json --mode=svg
+          mv extreme-japanese-test.svg output/native-dot/extreme-japanese-test-native.svg 2>/dev/null || true  
+          mv extreme-japanese-test.title.svg output/native-dot/extreme-japanese-test.title-native.svg 2>/dev/null || true
+
+      - name: Generate comparison report
+        run: |
+          echo "=== Creating comparison report ===" 
+          cat > output/comparison-report.md << 'EOF'
+          # SVG Rendering Comparison Report
+          
+          This report compares SVG output between JavaScript-based rendering (viz.js) and native dot command rendering.
+          
+          ## Test Files
+          - Standard profile: ${{ inputs.sample_profile }}
+          - Japanese test: japanese-test.json (moderate length Japanese labels)  
+          - Extreme test: extreme-japanese-test.json (very long Japanese labels)
+          
+          ## Key Differences Expected
+          - **JavaScript rendering**: May have font metric inaccuracies, especially with Japanese text
+          - **Native dot rendering**: More accurate font metrics using Pango font system
+          
+          ## Files Generated
+          ### JavaScript-only rendering (js-only/)
+          EOF
+          
+          ls -la output/js-only/ >> output/comparison-report.md
+          
+          cat >> output/comparison-report.md << 'EOF'
+          
+          ### Native dot rendering (native-dot/) 
+          EOF
+          
+          ls -la output/native-dot/ >> output/comparison-report.md
+          
+          cat >> output/comparison-report.md << 'EOF'
+          
+          ## Analysis
+          Compare the SVG files to observe:
+          1. Differences in node widths/heights
+          2. Text positioning accuracy
+          3. Overall diagram dimensions
+          4. Japanese character rendering quality
+          
+          The native dot rendering should provide more accurate measurements, 
+          especially for Japanese text that caused issue #207.
+          EOF
+
+      - name: Upload comparison artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: svg-rendering-comparison
+          path: |
+            output/
+            japanese-test.json
+            extreme-japanese-test.json
+          retention-days: 30
+
+      - name: Display summary
+        run: |
+          echo "=== Rendering Comparison Complete ==="
+          echo ""
+          echo "Generated files:"
+          find output -name "*.svg" | sort
+          echo ""
+          echo "Download the 'svg-rendering-comparison' artifact to compare:"
+          echo "- JavaScript rendering: output/js-only/"  
+          echo "- Native dot rendering: output/native-dot/"
+          echo "- Comparison report: output/comparison-report.md"
