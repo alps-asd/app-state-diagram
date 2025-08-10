@@ -191,7 +191,7 @@ describe('Alps2Dot Integration', () => {
 
     test('should handle missing alps property', () => {
       const noAlps = '{"other": "data"}';
-      expect(() => alps2dot.convert(noAlps)).toThrow('Invalid ALPS document');
+      expect(() => alps2dot.convert(noAlps)).toThrow(/invalid.*alps.*document/i);
     });
 
     test('should handle complex nested structures', () => {

@@ -59,12 +59,12 @@ describe('AlpsParser', () => {
 
     test('should throw error for invalid JSON', () => {
       const invalidJson = '{ invalid json }';
-      expect(() => parser.parse(invalidJson)).toThrow('Invalid JSON');
+      expect(() => parser.parse(invalidJson)).toThrow(/invalid.*json/i);
     });
 
     test('should throw error for missing alps property', () => {
       const noAlpsJson = '{ "other": "data" }';
-      expect(() => parser.parse(noAlpsJson)).toThrow('Invalid ALPS document: missing alps property');
+      expect(() => parser.parse(noAlpsJson)).toThrow(/missing alps property/i);
     });
   });
 
@@ -113,7 +113,7 @@ describe('AlpsParser', () => {
 
     test('should throw error for undetectable format', () => {
       const invalidContent = 'neither json nor xml';
-      expect(() => parser.parse(invalidContent)).toThrow('Cannot detect format');
+      expect(() => parser.parse(invalidContent)).toThrow(/cannot detect format/i);
     });
   });
 

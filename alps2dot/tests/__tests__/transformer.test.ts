@@ -88,7 +88,7 @@ describe('AlpsTransformer', () => {
       // Unknown href references don't create nodes since they're not resolved
     });
 
-    test('should prevent infinite loops with circular references', () => {
+    test('should handle multiple independent descriptors', () => {
       const document: AlpsDocument = {
         alps: {
           descriptor: [
@@ -104,7 +104,7 @@ describe('AlpsTransformer', () => {
         }
       };
 
-      // This should complete successfully without infinite loops
+      // Should create separate nodes for independent descriptors
       const result = transformer.transform(document);
       expect(result.nodes).toHaveLength(2);
       expect(result.links).toHaveLength(0);
