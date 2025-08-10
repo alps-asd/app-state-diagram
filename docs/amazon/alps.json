@@ -169,7 +169,7 @@
                 ]
             },
             {
-                "id": "Order",
+                "id": "OrderDetails",
                 "title": "注文情報",
                 "descriptor": [
                     {"href": "#orderId"},
