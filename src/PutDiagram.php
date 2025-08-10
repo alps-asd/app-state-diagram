@@ -88,15 +88,45 @@ final class PutDiagram
             $dotFile,
             $dot
         );
-        $dotJsPath = PathResolver::getDotJsPath();
-        $cmd = sprintf('node %s %s', $dotJsPath, $dotFile);
-        passthru($cmd, $status);
-        if ($status !== 0) {
-            echo 'Warning: Graphviz error' . PHP_EOL; // @codeCoverageIgnore
+
+        // @codeCoverageIgnoreStart
+        // Try native dot command first if available
+        if (PathResolver::isDotCommandAvailable()) {
+            $this->convertWithNativeDot($dotFile);
+
+            return;
         }
+
+        $this->convertWithJavaScript($dotFile);
 
         if (file_exists($dotFile)) {
             unlink($dotFile);
         }
+        // @codeCoverageIgnoreEnd
+    }
+
+    private function convertWithNativeDot(string $dotFile): void
+    {
+        // @codeCoverageIgnoreStart
+        $svgFile = str_replace('.dot', '.svg', $dotFile);
+        $cmd = sprintf('dot -Tsvg %s -o %s', $dotFile, $svgFile);
+        passthru($cmd, $status);
+        if ($status !== 0) {
+            echo 'Warning: Native Graphviz dot command error, falling back to JavaScript' . PHP_EOL;
+            $this->convertWithJavaScript($dotFile);
+        }
+        // @codeCoverageIgnoreEnd
+    }
+
+    private function convertWithJavaScript(string $dotFile): void
+    {
+        // @codeCoverageIgnoreStart
+        $dotJsPath = PathResolver::getDotJsPath();
+        $cmd = sprintf('node %s %s', $dotJsPath, $dotFile);
+        passthru($cmd, $status);
+        if ($status !== 0) {
+            echo 'Warning: Graphviz error' . PHP_EOL;
+        }
+        // @codeCoverageIgnoreEnd
     }
 }

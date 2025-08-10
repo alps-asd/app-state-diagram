@@ -14,6 +14,16 @@ use function trim;
 
 final class PathResolver
 {
+    public static function isDotCommandAvailable(): bool
+    {
+        // @codeCoverageIgnoreStart
+        /** @psalm-suppress ForbiddenCode */
+        $dotExists = shell_exec('command -v dot 2>/dev/null');
+
+        return $dotExists !== null && $dotExists !== false && trim($dotExists) !== '';
+        // @codeCoverageIgnoreEnd
+    }
+
     public static function getHomebrewPrefix(): ?string
     {
         // @codeCoverageIgnoreStart

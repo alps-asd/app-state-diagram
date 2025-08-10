@@ -20,3 +20,4 @@ tests/asd*
 /docker/app-state-diagram/work/*
 !/docker/app-state-diagram/work/profile.xml
 /coverage.xml
+.claude/settings.local.json

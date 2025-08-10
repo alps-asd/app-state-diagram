@@ -26,4 +26,10 @@ final class PathResolverTest extends TestCase
         $this->assertTrue($reflection->isStatic());
         $this->assertTrue($reflection->isPublic());
     }
+
+    public function testIsDotCommandAvailableReturnsBoolean(): void
+    {
+        $result = PathResolver::isDotCommandAvailable();
+        $this->assertIsBool($result);
+    }
 }
