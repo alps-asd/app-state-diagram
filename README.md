@@ -36,6 +36,12 @@ By focusing on these IA principles, app-state-diagram helps create a shared unde
 
 - [https://editor.app-state-diagram.com/](https://editor.app-state-diagram.com/)
 
+### Rendering Quality
+
+- **Local Installation**: When Graphviz (`dot` command) is installed locally, app-state-diagram provides high-quality rendering with improved font metrics, especially for Japanese text
+- **Online Editor**: Uses JavaScript-based rendering which may have some limitations in font rendering quality
+- **Automatic Detection**: The tool automatically detects available rendering engines and uses the best option available
+
 ### Install with Homebrew
 ```bash
 brew install alps-asd/asd/asd
