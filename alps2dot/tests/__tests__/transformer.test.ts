@@ -111,8 +111,8 @@ describe('AlpsTransformer', () => {
     });
   });
 
-  describe('unique ID generation', () => {
-    test('should generate unique IDs for unknown descriptors', () => {
+  describe('unidentifiable descriptors', () => {
+    test('should not create nodes for descriptors without id or href', () => {
       const document: AlpsDocument = {
         alps: {
           descriptor: [
@@ -131,7 +131,7 @@ describe('AlpsTransformer', () => {
       const result = transformer.transform(document);
       
       expect(result.nodes).toHaveLength(0);
-      // Unknown descriptors without id or href don't create nodes since they're not resolved
+      // Descriptors without id or href cannot be resolved and don't create nodes
     });
   });
 
