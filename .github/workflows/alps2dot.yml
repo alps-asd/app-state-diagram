@@ -1,0 +1,187 @@
+name: alps2dot CI
+
+on:
+  push:
+    branches: [ master, alps2dot ]
+    paths:
+      - 'alps2dot/**'
+      - '.github/workflows/alps2dot.yml'
+  pull_request:
+    branches: [ master ]
+    paths:
+      - 'alps2dot/**'
+      - '.github/workflows/alps2dot.yml'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        node-version: [16, 18, 20]
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+        cache-dependency-path: alps2dot/package-lock.json
+    
+    - name: Install dependencies
+      working-directory: alps2dot
+      run: npm ci
+    
+    - name: Run linting
+      working-directory: alps2dot
+      run: npm run lint
+    
+    - name: Build TypeScript
+      working-directory: alps2dot
+      run: npm run build
+    
+    - name: Run tests
+      working-directory: alps2dot
+      run: npm run test:coverage
+    
+    - name: Test CLI functionality
+      working-directory: alps2dot
+      run: |
+        # Test basic functionality
+        node dist/cli.js ../docs/bookstore/alps.xml > test-output.dot
+        [ -s test-output.dot ] || exit 1
+        
+        # Test JSON input
+        node dist/cli.js ../docs/amazon/alps.json > test-amazon.dot
+        [ -s test-amazon.dot ] || exit 1
+        
+        # Test title labels
+        node dist/cli.js ../docs/bookstore/alps.xml -l title > test-title.dot
+        [ -s test-title.dot ] || exit 1
+        
+        # Test validation
+        node dist/cli.js validate ../docs/bookstore/alps.xml
+    
+    - name: Upload coverage to Codecov
+      if: matrix.node-version == 20
+      uses: codecov/codecov-action@v3
+      with:
+        file: alps2dot/coverage/lcov.info
+        flags: alps2dot
+        name: alps2dot-coverage
+
+  compatibility-test:
+    runs-on: ubuntu-latest
+    needs: test
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.1'
+        extensions: mbstring, xml, json
+        tools: composer:v2
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: 20
+        cache: 'npm'
+        cache-dependency-path: alps2dot/package-lock.json
+    
+    - name: Install PHP dependencies
+      run: composer install --no-dev --optimize-autoloader
+    
+    - name: Install Node.js dependencies  
+      working-directory: alps2dot
+      run: npm ci
+    
+    - name: Build TypeScript
+      working-directory: alps2dot
+      run: npm run build
+    
+    - name: Install Graphviz for SVG generation
+      run: sudo apt-get update && sudo apt-get install -y graphviz
+    
+    - name: Test PHP-TypeScript output compatibility
+      run: |
+        # Test bookstore compatibility
+        bin/asd docs/bookstore/alps.xml > php-bookstore.dot
+        cd alps2dot && node dist/cli.js ../docs/bookstore/alps.xml > ../ts-bookstore.dot && cd ..
+        
+        if ! diff -q php-bookstore.dot ts-bookstore.dot > /dev/null; then
+          echo "❌ Bookstore output differs between PHP and TypeScript versions"
+          echo "PHP output:"
+          head -20 php-bookstore.dot
+          echo "TypeScript output:"  
+          head -20 ts-bookstore.dot
+          exit 1
+        fi
+        echo "✅ Bookstore output matches between PHP and TypeScript versions"
+        
+        # Test amazon compatibility
+        bin/asd docs/amazon/alps.json > php-amazon.dot
+        cd alps2dot && node dist/cli.js ../docs/amazon/alps.json > ../ts-amazon.dot && cd ..
+        
+        if ! diff -q php-amazon.dot ts-amazon.dot > /dev/null; then
+          echo "❌ Amazon output differs between PHP and TypeScript versions"
+          exit 1
+        fi
+        echo "✅ Amazon output matches between PHP and TypeScript versions"
+        
+        # Test LMS compatibility
+        bin/asd docs/lms/alps.xml > php-lms.dot
+        cd alps2dot && node dist/cli.js ../docs/lms/alps.xml > ../ts-lms.dot && cd ..
+        
+        if ! diff -q php-lms.dot ts-lms.dot > /dev/null; then
+          echo "❌ LMS output differs between PHP and TypeScript versions"
+          exit 1
+        fi
+        echo "✅ LMS output matches between PHP and TypeScript versions"
+
+  performance-test:
+    runs-on: ubuntu-latest
+    needs: test
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.1'
+        extensions: mbstring, xml, json
+        tools: composer:v2
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: 20
+        cache: 'npm'
+        cache-dependency-path: alps2dot/package-lock.json
+    
+    - name: Install dependencies
+      run: |
+        composer install --no-dev --optimize-autoloader
+        cd alps2dot && npm ci && npm run build
+    
+    - name: Performance comparison
+      run: |
+        echo "Performance comparison between PHP and TypeScript versions:"
+        echo "============================================================"
+        
+        echo "📁 Testing docs/amazon/alps.json"
+        echo "PHP version:"
+        time bin/asd docs/amazon/alps.json > /dev/null
+        echo "TypeScript version:"
+        time (cd alps2dot && node dist/cli.js ../docs/amazon/alps.json > /dev/null)
+        
+        echo "📁 Testing docs/bookstore/alps.xml"
+        echo "PHP version:"
+        time bin/asd docs/bookstore/alps.xml > /dev/null
+        echo "TypeScript version:"
+        time (cd alps2dot && node dist/cli.js ../docs/bookstore/alps.xml > /dev/null)
