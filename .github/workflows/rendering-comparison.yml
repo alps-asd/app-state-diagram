@@ -134,12 +134,14 @@ jobs:
           EOF
 
       - name: Generate SVGs without native dot (JavaScript only)
+        env:
+          SAMPLE_PROFILE: ${{ inputs.sample_profile }}
         run: |
           echo "=== Generating SVGs with JavaScript rendering only ==="
           mkdir -p output/js-only
           
           # Test with standard profile
-          bin/asd ${{ inputs.sample_profile }} --mode=svg
+          bin/asd "$SAMPLE_PROFILE" --mode=svg
           cp *.svg output/js-only/ 2>/dev/null || true
           rm -f *.svg
           
@@ -160,12 +162,14 @@ jobs:
           dot -V
 
       - name: Generate SVGs with native dot
+        env:
+          SAMPLE_PROFILE: ${{ inputs.sample_profile }}
         run: |
           echo "=== Generating SVGs with native dot rendering ==="
           mkdir -p output/native-dot
           
           # Test with standard profile  
-          bin/asd ${{ inputs.sample_profile }} --mode=svg
+          bin/asd "$SAMPLE_PROFILE" --mode=svg
           cp *.svg output/native-dot/ 2>/dev/null || true
           rm -f *.svg
           
@@ -180,15 +184,17 @@ jobs:
           mv extreme-japanese-test.title.svg output/native-dot/extreme-japanese-test.title-native.svg 2>/dev/null || true
 
       - name: Generate comparison report
+        env:
+          SAMPLE_PROFILE: ${{ inputs.sample_profile }}
         run: |
           echo "=== Creating comparison report ===" 
-          cat > output/comparison-report.md << 'EOF'
+          cat > output/comparison-report.md << EOF
           # SVG Rendering Comparison Report
           
           This report compares SVG output between JavaScript-based rendering (viz.js) and native dot command rendering.
           
           ## Test Files
-          - Standard profile: ${{ inputs.sample_profile }}
+          - Standard profile: $SAMPLE_PROFILE
           - Japanese test: japanese-test.json (moderate length Japanese labels)  
           - Extreme test: extreme-japanese-test.json (very long Japanese labels)
           
