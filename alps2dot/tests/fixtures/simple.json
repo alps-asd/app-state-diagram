@@ -1,0 +1,60 @@
+{
+  "alps": {
+    "doc": {
+      "value": "Simple ALPS profile for testing"
+    },
+    "descriptor": [
+      {
+        "id": "home",
+        "type": "safe",
+        "doc": {
+          "value": "Home state"
+        },
+        "descriptor": [
+          {
+            "href": "#users"
+          },
+          {
+            "href": "#posts"
+          }
+        ]
+      },
+      {
+        "id": "users",
+        "type": "safe",
+        "doc": {
+          "value": "Users collection"
+        },
+        "descriptor": [
+          {
+            "href": "#user"
+          }
+        ]
+      },
+      {
+        "id": "user",
+        "type": "safe",
+        "doc": {
+          "value": "Individual user"
+        },
+        "descriptor": [
+          {
+            "id": "name",
+            "type": "semantic"
+          },
+          {
+            "id": "email",
+            "type": "semantic"
+          }
+        ]
+      },
+      {
+        "id": "posts",
+        "type": "safe",
+        "doc": {
+          "value": "Posts collection"
+        }
+      }
+    ]
+  }
+}
