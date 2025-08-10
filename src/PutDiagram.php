@@ -112,7 +112,7 @@ final class PutDiagram
         $cmd = sprintf('dot -Tsvg %s -o %s', $dotFile, $svgFile);
         passthru($cmd, $status);
         if ($status !== 0) {
-            echo 'Warning: Native Graphviz dot command error, falling back to JavaScript' . PHP_EOL;
+            echo 'Warning: Native dot command failed, falling back to JavaScript rendering' . PHP_EOL;
             $this->convertWithJavaScript($dotFile);
         }
         // @codeCoverageIgnoreEnd
@@ -125,7 +125,7 @@ final class PutDiagram
         $cmd = sprintf('node %s %s', $dotJsPath, $dotFile);
         passthru($cmd, $status);
         if ($status !== 0) {
-            echo 'Warning: Graphviz error' . PHP_EOL;
+            echo 'Warning: JavaScript rendering failed' . PHP_EOL;
         }
         // @codeCoverageIgnoreEnd
     }

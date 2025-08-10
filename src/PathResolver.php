@@ -14,13 +14,22 @@ use function trim;
 
 final class PathResolver
 {
+    /** @var bool|null */
+    private static $dotAvailable = null;
+
     public static function isDotCommandAvailable(): bool
     {
+        if (self::$dotAvailable !== null) {
+            return self::$dotAvailable;
+        }
+
         // @codeCoverageIgnoreStart
         /** @psalm-suppress ForbiddenCode */
         $dotExists = shell_exec('command -v dot 2>/dev/null');
 
-        return $dotExists !== null && $dotExists !== false && trim($dotExists) !== '';
+        self::$dotAvailable = $dotExists !== null && $dotExists !== false && trim($dotExists) !== '';
+
+        return self::$dotAvailable;
         // @codeCoverageIgnoreEnd
     }
 
