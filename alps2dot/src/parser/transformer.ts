@@ -2,6 +2,8 @@ import { AlpsDocument, Descriptor, DescriptorType } from '../types/alps';
 import { InternalModel, InternalNode, InternalLink, ResolvedDescriptor } from '../types/internal';
 
 export class AlpsTransformer {
+  private unknownIdCounter = 0;
+
   transform(document: AlpsDocument): InternalModel {
     const descriptors = this.resolveReferences(document.alps.descriptor);
     const nodes = this.createNodes(descriptors);
@@ -21,8 +23,9 @@ export class AlpsTransformer {
     // Build a map of all descriptors by ID
     this.buildDescriptorMap(descriptors, descriptorMap);
     
-    // Resolve references
-    return descriptors.map(desc => this.resolveDescriptor(desc, descriptorMap));
+    // Resolve references with circular reference detection
+    const resolving = new Set<string>();
+    return descriptors.map(desc => this.resolveDescriptor(desc, descriptorMap, undefined, resolving));
   }
 
   private buildDescriptorMap(descriptors: Descriptor[], map: Map<string, Descriptor>): void {
@@ -40,7 +43,8 @@ export class AlpsTransformer {
   private resolveDescriptor(
     descriptor: Descriptor,
     map: Map<string, Descriptor>,
-    parent?: ResolvedDescriptor
+    parent?: ResolvedDescriptor,
+    resolving?: Set<string>
   ): ResolvedDescriptor {
     let resolvedId: string;
     let isResolved: boolean;
@@ -53,6 +57,12 @@ export class AlpsTransformer {
       isResolved = true;
     } else if (descriptor.href && descriptor.href.startsWith('#')) {
       const referencedId = descriptor.href.substring(1);
+      
+      // 循環参照の検出
+      if (resolving && resolving.has(referencedId)) {
+        throw new Error(`Circular reference detected: ${referencedId}`);
+      }
+      
       const referenced = map.get(referencedId);
       
       if (referenced) {
@@ -67,7 +77,12 @@ export class AlpsTransformer {
         isResolved = false;
       }
     } else {
-      resolvedId = descriptor.href || 'unknown';
+      // ID衝突を防ぐため、一意のプレースホルダーを生成
+      if (descriptor.href) {
+        resolvedId = descriptor.href;
+      } else {
+        resolvedId = `unknown_${++this.unknownIdCounter}`;
+      }
       isResolved = false;
     }
 
@@ -83,8 +98,12 @@ export class AlpsTransformer {
 
     // Resolve nested descriptors
     if (descriptor.descriptor) {
+      const childResolving = new Set(resolving);
+      if (resolvedId) {
+        childResolving.add(resolvedId);
+      }
       resolved.descriptor = descriptor.descriptor.map(nested => 
-        this.resolveDescriptor(nested, map, resolved)
+        this.resolveDescriptor(nested, map, resolved, childResolving)
       );
     }
 

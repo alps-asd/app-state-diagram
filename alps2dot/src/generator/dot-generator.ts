@@ -243,12 +243,14 @@ export class DotGenerator {
 
   /**
    * PHP版のgroupEdges()と同等
+   * ID衝突を防ぐために区切り文字を使用
    */
   private groupEdges(links: InternalLink[]): Record<string, InternalLink[]> {
     const groupedLinks: Record<string, InternalLink[]> = {};
     
     for (const link of links) {
-      const fromTo = link.from + link.to;
+      // ID衝突を防ぐため区切り文字を使用
+      const fromTo = `${link.from}→${link.to}`;
       if (!groupedLinks[fromTo]) {
         groupedLinks[fromTo] = [];
       }

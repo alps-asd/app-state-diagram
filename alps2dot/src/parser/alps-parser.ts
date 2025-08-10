@@ -85,8 +85,10 @@ export class AlpsParser {
       alps.doc = { value: alps.doc };
     }
 
-    // Recursively normalize descriptors
-    alps.descriptor = alps.descriptor.map((desc: any) => this.normalizeDescriptor(desc));
+    // Recursively normalize descriptors with type checks
+    alps.descriptor = alps.descriptor
+      .filter((desc: any) => typeof desc === 'object' && desc !== null)
+      .map((desc: any) => this.normalizeDescriptor(desc));
 
     return { alps };
   }
