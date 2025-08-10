@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.15.0] - 2025-08-10
+
+### Added
+- Native dot command rendering for improved Japanese font metrics (fixes [#207](https://github.com/alps-asd/app-state-diagram/issues/207))
+- Automatic detection with JavaScript fallback
+- Rendering comparison workflow for testing
+
+### Fixed
+- Japanese label overflow from nodes
+- Error message consistency
+- Command injection in GitHub Actions
+
 ## [0.14.2] - 2025-08-08
 
 ### Fixed
