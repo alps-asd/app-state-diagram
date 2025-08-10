@@ -3,6 +3,7 @@ export interface AlpsDocument {
 }
 
 export interface Alps {
+  version?: string;
   title?: string;
   doc?: Documentation | string;
   descriptor: Descriptor[];

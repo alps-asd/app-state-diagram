@@ -12,7 +12,7 @@ export interface InternalNode {
   type: DescriptorType;
   title?: string;
   description?: string;
-  isTransition: boolean;
+  isTransition?: boolean;
   semanticFields: string[];
 }
 
@@ -20,7 +20,7 @@ export interface InternalLink {
   from: string;
   to: string;
   relation?: string;
-  type: 'transition' | 'reference';
+  type?: 'transition' | 'reference';
   transitionId?: string;
   transitionType?: DescriptorType;
   transitionTitle?: string;
