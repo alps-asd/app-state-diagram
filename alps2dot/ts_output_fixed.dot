@@ -1,0 +1,19 @@
+digraph application_state_diagram {
+  graph [
+    labelloc="t";
+    fontname="Helvetica"
+  ];
+  node [shape = box, style = "bold,filled" fillcolor="lightgray", margin="0.3,0.1"];
+
+    State1 [margin=0.1, label="State1", shape=box, URL="#State1" target="_parent"]
+    State2 [margin=0.1, label="State2", shape=box, URL="#State2" target="_parent"]
+    State3 [margin=0.1, label="State3", shape=box, URL="#State3" target="_parent"]
+
+    State1 -> State2 [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goState2" tooltip="goState2 (safe)"><font color="#00A86B">■</font> goState2</td></tr></table>> URL="#goState2" target="_parent" fontsize=13 class="goState2" penwidth=1.5];
+    State2 -> State3 [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goState3" tooltip="goState3 (safe)"><font color="#00A86B">■</font> goState3</td></tr></table>> URL="#goState3" target="_parent" fontsize=13 class="goState3" penwidth=1.5];
+
+    State1 [label="State1" URL="#State1" target="_parent"]
+    State2 [label="State2" URL="#State2" target="_parent"]
+    State3 [label="State3" URL="#State3" target="_parent"]
+
+}

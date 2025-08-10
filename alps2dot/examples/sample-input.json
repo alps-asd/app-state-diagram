@@ -1,0 +1,39 @@
+{
+  "alps": {
+    "version": "1.0",
+    "title": "Sample API",
+    "descriptor": [
+      {
+        "id": "home",
+        "type": "safe",
+        "title": "Home Page",
+        "rt": "#blog"
+      },
+      {
+        "id": "blog",
+        "type": "safe",
+        "title": "Blog List",
+        "rt": "#blog_post"
+      },
+      {
+        "id": "blog_post",
+        "type": "semantic",
+        "title": "Blog Post",
+        "descriptor": [
+          {
+            "id": "title",
+            "type": "semantic"
+          },
+          {
+            "id": "content",
+            "type": "semantic"
+          },
+          {
+            "id": "author",
+            "type": "semantic"
+          }
+        ]
+      }
+    ]
+  }
+}

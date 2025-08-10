@@ -46,7 +46,7 @@
     ],
     "scripts": {
         "post-install-cmd": "@composer bin all install --ansi",
-        "post-update-cmd": ["@composer bin all update --ansi", "cd asd-sync && npm install"],
+        "post-update-cmd": ["@composer bin all update --ansi", "cd asd-sync && npm install", "cd alps2dot && npm install && npm run build"],
         "bin": "echo 'bin not installed'",
         "docs" : [
             "bin/asd docs/bookstore/alps.xml",
@@ -60,6 +60,11 @@
             "bin/asd --mode=svg docs/lms/alps.xml"
         ],
         "md" : "bin/asd -c docs/blog/asd.md.xml docs/blog/profile.xml",
+        "alps2dot": "./alps2dot.sh",
+        "alps2dot-demo": [
+            "echo '🚀 Running alps2dot demo comparison...'",
+            "./demo_compare.sh"
+        ],
         "test": ["./vendor/bin/phpunit"],
         "tests": ["@cs", "@test", "@sa"],
         "coverage": ["php -dzend_extension=xdebug.so -dxdebug.mode=coverage ./vendor/bin/phpunit --coverage-text --coverage-html=build/coverage"],

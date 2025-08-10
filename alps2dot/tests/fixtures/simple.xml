@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<alps>
+  <doc>Simple ALPS profile for testing</doc>
+  
+  <descriptor id="home" type="safe">
+    <doc>Home state</doc>
+    <descriptor href="#users" />
+    <descriptor href="#posts" />
+  </descriptor>
+  
+  <descriptor id="users" type="safe">
+    <doc>Users collection</doc>
+    <descriptor href="#user" />
+  </descriptor>
+  
+  <descriptor id="user" type="safe">
+    <doc>Individual user</doc>
+    <descriptor id="name" type="semantic" />
+    <descriptor id="email" type="semantic" />
+  </descriptor>
+  
+  <descriptor id="posts" type="safe">
+    <doc>Posts collection</doc>
+  </descriptor>
+</alps>

@@ -1,0 +1,24 @@
+# Source files
+src/
+tests/
+examples/
+
+# Config files
+tsconfig.json
+jest.config.js
+.eslintrc.js
+
+# Development files
+*.log
+node_modules/
+coverage/
+.nyc_output/
+
+# Test output
+test-*.dot
+debug_*.js
+*_output*.dot
+
+# OS files
+.DS_Store
+Thumbs.db
