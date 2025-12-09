@@ -182,8 +182,7 @@ Generate JSON format by default. Use XML only if explicitly requested.
 
 ## Validation
 
-Use `alps2dot validate <file>` to validate ALPS profiles. Output conforms to:
-https://alps-asd.github.io/app-state-diagram/schemas/validation-result.json
+Use `alps2dot validate <file>` to validate ALPS profiles. Output conforms to the [validation-result.json schema](https://alps-asd.github.io/app-state-diagram/schemas/validation-result.json).
 
 ### Error Codes (E)
 - E001: Missing id or href
