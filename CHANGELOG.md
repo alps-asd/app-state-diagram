@@ -27,6 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - PHPStan error in PathResolverTest (assertIsBool always true)
 - TypeScript regex duplication in alps-parser.ts
 
+### Added (from PR #222)
 - **Complete TypeScript alps2dot implementation** ([#222](https://github.com/alps-asd/app-state-diagram/pull/222))
   - Full TypeScript rewrite of ALPS to DOT conversion with PHP-compatible output
   - **Production-ready implementation** with comprehensive security features and testing
