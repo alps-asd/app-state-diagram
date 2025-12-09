@@ -299,6 +299,6 @@ asd --mode=markdown profile.json
 
 ## References
 
-- ALPS Specification: http://alps.io/spec/
-- Schema.org: https://schema.org/
-- app-state-diagram: https://github.com/alps-asd/app-state-diagram
+- [ALPS Specification](http://alps.io/spec/)
+- [Schema.org](https://schema.org/)
+- [app-state-diagram](https://github.com/alps-asd/app-state-diagram)
