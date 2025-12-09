@@ -23,21 +23,21 @@ final class Instances
     private const INVALID_XML_CHARS = '/[&<>"\']/';
 
     /** @var array<string, stdClass> */
-    private $insntances = [];
+    private $instances = [];
 
     public function add(stdClass $instance): void
     {
         assert(property_exists($instance, 'id'));
         assert(is_string($instance->id));
         $this->validateTitle($instance);
-        $this->insntances[$instance->id] = $instance;
-        ksort($this->insntances);
+        $this->instances[$instance->id] = $instance;
+        ksort($this->instances);
     }
 
     /** @return array<string, stdClass> */
     public function get(): array
     {
-        return $this->insntances;
+        return $this->instances;
     }
 
     private function validateTitle(stdClass $instance): void
