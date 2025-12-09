@@ -15,6 +15,7 @@
         "allow-plugins": {
             "dealerdirect/phpcodesniffer-composer-installer": true,
             "composer/package-versions-deprecated": true
-        }
+        },
+        "platform-check": false
     }
 }
