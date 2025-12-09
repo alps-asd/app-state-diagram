@@ -193,6 +193,9 @@ https://alps-asd.github.io/app-state-diagram/schemas/validation-result.json
 - E005: Duplicate id
 - E006: Invalid href
 - E007: Invalid rt format
+- E008: Missing alps property in document
+- E009: Descriptor must be an array
+- E010: Invalid XML character in descriptor title
 
 ### Warning Codes (W)
 - W001: Missing title

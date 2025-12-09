@@ -347,7 +347,7 @@ export class AlpsParser {
 
         // Naming convention check
         if (desc.id) {
-          if (desc.type === 'safe' && !desc.id.startsWith('go') && !desc.id.startsWith('do')) {
+          if (desc.type === 'safe' && !desc.id.startsWith('go')) {
             warnings.push({
               code: WarningCodes.NAMING_CONVENTION_SAFE,
               message: "Safe transitions should start with 'go' (e.g., goHome, goProductList)",
