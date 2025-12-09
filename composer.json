@@ -45,7 +45,7 @@
         "/bin/asd"
     ],
     "scripts": {
-        "post-install-cmd": "@composer bin all install --ansi",
+        "post-install-cmd": ["@composer bin all install --ansi", "cd asd-sync && npm install", "cd alps2dot && npm install && npm run build"],
         "post-update-cmd": ["@composer bin all update --ansi", "cd asd-sync && npm install", "cd alps2dot && npm install && npm run build"],
         "bin": "echo 'bin not installed'",
         "docs" : [
