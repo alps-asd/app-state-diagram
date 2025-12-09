@@ -8,6 +8,7 @@ use Koriym\AppStateDiagram\Exception\DescriptorIsNotArrayException;
 use Koriym\AppStateDiagram\Exception\DescriptorNotFoundException;
 use Koriym\AppStateDiagram\Exception\InvalidDescriptorException;
 use Koriym\AppStateDiagram\Exception\InvalidSemanticsException;
+use Koriym\AppStateDiagram\Exception\InvalidXmlCharException;
 use Koriym\AppStateDiagram\Exception\MissingRtException;
 use PHPUnit\Framework\TestCase;
 use Seld\JsonLint\ParsingException;
@@ -67,5 +68,19 @@ class ErrorTest extends TestCase
         });
 
         new TransDescriptor($invalidTrans, $semantic);
+    }
+
+    public function testInvalidXmlCharAmpersand(): void
+    {
+        $this->expectException(InvalidXmlCharException::class);
+        $this->expectExceptionMessage('&');
+        new Profile(__DIR__ . '/Fake/invalid_xml_char.json', new LabelName());
+    }
+
+    public function testInvalidXmlCharLessThan(): void
+    {
+        $this->expectException(InvalidXmlCharException::class);
+        $this->expectExceptionMessage('<');
+        new Profile(__DIR__ . '/Fake/invalid_xml_char_lt.json', new LabelName());
     }
 }

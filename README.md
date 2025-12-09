@@ -92,6 +92,67 @@ See these live demos:
 - [Book Store](https://www.app-state-diagram.com/app-state-diagram/bookstore/)
 - [LMS](https://www.app-state-diagram.com/app-state-diagram/lms/)
 
+## Claude Code Integration
+
+For [Claude Code](https://claude.ai/code) users, you can integrate app-state-diagram as either an **MCP Server** or a **Skill**.
+
+### MCP vs Skill: Which to Choose?
+
+| Approach | Best For | Setup |
+|----------|----------|-------|
+| **MCP Server** | Validation, diagram generation as tools | Requires MCP configuration |
+| **Skill** | Natural language ALPS creation, design guidance | Copy skill file to project |
+
+**Use MCP Server when:**
+- You want Claude to automatically validate ALPS files
+- You need programmatic diagram generation
+- You're working with existing ALPS profiles
+
+**Use Skill when:**
+- You want to create ALPS profiles from natural language descriptions
+- You need guidance on ALPS best practices
+- You're designing new APIs from scratch
+
+### Setting Up the Skill
+
+Create a symlink to the skill directory (recommended - auto-updates with package):
+
+```bash
+# From your project root
+mkdir -p .claude/skills
+ln -s $(pwd)/vendor/koriym/app-state-diagram/.claude/skills/alps .claude/skills/alps
+```
+
+Or if installed globally:
+
+```bash
+# Homebrew
+ln -s /opt/homebrew/opt/asd/libexec/.claude/skills/alps .claude/skills/alps
+
+# Composer global
+ln -s ~/.composer/vendor/koriym/app-state-diagram/.claude/skills/alps .claude/skills/alps
+```
+
+Then ask Claude Code:
+- "Create an ALPS profile for an e-commerce site"
+- "Validate my ALPS profile at docs/api.json"
+- "Improve this ALPS profile"
+
+### Setting Up MCP Server
+
+Add to your Claude Code MCP configuration (`~/.claude.json`):
+
+```json
+{
+  "mcpServers": {
+    "alps": {
+      "command": "asd",
+      "args": ["--mcp"]
+    }
+  }
+}
+```
+
 ## Documentation
 
 For more details, please refer to:

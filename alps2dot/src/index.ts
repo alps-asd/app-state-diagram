@@ -24,7 +24,8 @@ export class Alps2Dot {
     // Validate document
     const validation = this.parser.validate(document);
     if (!validation.isValid) {
-      throw new Error(`Invalid ALPS document:\n${validation.errors.join('\n')}`);
+      const errorMessages = validation.errors.map(e => e.message).join('\n');
+      throw new Error(`Invalid ALPS document:\n${errorMessages}`);
     }
 
     // Transform to internal model
@@ -42,7 +43,8 @@ export class Alps2Dot {
     // Validate document
     const validation = this.parser.validate(document);
     if (!validation.isValid) {
-      throw new Error(`Invalid ALPS document:\n${validation.errors.join('\n')}`);
+      const errorMessages = validation.errors.map(e => e.message).join('\n');
+      throw new Error(`Invalid ALPS document:\n${errorMessages}`);
     }
 
     // Transform to internal model

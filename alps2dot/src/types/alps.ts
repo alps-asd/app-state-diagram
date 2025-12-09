@@ -29,7 +29,52 @@ export interface Descriptor {
 
 export type DescriptorType = 'semantic' | 'safe' | 'unsafe' | 'idempotent';
 
+export interface ValidationIssue {
+  code: string;
+  message: string;
+  path?: string;
+  descriptorId?: string;
+}
+
+export interface ValidationSummary {
+  errorCount: number;
+  warningCount: number;
+  suggestionCount: number;
+}
+
 export interface ValidationResult {
   isValid: boolean;
-  errors: string[];
+  summary: ValidationSummary;
+  errors: ValidationIssue[];
+  warnings: ValidationIssue[];
+  suggestions: ValidationIssue[];
 }
+
+// Error codes
+export const ErrorCodes = {
+  MISSING_ID_OR_HREF: 'E001',
+  MISSING_RT: 'E002',
+  INVALID_TYPE: 'E003',
+  BROKEN_REFERENCE: 'E004',
+  DUPLICATE_ID: 'E005',
+  INVALID_HREF: 'E006',
+  INVALID_RT_FORMAT: 'E007',
+  MISSING_ALPS: 'E008',
+  MISSING_DESCRIPTOR_ARRAY: 'E009',
+  INVALID_XML_CHAR: 'E010',
+} as const;
+
+// Warning codes
+export const WarningCodes = {
+  MISSING_TITLE: 'W001',
+  NAMING_CONVENTION_SAFE: 'W002',
+  NAMING_CONVENTION_UNSAFE: 'W003',
+  ORPHAN_DESCRIPTOR: 'W004',
+} as const;
+
+// Suggestion codes
+export const SuggestionCodes = {
+  MISSING_DOC: 'S001',
+  MISSING_ALPS_TITLE: 'S002',
+  MISSING_ALPS_DOC: 'S003',
+} as const;

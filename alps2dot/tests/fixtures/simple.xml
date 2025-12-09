@@ -1,25 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <alps>
   <doc>Simple ALPS profile for testing</doc>
-  
-  <descriptor id="home" type="safe">
+
+  <descriptor id="home" type="semantic">
     <doc>Home state</doc>
-    <descriptor href="#users" />
-    <descriptor href="#posts" />
+    <descriptor href="#goUsers" />
+    <descriptor href="#goPosts" />
   </descriptor>
-  
-  <descriptor id="users" type="safe">
+
+  <descriptor id="users" type="semantic">
     <doc>Users collection</doc>
-    <descriptor href="#user" />
+    <descriptor href="#goUser" />
   </descriptor>
-  
-  <descriptor id="user" type="safe">
+
+  <descriptor id="user" type="semantic">
     <doc>Individual user</doc>
     <descriptor id="name" type="semantic" />
     <descriptor id="email" type="semantic" />
   </descriptor>
-  
-  <descriptor id="posts" type="safe">
+
+  <descriptor id="posts" type="semantic">
     <doc>Posts collection</doc>
+  </descriptor>
+
+  <descriptor id="goUsers" type="safe" rt="#users">
+    <doc>Go to users</doc>
+  </descriptor>
+
+  <descriptor id="goPosts" type="safe" rt="#posts">
+    <doc>Go to posts</doc>
+  </descriptor>
+
+  <descriptor id="goUser" type="safe" rt="#user">
+    <doc>Go to user</doc>
   </descriptor>
 </alps>

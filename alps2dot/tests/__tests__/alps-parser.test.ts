@@ -139,17 +139,66 @@ describe('AlpsParser', () => {
       
       const document = parser.parse(alpsJson);
       const validation = parser.validate(document);
-      
+
       expect(validation.isValid).toBe(false);
-      expect(validation.errors.some(error => error.includes('duplicate'))).toBe(true);
+      expect(validation.errors.some(error => error.message.includes('uplicate'))).toBe(true);
     });
 
     test('should accept missing optional fields', () => {
       const alpsJson = '{"alps": {"descriptor": []}}';
       const document = parser.parse(alpsJson);
       const validation = parser.validate(document);
-      
+
       expect(validation.isValid).toBe(true);
+    });
+
+    test('should detect invalid XML characters in title (ampersand)', () => {
+      const alpsJson = `{
+        "alps": {
+          "descriptor": [
+            {"id": "test", "title": "Q&A一覧"}
+          ]
+        }
+      }`;
+
+      const document = parser.parse(alpsJson);
+      const validation = parser.validate(document);
+
+      expect(validation.isValid).toBe(false);
+      expect(validation.errors.some(e => e.code === 'E010')).toBe(true);
+      expect(validation.errors.some(e => e.message.includes('ampersand'))).toBe(true);
+    });
+
+    test('should detect invalid XML characters in title (less than)', () => {
+      const alpsJson = `{
+        "alps": {
+          "descriptor": [
+            {"id": "test", "title": "価格 < 100"}
+          ]
+        }
+      }`;
+
+      const document = parser.parse(alpsJson);
+      const validation = parser.validate(document);
+
+      expect(validation.isValid).toBe(false);
+      expect(validation.errors.some(e => e.code === 'E010')).toBe(true);
+      expect(validation.errors.some(e => e.message.includes('less than'))).toBe(true);
+    });
+
+    test('should accept valid title without XML special characters', () => {
+      const alpsJson = `{
+        "alps": {
+          "descriptor": [
+            {"id": "test", "title": "質問一覧"}
+          ]
+        }
+      }`;
+
+      const document = parser.parse(alpsJson);
+      const validation = parser.validate(document);
+
+      expect(validation.errors.filter(e => e.code === 'E010')).toHaveLength(0);
     });
   });
 });
