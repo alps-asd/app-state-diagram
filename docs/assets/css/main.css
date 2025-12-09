@@ -266,7 +266,9 @@ table td.highlight {
 #asd-graph-id, #asd-graph-name {
     position: relative;
     flex-shrink: 0;
-    display: block;
+}
+#asd-graph-id.hidden, #asd-graph-name.hidden {
+    display: none;
 }
 #svg-container svg {
     max-width: none;
