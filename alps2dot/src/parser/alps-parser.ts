@@ -405,15 +405,14 @@ export class AlpsParser {
   }
 
   // XML special characters that need escaping in DOT/SVG labels
-  private static readonly INVALID_XML_CHARS = /[&<>"']/;
-  private static readonly INVALID_XML_CHARS_GLOBAL = /[&<>"']/g;
+  private static readonly INVALID_XML_CHARS_PATTERN = '[&<>"\']';
 
   private containsInvalidXmlChars(text: string): boolean {
-    return AlpsParser.INVALID_XML_CHARS.test(text);
+    return new RegExp(AlpsParser.INVALID_XML_CHARS_PATTERN).test(text);
   }
 
   private getInvalidXmlChars(text: string): string[] {
-    const matches = text.match(AlpsParser.INVALID_XML_CHARS_GLOBAL);
+    const matches = text.match(new RegExp(AlpsParser.INVALID_XML_CHARS_PATTERN, 'g'));
     if (!matches) return [];
 
     const charNames: Record<string, string> = {
