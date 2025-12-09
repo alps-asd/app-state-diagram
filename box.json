@@ -4,11 +4,17 @@
     "main": "bin/asd",
     "output": "bin/asd.phar",
     "directories": [
+        "alps2dot/src",
         "asd-sync",
         "src",
         "src-xml",
         "vendor",
         "vendor-xml2json"
+    ],
+    "files-bin": [
+        "alps2dot/package.json",
+        "alps2dot/package-lock.json",
+        "alps2dot/tsconfig.json"
     ],
     "files": [
         "alps.xsd",
