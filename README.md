@@ -92,55 +92,38 @@ See these live demos:
 - [Book Store](https://www.app-state-diagram.com/app-state-diagram/bookstore/)
 - [LMS](https://www.app-state-diagram.com/app-state-diagram/lms/)
 
-## Claude Code Integration
+## AI Assistant Integration
 
-For [Claude Code](https://claude.ai/code) users, you can integrate app-state-diagram as either an **MCP Server** or a **Skill**.
+Integrate ALPS design guidance into your AI workflow. Choose the method that fits your environment:
 
-### MCP vs Skill: Which to Choose?
+| Environment | Recommended | Setup |
+|-------------|-------------|-------|
+| **Claude Code (CLI)** | Skill | Symlink to project |
+| **Claude Desktop / Web** | MCP Server | Configure in settings |
+| **Other AI tools** | LLM Guide | Import URL in prompts |
 
-| Approach | Best For | Setup |
-|----------|----------|-------|
-| **MCP Server** | Validation, diagram generation as tools | Requires MCP configuration |
-| **Skill** | Natural language ALPS creation, design guidance | Copy skill file to project |
+### Option 1: Skill (Claude Code CLI)
 
-**Use MCP Server when:**
-- You want Claude to automatically validate ALPS files
-- You need programmatic diagram generation
-- You're working with existing ALPS profiles
-
-**Use Skill when:**
-- You want to create ALPS profiles from natural language descriptions
-- You need guidance on ALPS best practices
-- You're designing new APIs from scratch
-
-### Setting Up the Skill
-
-Create a symlink to the skill directory (recommended - auto-updates with package):
+Best for natural language ALPS creation and design guidance.
 
 ```bash
-# From your project root
+# From your project root (Composer)
 mkdir -p .claude/skills
 ln -s $(pwd)/vendor/koriym/app-state-diagram/.claude/skills/alps .claude/skills/alps
-```
 
-Or if installed globally:
-
-```bash
-# Homebrew
+# Or for Homebrew installation
 ln -s /opt/homebrew/opt/asd/libexec/.claude/skills/alps .claude/skills/alps
-
-# Composer global
-ln -s ~/.composer/vendor/koriym/app-state-diagram/.claude/skills/alps .claude/skills/alps
 ```
 
 Then ask Claude Code:
 - "Create an ALPS profile for an e-commerce site"
 - "Validate my ALPS profile at docs/api.json"
-- "Improve this ALPS profile"
 
-### Setting Up MCP Server
+### Option 2: MCP Server (Claude Desktop)
 
-Add to your Claude Code MCP configuration (`~/.claude.json`):
+For Claude Desktop or environments supporting MCP.
+
+Add to your MCP configuration (`~/.claude.json` or Claude Desktop settings):
 
 ```json
 {
@@ -152,6 +135,17 @@ Add to your Claude Code MCP configuration (`~/.claude.json`):
   }
 }
 ```
+
+### Option 3: LLM Guide (Any AI Tool)
+
+For any AI assistant, add this to your project's `AGENTS.md`, `CLAUDE.md`, or system prompt:
+
+```
+@import https://alps-asd.github.io/app-state-diagram/llms-alps-skill.txt
+```
+
+Or reference directly in conversations:
+- "Use the ALPS guide at https://alps-asd.github.io/app-state-diagram/llms-alps-skill.txt to create a profile for..."
 
 ## Documentation
 
