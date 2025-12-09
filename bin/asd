@@ -27,6 +27,7 @@ Options:
   -w, --watch             Watch mode with live reload
   -m, --mode <mode>       Output mode (html|markdown|svg)
   --port <port>           Port for watch mode (default: 3000)
+  --validate              Validate ALPS profile (JSON output)
   -v, --version           Show version information
   -h, --help              Show this help message
 
@@ -35,11 +36,11 @@ Options:
 EOT;
     exit(0);
 }
-$options = getopt('c:e::w::m::v', ['config:', 'echo::', 'watch::', 'mode::', 'port::', 'version']);
+$options = getopt('c:e::w::m::v', ['config:', 'echo::', 'watch::', 'mode::', 'port::', 'validate', 'version']);
 // Handle --version option
 if (isset($options['v']) || isset($options['version'])) {
     $pharRunning = Phar::running(false);
-    
+
     if ($pharRunning !== '') {
         // Try to extract version from Homebrew Cellar path
         if (preg_match('#/Cellar/asd/([^/]+)/#', $pharRunning, $matches)) {
@@ -51,6 +52,64 @@ if (isset($options['v']) || isset($options['version'])) {
         echo "asd (development version - version info not available)\n";
     }
     exit(0);
+}
+
+// Handle --validate option
+if (isset($options['validate'])) {
+    // Get the ALPS file from remaining arguments
+    $alpsFile = null;
+    for ($i = 1; $i < $argc; $i++) {
+        $arg = $argv[$i];
+        if ($arg === '--validate' || strpos($arg, '-') === 0) {
+            continue;
+        }
+        $alpsFile = $arg;
+        break;
+    }
+
+    if ($alpsFile === null) {
+        echo "Error: No ALPS file specified\n";
+        echo "Usage: asd --validate <alps_file>\n";
+        exit(1);
+    }
+
+    if (!file_exists($alpsFile)) {
+        echo "Error: File not found: $alpsFile\n";
+        exit(1);
+    }
+
+    // Find alps2dot CLI
+    $pharRunning = Phar::running(false);
+    $alps2dotPath = null;
+
+    if ($pharRunning !== '') {
+        // PHAR execution: look in libexec
+        $pharDir = dirname($pharRunning);
+        $alps2dotPath = $pharDir . '/alps2dot/dist/cli.js';
+
+        // Try version-independent opt path
+        if (!file_exists($alps2dotPath)) {
+            $homebrewPrefix = PathResolver::getHomebrewPrefix();
+            if ($homebrewPrefix !== null) {
+                $optPath = $homebrewPrefix . '/opt/asd/libexec/alps2dot/dist/cli.js';
+                if (file_exists($optPath)) {
+                    $alps2dotPath = $optPath;
+                }
+            }
+        }
+    } else {
+        // Development: look relative to bin/asd
+        $alps2dotPath = dirname(__DIR__) . '/alps2dot/dist/cli.js';
+    }
+
+    if ($alps2dotPath === null || !file_exists($alps2dotPath)) {
+        echo "Error: alps2dot not found. Please ensure Node.js components are installed.\n";
+        exit(1);
+    }
+
+    $alpsFileEscaped = escapeshellarg(realpath($alpsFile));
+    passthru("node " . escapeshellarg($alps2dotPath) . " validate $alpsFileEscaped", $exitCode);
+    exit($exitCode);
 }
 
 if ($argc === 1) {

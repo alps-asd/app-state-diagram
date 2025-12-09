@@ -147,7 +147,7 @@ Context clues for AI inference:
 
 7. **MANDATORY: Validate After Generation**
    - After generating ALPS JSON, save it to a temporary file
-   - Run `alps2dot validate <file>` to validate (outputs JSON per validation-result.json schema)
+   - Run `asd --validate <file>` to validate (outputs JSON per validation-result.json schema)
    - Parse the JSON result and report issues to the user
    - If errors exist, fix them before presenting the final output
 
@@ -182,7 +182,7 @@ Generate JSON format by default. Use XML only if explicitly requested.
 
 ## Validation
 
-Use `alps2dot validate <file>` to validate ALPS profiles. Output conforms to the [validation-result.json schema](https://alps-asd.github.io/app-state-diagram/schemas/validation-result.json).
+Use `asd --validate <file>` to validate ALPS profiles. Output conforms to the [validation-result.json schema](https://alps-asd.github.io/app-state-diagram/schemas/validation-result.json).
 
 ### Error Codes (E)
 - E001: Missing id or href

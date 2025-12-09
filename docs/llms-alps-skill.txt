@@ -135,6 +135,22 @@ Context clues for AI inference:
      ]}
      ```
 
+7. **MANDATORY: Validate After Generation**
+
+   After generating ALPS JSON, you MUST:
+
+   **Step 1: Tool Validation**
+   - If `asd --validate` command is available, run it on the generated file
+   - Parse the JSON result and fix any errors before presenting output
+
+   **Step 2: Self-Check**
+   - Verify all `href` references point to existing descriptor IDs
+   - Verify all `rt` (return type) references point to existing state descriptors
+   - Check transition naming: `go*` for safe, `do*` for unsafe/idempotent
+   - Ensure every transition has an `rt` attribute
+   - Confirm no duplicate IDs exist
+   - Check for orphan descriptors (defined but never referenced)
+
 ### Output Format
 
 Generate JSON format by default. Use XML only if explicitly requested.
