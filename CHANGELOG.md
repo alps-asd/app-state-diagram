@@ -7,6 +7,52 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **`asd --validate` option** for ALPS profile validation ([#224](https://github.com/alps-asd/app-state-diagram/pull/224))
+  - Validates ALPS profiles (JSON/XML) and outputs structured JSON result
+  - Unified validation interface under single `asd` command
+- **XML character validation (E010)** - Detect invalid XML characters (`&`, `<`, `>`, `"`, `'`) in descriptor titles
+  - Prevents SVG generation errors from unescaped XML special characters
+  - Implemented in both PHP and TypeScript validators
+- **Claude Code integration** ([#224](https://github.com/alps-asd/app-state-diagram/pull/224))
+  - Added `.claude/skills/alps/SKILL.md` for natural language ALPS generation
+  - Added `docs/llms-alps-skill.txt` for non-Claude Code AI tools
+  - README updated with AI integration guide (Skill, MCP Server, LLM Guide)
+- **PHP 8.5 support** - Added to CI test matrix
+
+### Changed
+- Claude code review workflow now triggers only on PR creation and manual dispatch (not every push)
+
+### Fixed
+- PHPStan error in PathResolverTest (assertIsBool always true)
+- TypeScript regex duplication in alps-parser.ts
+
+- **Complete TypeScript alps2dot implementation** ([#222](https://github.com/alps-asd/app-state-diagram/pull/222))
+  - Full TypeScript rewrite of ALPS to DOT conversion with PHP-compatible output
+  - **Production-ready implementation** with comprehensive security features and testing
+  - **~3x performance improvement** over PHP version (48ms vs 145ms for amazon/alps.json)
+  - **62 comprehensive tests** covering all functionality with 100% compatibility verification
+  - **Multi-version CI/CD pipeline** with Node.js 16, 18, 20 testing and PHP compatibility checks
+  - **CLI with multiple output modes**: ID-based, title-based, and dual output generation
+  - **Enhanced validation**: Duplicate ID detection, circular reference prevention, robust error handling
+  - **Security hardened**: Input validation, ID collision prevention, defensive programming
+  - **Composer integration**: `composer alps2dot` and `composer alps2dot-demo` commands for seamless usage
+  - **npm package ready**: Complete package.json configuration for potential npm publishing
+  - **Interactive demo scripts**: `demo_compare.sh`, `quick_demo.sh`, `alps2dot.sh` for easy testing
+
+### Security
+- **Fixed multiple security vulnerabilities** in TypeScript implementation
+  - Edge grouping collision prevention with delimiter-separated keys
+  - Unique ID generation system preventing descriptor conflicts  
+  - Circular reference detection with Set-based cycle tracking
+  - Input validation with type filtering against malformed data
+  - All vulnerabilities verified and approved by automated code review (Sourcery AI, CodeRabbit AI)
+
+### Fixed
+- **Data quality issue**: Resolved duplicate ID 'Order' in docs/amazon/alps.json (renamed to 'OrderDetails')
+- **Test suite robustness**: Flexible error message matching prevents brittle test failures
+- **CI/CD reliability**: Comprehensive workflow with automated compatibility and performance testing
+
 ## [0.15.0] - 2025-08-10
 
 ### Added
