@@ -6,34 +6,34 @@
     "descriptor": [
       {
         "id": "home",
-        "type": "safe",
+        "type": "semantic",
         "doc": {
           "value": "Home state"
         },
         "descriptor": [
           {
-            "href": "#users"
+            "href": "#goUsers"
           },
           {
-            "href": "#posts"
+            "href": "#goPosts"
           }
         ]
       },
       {
         "id": "users",
-        "type": "safe",
+        "type": "semantic",
         "doc": {
           "value": "Users collection"
         },
         "descriptor": [
           {
-            "href": "#user"
+            "href": "#goUser"
           }
         ]
       },
       {
         "id": "user",
-        "type": "safe",
+        "type": "semantic",
         "doc": {
           "value": "Individual user"
         },
@@ -50,9 +50,33 @@
       },
       {
         "id": "posts",
-        "type": "safe",
+        "type": "semantic",
         "doc": {
           "value": "Posts collection"
+        }
+      },
+      {
+        "id": "goUsers",
+        "type": "safe",
+        "rt": "#users",
+        "doc": {
+          "value": "Go to users"
+        }
+      },
+      {
+        "id": "goPosts",
+        "type": "safe",
+        "rt": "#posts",
+        "doc": {
+          "value": "Go to posts"
+        }
+      },
+      {
+        "id": "goUser",
+        "type": "safe",
+        "rt": "#user",
+        "doc": {
+          "value": "Go to user"
         }
       }
     ]

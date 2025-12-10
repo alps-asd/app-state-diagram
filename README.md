@@ -92,6 +92,61 @@ See these live demos:
 - [Book Store](https://www.app-state-diagram.com/app-state-diagram/bookstore/)
 - [LMS](https://www.app-state-diagram.com/app-state-diagram/lms/)
 
+## AI Assistant Integration
+
+Integrate ALPS design guidance into your AI workflow. Choose the method that fits your environment:
+
+| Environment | Recommended | Setup |
+|-------------|-------------|-------|
+| **Claude Code (CLI)** | Skill | Symlink to project |
+| **Claude Desktop / Web** | MCP Server | Configure in settings |
+| **Other AI tools** | LLM Guide | Import URL in prompts |
+
+### Option 1: Skill (Claude Code CLI)
+
+Best for natural language ALPS creation and design guidance.
+
+```bash
+# From your project root (Composer)
+mkdir -p .claude/skills
+ln -s $(pwd)/vendor/koriym/app-state-diagram/.claude/skills/alps .claude/skills/alps
+
+# Or for Homebrew installation
+ln -s /opt/homebrew/opt/asd/libexec/.claude/skills/alps .claude/skills/alps
+```
+
+Then ask Claude Code:
+- "Create an ALPS profile for an e-commerce site"
+- "Validate my ALPS profile at docs/api.json"
+
+### Option 2: MCP Server (Claude Desktop)
+
+For Claude Desktop or environments supporting MCP.
+
+Add to your MCP configuration (`~/.claude.json` or Claude Desktop settings):
+
+```json
+{
+  "mcpServers": {
+    "alps": {
+      "command": "asd",
+      "args": ["--mcp"]
+    }
+  }
+}
+```
+
+### Option 3: LLM Guide (Any AI Tool)
+
+For any AI assistant, add this to your project's `AGENTS.md`, `CLAUDE.md`, or system prompt:
+
+```text
+@import https://alps-asd.github.io/app-state-diagram/llms-alps-skill.txt
+```
+
+Or reference directly in conversations:
+- "Use the ALPS guide at <https://alps-asd.github.io/app-state-diagram/llms-alps-skill.txt> to create a profile for..."
+
 ## Documentation
 
 For more details, please refer to:

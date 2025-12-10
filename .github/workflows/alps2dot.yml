@@ -94,7 +94,7 @@ jobs:
         cache-dependency-path: alps2dot/package-lock.json
     
     - name: Install PHP dependencies
-      run: composer install --no-dev --optimize-autoloader
+      run: composer install --no-dev --optimize-autoloader --no-scripts
     
     - name: Install Node.js dependencies  
       working-directory: alps2dot
@@ -142,6 +142,7 @@ jobs:
   performance-test:
     runs-on: ubuntu-latest
     needs: test
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
     
     steps:
     - uses: actions/checkout@v4
@@ -162,7 +163,7 @@ jobs:
     
     - name: Install dependencies
       run: |
-        composer install --no-dev --optimize-autoloader
+        composer install --no-dev --optimize-autoloader --no-scripts
         cd alps2dot && npm ci && npm run build
     
     - name: Performance comparison

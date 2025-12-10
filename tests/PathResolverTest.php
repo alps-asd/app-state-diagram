@@ -30,6 +30,7 @@ final class PathResolverTest extends TestCase
     public function testIsDotCommandAvailableReturnsBoolean(): void
     {
         $result = PathResolver::isDotCommandAvailable();
-        $this->assertIsBool($result);
+        // Assert result is either true or false (validates method runs without error)
+        $this->assertThat($result, $this->logicalOr($this->isTrue(), $this->isFalse()));
     }
 }

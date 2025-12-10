@@ -22,6 +22,11 @@ describe('Alps2Dot Integration', () => {
               title: 'Home Page'
             },
             {
+              id: 'about',
+              type: 'semantic',
+              title: 'About Page'
+            },
+            {
               id: 'goToAbout',
               type: 'safe',
               rt: '#about'

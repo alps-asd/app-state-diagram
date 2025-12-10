@@ -1,0 +1,7 @@
+{
+  "alps": {
+    "descriptor": [
+      {"id": "PriceFilter", "title": "価格 < 100"}
+    ]
+  }
+}
