@@ -19,11 +19,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Added `docs/llms-alps-skill.txt` for non-Claude Code AI tools
   - README updated with AI integration guide (Skill, MCP Server, LLM Guide)
 - **PHP 8.5 support** - Added to CI test matrix
-
-### Changed
-- Claude code review workflow now triggers only on PR creation and manual dispatch (not every push)
-
-### Added (from PR #222)
 - **Complete TypeScript alps2dot implementation** ([#222](https://github.com/alps-asd/app-state-diagram/pull/222))
   - Full TypeScript rewrite of ALPS to DOT conversion with PHP-compatible output
   - **Production-ready implementation** with comprehensive security features and testing
@@ -36,6 +31,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - **Composer integration**: `composer alps2dot` and `composer alps2dot-demo` commands for seamless usage
   - **npm package ready**: Complete package.json configuration for potential npm publishing
   - **Interactive demo scripts**: `tests/bin/demo_compare.sh`, `bin/quick_demo.sh`, `bin/alps2dot.sh` for easy testing
+
+### Changed
+- Claude code review workflow now triggers only on PR creation and manual dispatch (not every push)
 
 ### Security
 - **Fixed multiple security vulnerabilities** in TypeScript implementation
