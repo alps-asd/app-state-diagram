@@ -140,12 +140,12 @@ Add to your MCP configuration (`~/.claude.json` or Claude Desktop settings):
 
 For any AI assistant, add this to your project's `AGENTS.md`, `CLAUDE.md`, or system prompt:
 
-```
+```text
 @import https://alps-asd.github.io/app-state-diagram/llms-alps-skill.txt
 ```
 
 Or reference directly in conversations:
-- "Use the ALPS guide at https://alps-asd.github.io/app-state-diagram/llms-alps-skill.txt to create a profile for..."
+- "Use the ALPS guide at <https://alps-asd.github.io/app-state-diagram/llms-alps-skill.txt> to create a profile for..."
 
 ## Documentation
 

@@ -58,11 +58,30 @@ if (isset($options['v']) || isset($options['version'])) {
 if (isset($options['validate'])) {
     // Get the ALPS file from remaining arguments
     $alpsFile = null;
+    $skipNext = false;
+    $optionsWithValues = ['c' => true, 'config' => true, 'm' => true, 'mode' => true, 'port' => true];
+
     for ($i = 1; $i < $argc; $i++) {
         $arg = $argv[$i];
-        if ($arg === '--validate' || strpos($arg, '-') === 0) {
+
+        if ($skipNext) {
+            $skipNext = false;
             continue;
         }
+
+        if ($arg === '--validate') {
+            continue;
+        }
+
+        // Check for options that take values
+        if (strpos($arg, '-') === 0) {
+            $optionName = ltrim($arg, '-');
+            if (isset($optionsWithValues[$optionName])) {
+                $skipNext = true;
+            }
+            continue;
+        }
+
         $alpsFile = $arg;
         break;
     }

@@ -23,10 +23,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Claude code review workflow now triggers only on PR creation and manual dispatch (not every push)
 
-### Fixed
-- PHPStan error in PathResolverTest (assertIsBool always true)
-- TypeScript regex duplication in alps-parser.ts
-
 ### Added (from PR #222)
 - **Complete TypeScript alps2dot implementation** ([#222](https://github.com/alps-asd/app-state-diagram/pull/222))
   - Full TypeScript rewrite of ALPS to DOT conversion with PHP-compatible output
@@ -44,12 +40,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Security
 - **Fixed multiple security vulnerabilities** in TypeScript implementation
   - Edge grouping collision prevention with delimiter-separated keys
-  - Unique ID generation system preventing descriptor conflicts  
+  - Unique ID generation system preventing descriptor conflicts
   - Circular reference detection with Set-based cycle tracking
   - Input validation with type filtering against malformed data
   - All vulnerabilities verified and approved by automated code review (Sourcery AI, CodeRabbit AI)
 
 ### Fixed
+- PHPStan error in PathResolverTest (assertIsBool always true)
+- TypeScript regex duplication in alps-parser.ts
 - **Data quality issue**: Resolved duplicate ID 'Order' in docs/amazon/alps.json (renamed to 'OrderDetails')
 - **Test suite robustness**: Flexible error message matching prevents brittle test failures
 - **CI/CD reliability**: Comprehensive workflow with automated compatibility and performance testing
