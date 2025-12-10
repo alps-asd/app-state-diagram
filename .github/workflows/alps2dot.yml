@@ -94,7 +94,7 @@ jobs:
         cache-dependency-path: alps2dot/package-lock.json
     
     - name: Install PHP dependencies
-      run: composer install --no-dev --optimize-autoloader
+      run: composer install --no-dev --optimize-autoloader --no-scripts
     
     - name: Install Node.js dependencies  
       working-directory: alps2dot
