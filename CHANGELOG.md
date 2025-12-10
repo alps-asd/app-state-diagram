@@ -35,7 +35,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - **Security hardened**: Input validation, ID collision prevention, defensive programming
   - **Composer integration**: `composer alps2dot` and `composer alps2dot-demo` commands for seamless usage
   - **npm package ready**: Complete package.json configuration for potential npm publishing
-  - **Interactive demo scripts**: `demo_compare.sh`, `quick_demo.sh`, `alps2dot.sh` for easy testing
+  - **Interactive demo scripts**: `tests/bin/demo_compare.sh`, `bin/quick_demo.sh`, `bin/alps2dot.sh` for easy testing
 
 ### Security
 - **Fixed multiple security vulnerabilities** in TypeScript implementation
