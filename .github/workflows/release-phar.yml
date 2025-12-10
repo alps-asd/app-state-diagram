@@ -27,7 +27,7 @@ jobs:
 
       - name: Install Dependencies
         run: |
-          composer install --no-dev --prefer-dist --optimize-autoloader
+          composer install --no-dev --prefer-dist --optimize-autoloader --no-scripts
           if [ -d "asd-sync" ]; then
             echo "Installing Node.js dependencies in asd-sync..."
             cd asd-sync

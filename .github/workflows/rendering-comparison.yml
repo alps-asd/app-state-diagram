@@ -32,7 +32,7 @@ jobs:
           cache-dependency-path: '**/package-lock.json'
 
       - name: Install PHP dependencies
-        run: composer install --no-dev --no-interaction --no-progress
+        run: composer install --no-dev --no-interaction --no-progress --no-scripts
 
       - name: Create test profiles with Japanese text
         run: |
