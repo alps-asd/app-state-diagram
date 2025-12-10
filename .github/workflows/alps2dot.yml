@@ -162,7 +162,7 @@ jobs:
     
     - name: Install dependencies
       run: |
-        composer install --no-dev --optimize-autoloader
+        composer install --no-dev --optimize-autoloader --no-scripts
         cd alps2dot && npm ci && npm run build
     
     - name: Performance comparison
