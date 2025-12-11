@@ -28,6 +28,7 @@ Options:
   -m, --mode <mode>       Output mode (html|markdown|svg)
   --port <port>           Port for watch mode (default: 3000)
   --validate              Validate ALPS profile (JSON output)
+  --mcp                   Start MCP server for Claude Desktop integration
   -v, --version           Show version information
   -h, --help              Show this help message
 
@@ -36,7 +37,7 @@ Options:
 EOT;
     exit(0);
 }
-$options = getopt('c:e::w::m::v', ['config:', 'echo::', 'watch::', 'mode::', 'port::', 'validate', 'version']);
+$options = getopt('c:e::w::m::v', ['config:', 'echo::', 'watch::', 'mode::', 'port::', 'validate', 'mcp', 'version']);
 // Handle --version option
 if (isset($options['v']) || isset($options['version'])) {
     $pharRunning = Phar::running(false);
@@ -52,6 +53,44 @@ if (isset($options['v']) || isset($options['version'])) {
         echo "asd (development version - version info not available)\n";
     }
     exit(0);
+}
+
+// Handle --mcp option (MCP Server mode)
+if (isset($options['mcp'])) {
+    $pharRunning = Phar::running(false);
+    $mcpServerPath = null;
+
+    if ($pharRunning !== '') {
+        // PHAR execution: look in libexec
+        $pharDir = dirname($pharRunning);
+        $mcpServerPath = $pharDir . '/mcp/asd-mcp.php';
+
+        // Try version-independent opt path
+        if (!file_exists($mcpServerPath)) {
+            $homebrewPrefix = PathResolver::getHomebrewPrefix();
+            if ($homebrewPrefix !== null) {
+                $optPath = $homebrewPrefix . '/opt/asd/libexec/mcp/asd-mcp.php';
+                if (file_exists($optPath)) {
+                    $mcpServerPath = $optPath;
+                }
+            }
+        }
+    } else {
+        // Development: look relative to bin/asd
+        $mcpServerPath = dirname(__DIR__) . '/mcp/asd-mcp.php';
+    }
+
+    if ($mcpServerPath === null || !file_exists($mcpServerPath)) {
+        fwrite(STDERR, "Error: MCP server not found at expected path.\n");
+        if ($mcpServerPath !== null) {
+            fwrite(STDERR, "Expected path: $mcpServerPath\n");
+        }
+        exit(1);
+    }
+
+    // Execute the MCP server - it will handle STDIN/STDOUT communication
+    passthru("php " . escapeshellarg($mcpServerPath), $exitCode);
+    exit($exitCode);
 }
 
 // Handle --validate option
