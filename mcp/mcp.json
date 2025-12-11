@@ -262,6 +262,6 @@
   "keywords": ["mcp", "server", "generator", "meta", "php", "template", "code-generation"],
   "repository": {
     "type": "git",
-    "url": "https://github.com/koriym/Koriym.SemanticLogger"
+    "url": "https://github.com/alps-asd/app-state-diagram"
   }
 }
