@@ -2,27 +2,21 @@
 <?php
 
 /**
- * MCP Server Skeleton for PHP
+ * ALPS MCP Server
  *
- * A minimal, type-safe Model Context Protocol (MCP) server implementation.
- * Use this as a starting point for building your own MCP servers.
+ * MCP server for ALPS profile validation and SVG diagram generation.
  *
  * Features:
  * - Full JSON-RPC 2.0 compliance
- * - MCP Protocol 2024-11-05 support  
- * - Complete Psalm type definitions
- * - Error handling and validation
- * - Example tools with proper schema definitions
- * - STDIN/STDOUT communication
+ * - MCP Protocol 2024-11-05 support
+ * - ALPS validation with detailed error feedback
+ * - ALPS to SVG diagram conversion
  *
  * Usage:
- *   php mcp-skelton-server.php
- *   
- * Customization:
- * 1. Update SERVER_NAME, SERVER_VERSION constants
- * 2. Replace example tools with your own in handleToolCall()
- * 3. Add your tool definitions in tools/list response
- * 4. Implement your business logic functions
+ *   php asd-mcp.php
+ *
+ * Or via CLI:
+ *   asd --mcp
  */
 
 declare(strict_types=1);
