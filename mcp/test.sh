@@ -24,14 +24,14 @@ echo "Test 3: Echo Tool"
 echo '{"jsonrpc":"2.0","method":"tools/call","id":3,"params":{"name":"echo","arguments":{"message":"Hello MCP!"}}}' | php asd-mcp.php
 echo ""
 
-# Test 4: Get current time
-echo "Test 4: Get Current Time"
-echo '{"jsonrpc":"2.0","method":"tools/call","id":4,"params":{"name":"getCurrentTime","arguments":{"format":"readable","timezone":"UTC"}}}' | php asd-mcp.php
+# Test 4: Test SVG tool
+echo "Test 4: Test SVG (simple)"
+echo '{"jsonrpc":"2.0","method":"tools/call","id":4,"params":{"name":"test_svg","arguments":{"example":"simple"}}}' | php asd-mcp.php
 echo ""
 
-# Test 5: Get system info
-echo "Test 5: Get System Info"
-echo '{"jsonrpc":"2.0","method":"tools/call","id":5,"params":{"name":"getSystemInfo","arguments":{}}}' | php asd-mcp.php
+# Test 5: Validate ALPS (error case - empty content)
+echo "Test 5: Validate ALPS (empty - should error)"
+echo '{"jsonrpc":"2.0","method":"tools/call","id":5,"params":{"name":"validate_alps","arguments":{"alps_content":""}}}' | php asd-mcp.php
 echo ""
 
 # Test 6: Unknown method (should return error)
