@@ -90,6 +90,19 @@ This skill responds to natural language requests:
 | State/Page | PascalCase | `HomePage`, `ProductDetail`, `ShoppingCart` |
 | Semantic field | camelCase | `userId`, `productName`, `createdAt` |
 
+### Safe Transition Naming Rule
+
+**IMPORTANT**: Safe transitions (`go*`) MUST include the target state name in their id.
+
+- `rt="#ProductList"` → id must be `goProductList` (or `goToProductList`)
+- `rt="#UserProfile"` → id must be `goUserProfile` (or `goToUserProfile`)
+
+**Invalid examples:**
+- `goStart` with `rt="#ProductList"` - Wrong! Should be `goProductList`
+- `goNext` with `rt="#Checkout"` - Wrong! Should be `goCheckout`
+
+This rule ensures consistency and makes the diagram self-documenting. When a transition has no source state (entry point), it will be displayed as originating from `UnknownState` in the diagram.
+
 ### Determining idempotent: PUT vs DELETE
 
 Context clues for AI inference:
@@ -128,17 +141,18 @@ Context clues for AI inference:
    - **Functional area tags**: Group by feature domain (e.g., `search`, `product`, `cart`, `checkout`, `order`, `account`, `review`)
    - **Flow tags**: Group by user journey with `flow-` prefix (e.g., `flow-purchase`, `flow-register`, `flow-return`)
    - States and transitions should have both types where applicable
-   - Example: A cart-related transition might have `"tag": ["cart", "flow-purchase"]`
+   - Tags are space-separated strings, not arrays
+   - Example: A cart-related transition might have `"tag": "cart flow-purchase"`
 
 6. **Add Semantic Descriptors to Transitions**
    - Every transition (go/do) should specify its required input parameters as nested descriptors
    - These define what data is needed to perform the action
    - Example:
      ```json
-     {"id": "goProductDetail", "type": "safe", "rt": "#ProductDetail", "tag": ["product"], "descriptor": [
+     {"id": "goProductDetail", "type": "safe", "rt": "#ProductDetail", "tag": "product", "descriptor": [
        {"href": "#productId"}
      ]},
-     {"id": "doAddToCart", "type": "unsafe", "rt": "#Cart", "tag": ["cart", "flow-purchase"], "descriptor": [
+     {"id": "doAddToCart", "type": "unsafe", "rt": "#Cart", "tag": "cart flow-purchase", "descriptor": [
        {"href": "#productId"},
        {"href": "#quantity"},
        {"href": "#selectedVariant"}
@@ -195,12 +209,15 @@ Use `asd --validate <file>` to validate ALPS profiles. Output conforms to the [v
 - E008: Missing alps property in document
 - E009: Descriptor must be an array
 - E010: Invalid XML character in descriptor title
+- E011: Tag must be a string (space-separated), not an array
 
 ### Warning Codes (W)
 - W001: Missing title
 - W002: Safe transition naming (should start with 'go')
 - W003: Unsafe/idempotent naming (should start with 'do')
 - W004: Orphan descriptor
+- W005: Safe transition id does not match rt target (e.g., `goStart` with `rt="#ProductList"` should be `goProductList`)
+- W006: Tag contains comma - may be confused with space-separated format
 
 ### Suggestion Codes (S)
 - S001: Missing doc on transition
