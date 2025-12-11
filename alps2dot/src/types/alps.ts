@@ -25,6 +25,7 @@ export interface Descriptor {
   descriptor?: Descriptor[];
   rt?: string;
   rel?: string;
+  tag?: string;
 }
 
 export type DescriptorType = 'semantic' | 'safe' | 'unsafe' | 'idempotent';
@@ -62,6 +63,7 @@ export const ErrorCodes = {
   MISSING_ALPS: 'E008',
   MISSING_DESCRIPTOR_ARRAY: 'E009',
   INVALID_XML_CHAR: 'E010',
+  TAG_MUST_BE_STRING: 'E011',
 } as const;
 
 // Warning codes
@@ -70,6 +72,8 @@ export const WarningCodes = {
   NAMING_CONVENTION_SAFE: 'W002',
   NAMING_CONVENTION_UNSAFE: 'W003',
   ORPHAN_DESCRIPTOR: 'W004',
+  SAFE_TRANSITION_RT_MISMATCH: 'W005',
+  TAG_CONTAINS_COMMA: 'W006',
 } as const;
 
 // Suggestion codes

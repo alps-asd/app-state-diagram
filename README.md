@@ -106,14 +106,19 @@ Integrate ALPS design guidance into your AI workflow. Choose the method that fit
 
 Best for natural language ALPS creation and design guidance.
 
-```bash
-# From your project root (Composer)
-mkdir -p .claude/skills
-ln -s $(pwd)/vendor/koriym/app-state-diagram/.claude/skills/alps .claude/skills/alps
+**Prerequisites:** Claude Code 2.0.65 or later
 
-# Or for Homebrew installation
-ln -s /opt/homebrew/opt/asd/libexec/.claude/skills/alps .claude/skills/alps
+```bash
+# Check your Claude Code version
+claude --version  # Should be ≥ 2.0.65
+
+# Install skill in your project
+mkdir -p .claude/skills/alps
+curl -o .claude/skills/alps/SKILL.md \
+  https://raw.githubusercontent.com/alps-asd/app-state-diagram/master/.claude/skills/alps/SKILL.md
 ```
+
+Restart Claude Code, then ask "Show me available skills" to verify installation.
 
 Then ask Claude Code:
 - "Create an ALPS profile for an e-commerce site"

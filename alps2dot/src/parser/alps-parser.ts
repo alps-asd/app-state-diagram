@@ -363,6 +363,19 @@ export class AlpsParser {
               descriptorId: desc.id
             });
           }
+          // W005: Check if safe transition id matches rt target
+          if (desc.type === 'safe' && desc.id.startsWith('go') && desc.rt) {
+            const rtTarget = desc.rt.replace(/^#/, '');
+            const idSuffix = desc.id.replace(/^go(?:To)?/, '');
+            if (idSuffix.toLowerCase() !== rtTarget.toLowerCase()) {
+              warnings.push({
+                code: WarningCodes.SAFE_TRANSITION_RT_MISMATCH,
+                message: `Safe transition '${desc.id}' does not match rt target '${rtTarget}'. Expected 'go${rtTarget}' or 'goTo${rtTarget}'`,
+                path: currentPath,
+                descriptorId: desc.id
+              });
+            }
+          }
         }
 
         // Should have doc for transitions
@@ -392,6 +405,24 @@ export class AlpsParser {
         errors.push({
           code: ErrorCodes.INVALID_XML_CHAR,
           message: `Title contains invalid XML characters: ${invalidChars.join(', ')}. These will cause SVG generation errors.`,
+          path: currentPath,
+          descriptorId: desc.id
+        });
+      }
+
+      // Validate tag must be string, not array
+      if (desc.tag !== undefined && Array.isArray(desc.tag)) {
+        errors.push({
+          code: ErrorCodes.TAG_MUST_BE_STRING,
+          message: `'tag' must be a string (space-separated), not an array. Found: [${desc.tag.join(', ')}]`,
+          path: currentPath,
+          descriptorId: desc.id
+        });
+      } else if (desc.tag !== undefined && typeof desc.tag === 'string' && desc.tag.includes(',')) {
+        // Warn if tag contains comma - may be confused with separator
+        warnings.push({
+          code: WarningCodes.TAG_CONTAINS_COMMA,
+          message: `'tag' contains comma ('${desc.tag}'). If specifying multiple tags, use space-separated format instead.`,
           path: currentPath,
           descriptorId: desc.id
         });
