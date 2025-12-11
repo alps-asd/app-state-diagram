@@ -35,13 +35,14 @@ php mcp-skelton-server.php
 
 The server will start and listen for JSON-RPC requests on STDIN.
 
-### 2. Test with Example Tools
+### 2. Available Tools
 
-The skeleton includes three example tools:
+The MCP server provides these tools:
 
+- **`validate_alps`** - Validate ALPS profiles and get detailed error feedback
+- **`alps2svg`** - Convert ALPS profiles to SVG diagrams
 - **`echo`** - Echo back a message (great for testing connectivity)
-- **`getCurrentTime`** - Get current time in various formats  
-- **`getSystemInfo`** - Display system information
+- **`test_svg`** - Display a test SVG diagram
 
 ### 3. MCP Client Configuration
 
@@ -197,7 +198,7 @@ if (!validateInput($userInput, 'string')) {
 
 ## Architecture
 
-```
+```text
 ┌─────────────────┐    JSON-RPC     ┌──────────────────┐
 │   MCP Client    │◄──────────────►│  mcp-skelton-    │
 │  (Claude, etc)  │   STDIN/STDOUT   │     server.php   │
