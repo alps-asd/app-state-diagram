@@ -27,10 +27,10 @@ A minimal, type-safe Model Context Protocol (MCP) server implementation for PHP.
 
 ```bash
 # Make executable
-chmod +x mcp-skelton-server.php
+chmod +x asd-mcp.php
 
 # Run the server
-php mcp-skelton-server.php
+php asd-mcp.php
 ```
 
 The server will start and listen for JSON-RPC requests on STDIN.
@@ -177,13 +177,13 @@ Test your server with curl or other JSON-RPC clients:
 
 ```bash
 # Test initialize
-echo '{"jsonrpc":"2.0","method":"initialize","id":1}' | php mcp-skelton-server.php
+echo '{"jsonrpc":"2.0","method":"initialize","id":1}' | php asd-mcp.php
 
 # Test tools/list  
-echo '{"jsonrpc":"2.0","method":"tools/list","id":2}' | php mcp-skelton-server.php
+echo '{"jsonrpc":"2.0","method":"tools/list","id":2}' | php asd-mcp.php
 
 # Test tool call
-echo '{"jsonrpc":"2.0","method":"tools/call","id":3,"params":{"name":"echo","arguments":{"message":"Hello"}}}' | php mcp-skelton-server.php
+echo '{"jsonrpc":"2.0","method":"tools/call","id":3,"params":{"name":"echo","arguments":{"message":"Hello"}}}' | php asd-mcp.php
 ```
 
 ### Input Validation
@@ -200,8 +200,8 @@ if (!validateInput($userInput, 'string')) {
 
 ```text
 ┌─────────────────┐    JSON-RPC     ┌──────────────────┐
-│   MCP Client    │◄──────────────►│  mcp-skelton-    │
-│  (Claude, etc)  │   STDIN/STDOUT   │     server.php   │
+│   MCP Client    │◄──────────────►│    asd-mcp.php   │
+│  (Claude, etc)  │   STDIN/STDOUT │                  │
 └─────────────────┘                 └──────────────────┘
                                              │
                                              ▼
