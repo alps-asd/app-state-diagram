@@ -347,19 +347,12 @@ function handleTestSvg(array $args): array
     <rect width="100%" height="100%" fill="#f0f8ff" stroke="#4169e1" stroke-width="2"/>
     <text x="100" y="50" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#4169e1">Test SVG</text>
 </svg>';
-            
-            // Save SVG to temp file and open in browser
-            $tempFile = '/tmp/mcp-simple-' . time() . '.svg';
-            file_put_contents($tempFile, $svgContent);
-            
-            // Open in browser
-            // SVG file saved: $tempFile
-            
+
             return [
                 'content' => [
                     [
                         'type' => 'text',
-                        'text' => "✅ Simple SVG opened in browser: $tempFile",
+                        'text' => "✅ Simple test SVG:\n\n```svg\n" . $svgContent . "\n```",
                     ]
                 ],
                 'isError' => false,
@@ -430,14 +423,11 @@ function handleTestSvg(array $args): array
 </body>
 </html>";
         
-        $tempFile = '/tmp/mcp-bookstore-' . time() . '.html';
-        file_put_contents($tempFile, $htmlContent);
-        
         return [
             'content' => [
                 [
                     'type' => 'text',
-                    'text' => "✅ Bookstore state diagram generated! Here's the interactive HTML content:\n\n```html\n" . $htmlContent . "\n```\n\nYou can also open the file directly: file://$tempFile",
+                    'text' => "✅ Bookstore state diagram:\n\n```html\n" . $htmlContent . "\n```",
                 ]
             ],
             'isError' => false,
@@ -735,19 +725,11 @@ function handleAlps2Svg(array $args): array
         
         // Both ALPS and SVG
         if ($format === 'both') {
-            // Save both ALPS and SVG
-            $tempSvg = '/tmp/mcp-alps2svg-' . time() . '.svg';
-            $tempAlps = '/tmp/mcp-alps2svg-' . time() . '.xml';
-            
-            file_put_contents($tempSvg, $svgContent);
-            file_put_contents($tempAlps, $alpsContent);
-            // SVG file saved: $tempSvg
-            
             return [
                 'content' => [
                     [
                         'type' => 'text',
-                        'text' => "✅ ALPS conversion complete:\n📊 SVG file: $tempSvg\n📄 ALPS profile: $tempAlps\n\n```svg\n" . $svgContent . "\n```",
+                        'text' => "✅ ALPS conversion complete:\n\n**SVG:**\n```svg\n" . $svgContent . "\n```\n\n**ALPS:**\n```xml\n" . $alpsContent . "\n```",
                     ],
                 ],
                 'isError' => false,
