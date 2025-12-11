@@ -366,7 +366,7 @@ export class AlpsParser {
           // W005: Check if safe transition id matches rt target
           if (desc.type === 'safe' && desc.id.startsWith('go') && desc.rt) {
             const rtTarget = desc.rt.replace(/^#/, '');
-            const idSuffix = desc.id.replace(/^go(To)?/, '');
+            const idSuffix = desc.id.replace(/^go(?:To)?/, '');
             if (idSuffix.toLowerCase() !== rtTarget.toLowerCase()) {
               warnings.push({
                 code: WarningCodes.SAFE_TRANSITION_RT_MISMATCH,
