@@ -516,6 +516,9 @@ function handleValidateAlps(array $args): array
         
         // Create temporary file for ALPS content with appropriate extension
         $trimmed = trim($alpsContent);
+        if ($trimmed === '') {
+            throw new Exception('ALPS content is empty or whitespace-only');
+        }
         $extension = ($trimmed[0] === '{') ? '.json' : '.xml';
         $tempAlpsFile = tempnam(sys_get_temp_dir(), 'mcp_validate_') . $extension;
         file_put_contents($tempAlpsFile, $alpsContent);
@@ -662,6 +665,9 @@ function handleAlps2Svg(array $args): array
         
         // Create temporary file for ALPS content with appropriate extension
         $trimmed = trim($alpsContent);
+        if ($trimmed === '') {
+            throw new Exception('ALPS content is empty or whitespace-only');
+        }
         $extension = ($trimmed[0] === '{') ? '.json' : '.xml';
         $tempAlpsFile = tempnam(sys_get_temp_dir(), 'mcp_alps_') . $extension;
         file_put_contents($tempAlpsFile, $alpsContent);
