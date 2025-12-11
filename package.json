@@ -1,0 +1,40 @@
+{
+  "name": "@alps-io/alps",
+  "version": "0.1.0",
+  "description": "ALPS (Application-Level Profile Semantics) CLI tool",
+  "main": "dist/index.js",
+  "bin": {
+    "alps": "dist/alps.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc --watch",
+    "test": "jest",
+    "test:coverage": "jest --coverage",
+    "update-assets": "./bin/update-assets.sh",
+    "check-assets": "./bin/check-assets.sh"
+  },
+  "keywords": [
+    "alps",
+    "api",
+    "hypermedia",
+    "rest"
+  ],
+  "author": "Akihito Koriyama <akihito.koriyama@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "@viz-js/viz": "^3.2.4",
+    "commander": "^11.1.0",
+    "fast-xml-parser": "^4.3.2"
+  },
+  "devDependencies": {
+    "@types/jest": "^30.0.0",
+    "@types/node": "^20.8.0",
+    "jest": "^30.2.0",
+    "ts-jest": "^29.4.6",
+    "typescript": "^5.2.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
