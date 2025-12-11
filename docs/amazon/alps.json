@@ -1815,7 +1815,7 @@
       },
       {
         "id": "SellerProducts",
-        "title": "Seller's Products",
+        "title": "Seller Products",
         "tag": "product",
         "descriptor": [
           {
@@ -4278,7 +4278,7 @@
         "id": "goSellerProducts",
         "type": "safe",
         "rt": "#SellerProducts",
-        "title": "Go to Seller's Products",
+        "title": "Go to Seller Products",
         "tag": "product",
         "descriptor": [
           {
@@ -5029,7 +5029,7 @@
         "id": "doSubscribe",
         "type": "unsafe",
         "rt": "#Cart",
-        "title": "Subscribe & Save",
+        "title": "Subscribe and Save",
         "tag": "cart",
         "descriptor": [
           {
