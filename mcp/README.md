@@ -10,19 +10,7 @@ MCP server for ALPS profile validation, SVG diagram generation, and best practic
 | `alps2svg` | Convert ALPS profiles to SVG state diagrams |
 | `alps_guide` | Get ALPS best practices and reference guide |
 
-## Quick Start
-
-### 1. Basic Usage
-
-```bash
-# Run the server
-php asd-mcp.php
-
-# Or via CLI
-asd --mcp
-```
-
-### 2. MCP Client Configuration
+## MCP Client Configuration
 
 Add to your MCP client configuration (e.g., Claude Desktop):
 
@@ -30,12 +18,15 @@ Add to your MCP client configuration (e.g., Claude Desktop):
 {
   "mcpServers": {
     "alps-tools": {
-      "command": "php",
-      "args": ["/path/to/mcp/asd-mcp.php"]
+      "command": "asd",
+      "args": ["--mcp"]
     }
   }
 }
 ```
+
+> **Tip**: Ask Claude to configure the MCP server for you:
+> "Add the alps-tools MCP server using `asd --mcp`"
 
 ## Tool Details
 
@@ -96,26 +87,26 @@ Or ask Claude to fetch and follow the guidelines from that URL.
 
 ```bash
 # Test initialize
-echo '{"jsonrpc":"2.0","method":"initialize","id":1}' | php asd-mcp.php
+echo '{"jsonrpc":"2.0","method":"initialize","id":1}' | asd --mcp
 
 # Test tools/list
-echo '{"jsonrpc":"2.0","method":"tools/list","id":2}' | php asd-mcp.php
+echo '{"jsonrpc":"2.0","method":"tools/list","id":2}' | asd --mcp
 
 # Test alps_guide
-echo '{"jsonrpc":"2.0","method":"tools/call","id":3,"params":{"name":"alps_guide","arguments":{}}}' | php asd-mcp.php
+echo '{"jsonrpc":"2.0","method":"tools/call","id":3,"params":{"name":"alps_guide","arguments":{}}}' | asd --mcp
 ```
 
 ## Architecture
 
 ```text
 ┌─────────────────┐    JSON-RPC     ┌──────────────────┐
-│   MCP Client    │◄──────────────►│    asd-mcp.php   │
+│   MCP Client    │◄──────────────►│    asd --mcp     │
 │ (Claude, etc)   │   STDIN/STDOUT │                  │
 └─────────────────┘                 └──────────────────┘
                                             │
                                             ▼
                                    ┌──────────────────┐
-                                   │  app-state-diagram│
+                                   │ app-state-diagram│
                                    │     library      │
                                    └──────────────────┘
 ```
