@@ -107,7 +107,7 @@ const MCP_PROTOCOL_VERSION = '2024-11-05';
  */
 
 // Log startup to STDERR (STDOUT is reserved for JSON-RPC responses)
-fwrite(STDERR, "Starting MCP PHP Skeleton Server...\n");
+fwrite(STDERR, "Starting ALPS MCP Server...\n");
 fwrite(STDERR, 'Server: ' . SERVER_NAME . ' v' . SERVER_VERSION . "\n");
 fwrite(STDERR, 'Protocol: MCP ' . MCP_PROTOCOL_VERSION . "\n\n");
 
@@ -143,7 +143,7 @@ while ($line = fgets(STDIN)) {
 
     $params = $request['params'] ?? null;
     $toolCallParams = is_array($params) ? $params : [];
-    assert($toolCallParams instanceof McpToolCallParams);
+    /** @var McpToolCallParams $toolCallParams */
 
     $response = match ($request['method'] ?? '') {
         'initialize' => [
@@ -201,7 +201,7 @@ while ($line = fgets(STDIN)) {
                 ]
         )
     };
-    assert($response instanceof McpJsonRpcResponse || $response === null);
+    /** @var McpJsonRpcResponse|null $response */
 
     // Send response (skip for notifications)
     if ($response !== null) {
