@@ -4,6 +4,12 @@
   "description": "ALPS CLI tool - generate documentation from ALPS profiles",
   "main": "dist/asd.js",
   "types": "dist/asd.d.ts",
+  "exports": {
+    ".": "./dist/asd.js",
+    "./parser/*": "./dist/parser/*",
+    "./validator/*": "./dist/validator/*",
+    "./generator/*": "./dist/generator/*"
+  },
   "bin": {
     "asd": "dist/asd.js"
   },

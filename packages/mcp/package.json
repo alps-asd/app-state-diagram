@@ -1,0 +1,22 @@
+{
+  "name": "@alps-asd/mcp",
+  "version": "0.1.0",
+  "description": "ALPS MCP Server",
+  "type": "module",
+  "main": "dist/index.js",
+  "bin": {
+    "alps-mcp": "dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "@alps-asd/cli": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.2.0"
+  }
+}
