@@ -4865,6 +4865,9 @@
         "rt": "#Home",
         "title": "Login",
         "tag": "account flow-register",
+        "doc": {
+          "value": "Authenticate user with email and password. Creates a session and redirects to home page. Enables access to personalized features, saved addresses, and order history."
+        },
         "descriptor": [
           {
             "href": "#email"
@@ -4880,6 +4883,9 @@
         "rt": "#Home",
         "title": "Register",
         "tag": "account flow-register",
+        "doc": {
+          "value": "Create new user account with email and password. Automatically logs in the user upon successful registration and redirects to home page."
+        },
         "descriptor": [
           {
             "href": "#email"
@@ -4966,6 +4972,9 @@
         "rt": "#Cart",
         "title": "Add to Cart",
         "tag": "cart flow-purchase",
+        "doc": {
+          "value": "Add the selected product to shopping cart with chosen variant and quantity. Updates cart total and item count. Navigates to cart page to review items."
+        },
         "descriptor": [
           {
             "href": "#productId"
@@ -4999,6 +5008,9 @@
         "rt": "#Checkout",
         "title": "Buy Now",
         "tag": "checkout flow-purchase",
+        "doc": {
+          "value": "Skip cart and proceed directly to checkout with selected product. Faster than add-to-cart for single item purchases. Product quantity and variant must be selected first."
+        },
         "descriptor": [
           {
             "href": "#productId"
@@ -5017,6 +5029,9 @@
         "rt": "#OrderComplete",
         "title": "One-Click Buy",
         "tag": "checkout flow-purchase",
+        "doc": {
+          "value": "Purchase product immediately using default payment and address. Bypasses cart and checkout pages entirely. Fastest purchasing option but requires pre-configured defaults."
+        },
         "descriptor": [
           {
             "href": "#productId"
@@ -5032,6 +5047,9 @@
         "rt": "#Wishlist",
         "title": "Add to Wishlist",
         "tag": "account",
+        "doc": {
+          "value": "Add product to a selected wishlist for future reference or purchase. Allows tracking prices and availability. Can share wishlist with others for gift ideas."
+        },
         "descriptor": [
           {
             "href": "#productId"
@@ -5047,6 +5065,9 @@
         "rt": "#Cart",
         "title": "Subscribe & Save",
         "tag": "cart",
+        "doc": {
+          "value": "Set up recurring delivery of a product at selected frequency with discount. Automatically charges and ships on schedule. Can cancel or modify subscription anytime."
+        },
         "descriptor": [
           {
             "href": "#productId"
@@ -5062,6 +5083,9 @@
         "rt": "#ProductDetail",
         "title": "Clip Coupon",
         "tag": "deals",
+        "doc": {
+          "value": "Activate a coupon for later use. Coupon is saved to account and automatically applied at checkout when purchasing eligible items. Has expiration date."
+        },
         "descriptor": [
           {
             "href": "#couponCode"
@@ -5074,6 +5098,9 @@
         "rt": "#PriceAlert",
         "title": "Set Price Alert",
         "tag": "account",
+        "doc": {
+          "value": "Set notification for when product price drops to target amount. Sends email when price threshold is reached. Helps track deals and buy at optimal price."
+        },
         "descriptor": [
           {
             "href": "#productId"
@@ -5152,6 +5179,9 @@
         "rt": "#ReviewList",
         "title": "Submit Review",
         "tag": "review flow-review",
+        "doc": {
+          "value": "Post a product review with rating, title, text, and optional images. Review appears on product page after moderation. Helps other customers make informed decisions."
+        },
         "descriptor": [
           {
             "href": "#productId"
@@ -5176,6 +5206,9 @@
         "rt": "#QuestionList",
         "title": "Ask Question",
         "tag": "review",
+        "doc": {
+          "value": "Post a question about a product for the community to answer. Notifies previous purchasers and sellers. Question appears on product page for others to see."
+        },
         "descriptor": [
           {
             "href": "#productId"
@@ -5191,6 +5224,9 @@
         "rt": "#QuestionList",
         "title": "Answer Question",
         "tag": "review",
+        "doc": {
+          "value": "Provide an answer to a customer question about a product. Available to previous purchasers and sellers. Helps build community knowledge and assists future buyers."
+        },
         "descriptor": [
           {
             "href": "#questionId"
@@ -5230,6 +5266,9 @@
         "rt": "#Cart",
         "title": "Update Quantity",
         "tag": "cart",
+        "doc": {
+          "value": "Change the quantity of an item already in the cart. Recalculates cart subtotal and total. Can be called multiple times with same result (idempotent)."
+        },
         "descriptor": [
           {
             "href": "#cartItemId"
@@ -5245,6 +5284,9 @@
         "rt": "#Cart",
         "title": "Remove from Cart",
         "tag": "cart",
+        "doc": {
+          "value": "Remove an item from the shopping cart completely. Updates cart total and item count. Item can be added back later from product page or saved items."
+        },
         "descriptor": [
           {
             "href": "#cartItemId"
@@ -5257,6 +5299,9 @@
         "rt": "#Cart",
         "title": "Save for Later",
         "tag": "cart",
+        "doc": {
+          "value": "Move item from active cart to saved for later section. Item remains available for future purchase without blocking current checkout. Can be moved back to cart anytime."
+        },
         "descriptor": [
           {
             "href": "#cartItemId"
@@ -5300,6 +5345,9 @@
         "rt": "#Cart",
         "title": "Apply Coupon",
         "tag": "cart",
+        "doc": {
+          "value": "Apply a promotional coupon code to the cart. Validates the coupon and applies discount if valid. Updates cart total and shows discount amount."
+        },
         "descriptor": [
           {
             "href": "#couponCode"
@@ -5345,6 +5393,9 @@
         "rt": "#Checkout",
         "title": "Select Address",
         "tag": "checkout flow-purchase",
+        "doc": {
+          "value": "Choose a delivery address from saved addresses or enter a new one. Updates shipping cost calculation and delivery date estimate. Required step in checkout flow."
+        },
         "descriptor": [
           {
             "href": "#addressId"
@@ -5357,6 +5408,9 @@
         "rt": "#SelectAddress",
         "title": "Save Address",
         "tag": "checkout account",
+        "doc": {
+          "value": "Save a new delivery address to user account. Address becomes available for future orders and can be set as default. Validates address format and postal code."
+        },
         "descriptor": [
           {
             "href": "#recipientName"
@@ -5507,6 +5561,9 @@
         "rt": "#Checkout",
         "title": "Select Payment Method",
         "tag": "checkout flow-purchase",
+        "doc": {
+          "value": "Choose a payment method from saved cards/accounts or add a new one. Validates payment method and enables order placement. Required step in checkout flow."
+        },
         "descriptor": [
           {
             "href": "#paymentMethodId"
@@ -5519,6 +5576,9 @@
         "rt": "#SelectPayment",
         "title": "Save Card",
         "tag": "checkout account",
+        "doc": {
+          "value": "Add a new credit/debit card to account for future purchases. Card details are securely stored and can be set as default. Validates card number and expiry date."
+        },
         "descriptor": [
           {
             "href": "#cardNumber"
@@ -5540,6 +5600,9 @@
         "rt": "#PaymentMethods",
         "title": "Set as Default",
         "tag": "account",
+        "doc": {
+          "value": "Set a payment method as the default for all future purchases. Used automatically in one-click purchases and pre-selected at checkout for convenience."
+        },
         "descriptor": [
           {
             "href": "#paymentMethodId"
@@ -5635,7 +5698,10 @@
         "type": "unsafe",
         "rt": "#OrderComplete",
         "title": "Place Order",
-        "tag": "checkout flow-purchase"
+        "tag": "checkout flow-purchase",
+        "doc": {
+          "value": "Submit the order for processing. Charges payment method, creates order record, sends confirmation email, and empties cart. Final step in checkout flow."
+        }
       },
       {
         "id": "doCancelOrder",
@@ -5643,6 +5709,9 @@
         "rt": "#OrderDetail",
         "title": "Cancel Order",
         "tag": "order",
+        "doc": {
+          "value": "Cancel an order before it ships. Refunds payment method and updates order status to cancelled. Only available for orders not yet dispatched."
+        },
         "descriptor": [
           {
             "href": "#orderId"
@@ -5667,6 +5736,9 @@
         "rt": "#ReturnItem",
         "title": "Return Item",
         "tag": "order flow-return",
+        "doc": {
+          "value": "Initiate a return for a delivered item. Creates return label and return request. Refund is processed after item is received. Requires return reason."
+        },
         "descriptor": [
           {
             "href": "#orderId"
@@ -5730,6 +5802,9 @@
         "rt": "#Cart",
         "title": "Buy Again",
         "tag": "order flow-purchase",
+        "doc": {
+          "value": "Add a previously ordered item to cart for repurchase. Copies product and quantity from past order. Navigates to cart for review before checkout."
+        },
         "descriptor": [
           {
             "href": "#productId"
@@ -5742,6 +5817,9 @@
         "rt": "#OrderHistory",
         "title": "Archive Order",
         "tag": "order",
+        "doc": {
+          "value": "Move order to archived section to reduce clutter in order history. Order remains accessible but hidden from main view. Can be unarchived later if needed."
+        },
         "descriptor": [
           {
             "href": "#orderId"
@@ -5863,6 +5941,9 @@
         "rt": "#ManageWishlists",
         "title": "Create Wishlist",
         "tag": "account",
+        "doc": {
+          "value": "Create a new wishlist with custom name and privacy settings. Can have multiple wishlists for different purposes (birthday, wedding, holidays, etc.)."
+        },
         "descriptor": [
           {
             "href": "#wishlistName"
