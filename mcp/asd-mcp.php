@@ -266,20 +266,6 @@ function getToolDefinitions(): array
             ],
         ],
         [
-            'name' => 'nl2alps',
-            'description' => 'Get guidelines for generating ALPS profile from natural language description. Returns best practices, naming conventions, and structure reference for creating valid ALPS.',
-            'inputSchema' => [
-                'type' => 'object',
-                'properties' => [
-                    'description' => [
-                        'type' => 'string',
-                        'description' => 'Natural language description of the application to create ALPS for',
-                    ],
-                ],
-                'required' => ['description'],
-            ],
-        ],
-        [
             'name' => 'alps_guide',
             'description' => 'Get ALPS best practices and reference guide. Use when creating or reviewing ALPS profiles.',
             'inputSchema' => [
@@ -310,7 +296,6 @@ function handleToolCall(array $params): array
     return match ($toolName) {
         'validate_alps' => handleValidateAlps($arguments),
         'alps2svg' => handleAlps2Svg($arguments),
-        'nl2alps' => handleNl2Alps($arguments),
         'alps_guide' => handleAlpsGuide(),
         default => [
             'content' => [
@@ -613,61 +598,6 @@ function handleAlps2Svg(array $args): array
             'isError' => true,
         ];
     }
-}
-
-/**
- * Get ALPS guidelines for natural language to ALPS conversion
- *
- * @param array<string, mixed> $args
- *
- * @return array{content: list<array{type: string, text: string}>, isError: bool}
- */
-function handleNl2Alps(array $args): array
-{
-    $description = $args['description'] ?? '';
-
-    if (! is_string($description) || $description === '') {
-        return [
-            'content' => [
-                [
-                    'type' => 'text',
-                    'text' => 'Error: description parameter is required',
-                ],
-            ],
-            'isError' => true,
-        ];
-    }
-
-    $guide = getAlpsGuideContent();
-
-    $prompt = <<<PROMPT
-# ALPS Generation Request
-
-## Application Description
-{$description}
-
-## Guidelines
-{$guide}
-
-## Instructions
-Based on the description above and following the guidelines:
-1. Identify entities (Ontology) - nouns become semantic fields
-2. Identify states (Taxonomy) - screens/pages the user sees
-3. Identify transitions (Choreography) - actions the user takes
-4. Generate valid ALPS JSON
-5. After generation, use validate_alps tool to verify
-
-PROMPT;
-
-    return [
-        'content' => [
-            [
-                'type' => 'text',
-                'text' => $prompt,
-            ],
-        ],
-        'isError' => false,
-    ];
 }
 
 /**
