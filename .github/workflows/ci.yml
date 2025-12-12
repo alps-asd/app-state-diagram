@@ -37,7 +37,7 @@ jobs:
         run: pnpm test
 
       - name: Test Coverage
-        run: pnpm test:coverage -- --coverageReporters=text --coverageReporters=lcov
+        run: pnpm test:coverage
 
       - name: Upload coverage to Codecov
         if: matrix.node-version == 20
@@ -45,7 +45,6 @@ jobs:
         with:
           files: ./packages/cli/coverage/lcov.info
           fail_ci_if_error: false
-          verbose: true
 
       - name: Run demo (JSON)
         run: node packages/cli/dist/asd.js docs/examples/amazon.json -o /tmp/amazon.html

@@ -5,4 +5,5 @@ module.exports = {
   roots: ['<rootDir>/src'],
   testMatch: ['**/*.test.ts'],
   moduleFileExtensions: ['ts', 'js'],
+  coverageReporters: ['text', 'lcov'],
 };
