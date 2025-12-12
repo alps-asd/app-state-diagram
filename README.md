@@ -74,12 +74,11 @@ asd [options] <profile.json|profile.xml>
 
 See these live demos:
 
-- [Book Store](https://www.app-state-diagram.com/app-state-diagram/bookstore/)
-- [LMS](https://www.app-state-diagram.com/app-state-diagram/lms/)
+- [Demos](https://www.app-state-diagram.com/app-state-diagram/)
 
 ## Design Application with AI and IA
 
-See [AI Integration Guide](docs/ai-integration.md) for setting up Claude Code, MCP Server, or other AI tools.
+See [AI Integration Guide](https://www.app-state-diagram.com/app-state-diagram/ai-integration.html) for setting up Claude Code, MCP Server, or other AI tools.
 
 ## Documentation
 
