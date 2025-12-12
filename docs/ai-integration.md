@@ -1,4 +1,4 @@
-# Design Application with AI
+# Design Application with AI and IA
 
 <img src="ai-integration.png" width="300" alt="AI Integration">
 
@@ -23,23 +23,31 @@ composer require koriym/app-state-diagram
 
 | Priority | Environment | Method |
 |----------|-------------|--------|
-| 1st | Claude Code | Skill (recommended) |
-| 2nd | Claude Desktop | MCP Server |
-| 3rd | Other AI tools | LLM Guide |
+| 1st | Skill clients* | Skill (recommended) |
+| 2nd | MCP clients | MCP Server |
+| 3rd | Chatbots/Agents | URL Reference |
 
-## Claude Code (Skill)
+*Skill clients: [Claude Code](https://claude.ai/code), [OpenAI Codex](https://github.com/openai/codex)
+
+## Skill
 
 ```bash
+claude --version  # Requires 1.0.3+
+
 mkdir -p .claude/skills/alps
 curl -o .claude/skills/alps/SKILL.md \
   https://raw.githubusercontent.com/alps-asd/app-state-diagram/master/.claude/skills/alps/SKILL.md
 ```
 
-Then ask Claude Code:
-- "Use the alps skill to create an ALPS XML file for a blog system"
-- "Validate my alps.xml and fix any issues"
+Then ask:
+- "Use the ALPS skill to create an ALPS JSON file for a blog system"
+- "Validate alps.xml and fix any issues"
 
-## Claude Desktop (MCP Server)
+## MCP Server
+
+```bash
+which asd  # e.g., /opt/homebrew/bin/asd
+```
 
 Add to your MCP configuration:
 
@@ -47,14 +55,14 @@ Add to your MCP configuration:
 {
   "mcpServers": {
     "alps": {
-      "command": "asd",
+      "command": "/opt/homebrew/bin/asd",
       "args": ["--mcp"]
     }
   }
 }
 ```
 
-## Other AI Tools (LLM Guide)
+## Chatbots/Agents
 
 Add to your `AGENTS.md`, `CLAUDE.md`, or system prompt:
 

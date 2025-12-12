@@ -77,7 +77,7 @@ See these live demos:
 - [Book Store](https://www.app-state-diagram.com/app-state-diagram/bookstore/)
 - [LMS](https://www.app-state-diagram.com/app-state-diagram/lms/)
 
-## Design Application with AI
+## Design Application with AI and IA
 
 See [AI Integration Guide](docs/ai-integration.md) for setting up Claude Code, MCP Server, or other AI tools.
 
