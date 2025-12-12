@@ -12,6 +12,11 @@ MCP server for ALPS profile validation, SVG diagram generation, and best practic
 
 ## Getting Started
 
+### Prerequisites
+
+- PHP 8.1+
+- Composer
+
 ### New Project Setup
 
 ```bash
