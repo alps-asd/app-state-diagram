@@ -47,13 +47,13 @@ jobs:
           fail_ci_if_error: false
 
       - name: Run demo (JSON)
-        run: node packages/cli/dist/asd.js docs/examples/amazon.json -o /tmp/amazon.html
+        run: node packages/cli/dist/asd.js docs/demo/amazon/amazon.json -o /tmp/amazon.html
 
       - name: Run demo (SVG)
-        run: node packages/cli/dist/asd.js docs/examples/amazon.json -m svg -o /tmp/amazon.svg
+        run: node packages/cli/dist/asd.js docs/demo/amazon/amazon.json -m svg -o /tmp/amazon.svg
 
       - name: Run demo (DOT)
-        run: node packages/cli/dist/asd.js docs/examples/amazon.json -m dot -o /tmp/amazon.dot
+        run: node packages/cli/dist/asd.js docs/demo/amazon/amazon.json -m dot -o /tmp/amazon.dot
 
       - name: Validate demo output
-        run: node packages/cli/dist/asd.js docs/examples/amazon.json --validate
+        run: node packages/cli/dist/asd.js docs/demo/amazon/amazon.json --validate

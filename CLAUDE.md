@@ -75,8 +75,7 @@ packages/
 └── editor/       # alps-editor assets (SSOT for UI)
 
 docs/
-├── examples/     # Source ALPS files
-└── demo/         # Generated demo output
+└── demo/         # Demo ALPS profiles and generated output
 ```
 
 ### Core Components
