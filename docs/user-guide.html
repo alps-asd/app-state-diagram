@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ALPS Editor - User Guide</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            color: #333;
+        }
+        h1 {
+            border-bottom: 3px solid #0066cc;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #0066cc;
+            margin-top: 30px;
+        }
+        .feature {
+            background: #f5f5f5;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+        kbd {
+            background: #333;
+            color: #fff;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: monospace;
+            font-size: 0.9em;
+        }
+        .tip {
+            background: #e7f3ff;
+            border-left: 4px solid #0066cc;
+            padding: 10px;
+            margin: 15px 0;
+        }
+        code {
+            background: #f0f0f0;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: monospace;
+        }
+        a {
+            color: #0066cc;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        .view-mode {
+            display: inline-block;
+            background: #4CAF50;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-weight: bold;
+            margin: 0 3px;
+        }
+    </style>
+</head>
+<body>
+    <div style="text-align: center; margin: 20px 0;">
+        <img src="images/alps-editor-hero.png" alt="ALPS Editor" style="max-width: 400px; width: 100%; height: auto; border-radius: 10px;">
+    </div>
+
+    <h1>📖 ALPS Editor User Guide</h1>
+
+    <p>Welcome to ALPS Editor! This guide will help you create and edit ALPS (Application-Level Profile Semantics) documents for API design.</p>
+
+    <h2>🚀 Getting Started</h2>
+
+    <div class="feature">
+        <h3>Creating Your First ALPS Document</h3>
+        <ol>
+            <li><strong>Clear the demo content:</strong> Select all (<kbd>Ctrl</kbd>/<kbd>Cmd</kbd> + <kbd>A</kbd>) and delete</li>
+            <li><strong>Open skeleton menu:</strong> Press <kbd>Ctrl</kbd>/<kbd>Cmd</kbd> + <kbd>Space</kbd></li>
+            <li><strong>Choose format:</strong> Select either <code>ALPS JSON Skeleton</code> or <code>ALPS XML Skeleton</code></li>
+            <li><strong>Start editing:</strong> The skeleton will be inserted - a valid but minimal ALPS structure</li>
+        </ol>
+        <p><em>Tip: The skeleton provides an empty but valid ALPS document ready for you to add your own descriptors.</em></p>
+    </div>
+
+    <div class="feature">
+        <h3>Opening Existing Files</h3>
+        <p><strong>Drag & Drop:</strong> Simply drag any ALPS file (JSON, XML, or downloaded HTML) onto the editor window.</p>
+        <p><strong>Supported formats:</strong> <code>.json</code>, <code>.xml</code>, <code>.html</code></p>
+    </div>
+
+    <h2>⌨️ Keyboard Shortcuts</h2>
+
+    <div class="feature">
+        <h3>Custom Shortcuts</h3>
+        <p><kbd>F8</kbd> - Toggle Preview mode (hide editor, show full-width documentation)</p>
+        <p><kbd>Ctrl</kbd>/<kbd>Cmd</kbd> + <kbd>S</kbd> - Download ALPS profile (JSON/XML source)</p>
+
+        <h3>Editor Shortcuts (Ace Editor)</h3>
+        <p><kbd>F1</kbd> - Show command palette (lists all available Ace editor commands)</p>
+        <p><kbd>Ctrl</kbd>/<kbd>Cmd</kbd> + <kbd>Space</kbd> - Trigger auto-completion</p>
+        <p><kbd>Ctrl</kbd>/<kbd>Cmd</kbd> + <kbd>F</kbd> - Find</p>
+        <p><kbd>Ctrl</kbd>/<kbd>Cmd</kbd> + <kbd>H</kbd> - Find and replace</p>
+    </div>
+
+    <h2>👁️ View Modes</h2>
+
+    <p>The editor supports three view modes, accessible via the toolbar:</p>
+
+    <div class="feature">
+        <h3><span class="view-mode">Document</span></h3>
+        <p>Full HTML documentation with state diagram and descriptor table. Best for comprehensive view of your ALPS profile.</p>
+
+        <h3><span class="view-mode">Diagram</span></h3>
+        <p>SVG state diagram only. Focus on the visual representation of states and transitions.</p>
+
+        <h3><span class="view-mode">Preview</span></h3>
+        <p>Hide the editor panel, show document full-width. Perfect for presentations or reviewing the final output.</p>
+    </div>
+
+    <div class="tip">
+        <strong>💡 Tip:</strong> In Preview mode, clicking on diagram elements will scroll to the corresponding descriptor in the table. Click on table rows to highlight elements in the diagram!
+    </div>
+
+    <h2>💾 Saving & Downloading</h2>
+
+    <div class="feature">
+        <h3>Download Options</h3>
+        <p>Click the <strong>Download</strong> button to access:</p>
+        <ul>
+            <li><strong>HTML</strong> - Standalone HTML file with embedded diagram (works offline!)</li>
+            <li><strong>SVG</strong> - State diagram as vector graphics</li>
+            <li><strong>Profile (JSON/XML)</strong> - ALPS source in your current format</li>
+        </ul>
+    </div>
+
+    <h2>✨ Features</h2>
+
+    <div class="feature">
+        <h3>Real-time Validation</h3>
+        <p>The editor validates your ALPS document as you type:</p>
+        <ul>
+            <li>Syntax validation (JSON/XML parsing)</li>
+            <li>ALPS semantic validation (against official schema)</li>
+            <li>Error messages appear below the editor</li>
+        </ul>
+    </div>
+
+    <div class="feature">
+        <h3>Auto-completion</h3>
+        <p>Press <kbd>Ctrl</kbd>/<kbd>Cmd</kbd> + <kbd>Space</kbd> for:</p>
+        <ul>
+            <li>ALPS document skeletons</li>
+            <li>Descriptor templates</li>
+            <li>Schema.org vocabulary suggestions</li>
+        </ul>
+    </div>
+
+    <div class="feature">
+        <h3>Interactive Diagram</h3>
+        <ul>
+            <li><strong>Label Mode:</strong> Toggle between ID and Title display</li>
+            <li><strong>Tag Filter:</strong> Filter diagram by tags</li>
+            <li><strong>Auto-fit:</strong> Diagram automatically adjusts to window size</li>
+            <li><strong>Bidirectional sync:</strong> Click diagram → scroll to table, click table → highlight diagram</li>
+        </ul>
+    </div>
+
+    <h2>📚 Learn More</h2>
+
+    <div class="feature">
+        <ul>
+            <li><a href="https://github.com/alps-asd/alps-editor" target="_blank">ALPS Editor on GitHub</a></li>
+            <li><a href="https://alps.io/" target="_blank">ALPS Specification</a></li>
+            <li><a href="https://www.app-state-diagram.com/" target="_blank">app-state-diagram Documentation</a></li>
+            <li><a href="https://www.app-state-diagram.com/manuals/1.0/en/schema-org.html" target="_blank">Vocabulary Guide (Schema.org)</a></li>
+        </ul>
+    </div>
+
+    <div class="tip">
+        <strong>🎯 Pro Tip:</strong> ALPS bridges vision and implementation. Focus on defining clear semantics that describe <em>what</em> your API does, not <em>how</em> it does it. Good ALPS profiles evolve with your API and serve as living documentation.
+    </div>
+
+    <hr style="margin: 40px 0; border: none; border-top: 1px solid #ddd;">
+
+    <p style="text-align: center; color: #666;">
+        <small><a href="index.html">Open ALPS Editor</a> | <a href="https://github.com/alps-asd/alps-editor">GitHub</a></small>
+    </p>
+</body>
+</html>

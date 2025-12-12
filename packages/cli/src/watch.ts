@@ -9,10 +9,7 @@ import * as path from 'path';
 import CDP from 'chrome-remote-interface';
 import { watch } from 'chokidar';
 import { parseAlpsAuto } from './parser/alps-parser';
-import { generateDot } from './generator/dot-generator';
-import { dotToSvg } from './generator/svg-generator';
-import { generateHtml } from './generator/html-generator';
-import { FileResolver } from './resolver/file-resolver';
+import { generateEditorHtml } from './generator/editor-html-generator';
 
 export async function startWatch(
   inputFile: string,
@@ -26,14 +23,11 @@ export async function startWatch(
   console.log(`CDP port: ${port}`);
   console.log('Press Ctrl+C to stop.\n');
 
-  // Generate initial HTML
+  // Generate initial HTML (editor with pre-loaded content)
   const content = fs.readFileSync(absolutePath, 'utf-8');
-  let document = parseAlpsAuto(content);
-  const resolver = new FileResolver(basePath);
-  document = await resolver.resolve(document);
-  const dotContent = generateDot(document, 'id');
-  const svgContent = await dotToSvg(dotContent);
-  const htmlOutput = generateHtml(document, svgContent, content);
+  const document = parseAlpsAuto(content);
+  const title = document?.alps?.title || 'ALPS Editor';
+  const htmlOutput = generateEditorHtml(content, title);
   const outputFile = options.output || inputFile.replace(/\.[^.]+$/, '.html');
   fs.writeFileSync(outputFile, htmlOutput, 'utf-8');
   console.log(`Generated: ${path.resolve(outputFile)}`);
@@ -45,9 +39,9 @@ export async function startWatch(
 
       const client = await CDP({ port });
       const { Runtime } = client;
+      // Update Ace editor content directly - editor will auto-refresh preview
       await Runtime.evaluate({
-        expression: `window.loadText(${JSON.stringify(fileContent)})`,
-        awaitPromise: true,
+        expression: `ace.edit("editor").setValue(${JSON.stringify(fileContent)}, -1)`,
       });
       await client.close();
       console.log(`[${new Date().toLocaleTimeString()}] Updated`);
