@@ -22,11 +22,22 @@ TypeScript版CLI (`@alps-asd/cli`) をPHP版 (`bin/asd`) と互換性を持た�
 | `-v, --version` | バージョン表示 | ✓ 実装済み |
 | `-h, --help` | ヘルプ表示 | ✓ 実装済み |
 
-### 後回し機能
+### 実装済み機能 (v0.21.0)
 
-| オプション | 説明 | 理由 |
+| オプション | 説明 | 状態 |
 |-----------|------|------|
-| `-w, --watch` | ライブリロード付きウォッチモード | ファイル監視とHTTPサーバーが必要 |
+| `-w, --watch` | ライブリロード付きウォッチモード | ✓ CDP経由で実装 |
+| `--port <port>` | CDPポート指定 (デフォルト: 9222) | ✓ 実装済み |
+
+#### Watch モードの仕組み
+
+```
+ローカルファイル編集 → chokidar検知 → CDP経由でloadText() → ブラウザ更新
+```
+
+- Chrome を `--remote-debugging-port=9222` で起動する必要あり
+- CLI はテキスト転送のみ、レンダリングはブラウザ側
+- 将来: Editor統合でTag/Table更新も対応予定
 
 ### 別リポジトリで維持（PHP版）
 
@@ -58,5 +69,7 @@ Profile file not found: filename
 ## Consequences
 
 - PHP版ユーザーが違和感なくTS版に移行できる
-- watchモードとMCPは将来のバージョンで追加予定
+- watchモードはCDP経由で実装完了（Tag/Table更新は Editor 統合待ち）
+- MCPは PHP 版を別リポジトリで維持
 - 設定ファイル機能は省略（シンプルさを優先）
+- Editor を UI の SSOT とすることで将来の機能追加が CLI に影響しない設計
