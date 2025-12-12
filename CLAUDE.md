@@ -4,74 +4,108 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-ALPS (Application-Level Profile Semantics) tooling. Generates HTML documentation and state diagrams from ALPS profiles.
+app-state-diagram is a TypeScript-based tool that generates visual state diagrams and documentation from ALPS (Application-Level Profile Semantics) profiles. It reads XML or JSON profile files and creates interactive diagrams showing application state transitions.
 
-**Architecture**: Editor-first design. Browser editor (`/public/`) is the source of truth. CLI is a Node.js adapter.
+## Essential Commands
 
-See [docs/architecture.md](docs/architecture.md) for detailed architecture documentation.
-
-## Project Structure
-
-```
-app-state-diagram/
-├── public/                     # Browser editor (GitHub Pages)
-│   ├── index.html
-│   └── js/
-│       ├── scripts.js          # Editor UI
-│       ├── diagramAdapters.js  # DOT/SVG/HTML generation
-│       └── descriptor2table.js # Table utilities
-│
-├── packages/
-│   └── cli/                    # @alps-asd/cli (Node.js)
-│       └── src/
-│           ├── asd.ts          # CLI entry point
-│           ├── parser/         # ALPS parsing (fast-xml-parser)
-│           ├── generator/      # DOT, SVG, HTML generation
-│           └── resolver/       # External reference resolution
-│
-└── docs/
-    ├── architecture.md
-    └── adr/
-```
-
-## Common Commands
+### Build and Testing
 
 ```bash
 # Install dependencies
 pnpm install
 
-# Build CLI
-pnpm --filter @alps-asd/cli build
+# Build all packages
+pnpm build
 
-# CLI usage (after build)
-node packages/cli/dist/asd.js profile.json
-node packages/cli/dist/asd.js profile.xml
-node packages/cli/dist/asd.js profile.json -f svg
-node packages/cli/dist/asd.js profile.json -f dot --echo
-node packages/cli/dist/asd.js profile.json --label title
+# Run all tests
+pnpm test
+
+# Run tests with coverage
+pnpm test:coverage
 ```
 
-## Key Files
+### CLI Usage
 
-### Browser Editor (public/js/)
+```bash
+# Generate HTML documentation
+asd profile.json
+asd profile.xml -o output.html
 
-| File | Description |
-|------|-------------|
-| `scripts.js` | Ace Editor, validation UI, preview |
-| `diagramAdapters.js` | DOT generation, HTML template, Viz.js integration |
-| `descriptor2table.js` | Table generation, tag extraction |
+# Generate SVG diagram
+asd profile.json -m svg
 
-### CLI (packages/cli/src/)
+# Generate DOT format
+asd profile.json -m dot
 
-| File | Description |
-|------|-------------|
-| `asd.ts` | CLI entry point (commander) |
-| `parser/alps-parser.ts` | ALPS parsing (fast-xml-parser for XML) |
-| `generator/dot-generator.ts` | DOT graph generation |
-| `generator/svg-generator.ts` | SVG generation (@viz-js/viz WASM) |
-| `generator/html-generator.ts` | HTML document generation |
-| `generator/table-functions.ts` | Table utilities (ported from JS) |
-| `resolver/file-resolver.ts` | External reference resolution |
+# Validate only
+asd profile.json --validate
+
+# Watch mode with live reload
+asd -w profile.json
+```
+
+### Package-specific Commands
+
+```bash
+# Build specific package
+pnpm --filter @alps-asd/cli build
+pnpm --filter @alps-asd/mcp build
+
+# Test specific package
+pnpm --filter @alps-asd/cli test
+pnpm --filter @alps-asd/mcp test
+```
+
+## Architecture
+
+### Monorepo Structure
+
+```
+packages/
+├── cli/          # @alps-asd/cli - Main CLI tool
+│   └── src/
+│       ├── asd.ts           # CLI entry point
+│       ├── parser/          # ALPS JSON/XML parsing
+│       ├── validator/       # Validation (E001-E011, W001-W004, S001-S003)
+│       ├── generator/       # DOT/SVG/HTML generation
+│       └── watch.ts         # Watch mode with Chrome CDP
+├── mcp/          # @alps-asd/mcp - MCP Server for AI integration
+│   └── src/
+│       └── index.ts         # MCP server with validate/generate tools
+└── editor/       # alps-editor assets (SSOT for UI)
+
+docs/
+├── examples/     # Source ALPS files
+└── demo/         # Generated demo output
+```
+
+### Core Components
+
+**Parser** (`parser/`):
+- `alps-parser.ts` - Auto-detects JSON/XML and parses ALPS profiles
+- `xml-parser.ts` - XML-specific parsing with fast-xml-parser
+
+**Validator** (`validator/`):
+- `alps-validator.ts` - Comprehensive validation
+- Errors (E001-E011): Missing id/href, invalid types, broken references
+- Warnings (W001-W004): Naming conventions, orphan descriptors
+- Suggestions (S001-S003): Documentation improvements
+
+**Generator** (`generator/`):
+- `dot-generator.ts` - Generates Graphviz DOT from ALPS
+- `html-generator.ts` - Creates HTML with embedded alps-editor
+- Uses @viz-js/viz for WASM-based SVG generation
+
+**Watch Mode** (`watch.ts`):
+- Chrome auto-launch with remote debugging
+- CDP-based live reload on file changes
+
+### MCP Server
+
+Provides AI tools for ALPS development:
+- `validate_alps` - Validate ALPS profiles
+- `alps2svg` - Generate SVG diagrams
+- `alps_guide` - ALPS best practices guide
 
 ## Descriptor Types
 
@@ -82,9 +116,10 @@ node packages/cli/dist/asd.js profile.json --label title
 | unsafe | #FF4136 | `doXxx` |
 | idempotent | #D4A000 | `doXxx` |
 
-## Design Notes
+## Dependencies
 
-- Tag separator: space-separated (not comma)
-- Browser uses DOMParser for XML, CLI uses fast-xml-parser
-- HTML output includes client-side Viz.js for label mode switching
-- Keep browser and CLI implementations in sync when algorithms change
+- Node.js 18+
+- pnpm for workspace management
+- @viz-js/viz for Graphviz WASM
+- fast-xml-parser for XML parsing
+- chrome-remote-interface for CDP

@@ -1,156 +1,108 @@
-# App State Diagram (TypeScript)
+# app-state-diagram
 
-A command-line tool to generate HTML documentation and state diagrams from [ALPS](http://alps.io/) (Application-Level Profile Semantics) profiles.
+[![CI](https://github.com/alps-asd/app-state-diagram/actions/workflows/ci.yml/badge.svg)](https://github.com/alps-asd/app-state-diagram/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/alps-asd/app-state-diagram/branch/2.x/graph/badge.svg)](https://codecov.io/gh/alps-asd/app-state-diagram)
 
-## Features
+<img src="https://www.app-state-diagram.com/images/logo.png" width="120px" alt="logo">
 
-- Parse JSON and XML ALPS profiles
-- Validate ALPS documents with detailed error/warning messages
-- Generate interactive HTML documentation with:
-  - State diagrams (via Graphviz WASM)
-  - Semantic descriptor tables
-  - Tag filtering
-  - Link navigation
-- Output formats: HTML, SVG, DOT
-- External file reference resolution
+**app-state-diagram** is a tool that visualizes state transitions and information structures of RESTful applications. It generates interactive state diagrams and hyperlinked documentation from ALPS (Application-Level Profile Semantics) profiles written in XML or JSON.
 
-## Installation
+[![App State Diagram](https://www.app-state-diagram.com/app-state-diagram/bookstore/alps.svg)](https://www.app-state-diagram.com/app-state-diagram/bookstore/)
+
+## Key Benefits
+
+- **Application Overview**: Visually grasp complex RESTful applications and understand the big picture
+- **Clear Information Semantics**: See how data flows and what each element means
+- **Enhanced Team Communication**: Both technical and business teams can discuss using the same visual representation
+- **Design Consistency**: Represent application structures uniformly and discover design issues early
+
+## Quick Start
+
+### Online Editor (No Installation)
+
+[https://editor.app-state-diagram.com/](https://editor.app-state-diagram.com/)
+
+### Install with Homebrew (Recommended)
 
 ```bash
-git clone https://github.com/alps-asd/app-state-diagram.git
-cd app-state-diagram
-git checkout v2-suite
-pnpm install
-pnpm build
-npm link
+brew install alps-asd/asd/asd
 ```
 
-## Usage
+Auto-updates with `brew upgrade`.
 
-### Generate HTML Documentation
+### Install with npm
 
 ```bash
-# Generate HTML (default) - opens in alps-editor
-asd profile.json
-
-# Specify output file
-asd profile.xml -o documentation.html
-
-# Output to stdout
-asd profile.json --echo
+npm install -g @alps-asd/cli
 ```
 
-### Watch Mode (Live Reload)
+### Try It
 
 ```bash
-# Start watch mode - Chrome launches automatically, updates on file save
+curl -O https://raw.githubusercontent.com/alps-asd/app-state-diagram/master/docs/bookstore/alps.xml
+asd alps.xml
+open index.html  # on macOS
+```
+
+## CLI Options
+
+```bash
+asd [options] <profile.json|profile.xml>
+```
+
+| Option | Description |
+|--------|-------------|
+| `-o, --output <file>` | Output file path |
+| `-m, --mode <mode>` | Output mode: `html` (default), `svg`, `dot` |
+| `-w, --watch` | Watch mode with live reload |
+| `-p, --port <port>` | Development server port (default: 3000) |
+| `--label <mode>` | Label mode: `id` (default) or `title` |
+| `--validate` | Validate ALPS profile only |
+| `--echo` | Output to stdout |
+
+## Watch Mode
+
+Start watch mode with automatic Chrome launch and live reload:
+
+```bash
 asd -w profile.json
-
-# Stop with Ctrl+C
 ```
 
-### Generate Diagram Only
-
-```bash
-# Generate SVG diagram (high quality with local Graphviz)
-asd profile.json -m svg
-
-# Generate DOT format (Graphviz)
-asd profile.json -m dot -o diagram.dot
-```
-
-### Validate Only
-
-```bash
-# Validate ALPS profile
-asd profile.json --validate
-```
-
-## Output
-
-The generated HTML opens in [alps-editor](https://editor.app-state-diagram.com) with:
-
-- **View Modes**: Document, Diagram, Preview
-- **State Diagram**: Interactive SVG with zoom and navigation
-- **Descriptor Table**: Semantic descriptors with type indicators
-- **Tag Filtering**: Filter by tags
-- **Download**: Export as HTML, SVG, or Profile
-- **Live Editing**: Modify ALPS directly in browser
+Chrome opens automatically with remote debugging enabled. Changes to the ALPS file trigger instant browser refresh.
 
 ## Validation
 
-The validator checks for:
+The validator checks for errors, warnings, and suggestions:
 
-### Errors (prevent generation)
-- `E001` - Missing id or href
-- `E002` - Missing rt (return type) for transitions
-- `E003` - Invalid type value
-- `E004` - Broken reference (href/rt pointing to non-existent id)
-- `E005` - Duplicate id
-- `E006` - Invalid href format
-- `E007` - Invalid rt format
-- `E008` - Missing alps property
-- `E009` - Missing descriptor array
-- `E010` - Invalid XML characters in title
-- `E011` - Tag must be string (not array)
+### Errors (E001-E011)
+- Missing id/href, missing rt, invalid type, broken references, duplicate ids, etc.
 
-### Warnings
-- `W001` - Missing title attribute
-- `W002` - Safe transitions should start with "go"
-- `W003` - Unsafe/idempotent transitions should start with "do"
-- `W004` - Orphan descriptor (defined but never referenced)
+### Warnings (W001-W004)
+- Missing title, naming conventions (go*/do* prefixes), orphan descriptors
 
-### Suggestions
-- `S001` - Consider adding doc to transitions
-- `S002` - Consider adding title to ALPS document
-- `S003` - Consider adding doc to ALPS document
+### Suggestions (S001-S003)
+- Consider adding doc/title to improve documentation
 
-## Programmatic Usage
-
-```typescript
-import {
-  AlpsParser,
-  AlpsTransformer,
-  DotGenerator,
-  HtmlGenerator,
-  dotToSvg
-} from '@alps-asd/asd';
-
-// Parse ALPS document
-const parser = new AlpsParser();
-const document = parser.parse(alpsContent);
-
-// Validate
-const validation = parser.validate(document);
-if (!validation.isValid) {
-  console.error(validation.errors);
-  process.exit(1);
-}
-
-// Transform to internal model
-const transformer = new AlpsTransformer();
-const model = transformer.transform(document);
-
-// Generate DOT
-const dotGenerator = new DotGenerator();
-const dot = dotGenerator.generate(model);
-
-// Convert to SVG
-const svg = await dotToSvg(dot);
-
-// Generate HTML
-const htmlGenerator = new HtmlGenerator();
-const html = htmlGenerator.generate(document, svg, alpsContent);
+```bash
+asd profile.json --validate
 ```
 
-## Requirements
+## Examples
 
-- Node.js 18.0.0 or higher
+See [live demos](docs/demo/) or visit [app-state-diagram.com](https://www.app-state-diagram.com/app-state-diagram/)
+
+## Design Application with AI
+
+See [AI Integration Guide](https://www.app-state-diagram.com/app-state-diagram/ai-integration.html) for setting up Claude Code, MCP Server, or other AI tools.
+
+## Documentation
+
+- [Quick Start Guide](https://www.app-state-diagram.com/manuals/1.0/en/quick-start.html)
+- [Official Documentation](https://www.app-state-diagram.com/manuals/1.0/en/index.html)
 
 ## Related Projects
 
 - [ALPS Specification](http://alps.io/)
-- [app-state-diagram](https://github.com/alps-asd/app-state-diagram) - PHP implementation
 - [alps-editor](https://github.com/alps-asd/alps-editor) - Online ALPS editor
 
 ## License
