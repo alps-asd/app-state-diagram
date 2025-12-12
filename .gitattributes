@@ -18,4 +18,17 @@
 # No show diffs
 /vendor-bin/**/composer.lock binary
 
-* text eol=lf
+# Text files use LF line endings
+* text=auto eol=lf
+
+# Binary files
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.svg binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.eot binary
