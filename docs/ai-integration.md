@@ -47,20 +47,10 @@ Then ask:
 
 ```bash
 which asd  # e.g., /opt/homebrew/bin/asd
+claude mcp add alps $(which asd) -- --mcp
 ```
 
-Add to your MCP configuration:
-
-```json
-{
-  "mcpServers": {
-    "alps": {
-      "command": "/opt/homebrew/bin/asd",
-      "args": ["--mcp"]
-    }
-  }
-}
-```
+Other MCP clients: Add `asd --mcp` as stdio server.
 
 ## Chatbots/Agents
 
