@@ -87,6 +87,15 @@ composer serve
 curl http://localhost:8080/
 ```
 
+## API Documentation
+
+This project includes an OpenAPI 3.1 specification file: [`openapi.yaml`](./openapi.yaml)
+
+You can view the API documentation using:
+- [Swagger Editor](https://editor.swagger.io/) - Paste the openapi.yaml content
+- [Redoc](https://redocly.github.io/redoc/) - Generate beautiful API documentation
+- [Swagger UI](https://swagger.io/tools/swagger-ui/) - Interactive API explorer
+
 ## API Endpoints
 
 ### User Resource (`/user`)

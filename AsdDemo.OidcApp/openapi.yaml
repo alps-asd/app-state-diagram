@@ -1,0 +1,438 @@
+openapi: 3.1.0
+info:
+  title: OIDC Demo Application API
+  version: 1.0.0
+  description: |
+    A demonstration OIDC (OpenID Connect) login system built with BEAR.Sunday framework.
+
+    This API provides user management and session authentication capabilities with:
+    - User CRUD operations with secure password hashing
+    - Token-based session management
+    - HAL+JSON hypermedia responses
+    - JsonSchema validation
+
+    Generated from ALPS profile: oidc-login-system.json
+  contact:
+    name: ALPS ASD
+    url: https://github.com/alps-asd/app-state-diagram
+  license:
+    name: MIT
+
+servers:
+  - url: http://localhost:8080
+    description: Development server
+  - url: https://api.example.com
+    description: Production server
+
+tags:
+  - name: User
+    description: User management operations
+  - name: Session
+    description: Authentication and session management
+
+paths:
+  /user:
+    get:
+      tags:
+        - User
+      summary: List all users
+      description: Returns a list of all users in the system
+      operationId: listUsers
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/hal+json:
+              schema:
+                type: object
+                required:
+                  - users
+                  - _links
+                properties:
+                  users:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/User'
+                  _links:
+                    $ref: '#/components/schemas/HalLinks'
+
+    post:
+      tags:
+        - User
+      summary: Create a new user
+      description: Creates a new user with username, email, and password
+      operationId: createUser
+      parameters:
+        - name: username
+          in: query
+          required: true
+          schema:
+            type: string
+            minLength: 3
+            maxLength: 100
+          description: Unique username for the user
+        - name: email
+          in: query
+          required: true
+          schema:
+            type: string
+            format: email
+            maxLength: 255
+          description: User's email address
+        - name: password
+          in: query
+          required: true
+          schema:
+            type: string
+            minLength: 8
+            maxLength: 255
+          description: User's password (will be hashed with bcrypt)
+      responses:
+        '201':
+          description: User created successfully
+          headers:
+            Location:
+              schema:
+                type: string
+              description: URI of the created user
+          content:
+            application/hal+json:
+              schema:
+                type: object
+                required:
+                  - id
+                  - _links
+                properties:
+                  id:
+                    type: string
+                    description: The ID of the created user
+                  _links:
+                    $ref: '#/components/schemas/HalLinks'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+  /user?id={id}:
+    get:
+      tags:
+        - User
+      summary: Get user by ID
+      description: Returns a single user by their ID
+      operationId: getUser
+      parameters:
+        - name: id
+          in: query
+          required: true
+          schema:
+            type: string
+            maxLength: 64
+          description: User ID
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/hal+json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/User'
+                  - type: object
+                    properties:
+                      _links:
+                        $ref: '#/components/schemas/HalLinks'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    put:
+      tags:
+        - User
+      summary: Update user
+      description: Updates an existing user's information
+      operationId: updateUser
+      parameters:
+        - name: id
+          in: query
+          required: true
+          schema:
+            type: string
+            maxLength: 64
+          description: User ID
+        - name: username
+          in: query
+          required: true
+          schema:
+            type: string
+            minLength: 3
+            maxLength: 100
+          description: Updated username
+        - name: email
+          in: query
+          required: true
+          schema:
+            type: string
+            format: email
+            maxLength: 255
+          description: Updated email address
+      responses:
+        '200':
+          description: User updated successfully
+          content:
+            application/hal+json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/User'
+                  - type: object
+                    properties:
+                      _links:
+                        $ref: '#/components/schemas/HalLinks'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+    delete:
+      tags:
+        - User
+      summary: Delete user
+      description: Deletes a user and all associated sessions
+      operationId: deleteUser
+      parameters:
+        - name: id
+          in: query
+          required: true
+          schema:
+            type: string
+            maxLength: 64
+          description: User ID
+      responses:
+        '204':
+          description: User deleted successfully
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /session:
+    post:
+      tags:
+        - Session
+      summary: Login (Create session)
+      description: Authenticates a user and creates a new session
+      operationId: login
+      parameters:
+        - name: username
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Username
+        - name: password
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Password
+      responses:
+        '201':
+          description: Login successful, session created
+          content:
+            application/hal+json:
+              schema:
+                type: object
+                required:
+                  - sessionToken
+                  - expiresAt
+                  - _links
+                properties:
+                  sessionToken:
+                    type: string
+                    description: Session token for authentication
+                  expiresAt:
+                    type: string
+                    format: date-time
+                    description: Session expiration timestamp
+                  _links:
+                    $ref: '#/components/schemas/HalLinks'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /session?sessionToken={token}:
+    get:
+      tags:
+        - Session
+      summary: Verify session
+      description: Validates a session token and returns session information
+      operationId: verifySession
+      parameters:
+        - name: sessionToken
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Session token
+      responses:
+        '200':
+          description: Valid session
+          content:
+            application/hal+json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Session'
+                  - type: object
+                    properties:
+                      _links:
+                        $ref: '#/components/schemas/HalLinks'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    delete:
+      tags:
+        - Session
+      summary: Logout (Delete session)
+      description: Deletes a session, logging the user out
+      operationId: logout
+      parameters:
+        - name: sessionToken
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Session token
+      responses:
+        '204':
+          description: Logout successful
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+components:
+  schemas:
+    User:
+      type: object
+      required:
+        - id
+        - username
+        - email
+        - dateCreated
+      properties:
+        id:
+          type: string
+          maxLength: 64
+          description: The unique identifier for a user
+          example: "fafab1168a5a7ee9a376f945e178ad68"
+        username:
+          type: string
+          maxLength: 100
+          description: User's unique username
+          example: "alice"
+        email:
+          type: string
+          format: email
+          maxLength: 255
+          description: User's email address
+          example: "alice@example.com"
+        dateCreated:
+          type: string
+          format: date-time
+          description: User creation timestamp
+          example: "2025-12-12T02:39:18Z"
+
+    Session:
+      type: object
+      required:
+        - id
+        - userId
+        - sessionToken
+        - expiresAt
+        - dateCreated
+      properties:
+        id:
+          type: string
+          maxLength: 64
+          description: The unique identifier for a session
+          example: "71db159c36cc562de7b20a2c9d71728a"
+        userId:
+          type: string
+          maxLength: 64
+          description: The user ID this session belongs to
+          example: "fafab1168a5a7ee9a376f945e178ad68"
+        sessionToken:
+          type: string
+          maxLength: 255
+          description: Session token for authentication
+          example: "b276ab38c12bf529036475149bb6d450e5ad0a34262ec4bf4bff0c53275e5380"
+        expiresAt:
+          type: string
+          format: date-time
+          description: Session expiration timestamp
+          example: "2025-12-13T02:39:30Z"
+        dateCreated:
+          type: string
+          format: date-time
+          description: Session creation timestamp
+          example: "2025-12-12T02:39:30Z"
+
+    HalLinks:
+      type: object
+      required:
+        - self
+      properties:
+        self:
+          type: object
+          required:
+            - href
+          properties:
+            href:
+              type: string
+              description: URI of the current resource
+
+    VndError:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string
+          description: A human-readable error message
+        logref:
+          type: string
+          description: A unique log reference identifier
+        request:
+          type: string
+          description: The request that caused the error
+        exceptions:
+          type: string
+          description: Exception information
+        file:
+          type: string
+          description: File where the error occurred
+
+  responses:
+    BadRequest:
+      description: Bad request - invalid parameters
+      content:
+        application/vnd.error+json:
+          schema:
+            $ref: '#/components/schemas/VndError'
+          example:
+            message: "Bad Request"
+            logref: "b0f6c522"
+            request: "post app://self/user"
+            exceptions: "BEAR\\Resource\\Exception\\ParameterException(username)"
+
+    Unauthorized:
+      description: Unauthorized - invalid credentials
+      content:
+        application/vnd.error+json:
+          schema:
+            $ref: '#/components/schemas/VndError'
+          example:
+            message: "Unauthorized"
+            error: "Invalid username or password"
+
+    NotFound:
+      description: Resource not found
+      content:
+        application/hal+json:
+          schema:
+            type: object
+            properties:
+              _links:
+                $ref: '#/components/schemas/HalLinks'
+
+security: []
