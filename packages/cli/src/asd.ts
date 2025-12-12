@@ -14,6 +14,7 @@ import { dotToSvg, dotToSvgHighQuality } from './generator/svg-generator';
 import { generateEditorHtml } from './generator/editor-html-generator';
 import { FileResolver } from './resolver/file-resolver';
 import { startWatch } from './watch';
+import { AlpsValidator } from './validator';
 
 const program = new Command();
 
@@ -78,7 +79,30 @@ Options:
 
       // Validate only mode
       if (options.validate) {
-        console.log('✓ ALPS document is valid');
+        const validator = new AlpsValidator();
+        const result = validator.validate(document);
+
+        // Show errors
+        for (const error of result.errors) {
+          console.error(`[${error.code}] ${error.message}${error.path ? ` at ${error.path}` : ''}`);
+        }
+
+        // Show warnings
+        for (const warning of result.warnings) {
+          console.warn(`[${warning.code}] ${warning.message}${warning.path ? ` at ${warning.path}` : ''}`);
+        }
+
+        // Show suggestions
+        for (const suggestion of result.suggestions) {
+          console.log(`[${suggestion.code}] ${suggestion.message}${suggestion.path ? ` at ${suggestion.path}` : ''}`);
+        }
+
+        if (result.isValid) {
+          console.log(`\n✓ ALPS document is valid (${result.warnings.length} warnings, ${result.suggestions.length} suggestions)`);
+        } else {
+          console.error(`\n✗ ALPS document has ${result.errors.length} errors`);
+          process.exit(1);
+        }
         return;
       }
 
