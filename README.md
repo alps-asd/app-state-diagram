@@ -47,6 +47,15 @@ By focusing on these IA principles, app-state-diagram helps create a shared unde
 brew install alps-asd/asd/asd
 ```
 
+### Install with Composer
+
+Prerequisites: PHP 8.1+, Composer
+
+```bash
+mkdir my-alps && cd my-alps
+composer require koriym/app-state-diagram
+```
+
 After installation, run:
 ```bash
 asd --watch path/to/your/profile.json
