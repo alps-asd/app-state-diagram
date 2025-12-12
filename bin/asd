@@ -37,7 +37,29 @@ Options:
 EOT;
     exit(0);
 }
-$options = getopt('c:e::w::m::v', ['config:', 'echo::', 'watch::', 'mode::', 'port::', 'validate', 'mcp', 'version']);
+$options = getopt('c:e::w::m::vh', ['config:', 'echo::', 'watch::', 'mode::', 'port::', 'validate', 'mcp', 'version', 'help']);
+// Handle --help option
+if (isset($options['h']) || isset($options['help'])) {
+    echo <<<EOT
+usage: asd [options] alps_file
+
+Options:
+  -c, --config <path>     Use custom config file
+  -e, --echo              Output to stdout instead of file
+  -w, --watch             Watch mode with live reload
+  -m, --mode <mode>       Output mode (html|markdown|svg)
+  --port <port>           Port for watch mode (default: 3000)
+  --validate              Validate ALPS profile (JSON output)
+  --mcp                   Start MCP server for Claude Desktop integration
+  -v, --version           Show version information
+  -h, --help              Show this help message
+
+@see https://github.com/alps-asd/app-state-diagram#usage
+
+EOT;
+    exit(0);
+}
+
 // Handle --version option
 if (isset($options['v']) || isset($options['version'])) {
     $pharRunning = Phar::running(false);
@@ -186,14 +208,14 @@ try {
 if ($config->watch) {
     $pharRunning = Phar::running(false);
     $actualPath = dirname(__DIR__) . '/asd-sync';
-    
+
     if ($pharRunning !== '') {
         // PHAR execution: use version-independent opt path for better compatibility
         // PHAR path: "/opt/homebrew/Cellar/asd/x.x.x/libexec/asd.phar"
         // Target:    "/opt/homebrew/opt/asd/libexec/asd-sync" (version-independent)
         $pharDir = dirname($pharRunning);
         $actualPath = $pharDir . '/asd-sync';
-        
+
         // Try version-independent opt path if not found in Cellar
         if (!is_dir($actualPath)) {
             $homebrewPrefix = PathResolver::getHomebrewPrefix();
@@ -205,13 +227,13 @@ if ($config->watch) {
             }
         }
     }
-    
+
     if (!is_dir($actualPath)) {
         echo "Error: asd-sync directory not found. Watch mode requires Node.js components.\n";
         echo "Expected path: $actualPath\n";
         exit(1);
     }
-    
+
     chdir($actualPath);
     $nodeModulesPath = $actualPath . '/node_modules';
     $isFirstRun = !is_dir($nodeModulesPath);

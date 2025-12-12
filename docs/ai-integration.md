@@ -39,28 +39,50 @@ curl -o .claude/skills/alps/SKILL.md \
   https://raw.githubusercontent.com/alps-asd/app-state-diagram/master/.claude/skills/alps/SKILL.md
 ```
 
+Verify skill is available:
+- Ask: "What skills are available?"
+- Response should include "alps" skill
+
 Then ask:
 - "Use the ALPS skill to create an ALPS JSON file for a blog system"
 - "Validate alps.xml and fix any issues"
 
 ## MCP Server
 
+### Setup
+
+1. Create `.mcp.json` configuration file:
+
 ```bash
-which asd  # e.g., /opt/homebrew/bin/asd
-```
-
-Add to your MCP configuration:
-
-```json
+cat > .mcp.json <<'EOF'
 {
   "mcpServers": {
     "alps": {
-      "command": "/opt/homebrew/bin/asd",
+      "command": "asd",
       "args": ["--mcp"]
     }
   }
 }
+EOF
 ```
+
+2. Verify setup:
+
+```bash
+/mcp   # Should show "alps" in the list
+```
+
+Note: MCP connection may disconnect during sessions. If you see "MCP connection lost" errors, simply run `/mcp` to reconnect.
+
+3. Use with natural language:
+
+- "Review my alps.json file and suggest improvements"
+- "Validate the ALPS profile in bookstore.xml"
+- "Generate an SVG diagram from alps.json"
+
+### For Other MCP Clients
+
+Add `asd --mcp` as stdio server in your MCP client configuration.
 
 ## Chatbots/Agents
 

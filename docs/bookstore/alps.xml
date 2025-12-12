@@ -48,7 +48,7 @@
     </descriptor>
 
     <!-- Taxonomy -->
-    <descriptor id="Home" title="Home Screen" tag="navigation">
+    <descriptor id="Home" def="https://schema.org/WebPage" title="Home Screen" tag="navigation">
         <doc>Starting point of the application. Displays site-wide navigation and promotional information.</doc>
         <descriptor href="#goToCatalog"/>
         <descriptor href="#goToCart"/>
@@ -60,6 +60,7 @@
         <descriptor href="#goSearchBooks"/>
         <descriptor href="#goGetCategories"/>
         <descriptor href="#goToBookDetails"/>
+        <descriptor href="#goToCategory"/>
         <descriptor href="#goToCart"/>
         <descriptor href="#Book"/>
     </descriptor>
@@ -80,10 +81,13 @@
         <doc>Book genre classification. May have a hierarchical structure with parent and child categories.</doc>
         <descriptor href="#id"/>
         <descriptor href="#title"/>
+        <descriptor href="#goToCatalog"/>
+        <descriptor href="#goToBookDetails"/>
     </descriptor>
 
     <descriptor id="ShoppingCart" def="https://schema.org/ShoppingCart" title="Shopping Cart" tag="cart">
         <doc>Cart containing books the user intends to purchase. Allows quantity changes, deletion, and total amount confirmation. Managed on a session basis.</doc>
+        <descriptor href="#totalAmount"/>
         <descriptor href="#goListCartItems"/>
         <descriptor href="#doUpdateQuantity"/>
         <descriptor href="#doRemoveFromCart"/>
@@ -140,8 +144,8 @@
     <descriptor id="goGetCategories" type="safe" rt="#Catalog" rel="collection" title="Get Category List" tag="catalog">
         <doc>Retrieve list of all available book categories. For hierarchical categories, parent-child relationships are also returned.</doc>
     </descriptor>
-    <descriptor id="goGetBookDetails" type="safe" rt="#Book" rel="item" title="Get Book Details" tag="catalog">
-        <doc>Retrieve detailed information for a specific book based on the specified book ID. Includes stock status and related book information.</doc>
+    <descriptor id="goToCategory" type="safe" rt="#Category" title="Go to Category Screen" tag="catalog">
+        <doc>Navigate to the category detail screen to view books filtered by the selected category.</doc>
         <descriptor href="#id"/>
     </descriptor>
 

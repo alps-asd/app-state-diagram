@@ -37,7 +37,7 @@ program
           process.exit(0);
         } else {
           console.error('✗ ALPS document is invalid:');
-          validation.errors.forEach(error => console.error(`  ${error}`));
+          validation.errors.forEach(error => console.error(`  ${error.message}`));
           process.exit(1);
         }
       }
@@ -108,7 +108,7 @@ program
         console.log('✓ ALPS document is valid');
       } else {
         console.error('✗ ALPS document is invalid:');
-        validation.errors.forEach(error => console.error(`  ${error}`));
+        validation.errors.forEach(error => console.error(`  ${error.message}`));
         process.exit(1);
       }
     } catch (error) {
