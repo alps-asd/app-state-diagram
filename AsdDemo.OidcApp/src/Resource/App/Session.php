@@ -10,6 +10,7 @@ use AsdDemo\OidcApp\Query\UserQueryInterface;
 use BEAR\Resource\Annotation\JsonSchema;
 use BEAR\Resource\ResourceObject;
 use DateTime;
+use DateTimeInterface;
 
 use function bin2hex;
 use function password_verify;
@@ -21,13 +22,14 @@ class Session extends ResourceObject
         private readonly SessionQueryInterface $query,
         private readonly SessionCommandInterface $command,
         private readonly UserQueryInterface $userQuery,
+        private readonly DateTimeInterface $now,
     ) {
     }
 
     #[JsonSchema(schema: 'session.json')]
     public function onGet(string $sessionToken): static
     {
-        $item = $this->query->itemByToken($sessionToken);
+        $item = $this->query->itemByToken($sessionToken, $this->now);
         if ($item === null) {
             $this->code = 404;
 
@@ -83,7 +85,7 @@ class Session extends ResourceObject
 
     public function onDelete(string $sessionToken): static
     {
-        $item = $this->query->itemByToken($sessionToken);
+        $item = $this->query->itemByToken($sessionToken, $this->now);
         if ($item === null) {
             $this->code = 404;
 

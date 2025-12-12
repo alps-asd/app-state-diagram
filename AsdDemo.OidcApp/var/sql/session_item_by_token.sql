@@ -6,4 +6,4 @@ SELECT id,
        date_created
   FROM session
  WHERE session_token = :sessionToken
-   AND expires_at > datetime('now')
+   AND expires_at > :now

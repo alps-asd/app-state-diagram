@@ -25,5 +25,5 @@ interface SessionCommandInterface
     public function deleteByToken(string $sessionToken): void;
 
     #[DbQuery('session_delete_expired')]
-    public function deleteExpired(): void;
+    public function deleteExpired(DateTimeInterface $now): void;
 }
