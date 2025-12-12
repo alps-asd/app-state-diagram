@@ -19,9 +19,9 @@ A command-line tool to generate HTML documentation and state diagrams from [ALPS
 ```bash
 git clone https://github.com/alps-asd/app-state-diagram.git
 cd app-state-diagram
-git checkout ts
-npm install
-npm run build
+git checkout v2-suite
+pnpm install
+pnpm build
 npm link
 ```
 
@@ -43,11 +43,8 @@ asd profile.json --echo
 ### Watch Mode (Live Reload)
 
 ```bash
-# Start watch mode - auto-updates browser on file save
+# Start watch mode - Chrome launches automatically, updates on file save
 asd -w profile.json
-
-# Requires Chrome with remote debugging:
-# open -a "Google Chrome" --args --remote-debugging-port=9222 --user-data-dir=/tmp/chrome-debug
 
 # Stop with Ctrl+C
 ```

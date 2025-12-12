@@ -6,22 +6,41 @@
 
 import * as fs from 'fs';
 import * as path from 'path';
+import { spawn } from 'child_process';
 import CDP from 'chrome-remote-interface';
 import { watch } from 'chokidar';
 import { parseAlpsAuto } from './parser/alps-parser';
 import { generateEditorHtml } from './generator/editor-html-generator';
+
+async function launchChrome(port: number, url: string): Promise<void> {
+  const args = [
+    '-a', 'Google Chrome',
+    '--args',
+    `--remote-debugging-port=${port}`,
+    '--user-data-dir=/tmp/chrome-debug',
+    url
+  ];
+
+  spawn('open', args, { detached: true, stdio: 'ignore' });
+
+  // Wait for Chrome to start
+  for (let i = 0; i < 10; i++) {
+    await new Promise(resolve => setTimeout(resolve, 500));
+    try {
+      await CDP({ port });
+      return;
+    } catch {
+      // Chrome not ready yet
+    }
+  }
+}
 
 export async function startWatch(
   inputFile: string,
   options: { port: number; output?: string }
 ): Promise<void> {
   const absolutePath = path.resolve(inputFile);
-  const basePath = path.dirname(absolutePath);
   const port = options.port;
-
-  console.log(`Watching ${inputFile} for changes...`);
-  console.log(`CDP port: ${port}`);
-  console.log('Press Ctrl+C to stop.\n');
 
   // Generate initial HTML (editor with pre-loaded content)
   const content = fs.readFileSync(absolutePath, 'utf-8');
@@ -30,7 +49,21 @@ export async function startWatch(
   const htmlOutput = generateEditorHtml(content, title);
   const outputFile = options.output || inputFile.replace(/\.[^.]+$/, '.html');
   fs.writeFileSync(outputFile, htmlOutput, 'utf-8');
-  console.log(`Generated: ${path.resolve(outputFile)}`);
+
+  const fileUrl = `file://${path.resolve(outputFile)}`;
+
+  // Check if Chrome is already running with CDP, if not launch it
+  try {
+    await CDP({ port });
+    console.log(`Chrome already running on port ${port}`);
+    spawn('open', ['-a', 'Google Chrome', fileUrl], { detached: true, stdio: 'ignore' });
+  } catch {
+    console.log('Launching Chrome with remote debugging...');
+    await launchChrome(port, fileUrl);
+  }
+
+  console.log(`Watching ${inputFile} for changes...`);
+  console.log('Press Ctrl+C to stop.\n');
 
   // Send update to browser via CDP
   const sendToBrowser = async () => {
@@ -46,14 +79,7 @@ export async function startWatch(
       await client.close();
       console.log(`[${new Date().toLocaleTimeString()}] Updated`);
     } catch (error) {
-      if ((error as NodeJS.ErrnoException).code === 'ECONNREFUSED') {
-        console.error('Cannot connect to Chrome. Start Chrome with:');
-        console.error(
-          `  open -a "Google Chrome" --args --remote-debugging-port=${port} --user-data-dir=/tmp/chrome-debug file://${path.resolve(outputFile)}`
-        );
-      } else {
-        console.error('Error:', error instanceof Error ? error.message : error);
-      }
+      console.error('Error:', error instanceof Error ? error.message : error);
     }
   };
 
