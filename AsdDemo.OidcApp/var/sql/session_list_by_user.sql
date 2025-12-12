@@ -6,5 +6,5 @@ SELECT id,
        date_created
   FROM session
  WHERE user_id = :userId
-   AND expires_at > NOW()
+   AND expires_at > datetime('now')
  ORDER BY date_created DESC

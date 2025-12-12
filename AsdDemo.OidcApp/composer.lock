@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "36656d2e57d31e2da922f0e8478e5dba",
+    "content-hash": "cff0831d0bd4d6a19fb74e3a9ac7014d",
     "packages": [
         {
             "name": "aura/cli",
@@ -4517,6 +4517,51 @@
                 "source": "https://github.com/koriym/Koriym.PhpServer/tree/1.0.1"
             },
             "time": "2025-01-03T00:56:16+00:00"
+        },
+        {
+            "name": "koriym/sql-quality",
+            "version": "0.1.7",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/koriym/Koriym.SqlQuality.git",
+                "reference": "2dd457e05674bfc970ad54c559c7385f88162bd0"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/koriym/Koriym.SqlQuality/zipball/2dd457e05674bfc970ad54c559c7385f88162bd0",
+                "reference": "2dd457e05674bfc970ad54c559c7385f88162bd0",
+                "shasum": ""
+            },
+            "require": {
+                "ext-pdo": "*",
+                "php": "^8.1"
+            },
+            "require-dev": {
+                "bamarni/composer-bin-plugin": "^1.8",
+                "phpunit/phpunit": "^9.5",
+                "rector/rector": "^2.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Koriym\\SqlQuality\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Akihito Koriyama",
+                    "email": "akihito.koriyama@gmail.com"
+                }
+            ],
+            "support": {
+                "issues": "https://github.com/koriym/Koriym.SqlQuality/issues",
+                "source": "https://github.com/koriym/Koriym.SqlQuality/tree/0.1.7"
+            },
+            "time": "2025-04-01T14:03:56+00:00"
         },
         {
             "name": "michelf/php-markdown",
