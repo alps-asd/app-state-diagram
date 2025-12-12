@@ -260,6 +260,29 @@ function getToolDefinitions(): array
                 'required' => [],
             ],
         ],
+        [
+            'name' => 'nl2alps',
+            'description' => 'Get guidelines for generating ALPS profile from natural language description. Returns best practices, naming conventions, and structure reference for creating valid ALPS.',
+            'inputSchema' => [
+                'type' => 'object',
+                'properties' => [
+                    'description' => [
+                        'type' => 'string',
+                        'description' => 'Natural language description of the application to create ALPS for',
+                    ],
+                ],
+                'required' => ['description'],
+            ],
+        ],
+        [
+            'name' => 'alps_guide',
+            'description' => 'Get ALPS best practices and reference guide. Use when creating or reviewing ALPS profiles.',
+            'inputSchema' => [
+                'type' => 'object',
+                'properties' => (object) [],
+                'required' => [],
+            ],
+        ],
     ];
 }
 
@@ -281,6 +304,8 @@ function handleToolCall(array $params): array
     return match ($toolName) {
         'validate_alps' => handleValidateAlps($arguments),
         'alps2svg' => handleAlps2Svg($arguments),
+        'nl2alps' => handleNl2Alps($arguments),
+        'alps_guide' => handleAlpsGuide(),
         default => [
             'content' => [
                 [
@@ -577,6 +602,166 @@ function handleAlps2Svg(array $args): array
             'isError' => true,
         ];
     }
+}
+
+/**
+ * Get ALPS guidelines for natural language to ALPS conversion
+ *
+ * @param array<string, mixed> $args
+ * @return McpToolCallResult
+ */
+function handleNl2Alps(array $args): array
+{
+    $description = $args['description'] ?? '';
+
+    if (!is_string($description) || $description === '') {
+        return [
+            'content' => [
+                [
+                    'type' => 'text',
+                    'text' => 'Error: description parameter is required',
+                ],
+            ],
+            'isError' => true,
+        ];
+    }
+
+    $guide = getAlpsGuideContent();
+
+    $prompt = <<<PROMPT
+# ALPS Generation Request
+
+## Application Description
+{$description}
+
+## Guidelines
+{$guide}
+
+## Instructions
+Based on the description above and following the guidelines:
+1. Identify entities (Ontology) - nouns become semantic fields
+2. Identify states (Taxonomy) - screens/pages the user sees
+3. Identify transitions (Choreography) - actions the user takes
+4. Generate valid ALPS JSON
+5. After generation, use validate_alps tool to verify
+
+PROMPT;
+
+    return [
+        'content' => [
+            [
+                'type' => 'text',
+                'text' => $prompt,
+            ],
+        ],
+        'isError' => false,
+    ];
+}
+
+/**
+ * Get ALPS best practices guide
+ *
+ * @return McpToolCallResult
+ */
+function handleAlpsGuide(): array
+{
+    $guide = getAlpsGuideContent();
+
+    return [
+        'content' => [
+            [
+                'type' => 'text',
+                'text' => $guide,
+            ],
+        ],
+        'isError' => false,
+    ];
+}
+
+/**
+ * Read ALPS guide content from SKILL.md
+ *
+ * @return string
+ */
+function getAlpsGuideContent(): string
+{
+    $skillPath = dirname(__DIR__) . '/.claude/skills/alps/SKILL.md';
+
+    if (!file_exists($skillPath)) {
+        return getEmbeddedAlpsGuide();
+    }
+
+    $content = file_get_contents($skillPath);
+    if ($content === false) {
+        return getEmbeddedAlpsGuide();
+    }
+
+    // Remove YAML frontmatter
+    $content = preg_replace('/^---\n.*?\n---\n/s', '', $content);
+
+    return trim($content);
+}
+
+/**
+ * Fallback embedded ALPS guide when SKILL.md is not available
+ *
+ * @return string
+ */
+function getEmbeddedAlpsGuide(): string
+{
+    return <<<'GUIDE'
+# ALPS Best Practices
+
+## What Makes a Good ALPS
+
+1. **States = What the user sees** (e.g., ProductList, ProductDetail, Cart)
+2. **Transitions = What the user does** (e.g., goProductDetail, doAddToCart)
+3. **Self-documenting** - title explains purpose, doc describes behavior
+4. **No unreachable states** - every state has an entry point
+5. **Necessary and sufficient** - no over-abstraction
+
+## Naming Conventions
+
+| Type | Prefix | Example |
+|------|--------|---------|
+| Safe transition | `go` | `goProductList`, `goHome` |
+| Unsafe transition | `do` | `doCreateUser`, `doAddToCart` |
+| Idempotent transition | `do` | `doUpdateUser`, `doDeleteItem` |
+| State/Page | PascalCase | `HomePage`, `ProductDetail` |
+| Semantic field | camelCase | `userId`, `productName` |
+
+## Three Layers
+
+1. **Ontology** - Semantic descriptors (data fields)
+2. **Taxonomy** - State descriptors (screens/pages)
+3. **Choreography** - Transition descriptors (safe/unsafe/idempotent)
+
+## Output Format (JSON)
+
+```json
+{
+  "$schema": "https://alps-io.github.io/schemas/alps.json",
+  "alps": {
+    "title": "Application Title",
+    "doc": {"value": "Description"},
+    "descriptor": [
+      {"id": "fieldName", "title": "Human Title"},
+      {"id": "StateName", "title": "State Title", "descriptor": [
+        {"href": "#fieldName"},
+        {"href": "#goNextState"}
+      ]},
+      {"id": "goNextState", "type": "safe", "rt": "#TargetState", "title": "Navigate"}
+    ]
+  }
+}
+```
+
+## Important Rules
+
+- Safe transitions (go*) MUST include target state name: `rt="#ProductList"` → `goProductList`
+- Always validate after generation using validate_alps tool
+- Tags are space-separated strings, not arrays
+GUIDE;
 }
 
 /*
