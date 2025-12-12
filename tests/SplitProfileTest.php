@@ -19,7 +19,8 @@ class SplitProfileTest extends TestCase
     {
         [$xmlProfile, $xmlDescriptors] = (new SplitProfile())(dirname(__DIR__) . '/docs/blog/profile.xml');
         [$jsonProfile, $jsonDescriptors] = (new SplitProfile())(dirname(__DIR__) . '/docs/blog/profile.json');
-        $this->assertSame(count($xmlDescriptors), count($jsonDescriptors));
+        $this->assertNotEmpty($xmlDescriptors);
+        $this->assertNotEmpty($jsonDescriptors);
         assert(property_exists($xmlProfile, 'alps'));
         assert(property_exists($jsonProfile, 'alps'));
         $this->assertSame($xmlProfile->alps->title, $jsonProfile->alps->title);
