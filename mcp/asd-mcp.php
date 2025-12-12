@@ -260,36 +260,6 @@ function getToolDefinitions(): array
                 'required' => [],
             ],
         ],
-        [
-            'name' => 'echo',
-            'description' => 'Echo back the provided message - useful for testing MCP connectivity',
-            'inputSchema' => [
-                'type' => 'object',
-                'properties' => [
-                    'message' => [
-                        'type' => 'string',
-                        'description' => 'Message to echo back',
-                    ],
-                ],
-                'required' => ['message'],
-            ],
-        ],
-        [
-            'name' => 'test_svg',
-            'description' => 'Display a test SVG diagram - useful for testing SVG rendering',
-            'inputSchema' => [
-                'type' => 'object',
-                'properties' => [
-                    'example' => [
-                        'type' => 'string',
-                        'description' => 'Which example to show',
-                        'enum' => ['bookstore', 'simple'],
-                        'default' => 'bookstore',
-                    ],
-                ],
-                'required' => [],
-            ],
-        ],
     ];
 }
 
@@ -311,8 +281,6 @@ function handleToolCall(array $params): array
     return match ($toolName) {
         'validate_alps' => handleValidateAlps($arguments),
         'alps2svg' => handleAlps2Svg($arguments),
-        'echo' => handleEcho($arguments),
-        'test_svg' => handleTestSvg($arguments),
         default => [
             'content' => [
                 [
@@ -323,160 +291,6 @@ function handleToolCall(array $params): array
             'isError' => true,
         ],
     };
-}
-
-/**
- * Test SVG tool implementation - Display existing working SVG
- *
- * @param array<string, mixed> $args
- * @return McpToolCallResult
- */
-function handleTestSvg(array $args): array
-{
-    $example = $args['example'] ?? 'bookstore';
-    
-    try {
-        $baseDir = dirname(__DIR__);
-        
-        if ($example === 'bookstore') {
-            $svgPath = $baseDir . '/docs/bookstore/alps.svg';
-        } else {
-            // Simple example - create a basic SVG
-            $svgContent = '<?xml version="1.0" encoding="UTF-8"?>
-<svg width="200" height="100" xmlns="http://www.w3.org/2000/svg">
-    <rect width="100%" height="100%" fill="#f0f8ff" stroke="#4169e1" stroke-width="2"/>
-    <text x="100" y="50" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#4169e1">Test SVG</text>
-</svg>';
-
-            return [
-                'content' => [
-                    [
-                        'type' => 'text',
-                        'text' => "✅ Simple test SVG:\n\n```svg\n" . $svgContent . "\n```",
-                    ]
-                ],
-                'isError' => false,
-            ];
-        }
-        
-        if (!file_exists($svgPath)) {
-            return [
-                'content' => [
-                    [
-                        'type' => 'text',
-                        'text' => "Error: SVG file not found at $svgPath",
-                    ],
-                ],
-                'isError' => true,
-            ];
-        }
-        
-        $svgContent = file_get_contents($svgPath);
-        if ($svgContent === false) {
-            return [
-                'content' => [
-                    [
-                        'type' => 'text',
-                        'text' => "Error: Could not read SVG file at $svgPath",
-                    ],
-                ],
-                'isError' => true,
-            ];
-        }
-        
-        // Create HTML wrapper for better display
-        $htmlContent = "<!DOCTYPE html>
-<html>
-<head>
-    <title>Bookstore State Diagram</title>
-    <style>
-        body { 
-            font-family: Arial, sans-serif; 
-            margin: 20px; 
-            background: #f5f5f5; 
-        }
-        .container { 
-            max-width: 1200px; 
-            margin: 0 auto; 
-            background: white; 
-            padding: 20px; 
-            border-radius: 8px; 
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        h1 { color: #333; }
-        svg { 
-            width: 100%; 
-            height: auto; 
-            border: 1px solid #ddd; 
-            border-radius: 4px; 
-        }
-    </style>
-</head>
-<body>
-    <div class=\"container\">
-        <h1>📚 Bookstore Application State Diagram</h1>
-        <p>This diagram shows the state transitions for a bookstore application.</p>
-        $svgContent
-        <hr>
-        <small>Generated at " . date('Y-m-d H:i:s') . " via MCP Server</small>
-    </div>
-</body>
-</html>";
-        
-        return [
-            'content' => [
-                [
-                    'type' => 'text',
-                    'text' => "✅ Bookstore state diagram:\n\n```html\n" . $htmlContent . "\n```",
-                ]
-            ],
-            'isError' => false,
-        ];
-        
-    } catch (Exception $e) {
-        return [
-            'content' => [
-                [
-                    'type' => 'text',
-                    'text' => 'Error displaying test SVG: ' . $e->getMessage(),
-                ],
-            ],
-            'isError' => true,
-        ];
-    }
-}
-
-/**
- * Echo tool implementation
- *
- * @param array<string, mixed> $args
- * @return McpToolCallResult
- */
-function handleEcho(array $args): array
-{
-    $message = $args['message'] ?? '';
-    
-    if (!is_string($message) || $message === '') {
-        return [
-            'content' => [
-                [
-                    'type' => 'text',
-                    'text' => 'Error: message parameter is required and must be a non-empty string',
-                ],
-            ],
-            'isError' => true,
-        ];
-    }
-
-    return [
-        'content' => [
-            [
-                'type' => 'text',
-                'text' => "Echo: $message",
-            ],
-        ],
-        'isError' => false,
-    ];
 }
 
 /**
@@ -765,64 +579,9 @@ function handleAlps2Svg(array $args): array
     }
 }
 
-
-
-/**
- * Generate pure SVG from ALPS XML file path
- */
-function getSvg(string $alpsFilePath): string
-{
-    try {
-        // Create profile and generate DOT content
-        $profile = new \Koriym\AppStateDiagram\Profile($alpsFilePath, new \Koriym\AppStateDiagram\LabelName());
-        $drawDiagram = new \Koriym\AppStateDiagram\DrawDiagram();
-        
-        debugLog("Profile created with " . count($profile->descriptors) . " descriptors");
-        
-        // Generate DOT content
-        $dotContent = $drawDiagram($profile, new \Koriym\AppStateDiagram\LabelName());
-        debugLog("DOT content generated, length: " . strlen($dotContent));
-        
-        // Convert DOT to SVG using Graphviz
-        $tempDot = tempnam(sys_get_temp_dir(), 'mcp_dot_') . '.dot';
-        file_put_contents($tempDot, $dotContent);
-        
-        debugLog("Converting DOT to SVG...");
-        $svgContent = shell_exec("dot -Tsvg \"$tempDot\" 2>&1");
-        
-        // Clean up DOT file
-        unlink($tempDot);
-        
-        if (!$svgContent || strpos($svgContent, '<svg') === false) {
-            debugLog("SVG conversion failed: " . ($svgContent ?? 'null'));
-            throw new Exception("Failed to convert DOT to SVG");
-        }
-        
-        return trim($svgContent);
-        
-    } catch (Exception $e) {
-        debugLog("getSvg error: " . $e->getMessage());
-        throw $e;
-    }
-}
-
 /*
  * Utilities
  */
-
-/**
- * Validate and sanitize user input
- * Add your validation logic here
- */
-function validateInput(mixed $input, string $type): bool
-{
-    return match ($type) {
-        'string' => is_string($input),
-        'int' => is_int($input),
-        'array' => is_array($input),
-        default => false,
-    };
-}
 
 /**
  * Log debug information to STDERR
