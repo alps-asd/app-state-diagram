@@ -1,6 +1,6 @@
 <html lang="en">
 <head>
-    <title>ALPS Book Store</title>
+    <title>OIDC Login System for CloudSign Products</title>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/3.0.1/github-markdown.min.css">
     <style>body {
@@ -271,7 +271,9 @@ table td.highlight {
 #asd-graph-id, #asd-graph-name {
     position: relative;
     flex-shrink: 0;
-    display: block;
+}
+#asd-graph-id.hidden, #asd-graph-name.hidden {
+    display: none;
 }
 #svg-container svg {
     max-width: none;
@@ -976,9 +978,9 @@ function updateAllSvgZoom(zoomControls) {
 </head>
 <body>
     <div class="markdown-body">
-        <h1>ALPS Book Store</h1>
+        <h1>OIDC Login System for CloudSign Products</h1>
 
-<p>ALPS profile for managing an online bookstore catalog and defining the user purchase flow. This profile provides semantic definitions for both RESTful APIs and UI.</p>
+<p>新規プロダクトでのログインをOIDCにするシステム。Ory/Hydraを使用したOAuth2.0/OIDC認証基盤により、CloudSign製品群と新規プロダクトの統合認証を実現する。</p>
 
 <!-- Container for the ASDs -->
 
@@ -991,8 +993,8 @@ function updateAllSvgZoom(zoomControls) {
     document.addEventListener('DOMContentLoaded', async function() {
         try {
             await Promise.all([
-                    renderGraph("#asd-graph-id", 'digraph application_state_diagram {  graph [    labelloc="t";    fontname="Helvetica"  ];  node [shape = box, style = "bold,filled" fillcolor="lightgray", margin="0.3,0.1"];    Book [margin=0.1, label="Book", shape=box, URL="#Book" target="_parent"]    Catalog [margin=0.1, label="Catalog", shape=box, URL="#Catalog" target="_parent"]    Payment [margin=0.1, label="Payment", shape=box, URL="#Payment" target="_parent"]    Book -> Catalog [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goToCatalog" tooltip="Go to Catalog Screen (safe)"><font color="#00A86B">■</font> goToCatalog</td></tr></table>> URL="#goToCatalog" target="_parent" fontsize=13 class="goToCatalog" penwidth=1.5];    Book -> ShoppingCart [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#doAddToCart" tooltip="Add to Cart (unsafe)"><font color="#FF4136">■</font> doAddToCart</td></tr></table>> URL="#doAddToCart" target="_parent" fontsize=13 class="doAddToCart" penwidth=1.5];    Catalog -> Book [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goBookDetails" tooltip="Get Book Details (safe)"><font color="#00A86B">■</font> goBookDetails</td></tr></table>> URL="#goBookDetails" target="_parent" fontsize=13 class="goBookDetails" penwidth=1.5];    Catalog -> Catalog [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" align="left" href="#goGetCategories" tooltip="Get Category List (safe)"><font color="#00A86B">■</font> goGetCategories</td></tr><tr><td valign="middle" align="left" href="#goListBooks" tooltip="Get Book List (safe)"><font color="#00A86B">■</font> goListBooks</td></tr><tr><td valign="middle" align="left" href="#goSearchBooks" tooltip="Search Books (safe)"><font color="#00A86B">■</font> goSearchBooks</td></tr></table>> URL="#goGetCategories" target="_parent" fontsize=13 class="goGetCategories" penwidth=1.5];    Catalog -> ShoppingCart [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goToCart" tooltip="Go to Cart Screen (safe)"><font color="#00A86B">■</font> goToCart</td></tr></table>> URL="#goToCart" target="_parent" fontsize=13 class="goToCart" penwidth=1.5];    Checkout -> Checkout [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" align="left" href="#doShippingInfo" tooltip="Input Shipping Information (unsafe)"><font color="#FF4136">■</font> doShippingInfo</td></tr><tr><td valign="middle" align="left" href="#doUserInfo" tooltip="Input User Information (unsafe)"><font color="#FF4136">■</font> doUserInfo</td></tr></table>> URL="#doShippingInfo" target="_parent" fontsize=13 class="doShippingInfo" penwidth=1.5];    Checkout -> Payment [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goToPayment" tooltip="Go to Payment Screen (safe)"><font color="#00A86B">■</font> goToPayment</td></tr></table>> URL="#goToPayment" target="_parent" fontsize=13 class="goToPayment" penwidth=1.5];    Checkout -> ShoppingCart [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goToCart" tooltip="Go to Cart Screen (safe)"><font color="#00A86B">■</font> goToCart</td></tr></table>> URL="#goToCart" target="_parent" fontsize=13 class="goToCart" penwidth=1.5];    Home -> Catalog [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goToCatalog" tooltip="Go to Catalog Screen (safe)"><font color="#00A86B">■</font> goToCatalog</td></tr></table>> URL="#goToCatalog" target="_parent" fontsize=13 class="goToCatalog" penwidth=1.5];    Home -> ShoppingCart [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goToCart" tooltip="Go to Cart Screen (safe)"><font color="#00A86B">■</font> goToCart</td></tr></table>> URL="#goToCart" target="_parent" fontsize=13 class="goToCart" penwidth=1.5];    Payment -> Home [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goToHome" tooltip="Go to Home Screen (safe)"><font color="#00A86B">■</font> goToHome</td></tr></table>> URL="#goToHome" target="_parent" fontsize=13 class="goToHome" penwidth=1.5];    Payment -> Payment [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" align="left" href="#doPaymentInfo" tooltip="Input Payment Information (unsafe)"><font color="#FF4136">■</font> doPaymentInfo</td></tr><tr><td valign="middle" align="left" href="#doPlaceOrder" tooltip="Place Order (unsafe)"><font color="#FF4136">■</font> doPlaceOrder</td></tr><tr><td valign="middle" align="left" href="#goOrderDetails" tooltip="Display Order Details (safe)"><font color="#00A86B">■</font> goOrderDetails</td></tr></table>> URL="#doPaymentInfo" target="_parent" fontsize=13 class="doPaymentInfo" penwidth=1.5];    Payment -> ShoppingCart [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goToCart" tooltip="Go to Cart Screen (safe)"><font color="#00A86B">■</font> goToCart</td></tr></table>> URL="#goToCart" target="_parent" fontsize=13 class="goToCart" penwidth=1.5];    ShoppingCart -> Catalog [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goToCatalog" tooltip="Go to Catalog Screen (safe)"><font color="#00A86B">■</font> goToCatalog</td></tr></table>> URL="#goToCatalog" target="_parent" fontsize=13 class="goToCatalog" penwidth=1.5];    ShoppingCart -> Checkout [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goToCheckout" tooltip="Go to Checkout Screen (safe)"><font color="#00A86B">■</font> goToCheckout</td></tr></table>> URL="#goToCheckout" target="_parent" fontsize=13 class="goToCheckout" penwidth=1.5];    ShoppingCart -> ShoppingCart [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" align="left" href="#doRemoveFromCart" tooltip="Remove Item from Cart (idempotent)"><font color="#FFDC00">■</font> doRemoveFromCart</td></tr><tr><td valign="middle" align="left" href="#doUpdateQuantity" tooltip="Update Cart Item Quantity (idempotent)"><font color="#FFDC00">■</font> doUpdateQuantity</td></tr><tr><td valign="middle" align="left" href="#goListCartItems" tooltip="Get Cart Items List (safe)"><font color="#00A86B">■</font> goListCartItems</td></tr></table>> URL="#doRemoveFromCart" target="_parent" fontsize=13 class="doRemoveFromCart" penwidth=1.5];    Book [label="Book" URL="#Book" target="_parent"]    Catalog [label="Catalog" URL="#Catalog" target="_parent"]    ShoppingCart [label="ShoppingCart" URL="#ShoppingCart" target="_parent"]    Checkout [label="Checkout" URL="#Checkout" target="_parent"]    Payment [label="Payment" URL="#Payment" target="_parent"]    Home [label="Home" URL="#Home" target="_parent"]}'),
-                    renderGraph("#asd-graph-name", 'digraph application_state_diagram {  graph [    labelloc="t";    fontname="Helvetica"  ];  node [shape = box, style = "bold,filled" fillcolor="lightgray", margin="0.3,0.1"];    Book [margin=0.1, label="Book", shape=box, URL="#Book" target="_parent"]    Catalog [margin=0.1, label="Book Catalog", shape=box, URL="#Catalog" target="_parent"]    Payment [margin=0.1, label="Payment Screen", shape=box, URL="#Payment" target="_parent"]    Book -> Catalog [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goToCatalog" tooltip="Go to Catalog Screen (safe)"><font color="#00A86B">■</font> Go&nbsp;to&nbsp;Catalog&nbsp;Screen</td></tr></table>> URL="#goToCatalog" target="_parent" fontsize=13 class="goToCatalog" penwidth=1.5];    Book -> ShoppingCart [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#doAddToCart" tooltip="Add to Cart (unsafe)"><font color="#FF4136">■</font> Add&nbsp;to&nbsp;Cart</td></tr></table>> URL="#doAddToCart" target="_parent" fontsize=13 class="doAddToCart" penwidth=1.5];    Catalog -> Book [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goBookDetails" tooltip="Get Book Details (safe)"><font color="#00A86B">■</font> Get&nbsp;Book&nbsp;Details</td></tr></table>> URL="#goBookDetails" target="_parent" fontsize=13 class="goBookDetails" penwidth=1.5];    Catalog -> Catalog [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" align="left" href="#goGetCategories" tooltip="Get Category List (safe)"><font color="#00A86B">■</font> Get&nbsp;Category&nbsp;List</td></tr><tr><td valign="middle" align="left" href="#goListBooks" tooltip="Get Book List (safe)"><font color="#00A86B">■</font> Get&nbsp;Book&nbsp;List</td></tr><tr><td valign="middle" align="left" href="#goSearchBooks" tooltip="Search Books (safe)"><font color="#00A86B">■</font> Search&nbsp;Books</td></tr></table>> URL="#goGetCategories" target="_parent" fontsize=13 class="goGetCategories" penwidth=1.5];    Catalog -> ShoppingCart [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goToCart" tooltip="Go to Cart Screen (safe)"><font color="#00A86B">■</font> Go&nbsp;to&nbsp;Cart&nbsp;Screen</td></tr></table>> URL="#goToCart" target="_parent" fontsize=13 class="goToCart" penwidth=1.5];    Checkout -> Checkout [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" align="left" href="#doShippingInfo" tooltip="Input Shipping Information (unsafe)"><font color="#FF4136">■</font> Input&nbsp;Shipping&nbsp;Information</td></tr><tr><td valign="middle" align="left" href="#doUserInfo" tooltip="Input User Information (unsafe)"><font color="#FF4136">■</font> Input&nbsp;User&nbsp;Information</td></tr></table>> URL="#doShippingInfo" target="_parent" fontsize=13 class="doShippingInfo" penwidth=1.5];    Checkout -> Payment [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goToPayment" tooltip="Go to Payment Screen (safe)"><font color="#00A86B">■</font> Go&nbsp;to&nbsp;Payment&nbsp;Screen</td></tr></table>> URL="#goToPayment" target="_parent" fontsize=13 class="goToPayment" penwidth=1.5];    Checkout -> ShoppingCart [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goToCart" tooltip="Go to Cart Screen (safe)"><font color="#00A86B">■</font> Go&nbsp;to&nbsp;Cart&nbsp;Screen</td></tr></table>> URL="#goToCart" target="_parent" fontsize=13 class="goToCart" penwidth=1.5];    Home -> Catalog [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goToCatalog" tooltip="Go to Catalog Screen (safe)"><font color="#00A86B">■</font> Go&nbsp;to&nbsp;Catalog&nbsp;Screen</td></tr></table>> URL="#goToCatalog" target="_parent" fontsize=13 class="goToCatalog" penwidth=1.5];    Home -> ShoppingCart [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goToCart" tooltip="Go to Cart Screen (safe)"><font color="#00A86B">■</font> Go&nbsp;to&nbsp;Cart&nbsp;Screen</td></tr></table>> URL="#goToCart" target="_parent" fontsize=13 class="goToCart" penwidth=1.5];    Payment -> Home [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goToHome" tooltip="Go to Home Screen (safe)"><font color="#00A86B">■</font> Go&nbsp;to&nbsp;Home&nbsp;Screen</td></tr></table>> URL="#goToHome" target="_parent" fontsize=13 class="goToHome" penwidth=1.5];    Payment -> Payment [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" align="left" href="#doPaymentInfo" tooltip="Input Payment Information (unsafe)"><font color="#FF4136">■</font> Input&nbsp;Payment&nbsp;Information</td></tr><tr><td valign="middle" align="left" href="#doPlaceOrder" tooltip="Place Order (unsafe)"><font color="#FF4136">■</font> Place&nbsp;Order</td></tr><tr><td valign="middle" align="left" href="#goOrderDetails" tooltip="Display Order Details (safe)"><font color="#00A86B">■</font> Display&nbsp;Order&nbsp;Details</td></tr></table>> URL="#doPaymentInfo" target="_parent" fontsize=13 class="doPaymentInfo" penwidth=1.5];    Payment -> ShoppingCart [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goToCart" tooltip="Go to Cart Screen (safe)"><font color="#00A86B">■</font> Go&nbsp;to&nbsp;Cart&nbsp;Screen</td></tr></table>> URL="#goToCart" target="_parent" fontsize=13 class="goToCart" penwidth=1.5];    ShoppingCart -> Catalog [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goToCatalog" tooltip="Go to Catalog Screen (safe)"><font color="#00A86B">■</font> Go&nbsp;to&nbsp;Catalog&nbsp;Screen</td></tr></table>> URL="#goToCatalog" target="_parent" fontsize=13 class="goToCatalog" penwidth=1.5];    ShoppingCart -> Checkout [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goToCheckout" tooltip="Go to Checkout Screen (safe)"><font color="#00A86B">■</font> Go&nbsp;to&nbsp;Checkout&nbsp;Screen</td></tr></table>> URL="#goToCheckout" target="_parent" fontsize=13 class="goToCheckout" penwidth=1.5];    ShoppingCart -> ShoppingCart [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" align="left" href="#doRemoveFromCart" tooltip="Remove Item from Cart (idempotent)"><font color="#FFDC00">■</font> Remove&nbsp;Item&nbsp;from&nbsp;Cart</td></tr><tr><td valign="middle" align="left" href="#doUpdateQuantity" tooltip="Update Cart Item Quantity (idempotent)"><font color="#FFDC00">■</font> Update&nbsp;Cart&nbsp;Item&nbsp;Quantity</td></tr><tr><td valign="middle" align="left" href="#goListCartItems" tooltip="Get Cart Items List (safe)"><font color="#00A86B">■</font> Get&nbsp;Cart&nbsp;Items&nbsp;List</td></tr></table>> URL="#doRemoveFromCart" target="_parent" fontsize=13 class="doRemoveFromCart" penwidth=1.5];    Book [label="Book" URL="#Book" target="_parent"]    Catalog [label="Book Catalog" URL="#Catalog" target="_parent"]    ShoppingCart [label="Shopping Cart" URL="#ShoppingCart" target="_parent"]    Checkout [label="Checkout Screen" URL="#Checkout" target="_parent"]    Payment [label="Payment Screen" URL="#Payment" target="_parent"]    Home [label="Home Screen" URL="#Home" target="_parent"]}')
+                    renderGraph("#asd-graph-id", 'digraph application_state_diagram {  graph [    labelloc="t";    fontname="Helvetica"  ];  node [shape = box, style = "bold,filled" fillcolor="lightgray", margin="0.3,0.1"];    AuthenticatedState [margin=0.1, label="AuthenticatedState", shape=box, URL="#AuthenticatedState" target="_parent"]    AuthenticationInProgress [margin=0.1, label="AuthenticationInProgress", shape=box, URL="#AuthenticationInProgress" target="_parent"]    AuthorizationCallback [margin=0.1, label="AuthorizationCallback", shape=box, URL="#AuthorizationCallback" target="_parent"]    AuthorizationRequest [margin=0.1, label="AuthorizationRequest", shape=box, URL="#AuthorizationRequest" target="_parent"]    Central [margin=0.1, label="Central", shape=box, URL="#Central" target="_parent"]    CloudSignJp [margin=0.1, label="CloudSignJp", shape=box, URL="#CloudSignJp" target="_parent"]    CloudSignNimbus [margin=0.1, label="CloudSignNimbus", shape=box, URL="#CloudSignNimbus" target="_parent"]    CloudSignRevel [margin=0.1, label="CloudSignRevel", shape=box, URL="#CloudSignRevel" target="_parent"]    ConsentForm [margin=0.1, label="ConsentForm", shape=box, URL="#ConsentForm" target="_parent"]    ErrorState [margin=0.1, label="ErrorState", shape=box, URL="#ErrorState" target="_parent"]    LoginForm [margin=0.1, label="LoginForm", shape=box, URL="#LoginForm" target="_parent"]    NewProductA [margin=0.1, label="NewProductA", shape=box, URL="#NewProductA" target="_parent"]    NewProductABFF [margin=0.1, label="NewProductABFF", shape=box, URL="#NewProductABFF" target="_parent"]    NewProductAInternal [margin=0.1, label="NewProductAInternal", shape=box, URL="#NewProductAInternal" target="_parent"]    TokenExchange [margin=0.1, label="TokenExchange", shape=box, URL="#TokenExchange" target="_parent"]    AuthenticatedState -> AuthenticatedState [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#doRefreshToken" tooltip="トークン更新 (unsafe)"><font color="#FF4136">■</font> doRefreshToken</td></tr></table>> URL="#doRefreshToken" target="_parent" fontsize=13 class="doRefreshToken" penwidth=1.5];    AuthenticatedState -> Central [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goCentral" tooltip="Centralへ遷移 (safe)"><font color="#00A86B">■</font> goCentral</td></tr></table>> URL="#goCentral" target="_parent" fontsize=13 class="goCentral" penwidth=1.5];    AuthenticatedState -> CloudSignJp [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goCloudSignJp" tooltip="cloudsign.jpへ遷移 (safe)"><font color="#00A86B">■</font> goCloudSignJp</td></tr></table>> URL="#goCloudSignJp" target="_parent" fontsize=13 class="goCloudSignJp" penwidth=1.5];    AuthenticatedState -> CloudSignNimbus [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goCloudSignNimbus" tooltip="CloudSign Nimbusへ遷移 (safe)"><font color="#00A86B">■</font> goCloudSignNimbus</td></tr></table>> URL="#goCloudSignNimbus" target="_parent" fontsize=13 class="goCloudSignNimbus" penwidth=1.5];    AuthenticatedState -> CloudSignRevel [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goCloudSignRevel" tooltip="CloudSign Revelへ遷移 (safe)"><font color="#00A86B">■</font> goCloudSignRevel</td></tr></table>> URL="#goCloudSignRevel" target="_parent" fontsize=13 class="goCloudSignRevel" penwidth=1.5];    AuthenticatedState -> NewProductA [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goNewProductA" tooltip="NewProductAへ遷移 (safe)"><font color="#00A86B">■</font> goNewProductA</td></tr></table>> URL="#goNewProductA" target="_parent" fontsize=13 class="goNewProductA" penwidth=1.5];    AuthenticatedState -> UnauthenticatedState [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#doLogout" tooltip="ログアウト (idempotent)"><font color="#FFDC00">■</font> doLogout</td></tr></table>> URL="#doLogout" target="_parent" fontsize=13 class="doLogout" penwidth=1.5];    AuthenticationInProgress -> AuthorizationCallback [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goAuthorizationCallback" tooltip="認可コールバックへ遷移 (safe)"><font color="#00A86B">■</font> goAuthorizationCallback</td></tr></table>> URL="#goAuthorizationCallback" target="_parent" fontsize=13 class="goAuthorizationCallback" penwidth=1.5];    AuthenticationInProgress -> LoginForm [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goLoginForm" tooltip="ログインフォームへ遷移 (safe)"><font color="#00A86B">■</font> goLoginForm</td></tr></table>> URL="#goLoginForm" target="_parent" fontsize=13 class="goLoginForm" penwidth=1.5];    AuthorizationCallback -> TokenExchange [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#doExchangeToken" tooltip="トークン交換実行 (unsafe)"><font color="#FF4136">■</font> doExchangeToken</td></tr></table>> URL="#doExchangeToken" target="_parent" fontsize=13 class="doExchangeToken" penwidth=1.5];    AuthorizationRequest -> ConsentForm [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goConsentForm" tooltip="同意確認フォームへ遷移 (safe)"><font color="#00A86B">■</font> goConsentForm</td></tr></table>> URL="#goConsentForm" target="_parent" fontsize=13 class="goConsentForm" penwidth=1.5];    AuthorizationRequest -> LoginForm [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goLoginForm" tooltip="ログインフォームへ遷移 (safe)"><font color="#00A86B">■</font> goLoginForm</td></tr></table>> URL="#goLoginForm" target="_parent" fontsize=13 class="goLoginForm" penwidth=1.5];    Central -> AuthenticatedState [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goAuthenticatedState" tooltip="認証済み状態へ遷移 (safe)"><font color="#00A86B">■</font> goAuthenticatedState</td></tr></table>> URL="#goAuthenticatedState" target="_parent" fontsize=13 class="goAuthenticatedState" penwidth=1.5];    CloudSignJp -> AuthenticatedState [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goAuthenticatedState" tooltip="認証済み状態へ遷移 (safe)"><font color="#00A86B">■</font> goAuthenticatedState</td></tr></table>> URL="#goAuthenticatedState" target="_parent" fontsize=13 class="goAuthenticatedState" penwidth=1.5];    CloudSignNimbus -> AuthenticatedState [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goAuthenticatedState" tooltip="認証済み状態へ遷移 (safe)"><font color="#00A86B">■</font> goAuthenticatedState</td></tr></table>> URL="#goAuthenticatedState" target="_parent" fontsize=13 class="goAuthenticatedState" penwidth=1.5];    CloudSignRevel -> AuthenticatedState [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goAuthenticatedState" tooltip="認証済み状態へ遷移 (safe)"><font color="#00A86B">■</font> goAuthenticatedState</td></tr></table>> URL="#goAuthenticatedState" target="_parent" fontsize=13 class="goAuthenticatedState" penwidth=1.5];    ConsentForm -> AuthorizationCallback [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#doGrantConsent" tooltip="同意を許可 (unsafe)"><font color="#FF4136">■</font> doGrantConsent</td></tr></table>> URL="#doGrantConsent" target="_parent" fontsize=13 class="doGrantConsent" penwidth=1.5];    ConsentForm -> ErrorState [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#doDenyConsent" tooltip="同意を拒否 (unsafe)"><font color="#FF4136">■</font> doDenyConsent</td></tr></table>> URL="#doDenyConsent" target="_parent" fontsize=13 class="doDenyConsent" penwidth=1.5];    ErrorState -> LoginForm [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goLoginForm" tooltip="ログインフォームへ遷移 (safe)"><font color="#00A86B">■</font> goLoginForm</td></tr></table>> URL="#goLoginForm" target="_parent" fontsize=13 class="goLoginForm" penwidth=1.5];    ErrorState -> UnauthenticatedState [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goUnauthenticatedState" tooltip="未認証状態へ戻る (safe)"><font color="#00A86B">■</font> goUnauthenticatedState</td></tr></table>> URL="#goUnauthenticatedState" target="_parent" fontsize=13 class="goUnauthenticatedState" penwidth=1.5];    LoginForm -> AuthenticationInProgress [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#doLogin" tooltip="ログイン実行 (unsafe)"><font color="#FF4136">■</font> doLogin</td></tr></table>> URL="#doLogin" target="_parent" fontsize=13 class="doLogin" penwidth=1.5];    LoginForm -> UnauthenticatedState [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goUnauthenticatedState" tooltip="未認証状態へ戻る (safe)"><font color="#00A86B">■</font> goUnauthenticatedState</td></tr></table>> URL="#goUnauthenticatedState" target="_parent" fontsize=13 class="goUnauthenticatedState" penwidth=1.5];    NewProductA -> AuthenticatedState [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goAuthenticatedState" tooltip="認証済み状態へ遷移 (safe)"><font color="#00A86B">■</font> goAuthenticatedState</td></tr></table>> URL="#goAuthenticatedState" target="_parent" fontsize=13 class="goAuthenticatedState" penwidth=1.5];    NewProductA -> NewProductABFF [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goNewProductABFF" tooltip="NewProductA BFFへ遷移 (safe)"><font color="#00A86B">■</font> goNewProductABFF</td></tr></table>> URL="#goNewProductABFF" target="_parent" fontsize=13 class="goNewProductABFF" penwidth=1.5];    NewProductABFF -> NewProductAInternal [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goNewProductAInternal" tooltip="NewProductA Internalへ遷移 (safe)"><font color="#00A86B">■</font> goNewProductAInternal</td></tr></table>> URL="#goNewProductAInternal" target="_parent" fontsize=13 class="goNewProductAInternal" penwidth=1.5];    TokenExchange -> AuthenticatedState [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goAuthenticatedState" tooltip="認証済み状態へ遷移 (safe)"><font color="#00A86B">■</font> goAuthenticatedState</td></tr></table>> URL="#goAuthenticatedState" target="_parent" fontsize=13 class="goAuthenticatedState" penwidth=1.5];    UnauthenticatedState -> AuthorizationRequest [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goAuthorizationRequest" tooltip="認可リクエストへ遷移 (safe)"><font color="#00A86B">■</font> goAuthorizationRequest</td></tr></table>> URL="#goAuthorizationRequest" target="_parent" fontsize=13 class="goAuthorizationRequest" penwidth=1.5];    AuthenticatedState [label="AuthenticatedState" URL="#AuthenticatedState" target="_parent"]    Central [label="Central" URL="#Central" target="_parent"]    CloudSignJp [label="CloudSignJp" URL="#CloudSignJp" target="_parent"]    CloudSignNimbus [label="CloudSignNimbus" URL="#CloudSignNimbus" target="_parent"]    CloudSignRevel [label="CloudSignRevel" URL="#CloudSignRevel" target="_parent"]    NewProductA [label="NewProductA" URL="#NewProductA" target="_parent"]    UnauthenticatedState [label="UnauthenticatedState" URL="#UnauthenticatedState" target="_parent"]    AuthenticationInProgress [label="AuthenticationInProgress" URL="#AuthenticationInProgress" target="_parent"]    AuthorizationCallback [label="AuthorizationCallback" URL="#AuthorizationCallback" target="_parent"]    LoginForm [label="LoginForm" URL="#LoginForm" target="_parent"]    TokenExchange [label="TokenExchange" URL="#TokenExchange" target="_parent"]    AuthorizationRequest [label="AuthorizationRequest" URL="#AuthorizationRequest" target="_parent"]    ConsentForm [label="ConsentForm" URL="#ConsentForm" target="_parent"]    ErrorState [label="ErrorState" URL="#ErrorState" target="_parent"]    NewProductABFF [label="NewProductABFF" URL="#NewProductABFF" target="_parent"]    NewProductAInternal [label="NewProductAInternal" URL="#NewProductAInternal" target="_parent"]}'),
+                    renderGraph("#asd-graph-name", 'digraph application_state_diagram {  graph [    labelloc="t";    fontname="Helvetica"  ];  node [shape = box, style = "bold,filled" fillcolor="lightgray", margin="0.3,0.1"];    AuthenticatedState [margin=0.1, label="認証済み状態", shape=box, URL="#AuthenticatedState" target="_parent"]    AuthenticationInProgress [margin=0.1, label="認証処理中", shape=box, URL="#AuthenticationInProgress" target="_parent"]    AuthorizationCallback [margin=0.1, label="認可コールバック", shape=box, URL="#AuthorizationCallback" target="_parent"]    AuthorizationRequest [margin=0.1, label="認可リクエスト", shape=box, URL="#AuthorizationRequest" target="_parent"]    Central [margin=0.1, label="Central", shape=box, URL="#Central" target="_parent"]    CloudSignJp [margin=0.1, label="cloudsign.jp", shape=box, URL="#CloudSignJp" target="_parent"]    CloudSignNimbus [margin=0.1, label="CloudSign (Nimbus)", shape=box, URL="#CloudSignNimbus" target="_parent"]    CloudSignRevel [margin=0.1, label="CloudSign (Revel)", shape=box, URL="#CloudSignRevel" target="_parent"]    ConsentForm [margin=0.1, label="同意確認フォーム", shape=box, URL="#ConsentForm" target="_parent"]    ErrorState [margin=0.1, label="エラー状態", shape=box, URL="#ErrorState" target="_parent"]    LoginForm [margin=0.1, label="ログインフォーム", shape=box, URL="#LoginForm" target="_parent"]    NewProductA [margin=0.1, label="NewProductA", shape=box, URL="#NewProductA" target="_parent"]    NewProductABFF [margin=0.1, label="NewProductA BFF", shape=box, URL="#NewProductABFF" target="_parent"]    NewProductAInternal [margin=0.1, label="NewProductA Internal", shape=box, URL="#NewProductAInternal" target="_parent"]    TokenExchange [margin=0.1, label="トークン交換", shape=box, URL="#TokenExchange" target="_parent"]    AuthenticatedState -> AuthenticatedState [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#doRefreshToken" tooltip="トークン更新 (unsafe)"><font color="#FF4136">■</font> トークン更新</td></tr></table>> URL="#doRefreshToken" target="_parent" fontsize=13 class="doRefreshToken" penwidth=1.5];    AuthenticatedState -> Central [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goCentral" tooltip="Centralへ遷移 (safe)"><font color="#00A86B">■</font> Centralへ遷移</td></tr></table>> URL="#goCentral" target="_parent" fontsize=13 class="goCentral" penwidth=1.5];    AuthenticatedState -> CloudSignJp [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goCloudSignJp" tooltip="cloudsign.jpへ遷移 (safe)"><font color="#00A86B">■</font> cloudsign.jpへ遷移</td></tr></table>> URL="#goCloudSignJp" target="_parent" fontsize=13 class="goCloudSignJp" penwidth=1.5];    AuthenticatedState -> CloudSignNimbus [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goCloudSignNimbus" tooltip="CloudSign Nimbusへ遷移 (safe)"><font color="#00A86B">■</font> CloudSign&nbsp;Nimbusへ遷移</td></tr></table>> URL="#goCloudSignNimbus" target="_parent" fontsize=13 class="goCloudSignNimbus" penwidth=1.5];    AuthenticatedState -> CloudSignRevel [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goCloudSignRevel" tooltip="CloudSign Revelへ遷移 (safe)"><font color="#00A86B">■</font> CloudSign&nbsp;Revelへ遷移</td></tr></table>> URL="#goCloudSignRevel" target="_parent" fontsize=13 class="goCloudSignRevel" penwidth=1.5];    AuthenticatedState -> NewProductA [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goNewProductA" tooltip="NewProductAへ遷移 (safe)"><font color="#00A86B">■</font> NewProductAへ遷移</td></tr></table>> URL="#goNewProductA" target="_parent" fontsize=13 class="goNewProductA" penwidth=1.5];    AuthenticatedState -> UnauthenticatedState [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#doLogout" tooltip="ログアウト (idempotent)"><font color="#FFDC00">■</font> ログアウト</td></tr></table>> URL="#doLogout" target="_parent" fontsize=13 class="doLogout" penwidth=1.5];    AuthenticationInProgress -> AuthorizationCallback [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goAuthorizationCallback" tooltip="認可コールバックへ遷移 (safe)"><font color="#00A86B">■</font> 認可コールバックへ遷移</td></tr></table>> URL="#goAuthorizationCallback" target="_parent" fontsize=13 class="goAuthorizationCallback" penwidth=1.5];    AuthenticationInProgress -> LoginForm [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goLoginForm" tooltip="ログインフォームへ遷移 (safe)"><font color="#00A86B">■</font> ログインフォームへ遷移</td></tr></table>> URL="#goLoginForm" target="_parent" fontsize=13 class="goLoginForm" penwidth=1.5];    AuthorizationCallback -> TokenExchange [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#doExchangeToken" tooltip="トークン交換実行 (unsafe)"><font color="#FF4136">■</font> トークン交換実行</td></tr></table>> URL="#doExchangeToken" target="_parent" fontsize=13 class="doExchangeToken" penwidth=1.5];    AuthorizationRequest -> ConsentForm [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goConsentForm" tooltip="同意確認フォームへ遷移 (safe)"><font color="#00A86B">■</font> 同意確認フォームへ遷移</td></tr></table>> URL="#goConsentForm" target="_parent" fontsize=13 class="goConsentForm" penwidth=1.5];    AuthorizationRequest -> LoginForm [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goLoginForm" tooltip="ログインフォームへ遷移 (safe)"><font color="#00A86B">■</font> ログインフォームへ遷移</td></tr></table>> URL="#goLoginForm" target="_parent" fontsize=13 class="goLoginForm" penwidth=1.5];    Central -> AuthenticatedState [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goAuthenticatedState" tooltip="認証済み状態へ遷移 (safe)"><font color="#00A86B">■</font> 認証済み状態へ遷移</td></tr></table>> URL="#goAuthenticatedState" target="_parent" fontsize=13 class="goAuthenticatedState" penwidth=1.5];    CloudSignJp -> AuthenticatedState [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goAuthenticatedState" tooltip="認証済み状態へ遷移 (safe)"><font color="#00A86B">■</font> 認証済み状態へ遷移</td></tr></table>> URL="#goAuthenticatedState" target="_parent" fontsize=13 class="goAuthenticatedState" penwidth=1.5];    CloudSignNimbus -> AuthenticatedState [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goAuthenticatedState" tooltip="認証済み状態へ遷移 (safe)"><font color="#00A86B">■</font> 認証済み状態へ遷移</td></tr></table>> URL="#goAuthenticatedState" target="_parent" fontsize=13 class="goAuthenticatedState" penwidth=1.5];    CloudSignRevel -> AuthenticatedState [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goAuthenticatedState" tooltip="認証済み状態へ遷移 (safe)"><font color="#00A86B">■</font> 認証済み状態へ遷移</td></tr></table>> URL="#goAuthenticatedState" target="_parent" fontsize=13 class="goAuthenticatedState" penwidth=1.5];    ConsentForm -> AuthorizationCallback [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#doGrantConsent" tooltip="同意を許可 (unsafe)"><font color="#FF4136">■</font> 同意を許可</td></tr></table>> URL="#doGrantConsent" target="_parent" fontsize=13 class="doGrantConsent" penwidth=1.5];    ConsentForm -> ErrorState [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#doDenyConsent" tooltip="同意を拒否 (unsafe)"><font color="#FF4136">■</font> 同意を拒否</td></tr></table>> URL="#doDenyConsent" target="_parent" fontsize=13 class="doDenyConsent" penwidth=1.5];    ErrorState -> LoginForm [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goLoginForm" tooltip="ログインフォームへ遷移 (safe)"><font color="#00A86B">■</font> ログインフォームへ遷移</td></tr></table>> URL="#goLoginForm" target="_parent" fontsize=13 class="goLoginForm" penwidth=1.5];    ErrorState -> UnauthenticatedState [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goUnauthenticatedState" tooltip="未認証状態へ戻る (safe)"><font color="#00A86B">■</font> 未認証状態へ戻る</td></tr></table>> URL="#goUnauthenticatedState" target="_parent" fontsize=13 class="goUnauthenticatedState" penwidth=1.5];    LoginForm -> AuthenticationInProgress [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#doLogin" tooltip="ログイン実行 (unsafe)"><font color="#FF4136">■</font> ログイン実行</td></tr></table>> URL="#doLogin" target="_parent" fontsize=13 class="doLogin" penwidth=1.5];    LoginForm -> UnauthenticatedState [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goUnauthenticatedState" tooltip="未認証状態へ戻る (safe)"><font color="#00A86B">■</font> 未認証状態へ戻る</td></tr></table>> URL="#goUnauthenticatedState" target="_parent" fontsize=13 class="goUnauthenticatedState" penwidth=1.5];    NewProductA -> AuthenticatedState [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goAuthenticatedState" tooltip="認証済み状態へ遷移 (safe)"><font color="#00A86B">■</font> 認証済み状態へ遷移</td></tr></table>> URL="#goAuthenticatedState" target="_parent" fontsize=13 class="goAuthenticatedState" penwidth=1.5];    NewProductA -> NewProductABFF [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goNewProductABFF" tooltip="NewProductA BFFへ遷移 (safe)"><font color="#00A86B">■</font> NewProductA&nbsp;BFFへ遷移</td></tr></table>> URL="#goNewProductABFF" target="_parent" fontsize=13 class="goNewProductABFF" penwidth=1.5];    NewProductABFF -> NewProductAInternal [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goNewProductAInternal" tooltip="NewProductA Internalへ遷移 (safe)"><font color="#00A86B">■</font> NewProductA&nbsp;Internalへ遷移</td></tr></table>> URL="#goNewProductAInternal" target="_parent" fontsize=13 class="goNewProductAInternal" penwidth=1.5];    TokenExchange -> AuthenticatedState [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goAuthenticatedState" tooltip="認証済み状態へ遷移 (safe)"><font color="#00A86B">■</font> 認証済み状態へ遷移</td></tr></table>> URL="#goAuthenticatedState" target="_parent" fontsize=13 class="goAuthenticatedState" penwidth=1.5];    UnauthenticatedState -> AuthorizationRequest [label=<<table border="0" cellborder="0" cellspacing="0" cellpadding="0"><tr><td valign="middle" href="#goAuthorizationRequest" tooltip="認可リクエストへ遷移 (safe)"><font color="#00A86B">■</font> 認可リクエストへ遷移</td></tr></table>> URL="#goAuthorizationRequest" target="_parent" fontsize=13 class="goAuthorizationRequest" penwidth=1.5];    AuthenticatedState [label="認証済み状態" URL="#AuthenticatedState" target="_parent"]    Central [label="Central" URL="#Central" target="_parent"]    CloudSignJp [label="cloudsign.jp" URL="#CloudSignJp" target="_parent"]    CloudSignNimbus [label="CloudSign (Nimbus)" URL="#CloudSignNimbus" target="_parent"]    CloudSignRevel [label="CloudSign (Revel)" URL="#CloudSignRevel" target="_parent"]    NewProductA [label="NewProductA" URL="#NewProductA" target="_parent"]    UnauthenticatedState [label="未認証状態" URL="#UnauthenticatedState" target="_parent"]    AuthenticationInProgress [label="認証処理中" URL="#AuthenticationInProgress" target="_parent"]    AuthorizationCallback [label="認可コールバック" URL="#AuthorizationCallback" target="_parent"]    LoginForm [label="ログインフォーム" URL="#LoginForm" target="_parent"]    TokenExchange [label="トークン交換" URL="#TokenExchange" target="_parent"]    AuthorizationRequest [label="認可リクエスト" URL="#AuthorizationRequest" target="_parent"]    ConsentForm [label="同意確認フォーム" URL="#ConsentForm" target="_parent"]    ErrorState [label="エラー状態" URL="#ErrorState" target="_parent"]    NewProductABFF [label="NewProductA BFF" URL="#NewProductABFF" target="_parent"]    NewProductAInternal [label="NewProductA Internal" URL="#NewProductAInternal" target="_parent"]}')
             ]);
             setupTagTrigger();
             setupModeSwitch('asd-show-id', 'asd-graph-id', 'asd-graph-name');
@@ -1000,7 +1002,7 @@ function updateAllSvgZoom(zoomControls) {
             applySmoothScrollToLinks(document.querySelectorAll('a[href^="#"]'));
             setupTagClick();
             setupDocClick();
-            setupTagEventListener('cart', ['ShoppingCart', 'doAddToCart', 'doRemoveFromCart', 'doUpdateQuantity', 'goListCartItems'], 'LightGreen'); setupTagEventListener('catalog', ['Book', 'Catalog', 'Category', 'author', 'category', 'goBookDetails', 'goGetCategories', 'goListBooks', 'goSearchBooks', 'isbn', 'query', 'title'], 'SkyBlue'); setupTagEventListener('checkout', ['Checkout'], 'LightCoral'); setupTagEventListener('commerce', ['price', 'quantity', 'totalAmount'], 'LightSalmon'); setupTagEventListener('core', ['id'], 'Khaki'); setupTagEventListener('customer', ['doUserInfo', 'userEmail', 'userName'], 'Plum'); setupTagEventListener('navigation', ['Home'], 'Wheat'); setupTagEventListener('order', ['doPlaceOrder', 'goOrderDetails'], 'LightGreen'); setupTagEventListener('payment', ['Payment', 'doPaymentInfo', 'paymentMethod'], 'SkyBlue'); setupTagEventListener('shipping', ['doShippingInfo', 'shippingAddress'], 'LightCoral'); 
+            setupTagEventListener('auth', ['AuthenticationInProgress', 'ConsentForm', 'LoginForm', 'doDenyConsent', 'doGrantConsent', 'doLogin', 'doLogout', 'goAuthorizationRequest', 'goConsentForm', 'goLoginForm'], 'LightGreen'); setupTagEventListener('flow-auth', ['AuthenticatedState', 'AuthenticationInProgress', 'AuthorizationCallback', 'AuthorizationRequest', 'ConsentForm', 'ErrorState', 'LoginForm', 'TokenExchange', 'UnauthenticatedState', 'doDenyConsent', 'doExchangeToken', 'doGrantConsent', 'doLogin', 'doLogout', 'doRefreshToken', 'goAuthenticatedState', 'goAuthorizationCallback', 'goAuthorizationRequest', 'goConsentForm', 'goLoginForm', 'goUnauthenticatedState'], 'SkyBlue'); setupTagEventListener('product', ['Central', 'CloudSignJp', 'CloudSignNimbus', 'CloudSignRevel', 'NewProductA', 'NewProductABFF', 'NewProductAInternal', 'goCentral', 'goCloudSignJp', 'goCloudSignNimbus', 'goCloudSignRevel', 'goNewProductA', 'goNewProductABFF', 'goNewProductAInternal'], 'LightCoral'); 
 
             // Initialize new features
             enhanceProfileSection();
@@ -1022,16 +1024,9 @@ function updateAllSvgZoom(zoomControls) {
 </div>
 
 <div class="selector-container"><span class="selector-label">Tags:</span>
-<span class="selector-option"><input type="checkbox" id="tag-cart" class="tag-trigger-checkbox" data-tag="cart" name="tag-cart"><label for="tag-cart"> cart</label></span>
-<span class="selector-option"><input type="checkbox" id="tag-catalog" class="tag-trigger-checkbox" data-tag="catalog" name="tag-catalog"><label for="tag-catalog"> catalog</label></span>
-<span class="selector-option"><input type="checkbox" id="tag-checkout" class="tag-trigger-checkbox" data-tag="checkout" name="tag-checkout"><label for="tag-checkout"> checkout</label></span>
-<span class="selector-option"><input type="checkbox" id="tag-commerce" class="tag-trigger-checkbox" data-tag="commerce" name="tag-commerce"><label for="tag-commerce"> commerce</label></span>
-<span class="selector-option"><input type="checkbox" id="tag-core" class="tag-trigger-checkbox" data-tag="core" name="tag-core"><label for="tag-core"> core</label></span>
-<span class="selector-option"><input type="checkbox" id="tag-customer" class="tag-trigger-checkbox" data-tag="customer" name="tag-customer"><label for="tag-customer"> customer</label></span>
-<span class="selector-option"><input type="checkbox" id="tag-navigation" class="tag-trigger-checkbox" data-tag="navigation" name="tag-navigation"><label for="tag-navigation"> navigation</label></span>
-<span class="selector-option"><input type="checkbox" id="tag-order" class="tag-trigger-checkbox" data-tag="order" name="tag-order"><label for="tag-order"> order</label></span>
-<span class="selector-option"><input type="checkbox" id="tag-payment" class="tag-trigger-checkbox" data-tag="payment" name="tag-payment"><label for="tag-payment"> payment</label></span>
-<span class="selector-option"><input type="checkbox" id="tag-shipping" class="tag-trigger-checkbox" data-tag="shipping" name="tag-shipping"><label for="tag-shipping"> shipping</label></span></div>
+<span class="selector-option"><input type="checkbox" id="tag-auth" class="tag-trigger-checkbox" data-tag="auth" name="tag-auth"><label for="tag-auth"> auth</label></span>
+<span class="selector-option"><input type="checkbox" id="tag-flow-auth" class="tag-trigger-checkbox" data-tag="flow-auth" name="tag-flow-auth"><label for="tag-flow-auth"> flow-auth</label></span>
+<span class="selector-option"><input type="checkbox" id="tag-product" class="tag-trigger-checkbox" data-tag="product" name="tag-product"><label for="tag-product"> product</label></span></div>
 
 <div class="legend">
     <div class="legend-item" title="A state element (e.g.  HTML.SPAN, HTML.INPUT, etc.).">
@@ -1070,465 +1065,568 @@ function updateAllSvgZoom(zoomControls) {
 <tbody>
 <tr>
   <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
-  <td align="left"><a id="author"></a><a href="#author">author</a></td>
-  <td align="left"><span style="white-space: normal;">Author</span></td>
+  <td align="left"><a id="accessToken"></a><a href="#accessToken">accessToken</a></td>
+  <td align="left"><span style="white-space: normal;">Access Token</span></td>
   <td align="left"></td>
-  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">def:</span><span class="meta-tag def-tag"><a href="https://schema.org/author" target="_blank">schema.org/author</a></span></span><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-catalog">catalog</a></span></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">Name of the book&#039;s author. For multiple authors, names are comma-separated.</span></span></span></span></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">リソースアクセス用のアクセストークン</span></span></span></span></td>
 </tr>
 <tr>
   <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
-  <td align="left"><a id="Book"></a><a href="#Book">Book</a></td>
-  <td align="left"><span style="white-space: normal;">Book</span></td>
-  <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#id">id</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#title">title</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#author">author</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#isbn">isbn</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#price">price</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#category">category</a><br><span class="type-indicator-small safe" title="Safe"></span><a href="#goToCatalog">goToCatalog</a><br><span class="type-indicator-small unsafe" title="Unsafe"></span><a href="#doAddToCart">doAddToCart</a></td>
-  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">def:</span><span class="meta-tag def-tag"><a href="https://schema.org/Book" target="_blank">schema.org/Book</a></span></span><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-catalog">catalog</a></span></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag clickable" data-full="Screen displaying individual book information. Shows detailed information, reviews, and related books. Items can be added to cart from this screen." title="Screen displaying individual book information. Shows detailed information, reviews, and related books. Items can be added to cart from this screen.">Screen displaying individual book information. Shows detailed information, reviews, and related books. Items can be added to cart from this screen.</span></span></span></span></td>
+  <td align="left"><a id="AuthenticatedState"></a><a href="#AuthenticatedState">AuthenticatedState</a></td>
+  <td align="left"><span style="white-space: normal;">認証済み状態</span></td>
+  <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#userId">userId</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#accessToken">accessToken</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#idToken">idToken</a><br><span class="type-indicator-small safe" title="Safe"></span><a href="#goCloudSignNimbus">goCloudSignNimbus</a><br><span class="type-indicator-small safe" title="Safe"></span><a href="#goCloudSignRevel">goCloudSignRevel</a><br><span class="type-indicator-small safe" title="Safe"></span><a href="#goCloudSignJp">goCloudSignJp</a><br><span class="type-indicator-small safe" title="Safe"></span><a href="#goNewProductA">goNewProductA</a><br><span class="type-indicator-small safe" title="Safe"></span><a href="#goCentral">goCentral</a><br><span class="type-indicator-small unsafe" title="Unsafe"></span><a href="#doRefreshToken">doRefreshToken</a><br><span class="type-indicator-small idempotent" title="Idempotent"></span><a href="#doLogout">doLogout</a></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-flow-auth">flow-auth</a></span></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">ユーザーが正常に認証され、アクセストークンを保持している状態。各プロダクトへアクセス可能。</span></span></span></span></td>
 </tr>
 <tr>
   <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
-  <td align="left"><a id="Catalog"></a><a href="#Catalog">Catalog</a></td>
-  <td align="left"><span style="white-space: normal;">Book Catalog</span></td>
-  <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#Book">Book</a><br><span class="type-indicator-small safe" title="Safe"></span><a href="#goListBooks">goListBooks</a><br><span class="type-indicator-small safe" title="Safe"></span><a href="#goSearchBooks">goSearchBooks</a><br><span class="type-indicator-small safe" title="Safe"></span><a href="#goGetCategories">goGetCategories</a><br><span class="type-indicator-small safe" title="Safe"></span><a href="#goBookDetails">goBookDetails</a><br><span class="type-indicator-small safe" title="Safe"></span><a href="#goToCart">goToCart</a></td>
-  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">def:</span><span class="meta-tag def-tag"><a href="https://schema.org/CollectionPage" target="_blank">schema.org/CollectionPage</a></span></span><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-catalog">catalog</a></span></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag clickable" data-full="Screen displaying all books. Provides category filtering, keyword search, and sorting functions. Default display is ordered by recent additions." title="Screen displaying all books. Provides category filtering, keyword search, and sorting functions. Default display is ordered by recent additions.">Screen displaying all books. Provides category filtering, keyword search, and sorting functions. Default display is ordered by recent additions.</span></span></span></span></td>
+  <td align="left"><a id="AuthenticationInProgress"></a><a href="#AuthenticationInProgress">AuthenticationInProgress</a></td>
+  <td align="left"><span style="white-space: normal;">認証処理中</span></td>
+  <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#username">username</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#sessionId">sessionId</a><br><span class="type-indicator-small safe" title="Safe"></span><a href="#goAuthorizationCallback">goAuthorizationCallback</a><br><span class="type-indicator-small safe" title="Safe"></span><a href="#goLoginForm">goLoginForm</a></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-auth">auth</a></span> <span class="meta-tag tag-tag"><a href="#tag-flow-auth">flow-auth</a></span></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">認証サーバーがユーザーのクレデンシャルを検証している状態。</span></span></span></span></td>
 </tr>
 <tr>
   <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
-  <td align="left"><a id="Category"></a><a href="#Category">Category</a></td>
-  <td align="left"><span style="white-space: normal;">Category</span></td>
-  <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#id">id</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#title">title</a></td>
-  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">def:</span><span class="meta-tag def-tag"><a href="https://schema.org/Category" target="_blank">schema.org/Category</a></span></span><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-catalog">catalog</a></span></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">Book genre classification. May have a hierarchical structure with parent and child categories.</span></span></span></span></td>
+  <td align="left"><a id="AuthorizationCallback"></a><a href="#AuthorizationCallback">AuthorizationCallback</a></td>
+  <td align="left"><span style="white-space: normal;">認可コールバック</span></td>
+  <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#authorizationCode">authorizationCode</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#state">state</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#redirectUri">redirectUri</a><br><span class="type-indicator-small unsafe" title="Unsafe"></span><a href="#doExchangeToken">doExchangeToken</a></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-flow-auth">flow-auth</a></span></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">認証成功後、認可コードとともにクライアントアプリケーションへリダイレクトされる。</span></span></span></span></td>
 </tr>
 <tr>
   <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
-  <td align="left"><a id="category"></a><a href="#category">category</a></td>
-  <td align="left"><span style="white-space: normal;">Category</span></td>
+  <td align="left"><a id="authorizationCode"></a><a href="#authorizationCode">authorizationCode</a></td>
+  <td align="left"><span style="white-space: normal;">Authorization Code</span></td>
   <td align="left"></td>
-  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">def:</span><span class="meta-tag def-tag"><a href="https://schema.org/category" target="_blank">schema.org/category</a></span></span><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-catalog">catalog</a></span></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">Genre or category of the book. Books may belong to multiple categories.</span></span></span></span></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">OAuth2.0認可コード</span></span></span></span></td>
 </tr>
 <tr>
   <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
-  <td align="left"><a id="Checkout"></a><a href="#Checkout">Checkout</a></td>
-  <td align="left"><span style="white-space: normal;">Checkout Screen</span></td>
-  <td align="left"><span class="type-indicator-small safe" title="Safe"></span><a href="#goToPayment">goToPayment</a><br><span class="type-indicator-small safe" title="Safe"></span><a href="#goToCart">goToCart</a><br><span class="type-indicator-small unsafe" title="Unsafe"></span><a href="#doUserInfo">doUserInfo</a><br><span class="type-indicator-small unsafe" title="Unsafe"></span><a href="#doShippingInfo">doShippingInfo</a></td>
-  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-checkout">checkout</a></span></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag clickable" data-full="Purchase procedure screen. Input user information, delivery destination, and proceed to payment. Displays final confirmation before order is placed." title="Purchase procedure screen. Input user information, delivery destination, and proceed to payment. Displays final confirmation before order is placed.">Purchase procedure screen. Input user information, delivery destination, and proceed to payment. Displays final confirmation before order is placed.</span></span></span></span></td>
+  <td align="left"><a id="AuthorizationRequest"></a><a href="#AuthorizationRequest">AuthorizationRequest</a></td>
+  <td align="left"><span style="white-space: normal;">認可リクエスト</span></td>
+  <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#clientId">clientId</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#redirectUri">redirectUri</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#state">state</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#scope">scope</a><br><span class="type-indicator-small safe" title="Safe"></span><a href="#goLoginForm">goLoginForm</a><br><span class="type-indicator-small safe" title="Safe"></span><a href="#goConsentForm">goConsentForm</a></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-flow-auth">flow-auth</a></span></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">OIDCプロバイダー（Ory/Hydra）への認可リクエスト。クライアントアプリケーションからauth.cloudsign.jpへリダイレクトされる。</span></span></span></span></td>
+</tr>
+<tr>
+  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="left"><a id="Central"></a><a href="#Central">Central</a></td>
+  <td align="left"><span style="white-space: normal;">Central</span></td>
+  <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#userId">userId</a><br><span class="type-indicator-small safe" title="Safe"></span><a href="#goAuthenticatedState">goAuthenticatedState</a></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-product">product</a></span></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">中央管理システム。CloudSign DBへアクセスする。</span></span></span></span></td>
+</tr>
+<tr>
+  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="left"><a id="clientId"></a><a href="#clientId">clientId</a></td>
+  <td align="left"><span style="white-space: normal;">Client ID</span></td>
+  <td align="left"></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">OAuthクライアント識別子</span></span></span></span></td>
+</tr>
+<tr>
+  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="left"><a id="CloudSignJp"></a><a href="#CloudSignJp">CloudSignJp</a></td>
+  <td align="left"><span style="white-space: normal;">cloudsign.jp</span></td>
+  <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#userId">userId</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#productName">productName</a><br><span class="type-indicator-small safe" title="Safe"></span><a href="#goAuthenticatedState">goAuthenticatedState</a></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-product">product</a></span></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">cloudsign.jpのメインサイト。</span></span></span></span></td>
+</tr>
+<tr>
+  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="left"><a id="CloudSignNimbus"></a><a href="#CloudSignNimbus">CloudSignNimbus</a></td>
+  <td align="left"><span style="white-space: normal;">CloudSign (Nimbus)</span></td>
+  <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#userId">userId</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#productName">productName</a><br><span class="type-indicator-small safe" title="Safe"></span><a href="#goAuthenticatedState">goAuthenticatedState</a></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-product">product</a></span></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">CloudSign Nimbusプロダクトのホーム画面。</span></span></span></span></td>
+</tr>
+<tr>
+  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="left"><a id="CloudSignRevel"></a><a href="#CloudSignRevel">CloudSignRevel</a></td>
+  <td align="left"><span style="white-space: normal;">CloudSign (Revel)</span></td>
+  <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#userId">userId</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#productName">productName</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#sessionId">sessionId</a><br><span class="type-indicator-small safe" title="Safe"></span><a href="#goAuthenticatedState">goAuthenticatedState</a></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-product">product</a></span></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">CloudSign Revelプロダクトのホーム画面。認証基盤との連携やリダイレクト処理を行う。</span></span></span></span></td>
+</tr>
+<tr>
+  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="left"><a id="ConsentForm"></a><a href="#ConsentForm">ConsentForm</a></td>
+  <td align="left"><span style="white-space: normal;">同意確認フォーム</span></td>
+  <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#clientId">clientId</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#scope">scope</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#consentRequired">consentRequired</a><br><span class="type-indicator-small unsafe" title="Unsafe"></span><a href="#doGrantConsent">doGrantConsent</a><br><span class="type-indicator-small unsafe" title="Unsafe"></span><a href="#doDenyConsent">doDenyConsent</a></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-auth">auth</a></span> <span class="meta-tag tag-tag"><a href="#tag-flow-auth">flow-auth</a></span></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">アプリケーションへの権限付与に対するユーザーの同意を確認するフォーム。</span></span></span></span></td>
+</tr>
+<tr>
+  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="left"><a id="consentRequired"></a><a href="#consentRequired">consentRequired</a></td>
+  <td align="left"><span style="white-space: normal;">Consent Required</span></td>
+  <td align="left"></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">ユーザー同意が必要かどうか</span></span></span></span></td>
 </tr>
 <tr>
   <td align="center"><span class="legend"><span class="legend-icon unsafe"></span></span></td>
-  <td align="left"><a id="doAddToCart"></a><a href="#doAddToCart">doAddToCart</a></td>
-  <td align="left"><span style="white-space: normal;">Add to Cart</span></td>
-  <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#id">id</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#quantity">quantity</a></td>
-  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-cart">cart</a></span></span></span><span class="meta-item"><span class="meta-label">rel:</span><span class="meta-tag rel-tag">collection</span></span><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#ShoppingCart">ShoppingCart</a></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">Add the specified book to the shopping cart. If already in the cart, quantity is increased. Orders exceeding stock will result in an error.</span></span></span></span></td>
+  <td align="left"><a id="doDenyConsent"></a><a href="#doDenyConsent">doDenyConsent</a></td>
+  <td align="left"><span style="white-space: normal;">同意を拒否</span></td>
+  <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#clientId">clientId</a></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-auth">auth</a></span> <span class="meta-tag tag-tag"><a href="#tag-flow-auth">flow-auth</a></span></span></span><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#ErrorState">ErrorState</a></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">アプリケーションへの権限付与を拒否する。</span></span></span></span></td>
 </tr>
 <tr>
   <td align="center"><span class="legend"><span class="legend-icon unsafe"></span></span></td>
-  <td align="left"><a id="doPaymentInfo"></a><a href="#doPaymentInfo">doPaymentInfo</a></td>
-  <td align="left"><span style="white-space: normal;">Input Payment Information</span></td>
-  <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#paymentMethod">paymentMethod</a></td>
-  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-payment">payment</a></span></span></span><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#Payment">Payment</a></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">Select order payment method and input necessary payment information. When credit card is selected, card information is input and validated.</span></span></span></span></td>
+  <td align="left"><a id="doExchangeToken"></a><a href="#doExchangeToken">doExchangeToken</a></td>
+  <td align="left"><span style="white-space: normal;">トークン交換実行</span></td>
+  <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#authorizationCode">authorizationCode</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#clientId">clientId</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#redirectUri">redirectUri</a></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-flow-auth">flow-auth</a></span></span></span><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#TokenExchange">TokenExchange</a></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">認可コードをアクセストークンとIDトークンに交換する。Ory/Hydraのトークンエンドポイントを呼び出す。</span></span></span></span></td>
 </tr>
 <tr>
   <td align="center"><span class="legend"><span class="legend-icon unsafe"></span></span></td>
-  <td align="left"><a id="doPlaceOrder"></a><a href="#doPlaceOrder">doPlaceOrder</a></td>
-  <td align="left"><span style="white-space: normal;">Place Order</span></td>
-  <td align="left"></td>
-  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-order">order</a></span></span></span><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#Payment">Payment</a></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag clickable" data-full="Confirm order based on user input information, process payment, and display order confirmation details on the payment screen. Payment processing is executed, inventory is secured, and a confirmation email is sent. This operation cannot be reversed." title="Confirm order based on user input information, process payment, and display order confirmation details on the payment screen. Payment processing is executed, inventory is secured, and a confirmation email is sent. This operation cannot be reversed.">Confirm order based on user input information, process payment, and display order confirmation details on the payment screen. Payment processing is executed, inventory is secured, and a confirmation email is sent. This operation cannot be reversed.</span></span></span></span></td>
+  <td align="left"><a id="doGrantConsent"></a><a href="#doGrantConsent">doGrantConsent</a></td>
+  <td align="left"><span style="white-space: normal;">同意を許可</span></td>
+  <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#clientId">clientId</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#scope">scope</a></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-auth">auth</a></span> <span class="meta-tag tag-tag"><a href="#tag-flow-auth">flow-auth</a></span></span></span><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#AuthorizationCallback">AuthorizationCallback</a></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">アプリケーションへの権限付与に同意し、認可フローを続行する。</span></span></span></span></td>
+</tr>
+<tr>
+  <td align="center"><span class="legend"><span class="legend-icon unsafe"></span></span></td>
+  <td align="left"><a id="doLogin"></a><a href="#doLogin">doLogin</a></td>
+  <td align="left"><span style="white-space: normal;">ログイン実行</span></td>
+  <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#username">username</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#password">password</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#sessionId">sessionId</a></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-auth">auth</a></span> <span class="meta-tag tag-tag"><a href="#tag-flow-auth">flow-auth</a></span></span></span><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#AuthenticationInProgress">AuthenticationInProgress</a></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">ユーザー名とパスワードを使用してログインを実行する。認証サーバーがクレデンシャルを検証する。</span></span></span></span></td>
 </tr>
 <tr>
   <td align="center"><span class="legend"><span class="legend-icon idempotent"></span></span></td>
-  <td align="left"><a id="doRemoveFromCart"></a><a href="#doRemoveFromCart">doRemoveFromCart</a></td>
-  <td align="left"><span style="white-space: normal;">Remove Item from Cart</span></td>
-  <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#id">id</a></td>
-  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-cart">cart</a></span></span></span><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#ShoppingCart">ShoppingCart</a></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">Completely remove the specified item from the cart. If the item does not exist in the cart, no changes are made.</span></span></span></span></td>
+  <td align="left"><a id="doLogout"></a><a href="#doLogout">doLogout</a></td>
+  <td align="left"><span style="white-space: normal;">ログアウト</span></td>
+  <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#sessionId">sessionId</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#idToken">idToken</a></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-auth">auth</a></span> <span class="meta-tag tag-tag"><a href="#tag-flow-auth">flow-auth</a></span></span></span><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#UnauthenticatedState">UnauthenticatedState</a></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">現在の認証セッションを終了し、トークンを無効化する。</span></span></span></span></td>
 </tr>
 <tr>
   <td align="center"><span class="legend"><span class="legend-icon unsafe"></span></span></td>
-  <td align="left"><a id="doShippingInfo"></a><a href="#doShippingInfo">doShippingInfo</a></td>
-  <td align="left"><span style="white-space: normal;">Input Shipping Information</span></td>
-  <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#shippingAddress">shippingAddress</a></td>
-  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-shipping">shipping</a></span></span></span><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#Checkout">Checkout</a></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">Input product delivery address. Features automatic address input using postal code lookup.</span></span></span></span></td>
+  <td align="left"><a id="doRefreshToken"></a><a href="#doRefreshToken">doRefreshToken</a></td>
+  <td align="left"><span style="white-space: normal;">トークン更新</span></td>
+  <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#refreshToken">refreshToken</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#clientId">clientId</a></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-flow-auth">flow-auth</a></span></span></span><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#AuthenticatedState">AuthenticatedState</a></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">リフレッシュトークンを使用してアクセストークンを更新する。</span></span></span></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon idempotent"></span></span></td>
-  <td align="left"><a id="doUpdateQuantity"></a><a href="#doUpdateQuantity">doUpdateQuantity</a></td>
-  <td align="left"><span style="white-space: normal;">Update Cart Item Quantity</span></td>
-  <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#id">id</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#quantity">quantity</a></td>
-  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-cart">cart</a></span></span></span><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#ShoppingCart">ShoppingCart</a></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag clickable" data-full="Update the quantity of a specific product in the cart. Values less than or equal to 0 cannot be specified. Quantities exceeding stock will result in an error." title="Update the quantity of a specific product in the cart. Values less than or equal to 0 cannot be specified. Quantities exceeding stock will result in an error.">Update the quantity of a specific product in the cart. Values less than or equal to 0 cannot be specified. Quantities exceeding stock will result in an error.</span></span></span></span></td>
+  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="left"><a id="errorMessage"></a><a href="#errorMessage">errorMessage</a></td>
+  <td align="left"><span style="white-space: normal;">Error Message</span></td>
+  <td align="left"></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">エラーメッセージ</span></span></span></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon unsafe"></span></span></td>
-  <td align="left"><a id="doUserInfo"></a><a href="#doUserInfo">doUserInfo</a></td>
-  <td align="left"><span style="white-space: normal;">Input User Information</span></td>
-  <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#userName">userName</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#userEmail">userEmail</a></td>
-  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-customer">customer</a></span></span></span><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#Checkout">Checkout</a></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">Input customer&#039;s name and email address. Email address is validated using regular expressions.</span></span></span></span></td>
+  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="left"><a id="ErrorState"></a><a href="#ErrorState">ErrorState</a></td>
+  <td align="left"><span style="white-space: normal;">エラー状態</span></td>
+  <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#errorMessage">errorMessage</a><br><span class="type-indicator-small safe" title="Safe"></span><a href="#goLoginForm">goLoginForm</a><br><span class="type-indicator-small safe" title="Safe"></span><a href="#goUnauthenticatedState">goUnauthenticatedState</a></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-flow-auth">flow-auth</a></span></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">認証フローでエラーが発生した状態。</span></span></span></span></td>
 </tr>
 <tr>
   <td align="center"><span class="legend"><span class="legend-icon safe"></span></span></td>
-  <td align="left"><a id="goBookDetails"></a><a href="#goBookDetails">goBookDetails</a></td>
-  <td align="left"><span style="white-space: normal;">Get Book Details</span></td>
-  <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#id">id</a></td>
-  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-catalog">catalog</a></span></span></span><span class="meta-item"><span class="meta-label">rel:</span><span class="meta-tag rel-tag">item</span></span><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#Book">Book</a></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">Retrieve detailed information for a specific book based on the specified book ID. Includes stock status and related book information.</span></span></span></span></td>
+  <td align="left"><a id="goAuthenticatedState"></a><a href="#goAuthenticatedState">goAuthenticatedState</a></td>
+  <td align="left"><span style="white-space: normal;">認証済み状態へ遷移</span></td>
+  <td align="left"></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-flow-auth">flow-auth</a></span></span></span><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#AuthenticatedState">AuthenticatedState</a></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">トークン取得後、認証済み状態へ遷移する。</span></span></span></span></td>
 </tr>
 <tr>
   <td align="center"><span class="legend"><span class="legend-icon safe"></span></span></td>
-  <td align="left"><a id="goGetCategories"></a><a href="#goGetCategories">goGetCategories</a></td>
-  <td align="left"><span style="white-space: normal;">Get Category List</span></td>
-  <td align="left"></td>
-  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-catalog">catalog</a></span></span></span><span class="meta-item"><span class="meta-label">rel:</span><span class="meta-tag rel-tag">collection</span></span><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#Catalog">Catalog</a></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">Retrieve list of all available book categories. For hierarchical categories, parent-child relationships are also returned.</span></span></span></span></td>
+  <td align="left"><a id="goAuthorizationCallback"></a><a href="#goAuthorizationCallback">goAuthorizationCallback</a></td>
+  <td align="left"><span style="white-space: normal;">認可コールバックへ遷移</span></td>
+  <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#authorizationCode">authorizationCode</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#state">state</a></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-flow-auth">flow-auth</a></span></span></span><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#AuthorizationCallback">AuthorizationCallback</a></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">認証成功後、認可コードとともにクライアントへリダイレクトする。</span></span></span></span></td>
 </tr>
 <tr>
   <td align="center"><span class="legend"><span class="legend-icon safe"></span></span></td>
-  <td align="left"><a id="goListBooks"></a><a href="#goListBooks">goListBooks</a></td>
-  <td align="left"><span style="white-space: normal;">Get Book List</span></td>
-  <td align="left"></td>
-  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-catalog">catalog</a></span></span></span><span class="meta-item"><span class="meta-label">rel:</span><span class="meta-tag rel-tag">collection</span></span><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#Catalog">Catalog</a></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">Retrieve list of all books in the catalog. Can specify pagination (default 20 items/page) and sort order (newest, price, popularity, etc.).</span></span></span></span></td>
+  <td align="left"><a id="goAuthorizationRequest"></a><a href="#goAuthorizationRequest">goAuthorizationRequest</a></td>
+  <td align="left"><span style="white-space: normal;">認可リクエストへ遷移</span></td>
+  <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#clientId">clientId</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#redirectUri">redirectUri</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#state">state</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#scope">scope</a></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-auth">auth</a></span> <span class="meta-tag tag-tag"><a href="#tag-flow-auth">flow-auth</a></span></span></span><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#AuthorizationRequest">AuthorizationRequest</a></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">保護されたリソースへのアクセス時に、OIDCプロバイダーへ認可リクエストを送信する。</span></span></span></span></td>
 </tr>
 <tr>
   <td align="center"><span class="legend"><span class="legend-icon safe"></span></span></td>
-  <td align="left"><a id="goListCartItems"></a><a href="#goListCartItems">goListCartItems</a></td>
-  <td align="left"><span style="white-space: normal;">Get Cart Items List</span></td>
+  <td align="left"><a id="goCentral"></a><a href="#goCentral">goCentral</a></td>
+  <td align="left"><span style="white-space: normal;">Centralへ遷移</span></td>
   <td align="left"></td>
-  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-cart">cart</a></span></span></span><span class="meta-item"><span class="meta-label">rel:</span><span class="meta-tag rel-tag">collection</span></span><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#ShoppingCart">ShoppingCart</a></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">Retrieve all products in the current shopping cart, including their quantities, subtotals, and total amount.</span></span></span></span></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-product">product</a></span></span></span><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#Central">Central</a></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">中央管理システムへアクセスする。</span></span></span></span></td>
 </tr>
 <tr>
   <td align="center"><span class="legend"><span class="legend-icon safe"></span></span></td>
-  <td align="left"><a id="goOrderDetails"></a><a href="#goOrderDetails">goOrderDetails</a></td>
-  <td align="left"><span style="white-space: normal;">Display Order Details</span></td>
+  <td align="left"><a id="goCloudSignJp"></a><a href="#goCloudSignJp">goCloudSignJp</a></td>
+  <td align="left"><span style="white-space: normal;">cloudsign.jpへ遷移</span></td>
   <td align="left"></td>
-  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-order">order</a></span></span></span><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#Payment">Payment</a></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag clickable" data-full="Display detailed information for the confirmed order on the payment screen. Includes order number, list of purchased products, total amount, delivery destination, payment method, etc." title="Display detailed information for the confirmed order on the payment screen. Includes order number, list of purchased products, total amount, delivery destination, payment method, etc.">Display detailed information for the confirmed order on the payment screen. Includes order number, list of purchased products, total amount, delivery destination, payment method, etc.</span></span></span></span></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-product">product</a></span></span></span><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#CloudSignJp">CloudSignJp</a></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">cloudsign.jpへアクセスする。</span></span></span></span></td>
 </tr>
 <tr>
   <td align="center"><span class="legend"><span class="legend-icon safe"></span></span></td>
-  <td align="left"><a id="goSearchBooks"></a><a href="#goSearchBooks">goSearchBooks</a></td>
-  <td align="left"><span style="white-space: normal;">Search Books</span></td>
-  <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#query">query</a></td>
-  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-catalog">catalog</a></span></span></span><span class="meta-item"><span class="meta-label">rel:</span><span class="meta-tag rel-tag">collection</span></span><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#Catalog">Catalog</a></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag clickable" data-full="Search for books based on specified search query. Can search across multiple fields including title, author name, content description, ISBN, etc." title="Search for books based on specified search query. Can search across multiple fields including title, author name, content description, ISBN, etc.">Search for books based on specified search query. Can search across multiple fields including title, author name, content description, ISBN, etc.</span></span></span></span></td>
+  <td align="left"><a id="goCloudSignNimbus"></a><a href="#goCloudSignNimbus">goCloudSignNimbus</a></td>
+  <td align="left"><span style="white-space: normal;">CloudSign Nimbusへ遷移</span></td>
+  <td align="left"></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-product">product</a></span></span></span><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#CloudSignNimbus">CloudSignNimbus</a></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">CloudSign Nimbusプロダクトへアクセスする。</span></span></span></span></td>
 </tr>
 <tr>
   <td align="center"><span class="legend"><span class="legend-icon safe"></span></span></td>
-  <td align="left"><a id="goToCart"></a><a href="#goToCart">goToCart</a></td>
-  <td align="left"><span style="white-space: normal;">Go to Cart Screen</span></td>
+  <td align="left"><a id="goCloudSignRevel"></a><a href="#goCloudSignRevel">goCloudSignRevel</a></td>
+  <td align="left"><span style="white-space: normal;">CloudSign Revelへ遷移</span></td>
   <td align="left"></td>
-  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#ShoppingCart">ShoppingCart</a></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">Navigate to the screen displaying the contents of the current shopping cart.</span></span></span></span></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-product">product</a></span></span></span><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#CloudSignRevel">CloudSignRevel</a></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">CloudSign Revelプロダクトへアクセスする。</span></span></span></span></td>
 </tr>
 <tr>
   <td align="center"><span class="legend"><span class="legend-icon safe"></span></span></td>
-  <td align="left"><a id="goToCatalog"></a><a href="#goToCatalog">goToCatalog</a></td>
-  <td align="left"><span style="white-space: normal;">Go to Catalog Screen</span></td>
-  <td align="left"></td>
-  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#Catalog">Catalog</a></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">Navigate to the book catalog list screen. All books are displayed.</span></span></span></span></td>
+  <td align="left"><a id="goConsentForm"></a><a href="#goConsentForm">goConsentForm</a></td>
+  <td align="left"><span style="white-space: normal;">同意確認フォームへ遷移</span></td>
+  <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#clientId">clientId</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#scope">scope</a></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-auth">auth</a></span> <span class="meta-tag tag-tag"><a href="#tag-flow-auth">flow-auth</a></span></span></span><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#ConsentForm">ConsentForm</a></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">ユーザーの同意が必要な場合、同意確認フォームへ遷移する。</span></span></span></span></td>
 </tr>
 <tr>
   <td align="center"><span class="legend"><span class="legend-icon safe"></span></span></td>
-  <td align="left"><a id="goToCheckout"></a><a href="#goToCheckout">goToCheckout</a></td>
-  <td align="left"><span style="white-space: normal;">Go to Checkout Screen</span></td>
-  <td align="left"></td>
-  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#Checkout">Checkout</a></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">Navigate to the screen to confirm cart contents and proceed with purchase. Cannot transition if cart is empty.</span></span></span></span></td>
+  <td align="left"><a id="goLoginForm"></a><a href="#goLoginForm">goLoginForm</a></td>
+  <td align="left"><span style="white-space: normal;">ログインフォームへ遷移</span></td>
+  <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#sessionId">sessionId</a></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-auth">auth</a></span> <span class="meta-tag tag-tag"><a href="#tag-flow-auth">flow-auth</a></span></span></span><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#LoginForm">LoginForm</a></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">認証セッションが存在しない場合、ログインフォームへリダイレクトする。</span></span></span></span></td>
 </tr>
 <tr>
   <td align="center"><span class="legend"><span class="legend-icon safe"></span></span></td>
-  <td align="left"><a id="goToHome"></a><a href="#goToHome">goToHome</a></td>
-  <td align="left"><span style="white-space: normal;">Go to Home Screen</span></td>
+  <td align="left"><a id="goNewProductA"></a><a href="#goNewProductA">goNewProductA</a></td>
+  <td align="left"><span style="white-space: normal;">NewProductAへ遷移</span></td>
   <td align="left"></td>
-  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#Home">Home</a></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">Navigate to the application&#039;s home screen. Accessible from any screen.</span></span></span></span></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-product">product</a></span></span></span><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#NewProductA">NewProductA</a></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">新規プロダクトAへアクセスする。</span></span></span></span></td>
 </tr>
 <tr>
   <td align="center"><span class="legend"><span class="legend-icon safe"></span></span></td>
-  <td align="left"><a id="goToPayment"></a><a href="#goToPayment">goToPayment</a></td>
-  <td align="left"><span style="white-space: normal;">Go to Payment Screen</span></td>
+  <td align="left"><a id="goNewProductABFF"></a><a href="#goNewProductABFF">goNewProductABFF</a></td>
+  <td align="left"><span style="white-space: normal;">NewProductA BFFへ遷移</span></td>
   <td align="left"></td>
-  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#Payment">Payment</a></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">Navigate to the payment screen to input payment information and complete the order.</span></span></span></span></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-product">product</a></span></span></span><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#NewProductABFF">NewProductABFF</a></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">NewProductAのBFFへアクセスする。</span></span></span></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
-  <td align="left"><a id="Home"></a><a href="#Home">Home</a></td>
-  <td align="left"><span style="white-space: normal;">Home Screen</span></td>
-  <td align="left"><span class="type-indicator-small safe" title="Safe"></span><a href="#goToCatalog">goToCatalog</a><br><span class="type-indicator-small safe" title="Safe"></span><a href="#goToCart">goToCart</a></td>
-  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-navigation">navigation</a></span></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">Starting point of the application. Displays site-wide navigation and promotional information.</span></span></span></span></td>
-</tr>
-<tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
-  <td align="left"><a id="id"></a><a href="#id">id</a></td>
-  <td align="left"><span style="white-space: normal;">Identifier</span></td>
+  <td align="center"><span class="legend"><span class="legend-icon safe"></span></span></td>
+  <td align="left"><a id="goNewProductAInternal"></a><a href="#goNewProductAInternal">goNewProductAInternal</a></td>
+  <td align="left"><span style="white-space: normal;">NewProductA Internalへ遷移</span></td>
   <td align="left"></td>
-  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">def:</span><span class="meta-tag def-tag"><a href="https://schema.org/identifier" target="_blank">schema.org/identifier</a></span></span><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-core">core</a></span></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">Unique identifier for each resource. UUID or auto-generated integer.</span></span></span></span></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-product">product</a></span></span></span><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#NewProductAInternal">NewProductAInternal</a></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">NewProductAの内部APIへアクセスする。</span></span></span></span></td>
 </tr>
 <tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
-  <td align="left"><a id="isbn"></a><a href="#isbn">isbn</a></td>
-  <td align="left"><span style="white-space: normal;">ISBN</span></td>
+  <td align="center"><span class="legend"><span class="legend-icon safe"></span></span></td>
+  <td align="left"><a id="goUnauthenticatedState"></a><a href="#goUnauthenticatedState">goUnauthenticatedState</a></td>
+  <td align="left"><span style="white-space: normal;">未認証状態へ戻る</span></td>
   <td align="left"></td>
-  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">def:</span><span class="meta-tag def-tag"><a href="https://schema.org/isbn" target="_blank">schema.org/isbn</a></span></span><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-catalog">catalog</a></span></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">International Standard Book Number. Formatted as ISBN-13 with hyphens.</span></span></span></span></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-flow-auth">flow-auth</a></span></span></span><span class="meta-item"><span class="meta-label">rt:</span><span class="meta-tag rt-tag"><a href="#UnauthenticatedState">UnauthenticatedState</a></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">ログインキャンセルやエラー時に未認証状態へ戻る。</span></span></span></span></td>
 </tr>
 <tr>
   <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
-  <td align="left"><a id="Payment"></a><a href="#Payment">Payment</a></td>
-  <td align="left"><span style="white-space: normal;">Payment Screen</span></td>
-  <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#paymentMethod">paymentMethod</a><br><span class="type-indicator-small safe" title="Safe"></span><a href="#goOrderDetails">goOrderDetails</a><br><span class="type-indicator-small safe" title="Safe"></span><a href="#goToHome">goToHome</a><br><span class="type-indicator-small safe" title="Safe"></span><a href="#goToCart">goToCart</a><br><span class="type-indicator-small unsafe" title="Unsafe"></span><a href="#doPaymentInfo">doPaymentInfo</a><br><span class="type-indicator-small unsafe" title="Unsafe"></span><a href="#doPlaceOrder">doPlaceOrder</a></td>
-  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-payment">payment</a></span></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag clickable" data-full="Screen for entering payment information, confirming the order, and displaying order completion details. Handles payment method selection, payment validation, order placement, and shows order number, total amount, and estimated delivery date upon completion. A confirmation email is sent automatically." title="Screen for entering payment information, confirming the order, and displaying order completion details. Handles payment method selection, payment validation, order placement, and shows order number, total amount, and estimated delivery date upon completion. A confirmation email is sent automatically.">Screen for entering payment information, confirming the order, and displaying order completion details. Handles payment method selection, payment validation, order placement, and shows order number, total amount, and estimated delivery date upon completion. A confirmation email is sent automatically.</span></span></span></span></td>
-</tr>
-<tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
-  <td align="left"><a id="paymentMethod"></a><a href="#paymentMethod">paymentMethod</a></td>
-  <td align="left"><span style="white-space: normal;">Payment Method</span></td>
+  <td align="left"><a id="idToken"></a><a href="#idToken">idToken</a></td>
+  <td align="left"><span style="white-space: normal;">ID Token</span></td>
   <td align="left"></td>
-  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">def:</span><span class="meta-tag def-tag"><a href="https://schema.org/paymentMethod" target="_blank">schema.org/paymentMethod</a></span></span><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-payment">payment</a></span></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">Method of payment for the order. Options include credit card, cash on delivery, bank transfer, etc.</span></span></span></span></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">OIDC ID Token（ユーザー情報を含む）</span></span></span></span></td>
 </tr>
 <tr>
   <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
-  <td align="left"><a id="price"></a><a href="#price">price</a></td>
-  <td align="left"><span style="white-space: normal;">Price</span></td>
+  <td align="left"><a id="LoginForm"></a><a href="#LoginForm">LoginForm</a></td>
+  <td align="left"><span style="white-space: normal;">ログインフォーム</span></td>
+  <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#username">username</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#password">password</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#sessionId">sessionId</a><br><span class="type-indicator-small safe" title="Safe"></span><a href="#goUnauthenticatedState">goUnauthenticatedState</a><br><span class="type-indicator-small unsafe" title="Unsafe"></span><a href="#doLogin">doLogin</a></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-auth">auth</a></span> <span class="meta-tag tag-tag"><a href="#tag-flow-auth">flow-auth</a></span></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">認証サーバーが提供するログインフォーム。ユーザー名とパスワードの入力を受け付ける。</span></span></span></span></td>
+</tr>
+<tr>
+  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="left"><a id="NewProductA"></a><a href="#NewProductA">NewProductA</a></td>
+  <td align="left"><span style="white-space: normal;">NewProductA</span></td>
+  <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#userId">userId</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#productName">productName</a><br><span class="type-indicator-small safe" title="Safe"></span><a href="#goNewProductABFF">goNewProductABFF</a><br><span class="type-indicator-small safe" title="Safe"></span><a href="#goAuthenticatedState">goAuthenticatedState</a></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-product">product</a></span></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">新規プロダクトAのメイン画面。BFFとinternalサービスを経由してデータにアクセスする。</span></span></span></span></td>
+</tr>
+<tr>
+  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="left"><a id="NewProductABFF"></a><a href="#NewProductABFF">NewProductABFF</a></td>
+  <td align="left"><span style="white-space: normal;">NewProductA BFF</span></td>
+  <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#userId">userId</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#accessToken">accessToken</a><br><span class="type-indicator-small safe" title="Safe"></span><a href="#goNewProductAInternal">goNewProductAInternal</a></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-product">product</a></span></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">NewProductA用のBackend For Frontend。クライアントとバックエンドサービスの仲介を行う。</span></span></span></span></td>
+</tr>
+<tr>
+  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="left"><a id="NewProductAInternal"></a><a href="#NewProductAInternal">NewProductAInternal</a></td>
+  <td align="left"><span style="white-space: normal;">NewProductA Internal</span></td>
+  <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#userId">userId</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#accessToken">accessToken</a></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-product">product</a></span></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">NewProductAの内部APIサービス。</span></span></span></span></td>
+</tr>
+<tr>
+  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="left"><a id="password"></a><a href="#password">password</a></td>
+  <td align="left"><span style="white-space: normal;">Password</span></td>
   <td align="left"></td>
-  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">def:</span><span class="meta-tag def-tag"><a href="https://schema.org/price" target="_blank">schema.org/price</a></span></span><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-commerce">commerce</a></span></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">Sales price of the book. Pre-tax amount in JPY currency.</span></span></span></span></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">ユーザーのパスワード</span></span></span></span></td>
 </tr>
 <tr>
   <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
-  <td align="left"><a id="quantity"></a><a href="#quantity">quantity</a></td>
-  <td align="left"><span style="white-space: normal;">Quantity</span></td>
+  <td align="left"><a id="productName"></a><a href="#productName">productName</a></td>
+  <td align="left"><span style="white-space: normal;">Product Name</span></td>
   <td align="left"></td>
-  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">def:</span><span class="meta-tag def-tag"><a href="https://schema.org/quantityValue" target="_blank">schema.org/quantityValue</a></span></span><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-commerce">commerce</a></span></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">Quantity of books in the cart. Integer value greater than or equal to 1.</span></span></span></span></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">製品名（CloudSign, NewProductA等）</span></span></span></span></td>
 </tr>
 <tr>
   <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
-  <td align="left"><a id="query"></a><a href="#query">query</a></td>
-  <td align="left"><span style="white-space: normal;">Search Query</span></td>
+  <td align="left"><a id="redirectUri"></a><a href="#redirectUri">redirectUri</a></td>
+  <td align="left"><span style="white-space: normal;">Redirect URI</span></td>
   <td align="left"></td>
-  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-catalog">catalog</a></span></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">Keywords or conditions used for book searches. Can search by title, author name, ISBN, etc.</span></span></span></span></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">def:</span><span class="meta-tag def-tag"><a href="https://schema.org/url" target="_blank">schema.org/url</a></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">認証後のリダイレクト先URI</span></span></span></span></td>
 </tr>
 <tr>
   <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
-  <td align="left"><a id="shippingAddress"></a><a href="#shippingAddress">shippingAddress</a></td>
-  <td align="left"><span style="white-space: normal;">Shipping Address</span></td>
+  <td align="left"><a id="refreshToken"></a><a href="#refreshToken">refreshToken</a></td>
+  <td align="left"><span style="white-space: normal;">Refresh Token</span></td>
   <td align="left"></td>
-  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">def:</span><span class="meta-tag def-tag"><a href="https://schema.org/address" target="_blank">schema.org/address</a></span></span><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-shipping">shipping</a></span></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">Delivery address for products. Includes postal code, prefecture, city, street address, and building name.</span></span></span></span></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">アクセストークン更新用のリフレッシュトークン</span></span></span></span></td>
 </tr>
 <tr>
   <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
-  <td align="left"><a id="ShoppingCart"></a><a href="#ShoppingCart">ShoppingCart</a></td>
-  <td align="left"><span style="white-space: normal;">Shopping Cart</span></td>
-  <td align="left"><span class="type-indicator-small safe" title="Safe"></span><a href="#goListCartItems">goListCartItems</a><br><span class="type-indicator-small safe" title="Safe"></span><a href="#goToCheckout">goToCheckout</a><br><span class="type-indicator-small safe" title="Safe"></span><a href="#goToCatalog">goToCatalog</a><br><span class="type-indicator-small idempotent" title="Idempotent"></span><a href="#doUpdateQuantity">doUpdateQuantity</a><br><span class="type-indicator-small idempotent" title="Idempotent"></span><a href="#doRemoveFromCart">doRemoveFromCart</a></td>
-  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">def:</span><span class="meta-tag def-tag"><a href="https://schema.org/ShoppingCart" target="_blank">schema.org/ShoppingCart</a></span></span><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-cart">cart</a></span></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag clickable" data-full="Cart containing books the user intends to purchase. Allows quantity changes, deletion, and total amount confirmation. Managed on a session basis." title="Cart containing books the user intends to purchase. Allows quantity changes, deletion, and total amount confirmation. Managed on a session basis.">Cart containing books the user intends to purchase. Allows quantity changes, deletion, and total amount confirmation. Managed on a session basis.</span></span></span></span></td>
-</tr>
-<tr>
-  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
-  <td align="left"><a id="title"></a><a href="#title">title</a></td>
-  <td align="left"><span style="white-space: normal;">Title</span></td>
+  <td align="left"><a id="scope"></a><a href="#scope">scope</a></td>
+  <td align="left"><span style="white-space: normal;">Scope</span></td>
   <td align="left"></td>
-  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">def:</span><span class="meta-tag def-tag"><a href="https://schema.org/name" target="_blank">schema.org/name</a></span></span><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-catalog">catalog</a></span></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">Title of book or category name. String with a maximum of 200 characters.</span></span></span></span></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">要求するアクセス権限のスコープ</span></span></span></span></td>
 </tr>
 <tr>
   <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
-  <td align="left"><a id="totalAmount"></a><a href="#totalAmount">totalAmount</a></td>
-  <td align="left"><span style="white-space: normal;">Total Amount</span></td>
+  <td align="left"><a id="sessionId"></a><a href="#sessionId">sessionId</a></td>
+  <td align="left"><span style="white-space: normal;">Session ID</span></td>
   <td align="left"></td>
-  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">def:</span><span class="meta-tag def-tag"><a href="https://schema.org/totalPrice" target="_blank">schema.org/totalPrice</a></span></span><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-commerce">commerce</a></span></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">Total amount for an order or cart contents. Displayed with tax included.</span></span></span></span></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">認証セッションの識別子</span></span></span></span></td>
 </tr>
 <tr>
   <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
-  <td align="left"><a id="userEmail"></a><a href="#userEmail">userEmail</a></td>
-  <td align="left"><span style="white-space: normal;">Email Address</span></td>
+  <td align="left"><a id="state"></a><a href="#state">state</a></td>
+  <td align="left"><span style="white-space: normal;">State Parameter</span></td>
   <td align="left"></td>
-  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">def:</span><span class="meta-tag def-tag"><a href="https://schema.org/email" target="_blank">schema.org/email</a></span></span><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-customer">customer</a></span></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">Customer&#039;s contact email address. Used for sending order confirmation emails.</span></span></span></span></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">CSRF対策用のステートパラメータ</span></span></span></span></td>
 </tr>
 <tr>
   <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
-  <td align="left"><a id="userName"></a><a href="#userName">userName</a></td>
-  <td align="left"><span style="white-space: normal;">User Name</span></td>
+  <td align="left"><a id="TokenExchange"></a><a href="#TokenExchange">TokenExchange</a></td>
+  <td align="left"><span style="white-space: normal;">トークン交換</span></td>
+  <td align="left"><span class="type-indicator-small semantic" title="Semantic"></span><a href="#authorizationCode">authorizationCode</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#clientId">clientId</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#accessToken">accessToken</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#idToken">idToken</a><br><span class="type-indicator-small semantic" title="Semantic"></span><a href="#refreshToken">refreshToken</a><br><span class="type-indicator-small safe" title="Safe"></span><a href="#goAuthenticatedState">goAuthenticatedState</a></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-flow-auth">flow-auth</a></span></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">認可コードをアクセストークンとIDトークンに交換する処理。</span></span></span></span></td>
+</tr>
+<tr>
+  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="left"><a id="UnauthenticatedState"></a><a href="#UnauthenticatedState">UnauthenticatedState</a></td>
+  <td align="left"><span style="white-space: normal;">未認証状態</span></td>
+  <td align="left"><span class="type-indicator-small safe" title="Safe"></span><a href="#goAuthorizationRequest">goAuthorizationRequest</a></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-flow-auth">flow-auth</a></span></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">ユーザーが未認証の初期状態。保護されたリソースへのアクセスを試みると認証フローが開始される。</span></span></span></span></td>
+</tr>
+<tr>
+  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="left"><a id="userId"></a><a href="#userId">userId</a></td>
+  <td align="left"><span style="white-space: normal;">User ID</span></td>
   <td align="left"></td>
-  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">def:</span><span class="meta-tag def-tag"><a href="https://schema.org/name" target="_blank">schema.org/name</a></span></span><span class="meta-item"><span class="meta-label">tag:</span><span class="meta-values"><span class="meta-tag tag-tag"><a href="#tag-customer">customer</a></span></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">Name of the customer. First and last name separated by a space.</span></span></span></span></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">def:</span><span class="meta-tag def-tag"><a href="https://schema.org/identifier" target="_blank">schema.org/identifier</a></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">ユーザーの一意な識別子</span></span></span></span></td>
+</tr>
+<tr>
+  <td align="center"><span class="legend"><span class="legend-icon semantic"></span></span></td>
+  <td align="left"><a id="username"></a><a href="#username">username</a></td>
+  <td align="left"><span style="white-space: normal;">Username</span></td>
+  <td align="left"></td>
+  <td align="left"><span style="white-space: normal;"><span class="meta-container"><span class="meta-item"><span class="meta-label">def:</span><span class="meta-tag def-tag"><a href="https://schema.org/name" target="_blank">schema.org/name</a></span></span><span class="meta-item"><span class="meta-label">doc:</span><span class="meta-tag doc-tag">ログイン用のユーザー名またはメールアドレス</span></span></span></span></td>
 </tr>
 </tbody>
 </table>
-
-<h2>Links</h2>
-
-<ul>
-<li><a rel="issue" href="https://github.com/example/online-bookstore-api/issues">issue</a></li>
-</ul>
 
 <hr />
 
 <h2>Profile</h2>
 
-<pre><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
-&lt;alps version=&quot;1.0&quot;
-        xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
-        xsi:noNamespaceSchemaLocation=&quot;https://alps-io.github.io/schemas/alps.xsd&quot;&gt;
-    &lt;title&gt;ALPS Book Store&lt;/title&gt;
-    &lt;doc&gt;ALPS profile for managing an online bookstore catalog and defining the user purchase flow. This profile provides semantic definitions for both RESTful APIs and UI.&lt;/doc&gt;
-    &lt;link href=&quot;https://github.com/example/online-bookstore-api/issues&quot; rel=&quot;issue&quot;/&gt;
+<pre><code>{
+  &quot;$schema&quot;: &quot;https://alps-io.github.io/schemas/alps.json&quot;,
+  &quot;alps&quot;: {
+    &quot;title&quot;: &quot;OIDC Login System for CloudSign Products&quot;,
+    &quot;doc&quot;: {&quot;value&quot;: &quot;新規プロダクトでのログインをOIDCにするシステム。Ory/Hydraを使用したOAuth2.0/OIDC認証基盤により、CloudSign製品群と新規プロダクトの統合認証を実現する。&quot;},
+    &quot;descriptor&quot;: [
+      {&quot;id&quot;: &quot;userId&quot;, &quot;title&quot;: &quot;User ID&quot;, &quot;def&quot;: &quot;https://schema.org/identifier&quot;, &quot;doc&quot;: {&quot;value&quot;: &quot;ユーザーの一意な識別子&quot;}},
+      {&quot;id&quot;: &quot;username&quot;, &quot;title&quot;: &quot;Username&quot;, &quot;def&quot;: &quot;https://schema.org/name&quot;, &quot;doc&quot;: {&quot;value&quot;: &quot;ログイン用のユーザー名またはメールアドレス&quot;}},
+      {&quot;id&quot;: &quot;password&quot;, &quot;title&quot;: &quot;Password&quot;, &quot;doc&quot;: {&quot;value&quot;: &quot;ユーザーのパスワード&quot;}},
+      {&quot;id&quot;: &quot;authorizationCode&quot;, &quot;title&quot;: &quot;Authorization Code&quot;, &quot;doc&quot;: {&quot;value&quot;: &quot;OAuth2.0認可コード&quot;}},
+      {&quot;id&quot;: &quot;accessToken&quot;, &quot;title&quot;: &quot;Access Token&quot;, &quot;doc&quot;: {&quot;value&quot;: &quot;リソースアクセス用のアクセストークン&quot;}},
+      {&quot;id&quot;: &quot;idToken&quot;, &quot;title&quot;: &quot;ID Token&quot;, &quot;doc&quot;: {&quot;value&quot;: &quot;OIDC ID Token（ユーザー情報を含む）&quot;}},
+      {&quot;id&quot;: &quot;refreshToken&quot;, &quot;title&quot;: &quot;Refresh Token&quot;, &quot;doc&quot;: {&quot;value&quot;: &quot;アクセストークン更新用のリフレッシュトークン&quot;}},
+      {&quot;id&quot;: &quot;clientId&quot;, &quot;title&quot;: &quot;Client ID&quot;, &quot;doc&quot;: {&quot;value&quot;: &quot;OAuthクライアント識別子&quot;}},
+      {&quot;id&quot;: &quot;redirectUri&quot;, &quot;title&quot;: &quot;Redirect URI&quot;, &quot;def&quot;: &quot;https://schema.org/url&quot;, &quot;doc&quot;: {&quot;value&quot;: &quot;認証後のリダイレクト先URI&quot;}},
+      {&quot;id&quot;: &quot;sessionId&quot;, &quot;title&quot;: &quot;Session ID&quot;, &quot;doc&quot;: {&quot;value&quot;: &quot;認証セッションの識別子&quot;}},
+      {&quot;id&quot;: &quot;state&quot;, &quot;title&quot;: &quot;State Parameter&quot;, &quot;doc&quot;: {&quot;value&quot;: &quot;CSRF対策用のステートパラメータ&quot;}},
+      {&quot;id&quot;: &quot;scope&quot;, &quot;title&quot;: &quot;Scope&quot;, &quot;doc&quot;: {&quot;value&quot;: &quot;要求するアクセス権限のスコープ&quot;}},
+      {&quot;id&quot;: &quot;errorMessage&quot;, &quot;title&quot;: &quot;Error Message&quot;, &quot;doc&quot;: {&quot;value&quot;: &quot;エラーメッセージ&quot;}},
+      {&quot;id&quot;: &quot;productName&quot;, &quot;title&quot;: &quot;Product Name&quot;, &quot;doc&quot;: {&quot;value&quot;: &quot;製品名（CloudSign, NewProductA等）&quot;}},
+      {&quot;id&quot;: &quot;consentRequired&quot;, &quot;title&quot;: &quot;Consent Required&quot;, &quot;doc&quot;: {&quot;value&quot;: &quot;ユーザー同意が必要かどうか&quot;}},
 
-    &lt;!-- Ontology (既存の記述はそのまま、変更なし) --&gt;
-    &lt;descriptor id=&quot;id&quot; def=&quot;https://schema.org/identifier&quot; title=&quot;Identifier&quot; tag=&quot;core&quot;&gt;
-        &lt;doc&gt;Unique identifier for each resource. UUID or auto-generated integer.&lt;/doc&gt;
-    &lt;/descriptor&gt;
-    &lt;descriptor id=&quot;title&quot; def=&quot;https://schema.org/name&quot; title=&quot;Title&quot; tag=&quot;catalog&quot;&gt;
-        &lt;doc&gt;Title of book or category name. String with a maximum of 200 characters.&lt;/doc&gt;
-    &lt;/descriptor&gt;
-    &lt;descriptor id=&quot;author&quot; def=&quot;https://schema.org/author&quot; title=&quot;Author&quot; tag=&quot;catalog&quot;&gt;
-        &lt;doc&gt;Name of the book&#039;s author. For multiple authors, names are comma-separated.&lt;/doc&gt;
-    &lt;/descriptor&gt;
-    &lt;descriptor id=&quot;isbn&quot; def=&quot;https://schema.org/isbn&quot; title=&quot;ISBN&quot; tag=&quot;catalog&quot;&gt;
-        &lt;doc&gt;International Standard Book Number. Formatted as ISBN-13 with hyphens.&lt;/doc&gt;
-    &lt;/descriptor&gt;
-    &lt;descriptor id=&quot;price&quot; def=&quot;https://schema.org/price&quot; title=&quot;Price&quot; tag=&quot;commerce&quot;&gt;
-        &lt;doc&gt;Sales price of the book. Pre-tax amount in JPY currency.&lt;/doc&gt;
-    &lt;/descriptor&gt;
-    &lt;descriptor id=&quot;category&quot; def=&quot;https://schema.org/category&quot; title=&quot;Category&quot; tag=&quot;catalog&quot;&gt;
-        &lt;doc&gt;Genre or category of the book. Books may belong to multiple categories.&lt;/doc&gt;
-    &lt;/descriptor&gt;
-    &lt;descriptor id=&quot;quantity&quot; def=&quot;https://schema.org/quantityValue&quot; title=&quot;Quantity&quot; tag=&quot;commerce&quot;&gt;
-        &lt;doc&gt;Quantity of books in the cart. Integer value greater than or equal to 1.&lt;/doc&gt;
-    &lt;/descriptor&gt;
-    &lt;descriptor id=&quot;totalAmount&quot; def=&quot;https://schema.org/totalPrice&quot; title=&quot;Total Amount&quot; tag=&quot;commerce&quot;&gt;
-        &lt;doc&gt;Total amount for an order or cart contents. Displayed with tax included.&lt;/doc&gt;
-    &lt;/descriptor&gt;
-    &lt;descriptor id=&quot;userName&quot; def=&quot;https://schema.org/name&quot; title=&quot;User Name&quot; tag=&quot;customer&quot;&gt;
-        &lt;doc&gt;Name of the customer. First and last name separated by a space.&lt;/doc&gt;
-    &lt;/descriptor&gt;
-    &lt;descriptor id=&quot;userEmail&quot; def=&quot;https://schema.org/email&quot; title=&quot;Email Address&quot; tag=&quot;customer&quot;&gt;
-        &lt;doc&gt;Customer&#039;s contact email address. Used for sending order confirmation emails.&lt;/doc&gt;
-    &lt;/descriptor&gt;
-    &lt;descriptor id=&quot;shippingAddress&quot; def=&quot;https://schema.org/address&quot; title=&quot;Shipping Address&quot; tag=&quot;shipping&quot;&gt;
-        &lt;doc&gt;Delivery address for products. Includes postal code, prefecture, city, street address, and building name.&lt;/doc&gt;
-    &lt;/descriptor&gt;
-    &lt;descriptor id=&quot;paymentMethod&quot; def=&quot;https://schema.org/paymentMethod&quot; title=&quot;Payment Method&quot; tag=&quot;payment&quot;&gt;
-        &lt;doc&gt;Method of payment for the order. Options include credit card, cash on delivery, bank transfer, etc.&lt;/doc&gt;
-    &lt;/descriptor&gt;
-    &lt;descriptor id=&quot;query&quot; title=&quot;Search Query&quot; tag=&quot;catalog&quot;&gt;
-        &lt;doc&gt;Keywords or conditions used for book searches. Can search by title, author name, ISBN, etc.&lt;/doc&gt;
-    &lt;/descriptor&gt;
+      {&quot;id&quot;: &quot;UnauthenticatedState&quot;, &quot;title&quot;: &quot;未認証状態&quot;, &quot;tag&quot;: &quot;flow-auth&quot;, &quot;doc&quot;: {&quot;value&quot;: &quot;ユーザーが未認証の初期状態。保護されたリソースへのアクセスを試みると認証フローが開始される。&quot;}, &quot;descriptor&quot;: [
+        {&quot;href&quot;: &quot;#goAuthorizationRequest&quot;}
+      ]},
 
-    &lt;!-- Taxonomy --&gt;
-    &lt;descriptor id=&quot;Home&quot; title=&quot;Home Screen&quot; tag=&quot;navigation&quot;&gt;
-        &lt;doc&gt;Starting point of the application. Displays site-wide navigation and promotional information.&lt;/doc&gt;
-        &lt;descriptor href=&quot;#goToCatalog&quot;/&gt;
-        &lt;descriptor href=&quot;#goToCart&quot;/&gt;
-    &lt;/descriptor&gt;
+      {&quot;id&quot;: &quot;AuthorizationRequest&quot;, &quot;title&quot;: &quot;認可リクエスト&quot;, &quot;tag&quot;: &quot;flow-auth&quot;, &quot;doc&quot;: {&quot;value&quot;: &quot;OIDCプロバイダー（Ory/Hydra）への認可リクエスト。クライアントアプリケーションからauth.cloudsign.jpへリダイレクトされる。&quot;}, &quot;descriptor&quot;: [
+        {&quot;href&quot;: &quot;#clientId&quot;},
+        {&quot;href&quot;: &quot;#redirectUri&quot;},
+        {&quot;href&quot;: &quot;#state&quot;},
+        {&quot;href&quot;: &quot;#scope&quot;},
+        {&quot;href&quot;: &quot;#goLoginForm&quot;},
+        {&quot;href&quot;: &quot;#goConsentForm&quot;}
+      ]},
 
-    &lt;descriptor id=&quot;Catalog&quot; def=&quot;https://schema.org/CollectionPage&quot; title=&quot;Book Catalog&quot; tag=&quot;catalog&quot;&gt;
-        &lt;doc&gt;Screen displaying all books. Provides category filtering, keyword search, and sorting functions. Default display is ordered by recent additions.&lt;/doc&gt;
-        &lt;descriptor href=&quot;#goListBooks&quot;/&gt;
-        &lt;descriptor href=&quot;#goSearchBooks&quot;/&gt;
-        &lt;descriptor href=&quot;#goGetCategories&quot;/&gt;
-        &lt;descriptor href=&quot;#goBookDetails&quot;/&gt;
-        &lt;descriptor href=&quot;#goToCart&quot;/&gt;
-        &lt;descriptor href=&quot;#Book&quot;/&gt;
-    &lt;/descriptor&gt;
+      {&quot;id&quot;: &quot;LoginForm&quot;, &quot;title&quot;: &quot;ログインフォーム&quot;, &quot;tag&quot;: &quot;auth flow-auth&quot;, &quot;doc&quot;: {&quot;value&quot;: &quot;認証サーバーが提供するログインフォーム。ユーザー名とパスワードの入力を受け付ける。&quot;}, &quot;descriptor&quot;: [
+        {&quot;href&quot;: &quot;#username&quot;},
+        {&quot;href&quot;: &quot;#password&quot;},
+        {&quot;href&quot;: &quot;#sessionId&quot;},
+        {&quot;href&quot;: &quot;#doLogin&quot;},
+        {&quot;href&quot;: &quot;#goUnauthenticatedState&quot;}
+      ]},
 
-    &lt;descriptor id=&quot;Book&quot; def=&quot;https://schema.org/Book&quot; title=&quot;Book&quot; tag=&quot;catalog&quot;&gt;
-        &lt;doc&gt;Screen displaying individual book information. Shows detailed information, reviews, and related books. Items can be added to cart from this screen.&lt;/doc&gt;
-        &lt;descriptor href=&quot;#id&quot;/&gt;
-        &lt;descriptor href=&quot;#title&quot;/&gt;
-        &lt;descriptor href=&quot;#author&quot;/&gt;
-        &lt;descriptor href=&quot;#isbn&quot;/&gt;
-        &lt;descriptor href=&quot;#price&quot;/&gt;
-        &lt;descriptor href=&quot;#category&quot;/&gt;
-        &lt;descriptor href=&quot;#doAddToCart&quot;/&gt;
-        &lt;descriptor href=&quot;#goToCatalog&quot;/&gt;
-    &lt;/descriptor&gt;
+      {&quot;id&quot;: &quot;ConsentForm&quot;, &quot;title&quot;: &quot;同意確認フォーム&quot;, &quot;tag&quot;: &quot;auth flow-auth&quot;, &quot;doc&quot;: {&quot;value&quot;: &quot;アプリケーションへの権限付与に対するユーザーの同意を確認するフォーム。&quot;}, &quot;descriptor&quot;: [
+        {&quot;href&quot;: &quot;#clientId&quot;},
+        {&quot;href&quot;: &quot;#scope&quot;},
+        {&quot;href&quot;: &quot;#consentRequired&quot;},
+        {&quot;href&quot;: &quot;#doGrantConsent&quot;},
+        {&quot;href&quot;: &quot;#doDenyConsent&quot;}
+      ]},
 
-    &lt;descriptor id=&quot;Category&quot; def=&quot;https://schema.org/Category&quot; title=&quot;Category&quot; tag=&quot;catalog&quot;&gt;
-        &lt;doc&gt;Book genre classification. May have a hierarchical structure with parent and child categories.&lt;/doc&gt;
-        &lt;descriptor href=&quot;#id&quot;/&gt;
-        &lt;descriptor href=&quot;#title&quot;/&gt;
-    &lt;/descriptor&gt;
+      {&quot;id&quot;: &quot;AuthenticationInProgress&quot;, &quot;title&quot;: &quot;認証処理中&quot;, &quot;tag&quot;: &quot;auth flow-auth&quot;, &quot;doc&quot;: {&quot;value&quot;: &quot;認証サーバーがユーザーのクレデンシャルを検証している状態。&quot;}, &quot;descriptor&quot;: [
+        {&quot;href&quot;: &quot;#username&quot;},
+        {&quot;href&quot;: &quot;#sessionId&quot;},
+        {&quot;href&quot;: &quot;#goAuthorizationCallback&quot;},
+        {&quot;href&quot;: &quot;#goLoginForm&quot;}
+      ]},
 
-    &lt;descriptor id=&quot;ShoppingCart&quot; def=&quot;https://schema.org/ShoppingCart&quot; title=&quot;Shopping Cart&quot; tag=&quot;cart&quot;&gt;
-        &lt;doc&gt;Cart containing books the user intends to purchase. Allows quantity changes, deletion, and total amount confirmation. Managed on a session basis.&lt;/doc&gt;
-        &lt;descriptor href=&quot;#goListCartItems&quot;/&gt;
-        &lt;descriptor href=&quot;#doUpdateQuantity&quot;/&gt;
-        &lt;descriptor href=&quot;#doRemoveFromCart&quot;/&gt;
-        &lt;descriptor href=&quot;#goToCheckout&quot;/&gt;
-        &lt;descriptor href=&quot;#goToCatalog&quot;/&gt;
-    &lt;/descriptor&gt;
+      {&quot;id&quot;: &quot;AuthorizationCallback&quot;, &quot;title&quot;: &quot;認可コールバック&quot;, &quot;tag&quot;: &quot;flow-auth&quot;, &quot;doc&quot;: {&quot;value&quot;: &quot;認証成功後、認可コードとともにクライアントアプリケーションへリダイレクトされる。&quot;}, &quot;descriptor&quot;: [
+        {&quot;href&quot;: &quot;#authorizationCode&quot;},
+        {&quot;href&quot;: &quot;#state&quot;},
+        {&quot;href&quot;: &quot;#redirectUri&quot;},
+        {&quot;href&quot;: &quot;#doExchangeToken&quot;}
+      ]},
 
-    &lt;descriptor id=&quot;Checkout&quot; title=&quot;Checkout Screen&quot; tag=&quot;checkout&quot;&gt;
-        &lt;doc&gt;Purchase procedure screen. Input user information, delivery destination, and proceed to payment. Displays final confirmation before order is placed.&lt;/doc&gt;
-        &lt;descriptor href=&quot;#doUserInfo&quot;/&gt;
-        &lt;descriptor href=&quot;#doShippingInfo&quot;/&gt;
-        &lt;descriptor href=&quot;#goToPayment&quot;/&gt;
-        &lt;descriptor href=&quot;#goToCart&quot;/&gt;
-    &lt;/descriptor&gt;
+      {&quot;id&quot;: &quot;TokenExchange&quot;, &quot;title&quot;: &quot;トークン交換&quot;, &quot;tag&quot;: &quot;flow-auth&quot;, &quot;doc&quot;: {&quot;value&quot;: &quot;認可コードをアクセストークンとIDトークンに交換する処理。&quot;}, &quot;descriptor&quot;: [
+        {&quot;href&quot;: &quot;#authorizationCode&quot;},
+        {&quot;href&quot;: &quot;#clientId&quot;},
+        {&quot;href&quot;: &quot;#accessToken&quot;},
+        {&quot;href&quot;: &quot;#idToken&quot;},
+        {&quot;href&quot;: &quot;#refreshToken&quot;},
+        {&quot;href&quot;: &quot;#goAuthenticatedState&quot;}
+      ]},
 
-    &lt;descriptor id=&quot;Payment&quot; title=&quot;Payment Screen&quot; tag=&quot;payment&quot;&gt;
-        &lt;doc&gt;Screen for entering payment information, confirming the order, and displaying order completion details. Handles payment method selection, payment validation, order placement, and shows order number, total amount, and estimated delivery date upon completion. A confirmation email is sent automatically.&lt;/doc&gt;
-        &lt;descriptor href=&quot;#paymentMethod&quot;/&gt;
-        &lt;descriptor href=&quot;#doPaymentInfo&quot;/&gt;
-        &lt;descriptor href=&quot;#doPlaceOrder&quot;/&gt;
-        &lt;descriptor href=&quot;#goOrderDetails&quot;/&gt;
-        &lt;descriptor href=&quot;#goToHome&quot;/&gt;
-        &lt;descriptor href=&quot;#goToCart&quot;/&gt;
-    &lt;/descriptor&gt;
+      {&quot;id&quot;: &quot;AuthenticatedState&quot;, &quot;title&quot;: &quot;認証済み状態&quot;, &quot;tag&quot;: &quot;flow-auth&quot;, &quot;doc&quot;: {&quot;value&quot;: &quot;ユーザーが正常に認証され、アクセストークンを保持している状態。各プロダクトへアクセス可能。&quot;}, &quot;descriptor&quot;: [
+        {&quot;href&quot;: &quot;#userId&quot;},
+        {&quot;href&quot;: &quot;#accessToken&quot;},
+        {&quot;href&quot;: &quot;#idToken&quot;},
+        {&quot;href&quot;: &quot;#goCloudSignNimbus&quot;},
+        {&quot;href&quot;: &quot;#goCloudSignRevel&quot;},
+        {&quot;href&quot;: &quot;#goCloudSignJp&quot;},
+        {&quot;href&quot;: &quot;#goNewProductA&quot;},
+        {&quot;href&quot;: &quot;#goCentral&quot;},
+        {&quot;href&quot;: &quot;#doLogout&quot;},
+        {&quot;href&quot;: &quot;#doRefreshToken&quot;}
+      ]},
 
-    &lt;!-- Choreography --&gt;
-    &lt;descriptor id=&quot;goToHome&quot; type=&quot;safe&quot; rt=&quot;#Home&quot; title=&quot;Go to Home Screen&quot;&gt;
-        &lt;doc&gt;Navigate to the application&#039;s home screen. Accessible from any screen.&lt;/doc&gt;
-    &lt;/descriptor&gt;
-    &lt;descriptor id=&quot;goToCatalog&quot; type=&quot;safe&quot; rt=&quot;#Catalog&quot; title=&quot;Go to Catalog Screen&quot;&gt;
-        &lt;doc&gt;Navigate to the book catalog list screen. All books are displayed.&lt;/doc&gt;
-    &lt;/descriptor&gt;
-    &lt;descriptor id=&quot;goToCart&quot; type=&quot;safe&quot; rt=&quot;#ShoppingCart&quot; title=&quot;Go to Cart Screen&quot;&gt;
-        &lt;doc&gt;Navigate to the screen displaying the contents of the current shopping cart.&lt;/doc&gt;
-    &lt;/descriptor&gt;
-    &lt;descriptor id=&quot;goToCheckout&quot; type=&quot;safe&quot; rt=&quot;#Checkout&quot; title=&quot;Go to Checkout Screen&quot;&gt;
-        &lt;doc&gt;Navigate to the screen to confirm cart contents and proceed with purchase. Cannot transition if cart is empty.&lt;/doc&gt;
-    &lt;/descriptor&gt;
-    &lt;descriptor id=&quot;goToPayment&quot; type=&quot;safe&quot; rt=&quot;#Payment&quot; title=&quot;Go to Payment Screen&quot;&gt;
-        &lt;doc&gt;Navigate to the payment screen to input payment information and complete the order.&lt;/doc&gt;
-    &lt;/descriptor&gt;
+      {&quot;id&quot;: &quot;CloudSignNimbus&quot;, &quot;title&quot;: &quot;CloudSign (Nimbus)&quot;, &quot;tag&quot;: &quot;product&quot;, &quot;doc&quot;: {&quot;value&quot;: &quot;CloudSign Nimbusプロダクトのホーム画面。&quot;}, &quot;descriptor&quot;: [
+        {&quot;href&quot;: &quot;#userId&quot;},
+        {&quot;href&quot;: &quot;#productName&quot;},
+        {&quot;href&quot;: &quot;#goAuthenticatedState&quot;}
+      ]},
 
-    &lt;descriptor id=&quot;goListBooks&quot; type=&quot;safe&quot; rt=&quot;#Catalog&quot; rel=&quot;collection&quot; title=&quot;Get Book List&quot; tag=&quot;catalog&quot;&gt;
-        &lt;doc&gt;Retrieve list of all books in the catalog. Can specify pagination (default 20 items/page) and sort order (newest, price, popularity, etc.).&lt;/doc&gt;
-    &lt;/descriptor&gt;
-    &lt;descriptor id=&quot;goSearchBooks&quot; type=&quot;safe&quot; rt=&quot;#Catalog&quot; rel=&quot;collection&quot; title=&quot;Search Books&quot; tag=&quot;catalog&quot;&gt;
-        &lt;doc&gt;Search for books based on specified search query. Can search across multiple fields including title, author name, content description, ISBN, etc.&lt;/doc&gt;
-        &lt;descriptor href=&quot;#query&quot;/&gt;
-    &lt;/descriptor&gt;
-    &lt;descriptor id=&quot;goGetCategories&quot; type=&quot;safe&quot; rt=&quot;#Catalog&quot; rel=&quot;collection&quot; title=&quot;Get Category List&quot; tag=&quot;catalog&quot;&gt;
-        &lt;doc&gt;Retrieve list of all available book categories. For hierarchical categories, parent-child relationships are also returned.&lt;/doc&gt;
-    &lt;/descriptor&gt;
-    &lt;descriptor id=&quot;goBookDetails&quot; type=&quot;safe&quot; rt=&quot;#Book&quot; rel=&quot;item&quot; title=&quot;Get Book Details&quot; tag=&quot;catalog&quot;&gt;
-        &lt;doc&gt;Retrieve detailed information for a specific book based on the specified book ID. Includes stock status and related book information.&lt;/doc&gt;
-        &lt;descriptor href=&quot;#id&quot;/&gt;
-    &lt;/descriptor&gt;
+      {&quot;id&quot;: &quot;CloudSignRevel&quot;, &quot;title&quot;: &quot;CloudSign (Revel)&quot;, &quot;tag&quot;: &quot;product&quot;, &quot;doc&quot;: {&quot;value&quot;: &quot;CloudSign Revelプロダクトのホーム画面。認証基盤との連携やリダイレクト処理を行う。&quot;}, &quot;descriptor&quot;: [
+        {&quot;href&quot;: &quot;#userId&quot;},
+        {&quot;href&quot;: &quot;#productName&quot;},
+        {&quot;href&quot;: &quot;#sessionId&quot;},
+        {&quot;href&quot;: &quot;#goAuthenticatedState&quot;}
+      ]},
 
-    &lt;descriptor id=&quot;doAddToCart&quot; type=&quot;unsafe&quot; rt=&quot;#ShoppingCart&quot; rel=&quot;collection&quot; title=&quot;Add to Cart&quot; tag=&quot;cart&quot;&gt;
-        &lt;doc&gt;Add the specified book to the shopping cart. If already in the cart, quantity is increased. Orders exceeding stock will result in an error.&lt;/doc&gt;
-        &lt;descriptor href=&quot;#id&quot;/&gt;
-        &lt;descriptor href=&quot;#quantity&quot;/&gt;
-    &lt;/descriptor&gt;
-    &lt;descriptor id=&quot;goListCartItems&quot; type=&quot;safe&quot; rt=&quot;#ShoppingCart&quot; rel=&quot;collection&quot; title=&quot;Get Cart Items List&quot; tag=&quot;cart&quot;&gt;
-        &lt;doc&gt;Retrieve all products in the current shopping cart, including their quantities, subtotals, and total amount.&lt;/doc&gt;
-    &lt;/descriptor&gt;
-    &lt;descriptor id=&quot;doUpdateQuantity&quot; type=&quot;idempotent&quot; rt=&quot;#ShoppingCart&quot; title=&quot;Update Cart Item Quantity&quot; tag=&quot;cart&quot;&gt;
-        &lt;doc&gt;Update the quantity of a specific product in the cart. Values less than or equal to 0 cannot be specified. Quantities exceeding stock will result in an error.&lt;/doc&gt;
-        &lt;descriptor href=&quot;#id&quot;/&gt;
-        &lt;descriptor href=&quot;#quantity&quot;/&gt;
-    &lt;/descriptor&gt;
-    &lt;descriptor id=&quot;doRemoveFromCart&quot; type=&quot;idempotent&quot; rt=&quot;#ShoppingCart&quot; title=&quot;Remove Item from Cart&quot; tag=&quot;cart&quot;&gt;
-        &lt;doc&gt;Completely remove the specified item from the cart. If the item does not exist in the cart, no changes are made.&lt;/doc&gt;
-        &lt;descriptor href=&quot;#id&quot;/&gt;
-    &lt;/descriptor&gt;
+      {&quot;id&quot;: &quot;CloudSignJp&quot;, &quot;title&quot;: &quot;cloudsign.jp&quot;, &quot;tag&quot;: &quot;product&quot;, &quot;doc&quot;: {&quot;value&quot;: &quot;cloudsign.jpのメインサイト。&quot;}, &quot;descriptor&quot;: [
+        {&quot;href&quot;: &quot;#userId&quot;},
+        {&quot;href&quot;: &quot;#productName&quot;},
+        {&quot;href&quot;: &quot;#goAuthenticatedState&quot;}
+      ]},
 
-    &lt;descriptor id=&quot;doUserInfo&quot; type=&quot;unsafe&quot; rt=&quot;#Checkout&quot; title=&quot;Input User Information&quot; tag=&quot;customer&quot;&gt;
-        &lt;doc&gt;Input customer&#039;s name and email address. Email address is validated using regular expressions.&lt;/doc&gt;
-        &lt;descriptor href=&quot;#userName&quot;/&gt;
-        &lt;descriptor href=&quot;#userEmail&quot;/&gt;
-    &lt;/descriptor&gt;
-    &lt;descriptor id=&quot;doShippingInfo&quot; type=&quot;unsafe&quot; rt=&quot;#Checkout&quot; title=&quot;Input Shipping Information&quot; tag=&quot;shipping&quot;&gt;
-        &lt;doc&gt;Input product delivery address. Features automatic address input using postal code lookup.&lt;/doc&gt;
-        &lt;descriptor href=&quot;#shippingAddress&quot;/&gt;
-    &lt;/descriptor&gt;
-    &lt;descriptor id=&quot;doPaymentInfo&quot; type=&quot;unsafe&quot; rt=&quot;#Payment&quot; title=&quot;Input Payment Information&quot; tag=&quot;payment&quot;&gt;
-        &lt;doc&gt;Select order payment method and input necessary payment information. When credit card is selected, card information is input and validated.&lt;/doc&gt;
-        &lt;descriptor href=&quot;#paymentMethod&quot;/&gt;
-    &lt;/descriptor&gt;
-    &lt;descriptor id=&quot;doPlaceOrder&quot; type=&quot;unsafe&quot; rt=&quot;#Payment&quot; title=&quot;Place Order&quot; tag=&quot;order&quot;&gt;
-        &lt;doc&gt;Confirm order based on user input information, process payment, and display order confirmation details on the payment screen. Payment processing is executed, inventory is secured, and a confirmation email is sent. This operation cannot be reversed.&lt;/doc&gt;
-    &lt;/descriptor&gt;
+      {&quot;id&quot;: &quot;NewProductA&quot;, &quot;title&quot;: &quot;NewProductA&quot;, &quot;tag&quot;: &quot;product&quot;, &quot;doc&quot;: {&quot;value&quot;: &quot;新規プロダクトAのメイン画面。BFFとinternalサービスを経由してデータにアクセスする。&quot;}, &quot;descriptor&quot;: [
+        {&quot;href&quot;: &quot;#userId&quot;},
+        {&quot;href&quot;: &quot;#productName&quot;},
+        {&quot;href&quot;: &quot;#goNewProductABFF&quot;},
+        {&quot;href&quot;: &quot;#goAuthenticatedState&quot;}
+      ]},
 
-    &lt;descriptor id=&quot;goOrderDetails&quot; type=&quot;safe&quot; rt=&quot;#Payment&quot; title=&quot;Display Order Details&quot; tag=&quot;order&quot;&gt;
-        &lt;doc&gt;Display detailed information for the confirmed order on the payment screen. Includes order number, list of purchased products, total amount, delivery destination, payment method, etc.&lt;/doc&gt;
-    &lt;/descriptor&gt;
-&lt;/alps&gt;
+      {&quot;id&quot;: &quot;NewProductABFF&quot;, &quot;title&quot;: &quot;NewProductA BFF&quot;, &quot;tag&quot;: &quot;product&quot;, &quot;doc&quot;: {&quot;value&quot;: &quot;NewProductA用のBackend For Frontend。クライアントとバックエンドサービスの仲介を行う。&quot;}, &quot;descriptor&quot;: [
+        {&quot;href&quot;: &quot;#userId&quot;},
+        {&quot;href&quot;: &quot;#accessToken&quot;},
+        {&quot;href&quot;: &quot;#goNewProductAInternal&quot;}
+      ]},
+
+      {&quot;id&quot;: &quot;NewProductAInternal&quot;, &quot;title&quot;: &quot;NewProductA Internal&quot;, &quot;tag&quot;: &quot;product&quot;, &quot;doc&quot;: {&quot;value&quot;: &quot;NewProductAの内部APIサービス。&quot;}, &quot;descriptor&quot;: [
+        {&quot;href&quot;: &quot;#userId&quot;},
+        {&quot;href&quot;: &quot;#accessToken&quot;}
+      ]},
+
+      {&quot;id&quot;: &quot;Central&quot;, &quot;title&quot;: &quot;Central&quot;, &quot;tag&quot;: &quot;product&quot;, &quot;doc&quot;: {&quot;value&quot;: &quot;中央管理システム。CloudSign DBへアクセスする。&quot;}, &quot;descriptor&quot;: [
+        {&quot;href&quot;: &quot;#userId&quot;},
+        {&quot;href&quot;: &quot;#goAuthenticatedState&quot;}
+      ]},
+
+      {&quot;id&quot;: &quot;ErrorState&quot;, &quot;title&quot;: &quot;エラー状態&quot;, &quot;tag&quot;: &quot;flow-auth&quot;, &quot;doc&quot;: {&quot;value&quot;: &quot;認証フローでエラーが発生した状態。&quot;}, &quot;descriptor&quot;: [
+        {&quot;href&quot;: &quot;#errorMessage&quot;},
+        {&quot;href&quot;: &quot;#goLoginForm&quot;},
+        {&quot;href&quot;: &quot;#goUnauthenticatedState&quot;}
+      ]},
+
+      {&quot;id&quot;: &quot;goAuthorizationRequest&quot;, &quot;type&quot;: &quot;safe&quot;, &quot;rt&quot;: &quot;#AuthorizationRequest&quot;, &quot;title&quot;: &quot;認可リクエストへ遷移&quot;, &quot;tag&quot;: &quot;auth flow-auth&quot;, &quot;doc&quot;: {&quot;value&quot;: &quot;保護されたリソースへのアクセス時に、OIDCプロバイダーへ認可リクエストを送信する。&quot;}, &quot;descriptor&quot;: [
+        {&quot;href&quot;: &quot;#clientId&quot;},
+        {&quot;href&quot;: &quot;#redirectUri&quot;},
+        {&quot;href&quot;: &quot;#state&quot;},
+        {&quot;href&quot;: &quot;#scope&quot;}
+      ]},
+
+      {&quot;id&quot;: &quot;goLoginForm&quot;, &quot;type&quot;: &quot;safe&quot;, &quot;rt&quot;: &quot;#LoginForm&quot;, &quot;title&quot;: &quot;ログインフォームへ遷移&quot;, &quot;tag&quot;: &quot;auth flow-auth&quot;, &quot;doc&quot;: {&quot;value&quot;: &quot;認証セッションが存在しない場合、ログインフォームへリダイレクトする。&quot;}, &quot;descriptor&quot;: [
+        {&quot;href&quot;: &quot;#sessionId&quot;}
+      ]},
+
+      {&quot;id&quot;: &quot;goConsentForm&quot;, &quot;type&quot;: &quot;safe&quot;, &quot;rt&quot;: &quot;#ConsentForm&quot;, &quot;title&quot;: &quot;同意確認フォームへ遷移&quot;, &quot;tag&quot;: &quot;auth flow-auth&quot;, &quot;doc&quot;: {&quot;value&quot;: &quot;ユーザーの同意が必要な場合、同意確認フォームへ遷移する。&quot;}, &quot;descriptor&quot;: [
+        {&quot;href&quot;: &quot;#clientId&quot;},
+        {&quot;href&quot;: &quot;#scope&quot;}
+      ]},
+
+      {&quot;id&quot;: &quot;goAuthorizationCallback&quot;, &quot;type&quot;: &quot;safe&quot;, &quot;rt&quot;: &quot;#AuthorizationCallback&quot;, &quot;title&quot;: &quot;認可コールバックへ遷移&quot;, &quot;tag&quot;: &quot;flow-auth&quot;, &quot;doc&quot;: {&quot;value&quot;: &quot;認証成功後、認可コードとともにクライアントへリダイレクトする。&quot;}, &quot;descriptor&quot;: [
+        {&quot;href&quot;: &quot;#authorizationCode&quot;},
+        {&quot;href&quot;: &quot;#state&quot;}
+      ]},
+
+      {&quot;id&quot;: &quot;goAuthenticatedState&quot;, &quot;type&quot;: &quot;safe&quot;, &quot;rt&quot;: &quot;#AuthenticatedState&quot;, &quot;title&quot;: &quot;認証済み状態へ遷移&quot;, &quot;tag&quot;: &quot;flow-auth&quot;, &quot;doc&quot;: {&quot;value&quot;: &quot;トークン取得後、認証済み状態へ遷移する。&quot;}},
+
+      {&quot;id&quot;: &quot;goUnauthenticatedState&quot;, &quot;type&quot;: &quot;safe&quot;, &quot;rt&quot;: &quot;#UnauthenticatedState&quot;, &quot;title&quot;: &quot;未認証状態へ戻る&quot;, &quot;tag&quot;: &quot;flow-auth&quot;, &quot;doc&quot;: {&quot;value&quot;: &quot;ログインキャンセルやエラー時に未認証状態へ戻る。&quot;}},
+
+      {&quot;id&quot;: &quot;goCloudSignNimbus&quot;, &quot;type&quot;: &quot;safe&quot;, &quot;rt&quot;: &quot;#CloudSignNimbus&quot;, &quot;title&quot;: &quot;CloudSign Nimbusへ遷移&quot;, &quot;tag&quot;: &quot;product&quot;, &quot;doc&quot;: {&quot;value&quot;: &quot;CloudSign Nimbusプロダクトへアクセスする。&quot;}},
+
+      {&quot;id&quot;: &quot;goCloudSignRevel&quot;, &quot;type&quot;: &quot;safe&quot;, &quot;rt&quot;: &quot;#CloudSignRevel&quot;, &quot;title&quot;: &quot;CloudSign Revelへ遷移&quot;, &quot;tag&quot;: &quot;product&quot;, &quot;doc&quot;: {&quot;value&quot;: &quot;CloudSign Revelプロダクトへアクセスする。&quot;}},
+
+      {&quot;id&quot;: &quot;goCloudSignJp&quot;, &quot;type&quot;: &quot;safe&quot;, &quot;rt&quot;: &quot;#CloudSignJp&quot;, &quot;title&quot;: &quot;cloudsign.jpへ遷移&quot;, &quot;tag&quot;: &quot;product&quot;, &quot;doc&quot;: {&quot;value&quot;: &quot;cloudsign.jpへアクセスする。&quot;}},
+
+      {&quot;id&quot;: &quot;goNewProductA&quot;, &quot;type&quot;: &quot;safe&quot;, &quot;rt&quot;: &quot;#NewProductA&quot;, &quot;title&quot;: &quot;NewProductAへ遷移&quot;, &quot;tag&quot;: &quot;product&quot;, &quot;doc&quot;: {&quot;value&quot;: &quot;新規プロダクトAへアクセスする。&quot;}},
+
+      {&quot;id&quot;: &quot;goNewProductABFF&quot;, &quot;type&quot;: &quot;safe&quot;, &quot;rt&quot;: &quot;#NewProductABFF&quot;, &quot;title&quot;: &quot;NewProductA BFFへ遷移&quot;, &quot;tag&quot;: &quot;product&quot;, &quot;doc&quot;: {&quot;value&quot;: &quot;NewProductAのBFFへアクセスする。&quot;}},
+
+      {&quot;id&quot;: &quot;goNewProductAInternal&quot;, &quot;type&quot;: &quot;safe&quot;, &quot;rt&quot;: &quot;#NewProductAInternal&quot;, &quot;title&quot;: &quot;NewProductA Internalへ遷移&quot;, &quot;tag&quot;: &quot;product&quot;, &quot;doc&quot;: {&quot;value&quot;: &quot;NewProductAの内部APIへアクセスする。&quot;}},
+
+      {&quot;id&quot;: &quot;goCentral&quot;, &quot;type&quot;: &quot;safe&quot;, &quot;rt&quot;: &quot;#Central&quot;, &quot;title&quot;: &quot;Centralへ遷移&quot;, &quot;tag&quot;: &quot;product&quot;, &quot;doc&quot;: {&quot;value&quot;: &quot;中央管理システムへアクセスする。&quot;}},
+
+      {&quot;id&quot;: &quot;doLogin&quot;, &quot;type&quot;: &quot;unsafe&quot;, &quot;rt&quot;: &quot;#AuthenticationInProgress&quot;, &quot;title&quot;: &quot;ログイン実行&quot;, &quot;tag&quot;: &quot;auth flow-auth&quot;, &quot;doc&quot;: {&quot;value&quot;: &quot;ユーザー名とパスワードを使用してログインを実行する。認証サーバーがクレデンシャルを検証する。&quot;}, &quot;descriptor&quot;: [
+        {&quot;href&quot;: &quot;#username&quot;},
+        {&quot;href&quot;: &quot;#password&quot;},
+        {&quot;href&quot;: &quot;#sessionId&quot;}
+      ]},
+
+      {&quot;id&quot;: &quot;doGrantConsent&quot;, &quot;type&quot;: &quot;unsafe&quot;, &quot;rt&quot;: &quot;#AuthorizationCallback&quot;, &quot;title&quot;: &quot;同意を許可&quot;, &quot;tag&quot;: &quot;auth flow-auth&quot;, &quot;doc&quot;: {&quot;value&quot;: &quot;アプリケーションへの権限付与に同意し、認可フローを続行する。&quot;}, &quot;descriptor&quot;: [
+        {&quot;href&quot;: &quot;#clientId&quot;},
+        {&quot;href&quot;: &quot;#scope&quot;}
+      ]},
+
+      {&quot;id&quot;: &quot;doDenyConsent&quot;, &quot;type&quot;: &quot;unsafe&quot;, &quot;rt&quot;: &quot;#ErrorState&quot;, &quot;title&quot;: &quot;同意を拒否&quot;, &quot;tag&quot;: &quot;auth flow-auth&quot;, &quot;doc&quot;: {&quot;value&quot;: &quot;アプリケーションへの権限付与を拒否する。&quot;}, &quot;descriptor&quot;: [
+        {&quot;href&quot;: &quot;#clientId&quot;}
+      ]},
+
+      {&quot;id&quot;: &quot;doExchangeToken&quot;, &quot;type&quot;: &quot;unsafe&quot;, &quot;rt&quot;: &quot;#TokenExchange&quot;, &quot;title&quot;: &quot;トークン交換実行&quot;, &quot;tag&quot;: &quot;flow-auth&quot;, &quot;doc&quot;: {&quot;value&quot;: &quot;認可コードをアクセストークンとIDトークンに交換する。Ory/Hydraのトークンエンドポイントを呼び出す。&quot;}, &quot;descriptor&quot;: [
+        {&quot;href&quot;: &quot;#authorizationCode&quot;},
+        {&quot;href&quot;: &quot;#clientId&quot;},
+        {&quot;href&quot;: &quot;#redirectUri&quot;}
+      ]},
+
+      {&quot;id&quot;: &quot;doRefreshToken&quot;, &quot;type&quot;: &quot;unsafe&quot;, &quot;rt&quot;: &quot;#AuthenticatedState&quot;, &quot;title&quot;: &quot;トークン更新&quot;, &quot;tag&quot;: &quot;flow-auth&quot;, &quot;doc&quot;: {&quot;value&quot;: &quot;リフレッシュトークンを使用してアクセストークンを更新する。&quot;}, &quot;descriptor&quot;: [
+        {&quot;href&quot;: &quot;#refreshToken&quot;},
+        {&quot;href&quot;: &quot;#clientId&quot;}
+      ]},
+
+      {&quot;id&quot;: &quot;doLogout&quot;, &quot;type&quot;: &quot;idempotent&quot;, &quot;rt&quot;: &quot;#UnauthenticatedState&quot;, &quot;title&quot;: &quot;ログアウト&quot;, &quot;tag&quot;: &quot;auth flow-auth&quot;, &quot;doc&quot;: {&quot;value&quot;: &quot;現在の認証セッションを終了し、トークンを無効化する。&quot;}, &quot;descriptor&quot;: [
+        {&quot;href&quot;: &quot;#sessionId&quot;},
+        {&quot;href&quot;: &quot;#idToken&quot;}
+      ]}
+    ]
+  }
+}
 </code></pre>
 
     </div>

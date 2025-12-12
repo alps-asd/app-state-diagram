@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.1/phpunit.xsd" bootstrap="vendor/autoload.php" cacheDirectory=".phpunit.cache">
+  <coverage includeUncoveredFiles="false"/>
+  <testsuites>
+    <testsuite name="resource">
+      <directory>tests/Resource</directory>
+    </testsuite>
+    <testsuite name="hypermedia">
+      <directory>tests/Hypermedia</directory>
+    </testsuite>
+    <testsuite name="http">
+      <directory>tests/Http</directory>
+    </testsuite>
+  </testsuites>
+  <source>
+    <include>
+      <directory suffix=".php">src</directory>
+    </include>
+    <exclude>
+      <file>src/Bootstrap.php</file>
+    </exclude>
+  </source>
+</phpunit>

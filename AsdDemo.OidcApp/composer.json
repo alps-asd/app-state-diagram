@@ -1,0 +1,108 @@
+{
+    "name": "asddemo/oidc-app",
+    "type": "project",
+    "license": "proprietary",
+    "description": "OIDC Login System Demo Application",
+    "require": {
+        "php": "^8.5.0",
+        "koriym/env-json": "^1.0",
+        "bear/package": "^1.14",
+        "bear/resource": "^1.17",
+        "bear/sunday": "^1.6",
+        "ray/aop": "^2.12",
+        "ray/di": "^2.14",
+        "ray/media-query": "^1.0",
+        "robmorgan/phinx": "^0.16"
+    },
+    "require-dev": {
+        "bear/api-doc": "^1.1",
+        "bear/devtools": "^1.0",
+        "bamarni/composer-bin-plugin": "^1.4",
+        "phpunit/phpunit": "^10.0",
+        "roave/security-advisories": "dev-latest"
+    },
+    "autoload": {
+        "psr-4": {
+            "AsdDemo\\OidcApp\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "AsdDemo\\OidcApp\\": "tests/"
+        }
+    },
+    "scripts": {
+        "post-install-cmd": [
+            "@setup",
+            "@composer bin all install --ansi"
+        ],
+        "setup": "php bin/setup.php",
+        "compile": "./vendor/bin/bear.compile 'AsdDemo\\OidcApp' prod-app ./",
+        "doc": "./vendor/bin/apidoc",
+        "test": "./vendor/bin/phpunit",
+        "coverage": "php -dzend_extension=xdebug.so -dxdebug.mode=coverage ./vendor/bin/phpunit --coverage-text --coverage-html=build/coverage",
+        "pcov": "php -dextension=pcov.so -d pcov.enabled=1 ./vendor/bin/phpunit --coverage-text --coverage-html=build/coverage  --coverage-clover=coverage.xml",
+        "cs": "./vendor/bin/phpcs",
+        "cs-fix": "./vendor/bin/phpcbf src tests",
+        "metrics": "./vendor/bin/phpmetrics --report-html=build/metrics --exclude=Exception src",
+        "clean": [
+            "./vendor/bin/phpstan clear-result-cache",
+            "./vendor/bin/psalm --clear-cache",
+            "rm -rf ./var/tmp/*.php"
+        ],
+        "sa": [
+            "./vendor/bin/psalm --show-info=true",
+            "./vendor/bin/phpstan analyse -c phpstan.neon"
+        ],
+        "phpmd": "php -d error_reporting=22527 ./vendor/bin/phpmd src text ./phpmd.xml",
+        "tests": [
+            "@cs",
+            "@sa",
+            "@phpmd",
+            "@test"
+        ],
+        "build": [
+            "@clean",
+            "@cs",
+            "@sa",
+            "@pcov",
+            "@compile",
+            "@metrics"
+        ],
+        "serve": "COMPOSER_PROCESS_TIMEOUT=0 php -dzend_extension=xdebug.so -S 127.0.0.1:8080 -t public",
+        "app": "php bin/app.php",
+        "page": "php bin/page.php",
+        "profile": "php -dzend_extension=xdebug.so -dxdebug.mode=profile -dxdebug.output_dir=./var/log -dxdebug.profiler_output_name=cachegrind.out.%t bin/page.php get /"
+    },
+    "scripts-descriptions": {
+        "setup": "Setup the project",
+        "compile": "Compile scripts for the production",
+        "doc": "Generate API document",
+        "test": "Run unit tests",
+        "tests": "Run tests and quality checks",
+        "coverage": "Generate test coverage report",
+        "pcov": "Generate test coverage report (pcov)",
+        "cs": "Checks the coding standard",
+        "cs-fix": "Fix the coding standard",
+        "sa": "Run static analysis",
+        "phpmd": "Detect code quality issues",
+        "metrics": "Build metrics report",
+        "clean": "Clear cache files",
+        "serve": "Start built-in server",
+        "app": "Request app resource",
+        "page": "Request page resource",
+        "profile": "Profile page request (customize endpoint as needed)"
+    },
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "bamarni/composer-bin-plugin": true
+        }
+    },
+    "extra": {
+        "bamarni-bin": {
+            "bin-links": true,
+            "forward-command": false
+        }
+    }
+}

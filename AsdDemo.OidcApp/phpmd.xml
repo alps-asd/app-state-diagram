@@ -1,0 +1,23 @@
+<ruleset
+        name="PHPMD rule sets"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://pmd.sf.net/ruleset/1.0.0"
+        xsi:schemaLocation="http://pmd.sf.net/ruleset/1.0.0 http://pmd.sf.net/ruleset_xml_schema.xsd"
+        xsi:noNamespaceSchemaLocation="http://pmd.sf.net/ruleset_xml_schema.xsd">
+    <description>PHPMD rule sets</description>
+
+    <!-- clean code -->
+    <rule ref="rulesets/cleancode.xml" externalInfoUrl="https://phpmd.org/rules/cleancode.html"/>
+    <!-- codesize -->
+    <rule ref="rulesets/codesize.xml" externalInfoUrl="https://phpmd.org/rules/codesize.html"/>
+    <!--controversial -->
+    <rule ref="rulesets/controversial.xml" externalInfoUrl="https://phpmd.org/rules/controversial.html"/>
+    <!--design-->
+    <rule ref="rulesets/design.xml" externalInfoUrl="https://phpmd.org/rules/design.html"/>
+    <!--naming-->
+    <rule ref="rulesets/naming.xml" externalInfoUrl="https://phpmd.org/rules/naming.html">
+        <exclude name="ShortVariable"/>
+    </rule>
+    <!--unusedcode-->
+    <rule ref="rulesets/unusedcode.xml" externalInfoUrl="https://phpmd.org/rules/unusedcode.html"/>
+</ruleset>

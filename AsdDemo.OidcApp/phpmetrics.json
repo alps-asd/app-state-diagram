@@ -1,0 +1,16 @@
+{
+    "includes": [
+        "src"
+    ],
+    "report": {
+        "html": "build/metrics",
+        "csv": "build/metrics/report.csv",
+        "json": "build/metrics/report.json",
+        "violations": "build/metrics/violations.xml"
+    },
+    "plugins": {
+        "git": {
+            "binary": "git"
+        }
+    }
+}

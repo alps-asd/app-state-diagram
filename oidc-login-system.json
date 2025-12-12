@@ -1,0 +1,207 @@
+{
+  "$schema": "https://alps-io.github.io/schemas/alps.json",
+  "alps": {
+    "title": "OIDC Login System for CloudSign Products",
+    "doc": {"value": "新規プロダクトでのログインをOIDCにするシステム。Ory/Hydraを使用したOAuth2.0/OIDC認証基盤により、CloudSign製品群と新規プロダクトの統合認証を実現する。"},
+    "descriptor": [
+      {"id": "userId", "title": "User ID", "def": "https://schema.org/identifier", "doc": {"value": "ユーザーの一意な識別子"}},
+      {"id": "username", "title": "Username", "def": "https://schema.org/name", "doc": {"value": "ログイン用のユーザー名またはメールアドレス"}},
+      {"id": "password", "title": "Password", "doc": {"value": "ユーザーのパスワード"}},
+      {"id": "authorizationCode", "title": "Authorization Code", "doc": {"value": "OAuth2.0認可コード"}},
+      {"id": "accessToken", "title": "Access Token", "doc": {"value": "リソースアクセス用のアクセストークン"}},
+      {"id": "idToken", "title": "ID Token", "doc": {"value": "OIDC ID Token（ユーザー情報を含む）"}},
+      {"id": "refreshToken", "title": "Refresh Token", "doc": {"value": "アクセストークン更新用のリフレッシュトークン"}},
+      {"id": "clientId", "title": "Client ID", "doc": {"value": "OAuthクライアント識別子"}},
+      {"id": "redirectUri", "title": "Redirect URI", "def": "https://schema.org/url", "doc": {"value": "認証後のリダイレクト先URI"}},
+      {"id": "sessionId", "title": "Session ID", "doc": {"value": "認証セッションの識別子"}},
+      {"id": "state", "title": "State Parameter", "doc": {"value": "CSRF対策用のステートパラメータ"}},
+      {"id": "scope", "title": "Scope", "doc": {"value": "要求するアクセス権限のスコープ"}},
+      {"id": "errorMessage", "title": "Error Message", "doc": {"value": "エラーメッセージ"}},
+      {"id": "productName", "title": "Product Name", "doc": {"value": "製品名（CloudSign, NewProductA等）"}},
+      {"id": "consentRequired", "title": "Consent Required", "doc": {"value": "ユーザー同意が必要かどうか"}},
+
+      {"id": "UnauthenticatedState", "title": "未認証状態", "tag": "flow-auth", "doc": {"value": "ユーザーが未認証の初期状態。保護されたリソースへのアクセスを試みると認証フローが開始される。"}, "descriptor": [
+        {"href": "#goAuthorizationRequest"}
+      ]},
+
+      {"id": "AuthorizationRequest", "title": "認可リクエスト", "tag": "flow-auth", "doc": {"value": "OIDCプロバイダー（Ory/Hydra）への認可リクエスト。クライアントアプリケーションからauth.cloudsign.jpへリダイレクトされる。"}, "descriptor": [
+        {"href": "#clientId"},
+        {"href": "#redirectUri"},
+        {"href": "#state"},
+        {"href": "#scope"},
+        {"href": "#goLoginForm"},
+        {"href": "#goConsentForm"}
+      ]},
+
+      {"id": "LoginForm", "title": "ログインフォーム", "tag": "auth flow-auth", "doc": {"value": "認証サーバーが提供するログインフォーム。ユーザー名とパスワードの入力を受け付ける。"}, "descriptor": [
+        {"href": "#username"},
+        {"href": "#password"},
+        {"href": "#sessionId"},
+        {"href": "#doLogin"},
+        {"href": "#goUnauthenticatedState"}
+      ]},
+
+      {"id": "ConsentForm", "title": "同意確認フォーム", "tag": "auth flow-auth", "doc": {"value": "アプリケーションへの権限付与に対するユーザーの同意を確認するフォーム。"}, "descriptor": [
+        {"href": "#clientId"},
+        {"href": "#scope"},
+        {"href": "#consentRequired"},
+        {"href": "#doGrantConsent"},
+        {"href": "#doDenyConsent"}
+      ]},
+
+      {"id": "AuthenticationInProgress", "title": "認証処理中", "tag": "auth flow-auth", "doc": {"value": "認証サーバーがユーザーのクレデンシャルを検証している状態。"}, "descriptor": [
+        {"href": "#username"},
+        {"href": "#sessionId"},
+        {"href": "#goAuthorizationCallback"},
+        {"href": "#goLoginForm"}
+      ]},
+
+      {"id": "AuthorizationCallback", "title": "認可コールバック", "tag": "flow-auth", "doc": {"value": "認証成功後、認可コードとともにクライアントアプリケーションへリダイレクトされる。"}, "descriptor": [
+        {"href": "#authorizationCode"},
+        {"href": "#state"},
+        {"href": "#redirectUri"},
+        {"href": "#doExchangeToken"}
+      ]},
+
+      {"id": "TokenExchange", "title": "トークン交換", "tag": "flow-auth", "doc": {"value": "認可コードをアクセストークンとIDトークンに交換する処理。"}, "descriptor": [
+        {"href": "#authorizationCode"},
+        {"href": "#clientId"},
+        {"href": "#accessToken"},
+        {"href": "#idToken"},
+        {"href": "#refreshToken"},
+        {"href": "#goAuthenticatedState"}
+      ]},
+
+      {"id": "AuthenticatedState", "title": "認証済み状態", "tag": "flow-auth", "doc": {"value": "ユーザーが正常に認証され、アクセストークンを保持している状態。各プロダクトへアクセス可能。"}, "descriptor": [
+        {"href": "#userId"},
+        {"href": "#accessToken"},
+        {"href": "#idToken"},
+        {"href": "#goCloudSignNimbus"},
+        {"href": "#goCloudSignRevel"},
+        {"href": "#goCloudSignJp"},
+        {"href": "#goNewProductA"},
+        {"href": "#goCentral"},
+        {"href": "#doLogout"},
+        {"href": "#doRefreshToken"}
+      ]},
+
+      {"id": "CloudSignNimbus", "title": "CloudSign (Nimbus)", "tag": "product", "doc": {"value": "CloudSign Nimbusプロダクトのホーム画面。"}, "descriptor": [
+        {"href": "#userId"},
+        {"href": "#productName"},
+        {"href": "#goAuthenticatedState"}
+      ]},
+
+      {"id": "CloudSignRevel", "title": "CloudSign (Revel)", "tag": "product", "doc": {"value": "CloudSign Revelプロダクトのホーム画面。認証基盤との連携やリダイレクト処理を行う。"}, "descriptor": [
+        {"href": "#userId"},
+        {"href": "#productName"},
+        {"href": "#sessionId"},
+        {"href": "#goAuthenticatedState"}
+      ]},
+
+      {"id": "CloudSignJp", "title": "cloudsign.jp", "tag": "product", "doc": {"value": "cloudsign.jpのメインサイト。"}, "descriptor": [
+        {"href": "#userId"},
+        {"href": "#productName"},
+        {"href": "#goAuthenticatedState"}
+      ]},
+
+      {"id": "NewProductA", "title": "NewProductA", "tag": "product", "doc": {"value": "新規プロダクトAのメイン画面。BFFとinternalサービスを経由してデータにアクセスする。"}, "descriptor": [
+        {"href": "#userId"},
+        {"href": "#productName"},
+        {"href": "#goNewProductABFF"},
+        {"href": "#goAuthenticatedState"}
+      ]},
+
+      {"id": "NewProductABFF", "title": "NewProductA BFF", "tag": "product", "doc": {"value": "NewProductA用のBackend For Frontend。クライアントとバックエンドサービスの仲介を行う。"}, "descriptor": [
+        {"href": "#userId"},
+        {"href": "#accessToken"},
+        {"href": "#goNewProductAInternal"}
+      ]},
+
+      {"id": "NewProductAInternal", "title": "NewProductA Internal", "tag": "product", "doc": {"value": "NewProductAの内部APIサービス。"}, "descriptor": [
+        {"href": "#userId"},
+        {"href": "#accessToken"}
+      ]},
+
+      {"id": "Central", "title": "Central", "tag": "product", "doc": {"value": "中央管理システム。CloudSign DBへアクセスする。"}, "descriptor": [
+        {"href": "#userId"},
+        {"href": "#goAuthenticatedState"}
+      ]},
+
+      {"id": "ErrorState", "title": "エラー状態", "tag": "flow-auth", "doc": {"value": "認証フローでエラーが発生した状態。"}, "descriptor": [
+        {"href": "#errorMessage"},
+        {"href": "#goLoginForm"},
+        {"href": "#goUnauthenticatedState"}
+      ]},
+
+      {"id": "goAuthorizationRequest", "type": "safe", "rt": "#AuthorizationRequest", "title": "認可リクエストへ遷移", "tag": "auth flow-auth", "doc": {"value": "保護されたリソースへのアクセス時に、OIDCプロバイダーへ認可リクエストを送信する。"}, "descriptor": [
+        {"href": "#clientId"},
+        {"href": "#redirectUri"},
+        {"href": "#state"},
+        {"href": "#scope"}
+      ]},
+
+      {"id": "goLoginForm", "type": "safe", "rt": "#LoginForm", "title": "ログインフォームへ遷移", "tag": "auth flow-auth", "doc": {"value": "認証セッションが存在しない場合、ログインフォームへリダイレクトする。"}, "descriptor": [
+        {"href": "#sessionId"}
+      ]},
+
+      {"id": "goConsentForm", "type": "safe", "rt": "#ConsentForm", "title": "同意確認フォームへ遷移", "tag": "auth flow-auth", "doc": {"value": "ユーザーの同意が必要な場合、同意確認フォームへ遷移する。"}, "descriptor": [
+        {"href": "#clientId"},
+        {"href": "#scope"}
+      ]},
+
+      {"id": "goAuthorizationCallback", "type": "safe", "rt": "#AuthorizationCallback", "title": "認可コールバックへ遷移", "tag": "flow-auth", "doc": {"value": "認証成功後、認可コードとともにクライアントへリダイレクトする。"}, "descriptor": [
+        {"href": "#authorizationCode"},
+        {"href": "#state"}
+      ]},
+
+      {"id": "goAuthenticatedState", "type": "safe", "rt": "#AuthenticatedState", "title": "認証済み状態へ遷移", "tag": "flow-auth", "doc": {"value": "トークン取得後、認証済み状態へ遷移する。"}},
+
+      {"id": "goUnauthenticatedState", "type": "safe", "rt": "#UnauthenticatedState", "title": "未認証状態へ戻る", "tag": "flow-auth", "doc": {"value": "ログインキャンセルやエラー時に未認証状態へ戻る。"}},
+
+      {"id": "goCloudSignNimbus", "type": "safe", "rt": "#CloudSignNimbus", "title": "CloudSign Nimbusへ遷移", "tag": "product", "doc": {"value": "CloudSign Nimbusプロダクトへアクセスする。"}},
+
+      {"id": "goCloudSignRevel", "type": "safe", "rt": "#CloudSignRevel", "title": "CloudSign Revelへ遷移", "tag": "product", "doc": {"value": "CloudSign Revelプロダクトへアクセスする。"}},
+
+      {"id": "goCloudSignJp", "type": "safe", "rt": "#CloudSignJp", "title": "cloudsign.jpへ遷移", "tag": "product", "doc": {"value": "cloudsign.jpへアクセスする。"}},
+
+      {"id": "goNewProductA", "type": "safe", "rt": "#NewProductA", "title": "NewProductAへ遷移", "tag": "product", "doc": {"value": "新規プロダクトAへアクセスする。"}},
+
+      {"id": "goNewProductABFF", "type": "safe", "rt": "#NewProductABFF", "title": "NewProductA BFFへ遷移", "tag": "product", "doc": {"value": "NewProductAのBFFへアクセスする。"}},
+
+      {"id": "goNewProductAInternal", "type": "safe", "rt": "#NewProductAInternal", "title": "NewProductA Internalへ遷移", "tag": "product", "doc": {"value": "NewProductAの内部APIへアクセスする。"}},
+
+      {"id": "goCentral", "type": "safe", "rt": "#Central", "title": "Centralへ遷移", "tag": "product", "doc": {"value": "中央管理システムへアクセスする。"}},
+
+      {"id": "doLogin", "type": "unsafe", "rt": "#AuthenticationInProgress", "title": "ログイン実行", "tag": "auth flow-auth", "doc": {"value": "ユーザー名とパスワードを使用してログインを実行する。認証サーバーがクレデンシャルを検証する。"}, "descriptor": [
+        {"href": "#username"},
+        {"href": "#password"},
+        {"href": "#sessionId"}
+      ]},
+
+      {"id": "doGrantConsent", "type": "unsafe", "rt": "#AuthorizationCallback", "title": "同意を許可", "tag": "auth flow-auth", "doc": {"value": "アプリケーションへの権限付与に同意し、認可フローを続行する。"}, "descriptor": [
+        {"href": "#clientId"},
+        {"href": "#scope"}
+      ]},
+
+      {"id": "doDenyConsent", "type": "unsafe", "rt": "#ErrorState", "title": "同意を拒否", "tag": "auth flow-auth", "doc": {"value": "アプリケーションへの権限付与を拒否する。"}, "descriptor": [
+        {"href": "#clientId"}
+      ]},
+
+      {"id": "doExchangeToken", "type": "unsafe", "rt": "#TokenExchange", "title": "トークン交換実行", "tag": "flow-auth", "doc": {"value": "認可コードをアクセストークンとIDトークンに交換する。Ory/Hydraのトークンエンドポイントを呼び出す。"}, "descriptor": [
+        {"href": "#authorizationCode"},
+        {"href": "#clientId"},
+        {"href": "#redirectUri"}
+      ]},
+
+      {"id": "doRefreshToken", "type": "unsafe", "rt": "#AuthenticatedState", "title": "トークン更新", "tag": "flow-auth", "doc": {"value": "リフレッシュトークンを使用してアクセストークンを更新する。"}, "descriptor": [
+        {"href": "#refreshToken"},
+        {"href": "#clientId"}
+      ]},
+
+      {"id": "doLogout", "type": "idempotent", "rt": "#UnauthenticatedState", "title": "ログアウト", "tag": "auth flow-auth", "doc": {"value": "現在の認証セッションを終了し、トークンを無効化する。"}, "descriptor": [
+        {"href": "#sessionId"},
+        {"href": "#idToken"}
+      ]}
+    ]
+  }
+}

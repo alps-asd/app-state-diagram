@@ -1,0 +1,30 @@
+{
+  "$id": "user.json",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "User",
+  "type": "object",
+  "required": ["id", "username", "email", "dateCreated"],
+  "properties": {
+    "id": {
+      "description": "The unique identifier for a user",
+      "type": "string",
+      "maxLength": 64
+    },
+    "username": {
+      "description": "User's unique username",
+      "type": "string",
+      "maxLength": 100
+    },
+    "email": {
+      "description": "User's email address",
+      "type": "string",
+      "format": "email",
+      "maxLength": 255
+    },
+    "dateCreated": {
+      "description": "User creation timestamp",
+      "type": "string",
+      "format": "date-time"
+    }
+  }
+}

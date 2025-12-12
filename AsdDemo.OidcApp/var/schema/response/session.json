@@ -1,0 +1,34 @@
+{
+  "$id": "session.json",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Session",
+  "type": "object",
+  "required": ["id", "userId", "sessionToken", "expiresAt", "dateCreated"],
+  "properties": {
+    "id": {
+      "description": "The unique identifier for a session",
+      "type": "string",
+      "maxLength": 64
+    },
+    "userId": {
+      "description": "The user ID this session belongs to",
+      "type": "string",
+      "maxLength": 64
+    },
+    "sessionToken": {
+      "description": "Session token for authentication",
+      "type": "string",
+      "maxLength": 255
+    },
+    "expiresAt": {
+      "description": "Session expiration timestamp",
+      "type": "string",
+      "format": "date-time"
+    },
+    "dateCreated": {
+      "description": "Session creation timestamp",
+      "type": "string",
+      "format": "date-time"
+    }
+  }
+}

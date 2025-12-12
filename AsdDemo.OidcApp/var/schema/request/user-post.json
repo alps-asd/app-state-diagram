@@ -1,0 +1,26 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Create User Request",
+  "type": "object",
+  "required": ["username", "email", "password"],
+  "properties": {
+    "username": {
+      "description": "Unique username for the user",
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 100
+    },
+    "email": {
+      "description": "User's email address",
+      "type": "string",
+      "format": "email",
+      "maxLength": 255
+    },
+    "password": {
+      "description": "User's password (will be hashed)",
+      "type": "string",
+      "minLength": 8,
+      "maxLength": 255
+    }
+  }
+}
