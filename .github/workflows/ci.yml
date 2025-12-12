@@ -5,6 +5,7 @@ on:
     branches: [2.x, v2-suite]
   pull_request:
     branches: [2.x]
+  workflow_dispatch:
 
 jobs:
   test:
@@ -36,4 +37,24 @@ jobs:
         run: pnpm test
 
       - name: Test Coverage
-        run: pnpm test:coverage
+        run: pnpm test:coverage -- --coverageReporters=text --coverageReporters=lcov
+
+      - name: Upload coverage to Codecov
+        if: matrix.node-version == 20
+        uses: codecov/codecov-action@v5
+        with:
+          files: ./packages/cli/coverage/lcov.info
+          fail_ci_if_error: false
+          verbose: true
+
+      - name: Run demo (JSON)
+        run: node packages/cli/dist/asd.js docs/examples/amazon.json -o /tmp/amazon.html
+
+      - name: Run demo (SVG)
+        run: node packages/cli/dist/asd.js docs/examples/amazon.json -m svg -o /tmp/amazon.svg
+
+      - name: Run demo (DOT)
+        run: node packages/cli/dist/asd.js docs/examples/amazon.json -m dot -o /tmp/amazon.dot
+
+      - name: Validate demo output
+        run: node packages/cli/dist/asd.js docs/examples/amazon.json --validate
