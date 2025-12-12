@@ -242,6 +242,64 @@ describe('AlpsValidator', () => {
     });
   });
 
+  describe('Nested descriptors', () => {
+    it('should validate nested descriptors', () => {
+      const alps = {
+        alps: {
+          title: 'Test',
+          descriptor: [
+            {
+              id: 'Parent',
+              descriptor: [
+                { id: 'child1' },
+                { id: 'child2', type: 'safe', rt: '#Parent' }
+              ]
+            }
+          ]
+        }
+      };
+      const result = validator.validate(alps);
+      expect(result.isValid).toBe(true);
+    });
+
+    it('should error on nested descriptor without id', () => {
+      const alps = {
+        alps: {
+          descriptor: [
+            {
+              id: 'Parent',
+              descriptor: [
+                { type: 'semantic' }
+              ]
+            }
+          ]
+        }
+      };
+      const result = validator.validate(alps);
+      expect(result.errors).toContainEqual(
+        expect.objectContaining({ code: 'E001' })
+      );
+    });
+
+    it('should find ids in nested descriptors for reference checking', () => {
+      const alps = {
+        alps: {
+          descriptor: [
+            {
+              id: 'Parent',
+              descriptor: [
+                { id: 'NestedTarget' }
+              ]
+            },
+            { id: 'goNested', type: 'safe', rt: '#NestedTarget' }
+          ]
+        }
+      };
+      const result = validator.validate(alps);
+      expect(result.errors.filter(e => e.code === 'E004')).toHaveLength(0);
+    });
+  });
+
   describe('isValid', () => {
     it('should be true when no errors', () => {
       const alps = {
