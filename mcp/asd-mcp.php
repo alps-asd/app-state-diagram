@@ -638,6 +638,9 @@ function getAlpsGuideContent(): string
 
     // Remove YAML frontmatter
     $content = preg_replace('/^---\n.*?\n---\n/s', '', $content);
+    if ($content === null) {
+        return getEmbeddedAlpsGuide();
+    }
 
     return trim($content);
 }
