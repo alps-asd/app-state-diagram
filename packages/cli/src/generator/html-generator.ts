@@ -359,10 +359,10 @@ Object.keys(tagDescriptorMap).forEach(tag => {
 setupTagTrigger();
 
 // Label mode switching
-const alpsData = ${escapeJsonForScript(alpsData)};
+window.alpsData = ${escapeJsonForScript(alpsData)};
 
-function generateDotFromAlps(alpsData, labelMode) {
-    const descriptors = alpsData.alps?.descriptor || [];
+function generateDotFromAlps(data, labelMode) {
+    const descriptors = data.alps?.descriptor || [];
     const transitions = descriptors.filter(d => d.type && d.rt);
     const rtTargets = new Set(transitions.map(t => t.rt.replace('#', '')));
     const states = descriptors.filter(d => d.id && rtTargets.has(d.id));
@@ -438,7 +438,7 @@ async function regenerateSvg(labelMode) {
     svgGraph.innerHTML = '<p>Regenerating diagram...</p>';
 
     try {
-        const dotContent = generateDotFromAlps(alpsData, labelMode);
+        const dotContent = generateDotFromAlps(window.alpsData, labelMode);
         const vizInstance = new Viz();
         const svgString = await vizInstance.renderString(dotContent, { format: 'svg' });
         svgGraph.innerHTML = svgString;
@@ -503,6 +503,56 @@ function centerSvgScroll() {
 
 document.addEventListener('DOMContentLoaded', autoSelectSizeMode);
 window.addEventListener('resize', autoSelectSizeMode);
+
+// loadText: Update from raw ALPS text (for CDP/watch mode)
+// Editor parses and renders - CLI just sends text
+window.loadText = async function(text) {
+    try {
+        // Auto-detect and parse (JSON or XML)
+        let newAlpsData;
+        const trimmed = text.trim();
+        if (trimmed.startsWith('{')) {
+            newAlpsData = JSON.parse(text);
+        } else if (trimmed.startsWith('<')) {
+            // Simple XML to JSON (basic support)
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(text, 'text/xml');
+            // For now, just update the source display
+            console.log('XML parsing in browser - limited support');
+            return;
+        } else {
+            throw new Error('Unknown format');
+        }
+
+        window.alpsData = newAlpsData;
+
+        // Update title
+        const title = newAlpsData?.alps?.title || 'ALPS Profile';
+        document.querySelector('h1').textContent = title;
+        document.title = title;
+
+        // Update description
+        const doc = newAlpsData?.alps?.doc;
+        const docText = typeof doc === 'object' ? doc?.value || '' : doc || '';
+        document.querySelector('.markdown-body > p').textContent = docText;
+
+        // Regenerate diagram
+        const labelMode = document.querySelector('input[name="labelMode"]:checked')?.value || 'id';
+        await regenerateSvg(labelMode);
+
+        // Set Fit to Width
+        const svgContainer = document.getElementById('svg-container');
+        const fitRadio = document.querySelector('input[name="sizeMode"][value="fit"]');
+        if (svgContainer && fitRadio) {
+            svgContainer.classList.add('fit-width');
+            fitRadio.checked = true;
+        }
+
+        console.log('ALPS reloaded via loadText');
+    } catch (e) {
+        console.error('loadText error:', e);
+    }
+};
 </script>
 </body>
 </html>`;

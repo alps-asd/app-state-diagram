@@ -26,10 +26,13 @@
   "license": "MIT",
   "dependencies": {
     "@viz-js/viz": "^3.11.0",
+    "chokidar": "3",
+    "chrome-remote-interface": "^0.33.3",
     "commander": "^11.1.0",
     "fast-xml-parser": "^4.5.0"
   },
   "devDependencies": {
+    "@types/chrome-remote-interface": "^0.33.0",
     "@types/node": "^20.8.0",
     "typescript": "^5.2.2"
   }

@@ -13,6 +13,7 @@ import { generateDot } from './generator/dot-generator';
 import { dotToSvg, dotToSvgHighQuality } from './generator/svg-generator';
 import { generateHtml } from './generator/html-generator';
 import { FileResolver } from './resolver/file-resolver';
+import { startWatch } from './watch';
 
 const program = new Command();
 
@@ -39,6 +40,8 @@ program
   .option('-o, --output <file>', 'Output file (default: <input>.html)')
   .option('--label <mode>', 'Label mode: id or title')
   .option('--validate', 'Validate ALPS profile')
+  .option('-w, --watch', 'Watch mode with live reload (requires Chrome with --remote-debugging-port=9222)')
+  .option('--port <port>', 'CDP port for watch mode (default: 9222)', '9222')
   .action(async (inputFile: string | undefined, options) => {
     // Show help if no input file
     if (!inputFile) {
@@ -46,8 +49,10 @@ program
 
 Options:
   -e, --echo              Output to stdout instead of file
+  -w, --watch             Watch mode with live reload
   -m, --mode <mode>       Output mode (html|svg|dot)
   -o, --output <file>     Output file (default: <input>.html)
+  --port <port>           CDP port for watch mode (default: 9222)
   --label <mode>          Label mode: id or title
   --validate              Validate ALPS profile
   -v, --version           Show version information
@@ -74,6 +79,15 @@ Options:
       // Validate only mode
       if (options.validate) {
         console.log('✓ ALPS document is valid');
+        return;
+      }
+
+      // Watch mode
+      if (options.watch) {
+        await startWatch(inputFile, {
+          port: parseInt(options.port, 10),
+          output: options.output,
+        });
         return;
       }
 
