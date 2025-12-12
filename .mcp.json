@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "alps": {
+      "command": "./bin/asd",
+      "args": ["--mcp"]
+    }
+  }
+}

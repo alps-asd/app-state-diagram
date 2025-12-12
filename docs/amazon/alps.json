@@ -4110,7 +4110,7 @@
         "id": "goSearchResults",
         "type": "safe",
         "rt": "#SearchResults",
-        "title": "Search",
+        "title": "Go to Search Results",
         "tag": "search flow-purchase",
         "descriptor": [
           {
@@ -4122,7 +4122,7 @@
         "id": "goCategoryBrowse",
         "type": "safe",
         "rt": "#CategoryBrowse",
-        "title": "Go to Category",
+        "title": "Go to Category Browse",
         "tag": "search",
         "descriptor": [
           {
@@ -4206,7 +4206,7 @@
         "id": "goCouponPage",
         "type": "safe",
         "rt": "#CouponPage",
-        "title": "Go to Coupons",
+        "title": "Go to Coupon Page",
         "tag": "deals",
         "descriptor": [
           {
@@ -4254,7 +4254,7 @@
         "id": "goOtherSellers",
         "type": "safe",
         "rt": "#OtherSellers",
-        "title": "Other Sellers",
+        "title": "Go to Other Sellers",
         "tag": "product",
         "descriptor": [
           {
@@ -4345,7 +4345,7 @@
         "id": "goSavedItems",
         "type": "safe",
         "rt": "#SavedItems",
-        "title": "Go to Save for Later",
+        "title": "Go to Saved Items",
         "tag": "cart"
       },
       {
@@ -4397,7 +4397,7 @@
         "id": "goSelectHub",
         "type": "safe",
         "rt": "#SelectHub",
-        "title": "Go to Select Pickup Location",
+        "title": "Go to Select Hub",
         "tag": "checkout"
       },
       {
@@ -4439,7 +4439,7 @@
         "id": "goConveniencePayment",
         "type": "safe",
         "rt": "#ConveniencePayment",
-        "title": "Go to Convenience Store Payment",
+        "title": "Go to Convenience Payment",
         "tag": "checkout"
       },
       {

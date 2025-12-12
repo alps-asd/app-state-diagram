@@ -208,14 +208,14 @@ try {
 if ($config->watch) {
     $pharRunning = Phar::running(false);
     $actualPath = dirname(__DIR__) . '/asd-sync';
-    
+
     if ($pharRunning !== '') {
         // PHAR execution: use version-independent opt path for better compatibility
         // PHAR path: "/opt/homebrew/Cellar/asd/x.x.x/libexec/asd.phar"
         // Target:    "/opt/homebrew/opt/asd/libexec/asd-sync" (version-independent)
         $pharDir = dirname($pharRunning);
         $actualPath = $pharDir . '/asd-sync';
-        
+
         // Try version-independent opt path if not found in Cellar
         if (!is_dir($actualPath)) {
             $homebrewPrefix = PathResolver::getHomebrewPrefix();
@@ -227,13 +227,13 @@ if ($config->watch) {
             }
         }
     }
-    
+
     if (!is_dir($actualPath)) {
         echo "Error: asd-sync directory not found. Watch mode requires Node.js components.\n";
         echo "Expected path: $actualPath\n";
         exit(1);
     }
-    
+
     chdir($actualPath);
     $nodeModulesPath = $actualPath . '/node_modules';
     $isFirstRun = !is_dir($nodeModulesPath);

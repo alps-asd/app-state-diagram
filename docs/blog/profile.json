@@ -1,46 +1,41 @@
 {
-    "$schema": "https://alps-io.github.io/schemas/alps.json",
-    "alps": {
-        "title": "ALPS Blog",
-        "doc" : { "value" : "An ALPS profile example for ASD"},
-        "link" : {"rel" : "issue", "href" : "https://github.com/alps-asd/app-state-diagram/issues"},
-        "descriptor": [
-            {"id": "id", "type": "semantic", "def": "https://schema.org/identifier"},
-            {"id": "articleBody", "type": "semantic", "def": "https://schema.org/articleBody"},
-            {"id": "dateCreated", "type": "semantic", "def": "https://schema.org/dateCreated"},
+  "$schema": "https://alps-io.github.io/schemas/alps.json",
+  "alps": {
+    "title": "ALPS Blog",
+    "doc": {"value": "An ALPS profile example for ASD"},
+    "link": {"rel": "issue", "href": "https://github.com/alps-asd/app-state-diagram/issues"},
+    "descriptor": [
+      {"id": "id", "type": "semantic", "def": "https://schema.org/identifier"},
+      {"id": "articleBody", "type": "semantic", "def": "https://schema.org/articleBody"},
+      {"id": "dateCreated", "type": "semantic", "def": "https://schema.org/dateCreated"},
 
-            {"id": "Index", "type": "semantic", "title": "Index Page", "descriptor": [
-                {"href": "#goBlog"},
-                {"href": "#goAbout"}
-            ]},
-            {"id": "About", "type": "semantic", "title": "About Page", "descriptor": [
-                {"href": "#goBlog"},
-                {"href": "#goIndex"}
-            ]},
-            {"id": "Blog", "type": "semantic", "def": "https://schema.org/Blog", "title": "Blog post list", "rel": "collection", "descriptor": [
-                {"href": "#BlogPosting"},
-                {"href": "#goBlogPosting"},
-                {"href": "#goAbout"},
-                {"href": "#goIndex"},
-                {"href": "#doPost"}
-            ]},
-            {"id": "BlogPosting", "type": "semantic", "title": "Blog post item", "def": "https://schema.org/BlogPosting", "link": {"rel": "schema", "href": "schema/BlogPosting.json", "title": "JsonSchema file"} ,"descriptor": [
-                {"href": "#id"},
-                {"href": "#articleBody"},
-                {"href": "#dateCreated"},
-                {"href": "#goBlog"}
-            ]},
+      {"id": "Index", "type": "semantic", "title": "Index Page", "descriptor": [
+        {"href": "#goBlog"}
+      ]},
+      {"id": "About", "type": "semantic", "descriptor": [
+        {"href": "#goBlog"}
+      ]},
+      {"id": "Blog", "type": "semantic", "def": "https://schema.org/Blog", "title": "Blog post list", "rel": "collection", "descriptor": [
+        {"href": "#BlogPosting"},
+        {"href": "#goBlogPosting"},
+        {"href": "#goAbout"},
+        {"href": "#doPost"}
+      ]},
+      {"id": "BlogPosting", "type": "semantic", "title": "Blog post item", "def": "https://schema.org/BlogPosting", "link": {"rel": "schema", "href": "schema/BlogPosting.json", "title": "JsonSchema file"}, "descriptor": [
+        {"href": "#id"},
+        {"href": "#articleBody"},
+        {"href": "#dateCreated"},
+        {"href": "#goBlog"}
+      ]},
 
-            {"id": "goStart", "type": "safe", "rt": "#Index", "title": "Start", "doc": {"value": "Application entry point"}},
-            {"id": "goIndex", "type": "safe", "rt": "#Index", "title": "Go to Index", "doc": {"value": "Navigate to the index page"}},
-            {"id": "goAbout", "type": "safe", "rt": "#About", "rel": "about", "title": "Go to About", "doc": {"value": "Navigate to the about page"}},
-            {"id": "goBlog", "type": "safe", "rt": "#Blog", "rel": "collection", "title": "Go to Blog", "doc": {"value": "Navigate to the blog post list"}},
-            {"id": "goBlogPosting", "type": "safe", "rt": "#BlogPosting", "rel": "item", "title": "View Blog Post", "doc": {"value": "View a specific blog post"}, "descriptor": [
-                {"href": "#id"}
-            ]},
-            {"id": "doPost", "type": "unsafe", "def": "https://activitystrea.ms/specs/json/1.0/#post-verb", "rt": "#Blog", "title": "Create Post", "doc": {"value": "Create a new blog post"}, "descriptor": [
-                {"href": "#articleBody"}
-            ]}
-        ]
-    }
+      {"id": "goBlog", "type": "safe", "rt": "#Blog", "title": "Go to Blog", "rel": "collection"},
+      {"id": "goAbout", "type": "safe", "rt": "#About", "title": "Go to About", "rel": "about"},
+      {"id": "goBlogPosting", "type": "safe", "rt": "#BlogPosting", "title": "Go to Blog Posting", "rel": "item", "descriptor": [
+        {"href": "#id"}
+      ]},
+      {"id": "doPost", "type": "unsafe", "def": "https://activitystrea.ms/specs/json/1.0/#post-verb", "rt": "#Blog", "title": "Create Post", "descriptor": [
+        {"href": "#articleBody"}
+      ]}
+    ]
+  }
 }

@@ -1,6 +1,6 @@
 ---
 name: alps
-description: Create, validate, and improve ALPS profiles. Generate from natural language (nl2alps), validate existing profiles, and get improvement suggestions.
+description: Create, validate, and improve ALPS profiles. Generate from natural language descriptions, validate existing profiles, and get improvement suggestions.
 ---
 
 # ALPS Profile Assistant
@@ -47,7 +47,7 @@ Generate, validate, and improve ALPS profiles for RESTful API design.
 
 This skill responds to natural language requests:
 
-### Generate ALPS from Description (nl2alps)
+### Generate ALPS from Natural Language
 - "Create an ALPS profile for a blog application"
 - "Generate ALPS for an e-commerce cart system"
 - "Design an ALPS profile for user authentication"
@@ -119,23 +119,37 @@ Context clues for AI inference:
 
 ### When Creating ALPS from Natural Language
 
-1. **Identify Entities** (Ontology)
+**IMPORTANT**: Structure the ALPS file in three blocks in this order:
+
+1. **Identify Entities** (Ontology - Semantic definitions)
    - Extract nouns: user, product, order, cart, etc.
    - Define atomic fields for each entity
+   - Add `def` links to schema.org where applicable
+   - Add `doc` for validation rules, formats, constraints
 
-2. **Identify States** (Taxonomy)
+2. **Identify States** (Taxonomy - Inclusion relationships)
    - Map user journey: login -> home -> browse -> cart -> checkout
    - Each state contains relevant fields and available transitions
+   - Use PascalCase for state names
+   - Add `doc` explaining what user sees and available actions
 
-3. **Identify Transitions** (Choreography)
-   - Safe: navigation, viewing, searching
-   - Unsafe: creating new resources
-   - Idempotent: updating or deleting resources
+3. **Identify Transitions** (Choreography - State transitions)
+   - Safe: navigation, viewing, searching (prefix: `go`)
+   - Unsafe: creating new resources (prefix: `do`)
+   - Idempotent: updating or deleting resources (prefix: `do`)
+   - Add `doc` explaining behavior, side effects, preconditions
 
 4. **Add Documentation**
-   - Every descriptor should have a meaningful `title`
-   - Complex descriptors should have `doc` explaining behavior
-   - Link to schema.org definitions where applicable (`def`)
+   - Every descriptor MUST have a meaningful `title`
+   - Add `doc` when title alone cannot fully explain the descriptor:
+     - **Semantic fields**: Validation rules, format requirements, constraints, examples
+       - Example: `{"id": "title", "title": "Title", "doc": {"value": "Article title. Maximum 100 characters."}}`
+     - **States**: What user sees, available actions, when this state is shown
+       - Example: `{"id": "BlogPost", "doc": {"value": "User-created article. Visible to all users after publication."}}`
+     - **Transitions**: Behavior, side effects, preconditions, error cases
+       - Example: `{"id": "doPublishBlogPost", "doc": {"value": "Publish article. Sets publishedAt to current time."}}`
+   - Use `def` to link to schema.org definitions for standard concepts
+   - **Rule of thumb**: If someone unfamiliar with the app would ask "what does this do?" or "what format?", add `doc`
 
 5. **Add Tags for Organization**
    - **Functional area tags**: Group by feature domain (e.g., `search`, `product`, `cart`, `checkout`, `order`, `account`, `review`)
@@ -167,7 +181,47 @@ Context clues for AI inference:
 
 ### Output Format
 
-Generate JSON format by default. Use XML only if explicitly requested.
+Generate XML format by default. Use JSON only if explicitly requested.
+
+**XML Format** (default):
+- Use XML comments to mark blocks: `<!-- Ontology -->`, `<!-- Taxonomy -->`, `<!-- Choreography -->`
+- One descriptor per line for simple elements
+- Multi-line for nested structures
+- Clear hierarchical structure makes maintenance easy
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<alps version="1.0"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="https://alps-io.github.io/schemas/alps.xsd">
+  <title>Application Title</title>
+  <doc>Description of the application</doc>
+
+  <!-- Ontology -->
+  <descriptor id="fieldName" title="Human Title">
+    <doc>Description</doc>
+  </descriptor>
+  <descriptor id="otherField" title="Other Field"/>
+
+  <!-- Taxonomy -->
+  <descriptor id="StateName" title="State Title">
+    <descriptor href="#fieldName"/>
+    <descriptor href="#transitionName"/>
+  </descriptor>
+
+  <!-- Choreography -->
+  <descriptor id="goTargetState" type="safe" rt="#TargetState" title="Go to Target State"/>
+  <descriptor id="doAction" type="unsafe" rt="#ResultState" title="Perform Action">
+    <descriptor href="#requiredField"/>
+  </descriptor>
+</alps>
+```
+
+**JSON Format** (when explicitly requested):
+- **Simple descriptors** (few attributes, no nesting): Write on a single line
+- **Complex descriptors** (with nesting or long `doc`): Use multiple lines with `"descriptor": [` at end of first line
+- **Block separation**: Add ONE blank line between Ontology/Taxonomy/Choreography blocks
+- **No other blank lines**: Keep descriptors within the same block compact
 
 ```json
 {
@@ -176,19 +230,18 @@ Generate JSON format by default. Use XML only if explicitly requested.
     "title": "Application Title",
     "doc": {"value": "Description of the application"},
     "descriptor": [
-      // Ontology: semantic fields
       {"id": "fieldName", "title": "Human Title", "doc": {"value": "Description"}},
+      {"id": "otherField", "title": "Other Field"},
 
-      // Taxonomy: states
       {"id": "StateName", "title": "State Title", "descriptor": [
         {"href": "#fieldName"},
         {"href": "#transitionName"}
       ]},
 
-      // Choreography: transitions
-      {"id": "goToState", "type": "safe", "rt": "#TargetState", "title": "Navigate to State"},
-      {"id": "doAction", "type": "unsafe", "rt": "#ResultState", "title": "Perform Action",
-        "descriptor": [{"href": "#requiredField"}]}
+      {"id": "goTargetState", "type": "safe", "rt": "#TargetState", "title": "Go to Target State"},
+      {"id": "doAction", "type": "unsafe", "rt": "#ResultState", "title": "Perform Action", "descriptor": [
+        {"href": "#requiredField"}
+      ]}
     ]
   }
 }
@@ -228,67 +281,105 @@ Use `asd --validate <file>` to validate ALPS profiles. Output conforms to the [v
 
 Input: "Create an ALPS for a simple blog with posts and comments"
 
-Output:
-```json
-{
-  "$schema": "https://alps-io.github.io/schemas/alps.json",
-  "alps": {
-    "title": "Simple Blog",
-    "doc": {"value": "ALPS profile for a blog application with posts and comments"},
-    "descriptor": [
-      {"id": "postId", "title": "Post ID", "def": "https://schema.org/identifier"},
-      {"id": "title", "title": "Post Title", "def": "https://schema.org/headline"},
-      {"id": "body", "title": "Post Body", "def": "https://schema.org/articleBody"},
-      {"id": "authorName", "title": "Author Name", "def": "https://schema.org/author"},
-      {"id": "createdAt", "title": "Created Date", "def": "https://schema.org/dateCreated"},
-      {"id": "commentId", "title": "Comment ID"},
-      {"id": "commentBody", "title": "Comment Text"},
+Output (XML - default):
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<alps version="1.0"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="https://alps-io.github.io/schemas/alps.xsd">
+  <title>Simple Blog</title>
+  <doc>ALPS profile for a blog application with posts and comments</doc>
 
-      {"id": "Home", "title": "Home Page", "descriptor": [
-        {"href": "#goPostList"}
-      ]},
-      {"id": "PostList", "title": "Post List", "descriptor": [
-        {"href": "#postId"},
-        {"href": "#title"},
-        {"href": "#authorName"},
-        {"href": "#goPostDetail"},
-        {"href": "#goHome"}
-      ]},
-      {"id": "PostDetail", "title": "Post Detail", "descriptor": [
-        {"href": "#postId"},
-        {"href": "#title"},
-        {"href": "#body"},
-        {"href": "#authorName"},
-        {"href": "#createdAt"},
-        {"href": "#Comment"},
-        {"href": "#goPostList"},
-        {"href": "#doCreateComment"}
-      ]},
-      {"id": "Comment", "title": "Comment", "descriptor": [
-        {"href": "#commentId"},
-        {"href": "#commentBody"},
-        {"href": "#authorName"},
-        {"href": "#createdAt"},
-        {"href": "#doDeleteComment"}
-      ]},
+  <!-- Ontology -->
+  <descriptor id="postId" title="Post ID" def="https://schema.org/identifier">
+    <doc>Unique identifier for blog post</doc>
+  </descriptor>
+  <descriptor id="title" title="Post Title" def="https://schema.org/headline">
+    <doc>Article title. Maximum 100 characters.</doc>
+  </descriptor>
+  <descriptor id="body" title="Post Body" def="https://schema.org/articleBody">
+    <doc>Article content. Markdown format supported.</doc>
+  </descriptor>
+  <descriptor id="authorName" title="Author Name" def="https://schema.org/author"/>
+  <descriptor id="createdAt" title="Created Date" def="https://schema.org/dateCreated">
+    <doc>Publication date and time. ISO 8601 format.</doc>
+  </descriptor>
+  <descriptor id="commentId" title="Comment ID">
+    <doc>Unique identifier for comment</doc>
+  </descriptor>
+  <descriptor id="commentBody" title="Comment Text">
+    <doc>Comment content. Maximum 500 characters.</doc>
+  </descriptor>
 
-      {"id": "goHome", "type": "safe", "rt": "#Home", "title": "Go to Home"},
-      {"id": "goPostList", "type": "safe", "rt": "#PostList", "title": "View Post List"},
-      {"id": "goPostDetail", "type": "safe", "rt": "#PostDetail", "title": "View Post Detail",
-        "descriptor": [{"href": "#postId"}]},
-      {"id": "doCreatePost", "type": "unsafe", "rt": "#PostDetail", "title": "Create Post",
-        "descriptor": [{"href": "#title"}, {"href": "#body"}]},
-      {"id": "doUpdatePost", "type": "idempotent", "rt": "#PostDetail", "title": "Update Post",
-        "descriptor": [{"href": "#postId"}, {"href": "#title"}, {"href": "#body"}]},
-      {"id": "doDeletePost", "type": "idempotent", "rt": "#PostList", "title": "Delete Post",
-        "descriptor": [{"href": "#postId"}]},
-      {"id": "doCreateComment", "type": "unsafe", "rt": "#PostDetail", "title": "Add Comment",
-        "descriptor": [{"href": "#postId"}, {"href": "#commentBody"}]},
-      {"id": "doDeleteComment", "type": "idempotent", "rt": "#PostDetail", "title": "Delete Comment",
-        "descriptor": [{"href": "#commentId"}]}
-    ]
-  }
-}
+  <!-- Taxonomy -->
+  <descriptor id="Home" title="Home Page">
+    <doc>Blog home page. Shows navigation to post list.</doc>
+    <descriptor href="#goPostList"/>
+  </descriptor>
+  <descriptor id="PostList" title="Post List">
+    <doc>List of blog posts. Shows latest 10 posts with title and author.</doc>
+    <descriptor href="#postId"/>
+    <descriptor href="#title"/>
+    <descriptor href="#authorName"/>
+    <descriptor href="#goPostDetail"/>
+    <descriptor href="#goHome"/>
+  </descriptor>
+  <descriptor id="PostDetail" title="Post Detail">
+    <doc>Single post view. Shows full content and comments. Allows adding new comments.</doc>
+    <descriptor href="#postId"/>
+    <descriptor href="#title"/>
+    <descriptor href="#body"/>
+    <descriptor href="#authorName"/>
+    <descriptor href="#createdAt"/>
+    <descriptor href="#Comment"/>
+    <descriptor href="#goPostList"/>
+    <descriptor href="#doCreateComment"/>
+  </descriptor>
+  <descriptor id="Comment" title="Comment">
+    <doc>User comment on a post. Can be deleted by comment author or post author.</doc>
+    <descriptor href="#commentId"/>
+    <descriptor href="#commentBody"/>
+    <descriptor href="#authorName"/>
+    <descriptor href="#createdAt"/>
+    <descriptor href="#doDeleteComment"/>
+  </descriptor>
+
+  <!-- Choreography -->
+  <descriptor id="goHome" type="safe" rt="#Home" title="Go to Home">
+    <doc>Navigate to blog home page.</doc>
+  </descriptor>
+  <descriptor id="goPostList" type="safe" rt="#PostList" title="Go to Post List">
+    <doc>Display list of blog posts. Shows latest 10 posts.</doc>
+  </descriptor>
+  <descriptor id="goPostDetail" type="safe" rt="#PostDetail" title="Go to Post Detail">
+    <doc>Display full post content with comments.</doc>
+    <descriptor href="#postId"/>
+  </descriptor>
+  <descriptor id="doCreatePost" type="unsafe" rt="#PostDetail" title="Create Post">
+    <doc>Create new blog post. Post is immediately published.</doc>
+    <descriptor href="#title"/>
+    <descriptor href="#body"/>
+  </descriptor>
+  <descriptor id="doUpdatePost" type="idempotent" rt="#PostDetail" title="Update Post">
+    <doc>Update existing post content. Only post author can update.</doc>
+    <descriptor href="#postId"/>
+    <descriptor href="#title"/>
+    <descriptor href="#body"/>
+  </descriptor>
+  <descriptor id="doDeletePost" type="idempotent" rt="#PostList" title="Delete Post">
+    <doc>Delete post and all associated comments. Only post author can delete.</doc>
+    <descriptor href="#postId"/>
+  </descriptor>
+  <descriptor id="doCreateComment" type="unsafe" rt="#PostDetail" title="Add Comment">
+    <doc>Add comment to post. Comment is immediately visible.</doc>
+    <descriptor href="#postId"/>
+    <descriptor href="#commentBody"/>
+  </descriptor>
+  <descriptor id="doDeleteComment" type="idempotent" rt="#PostDetail" title="Delete Comment">
+    <doc>Delete comment. Comment author or post author can delete.</doc>
+    <descriptor href="#commentId"/>
+  </descriptor>
+</alps>
 ```
 
 ## Integration with app-state-diagram
@@ -305,6 +396,49 @@ asd --watch profile.json
 # Generate markdown documentation
 asd --mode=markdown profile.json
 ```
+
+## Advanced Features
+
+### Structured Documentation with HTML
+
+For simple descriptions, use plain text in `doc.value`. When you need structured content (lists, definitions, tables), use HTML format:
+
+```json
+{"id": "doCheckout", "type": "unsafe", "rt": "#OrderConfirmation",
+ "title": "Complete Checkout",
+ "doc": {
+   "format": "html",
+   "value": "<dl><dt>Behavior</dt><dd>Processes payment, reserves inventory, sends confirmation email</dd><dt>Preconditions</dt><dd>Valid cart with items, payment method configured</dd><dt>Errors</dt><dd>Returns 400 if payment fails or items out of stock</dd></dl>"
+ }
+}
+```
+
+Format support levels (per ALPS spec):
+- `text`: Required (default if not specified)
+- `html`: Recommended
+- `markdown`: Optional
+- `asciidoc`: Optional
+
+### Links to Related Resources
+
+Use `link` elements to reference external documentation, schemas, or related resources:
+
+```json
+{"id": "BlogPost", "def": "https://schema.org/BlogPosting",
+ "title": "Blog Post",
+ "doc": {"value": "User-created article visible to all after publication"},
+ "link": [
+   {"rel": "help", "href": "https://example.com/docs/blog-api.html", "title": "Blog API Documentation"},
+   {"rel": "related", "href": "https://example.com/schemas/post.json", "title": "JSON Schema"}
+ ]
+}
+```
+
+Link attributes:
+- `rel` (required): Relationship type - use IANA Link Relations (`help`, `related`, `profile`, etc.)
+- `href` (required): URL to the related resource
+- `title` (optional): Human-readable description of the link
+- `tag` (optional): Classification tags
 
 ## Tips for Better ALPS
 
