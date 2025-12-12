@@ -30,7 +30,7 @@ npm link
 ### Generate HTML Documentation
 
 ```bash
-# Generate HTML (default) - includes validation
+# Generate HTML (default) - opens in alps-editor
 asd profile.json
 
 # Specify output file
@@ -40,36 +40,45 @@ asd profile.xml -o documentation.html
 asd profile.json --echo
 ```
 
+### Watch Mode (Live Reload)
+
+```bash
+# Start watch mode - auto-updates browser on file save
+asd -w profile.json
+
+# Requires Chrome with remote debugging:
+# open -a "Google Chrome" --args --remote-debugging-port=9222 --user-data-dir=/tmp/chrome-debug
+
+# Stop with Ctrl+C
+```
+
 ### Generate Diagram Only
 
 ```bash
-# Generate SVG diagram
-asd profile.json -f svg
+# Generate SVG diagram (high quality with local Graphviz)
+asd profile.json -m svg
 
 # Generate DOT format (Graphviz)
-asd profile.json -f dot -o diagram.dot
+asd profile.json -m dot -o diagram.dot
 ```
 
 ### Validate Only
 
 ```bash
-# Validate and output results as JSON (no HTML generation)
+# Validate ALPS profile
 asd profile.json --validate
 ```
 
-## Output Example
+## Output
 
-The generated HTML includes:
+The generated HTML opens in [alps-editor](https://editor.app-state-diagram.com) with:
 
-1. **Title and Description** - From ALPS `title` and `doc` elements
-2. **State Diagram** - Interactive SVG showing application states and transitions
-3. **Descriptor Table** - All semantic descriptors with:
-   - Type indicator (semantic/safe/unsafe/idempotent)
-   - ID and title
-   - Contained descriptors
-   - Extra info (def, rt, rel, doc, tags)
-4. **Legend** - Color coding for descriptor types
-5. **Links** - External links from ALPS `link` elements
+- **View Modes**: Document, Diagram, Preview
+- **State Diagram**: Interactive SVG with zoom and navigation
+- **Descriptor Table**: Semantic descriptors with type indicators
+- **Tag Filtering**: Filter by tags
+- **Download**: Export as HTML, SVG, or Profile
+- **Live Editing**: Modify ALPS directly in browser
 
 ## Validation
 
