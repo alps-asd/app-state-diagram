@@ -1126,7 +1126,7 @@
         <descriptor href="#courseId"/>
     </descriptor>
 
-    <descriptor id="doCalculateOverallGrades" type="safe" title="Calculate Overall Grades" rt="#Gradebook" tag="assessment instructor-tools">
+    <descriptor id="doCalculateOverallGrades" type="idempotent" title="Calculate Overall Grades" rt="#Gradebook" tag="assessment instructor-tools">
         <doc>Computes final course grades by applying weightings to individual assignment scores according to the grading scheme.</doc>
         <descriptor href="#courseId"/>
     </descriptor>

@@ -10,15 +10,18 @@
             {"id": "dateCreated", "type": "semantic", "def": "https://schema.org/dateCreated"},
 
             {"id": "Index", "type": "semantic", "title": "Index Page", "descriptor": [
-                {"href": "#goBlog"}
+                {"href": "#goBlog"},
+                {"href": "#goAbout"}
             ]},
-            {"id": "About", "type": "semantic", "descriptor": [
-                {"href": "#goBlog"}
+            {"id": "About", "type": "semantic", "title": "About Page", "descriptor": [
+                {"href": "#goBlog"},
+                {"href": "#goIndex"}
             ]},
             {"id": "Blog", "type": "semantic", "def": "https://schema.org/Blog", "title": "Blog post list", "rel": "collection", "descriptor": [
                 {"href": "#BlogPosting"},
                 {"href": "#goBlogPosting"},
                 {"href": "#goAbout"},
+                {"href": "#goIndex"},
                 {"href": "#doPost"}
             ]},
             {"id": "BlogPosting", "type": "semantic", "title": "Blog post item", "def": "https://schema.org/BlogPosting", "link": {"rel": "schema", "href": "schema/BlogPosting.json", "title": "JsonSchema file"} ,"descriptor": [
@@ -28,13 +31,14 @@
                 {"href": "#goBlog"}
             ]},
 
-            {"id": "goStart", "type": "safe", "rt": "#Blog"},
-            {"id": "goAbout", "type": "safe", "rt": "#About", "rel": "about"},
-            {"id": "goBlog", "type": "safe", "rt": "#Blog", "rel": "collection"},
-            {"id": "goBlogPosting", "type": "safe", "rt": "#BlogPosting", "rel": "item", "descriptor": [
+            {"id": "goStart", "type": "safe", "rt": "#Index", "title": "Start", "doc": {"value": "Application entry point"}},
+            {"id": "goIndex", "type": "safe", "rt": "#Index", "title": "Go to Index", "doc": {"value": "Navigate to the index page"}},
+            {"id": "goAbout", "type": "safe", "rt": "#About", "rel": "about", "title": "Go to About", "doc": {"value": "Navigate to the about page"}},
+            {"id": "goBlog", "type": "safe", "rt": "#Blog", "rel": "collection", "title": "Go to Blog", "doc": {"value": "Navigate to the blog post list"}},
+            {"id": "goBlogPosting", "type": "safe", "rt": "#BlogPosting", "rel": "item", "title": "View Blog Post", "doc": {"value": "View a specific blog post"}, "descriptor": [
                 {"href": "#id"}
             ]},
-            {"id": "doPost", "type": "unsafe", "def": "https://activitystrea.ms/specs/json/1.0/#post-verb", "rt": "#Blog", "descriptor": [
+            {"id": "doPost", "type": "unsafe", "def": "https://activitystrea.ms/specs/json/1.0/#post-verb", "rt": "#Blog", "title": "Create Post", "doc": {"value": "Create a new blog post"}, "descriptor": [
                 {"href": "#articleBody"}
             ]}
         ]
