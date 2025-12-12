@@ -47,7 +47,7 @@ composer require koriym/app-state-diagram
 ```bash
 curl -O https://raw.githubusercontent.com/alps-asd/app-state-diagram/master/docs/bookstore/alps.xml
 asd alps.xml  # or ./vendor/bin/asd for Composer
-open index.html
+open index.html # on macOS
 ```
 
 ## CLI Options
