@@ -10,6 +10,24 @@ MCP server for ALPS profile validation, SVG diagram generation, and best practic
 | `alps2svg` | Convert ALPS profiles to SVG state diagrams |
 | `alps_guide` | Get ALPS best practices and reference guide |
 
+## Getting Started
+
+### New Project Setup
+
+```bash
+mkdir my-alps && cd my-alps
+composer require koriym/app-state-diagram
+```
+
+### Claude Code Skill Setup (Optional)
+
+To enable ALPS best practices in Claude Code:
+
+```bash
+mkdir -p .claude/skills
+ln -s vendor/koriym/app-state-diagram/.claude/skills/alps .claude/skills/alps
+```
+
 ## MCP Client Configuration
 
 Add to your MCP client configuration (e.g., Claude Desktop):
