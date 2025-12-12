@@ -20,70 +20,55 @@
 - **Enhanced Team Communication**: Both technical and business teams can discuss using the same visual representation
 - **Design Consistency**: Represent application structures uniformly and discover design issues early
 
-## Information Architecture Perspective
-
-app-state-diagram embodies the three key aspects of Information Architecture (IA):
-
-- **Ontology**: Defines the semantic meaning of application elements and their relationships
-- **Taxonomy**: Organizes information into structured hierarchies and classifications
-- **Choreography**: Describes interaction patterns and rules for state transitions
-
-By focusing on these IA principles, app-state-diagram helps create a shared understanding of application semantics across organizational boundaries, independent of specific implementation technologies.
-
 ## Quick Start
 
 ### Online Editor (No Installation)
 
-- [https://editor.app-state-diagram.com/](https://editor.app-state-diagram.com/)
+[https://editor.app-state-diagram.com/](https://editor.app-state-diagram.com/)
 
-### Rendering Quality
+### Install with Homebrew (Recommended)
 
-- **Local Installation**: When Graphviz (`dot` command) is installed locally, app-state-diagram provides high-quality rendering with improved font metrics, especially for Japanese text
-- **Online Editor**: Uses JavaScript-based rendering which may have some limitations in font rendering quality
-- **Automatic Detection**: The tool automatically detects available rendering engines and uses the best option available
-
-### Install with Homebrew
 ```bash
 brew install alps-asd/asd/asd
 ```
 
-After installation, run:
+Auto-updates with `brew upgrade`.
+
+### Install with Composer
+
+Prerequisites: PHP 8.1+, Composer
+
 ```bash
-asd --watch path/to/your/profile.json
+composer require koriym/app-state-diagram
 ```
 
-### CLI Usage
+### Try It
 
-Basic usage:
 ```bash
-asd path/to/your/profile.json
+curl -O https://raw.githubusercontent.com/alps-asd/app-state-diagram/master/docs/bookstore/alps.xml
+asd alps.xml  # or ./vendor/bin/asd for Composer
+open index.html # on macOS
 ```
 
-#### Options
+## CLI Options
 
-- `--mode=html|markdown|svg`: Set output mode (default: html)
-  ```bash
-  asd --mode=html profile.json      # Generate interactive HTML (default)
-  asd --mode=markdown profile.json  # Generate markdown documentation
-  asd --mode=svg profile.json       # Generate SVG diagrams for embedding
-  ```
-  
-  **SVG mode** generates two standalone SVG files:
-  - `profile.svg` - Main diagram with descriptor IDs
-  - `profile.title.svg` - Diagram with human-readable titles
-  
-  Perfect for embedding in documentation, presentations, or web pages.
+```bash
+asd [options] <profile.json|profile.xml>
+```
 
-- `--watch` or `-w`: Enable watch mode with live browser sync
-  ```bash
-  asd --watch profile.json          # Start development server
-  asd --watch --port=3001 profile.json  # Custom port
-  ```
+| Option | Description |
+|--------|-------------|
+| `--mode=html` | Generate interactive HTML (default) |
+| `--mode=markdown` | Generate markdown documentation |
+| `--mode=svg` | Generate SVG diagrams for embedding |
+| `--watch`, `-w` | Enable watch mode with live browser sync |
+| `--port=N` | Set development server port (default: 3000) |
 
-- `--port`: Set development server port (default: 3000, only with `--watch`)
-  ```bash
-  asd --watch --port=8080 profile.json
-  ```
+**SVG mode** generates two standalone SVG files:
+- `profile.svg` - Main diagram with descriptor IDs
+- `profile.title.svg` - Diagram with human-readable titles
+
+> Tip: Install Graphviz (`dot`) for better multibyte character rendering.
 
 ## Examples
 
@@ -92,68 +77,11 @@ See these live demos:
 - [Book Store](https://www.app-state-diagram.com/app-state-diagram/bookstore/)
 - [LMS](https://www.app-state-diagram.com/app-state-diagram/lms/)
 
-## AI Assistant Integration
+## Design Application with AI and IA
 
-Integrate ALPS design guidance into your AI workflow. Choose the method that fits your environment:
-
-| Environment | Recommended | Setup |
-|-------------|-------------|-------|
-| **Claude Code (CLI)** | Skill | Symlink to project |
-| **Claude Desktop / Web** | MCP Server | Configure in settings |
-| **Other AI tools** | LLM Guide | Import URL in prompts |
-
-### Option 1: Skill (Claude Code CLI)
-
-Best for natural language ALPS creation and design guidance.
-
-**Prerequisites:** Claude Code 2.0.65 or later
-
-```bash
-# Check your Claude Code version
-claude --version  # Should be ≥ 2.0.65
-
-# Install skill in your project
-mkdir -p .claude/skills/alps
-curl -o .claude/skills/alps/SKILL.md \
-  https://raw.githubusercontent.com/alps-asd/app-state-diagram/master/.claude/skills/alps/SKILL.md
-```
-
-Restart Claude Code, then ask "Show me available skills" to verify installation.
-
-Then ask Claude Code:
-- "Create an ALPS profile for an e-commerce site"
-- "Validate my ALPS profile at docs/api.json"
-
-### Option 2: MCP Server (Claude Desktop)
-
-For Claude Desktop or environments supporting MCP.
-
-Add to your MCP configuration (`~/.claude.json` or Claude Desktop settings):
-
-```json
-{
-  "mcpServers": {
-    "alps": {
-      "command": "asd",
-      "args": ["--mcp"]
-    }
-  }
-}
-```
-
-### Option 3: LLM Guide (Any AI Tool)
-
-For any AI assistant, add this to your project's `AGENTS.md`, `CLAUDE.md`, or system prompt:
-
-```text
-@import https://alps-asd.github.io/app-state-diagram/llms-alps-skill.txt
-```
-
-Or reference directly in conversations:
-- "Use the ALPS guide at <https://alps-asd.github.io/app-state-diagram/llms-alps-skill.txt> to create a profile for..."
+See [AI Integration Guide](docs/ai-integration.md) for setting up Claude Code, MCP Server, or other AI tools.
 
 ## Documentation
 
-For more details, please refer to:
 - [Quick Start Guide](https://www.app-state-diagram.com/manuals/1.0/en/quick-start.html)
 - [Official Documentation](https://www.app-state-diagram.com/manuals/1.0/en/index.html)

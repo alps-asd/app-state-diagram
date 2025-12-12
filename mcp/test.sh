@@ -1,9 +1,9 @@
 #!/bin/bash
 
-# MCP PHP Skeleton Test Script
+# ALPS MCP Server Test Script
 # This script tests the basic functionality of the MCP server
 
-echo "Testing MCP PHP Skeleton Server..."
+echo "Testing ALPS MCP Server..."
 echo "=================================="
 
 # Make server executable

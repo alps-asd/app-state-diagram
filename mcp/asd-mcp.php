@@ -21,6 +21,11 @@
 
 declare(strict_types=1);
 
+use Koriym\AppStateDiagram\Config;
+use Koriym\AppStateDiagram\LabelName;
+use Koriym\AppStateDiagram\Profile;
+use Koriym\AppStateDiagram\PutDiagram;
+
 /*
  * Configuration
  */
@@ -102,9 +107,9 @@ const MCP_PROTOCOL_VERSION = '2024-11-05';
  */
 
 // Log startup to STDERR (STDOUT is reserved for JSON-RPC responses)
-fwrite(STDERR, "Starting MCP PHP Skeleton Server...\n");
-fwrite(STDERR, "Server: " . SERVER_NAME . " v" . SERVER_VERSION . "\n");
-fwrite(STDERR, "Protocol: MCP " . MCP_PROTOCOL_VERSION . "\n\n");
+fwrite(STDERR, "Starting ALPS MCP Server...\n");
+fwrite(STDERR, 'Server: ' . SERVER_NAME . ' v' . SERVER_VERSION . "\n");
+fwrite(STDERR, 'Protocol: MCP ' . MCP_PROTOCOL_VERSION . "\n\n");
 
 // Handle JSON-RPC requests from STDIN
 while ($line = fgets(STDIN)) {
@@ -112,8 +117,7 @@ while ($line = fgets(STDIN)) {
 
     // Validate JSON-RPC request structure
     if (! is_array($request) || ! isset($request['jsonrpc'], $request['method'])) {
-        
-        fwrite(STDERR, "Malformed JSON-RPC request: " . trim($line) . "\n");
+        fwrite(STDERR, 'Malformed JSON-RPC request: ' . trim($line) . "\n");
 
         // Only send error response for requests with id (not notifications)
         if (is_array($request) && array_key_exists('id', $request) && $request['id'] !== null) {
@@ -125,22 +129,22 @@ while ($line = fgets(STDIN)) {
                 ],
                 'id' => $request['id'],
             ];
-            
+
             $encodedError = json_encode($errorResponse);
             if ($encodedError !== false) {
                 fwrite(STDOUT, $encodedError . "\n");
             }
         }
+
         continue;
     }
 
     /** @var McpJsonRpcRequest $request */
-    
+
     $params = $request['params'] ?? null;
-    /** @var McpToolCallParams $toolCallParams */
     $toolCallParams = is_array($params) ? $params : [];
-    
-    /** @var McpJsonRpcResponse|null $response */
+    /** @var McpToolCallParams $toolCallParams */
+
     $response = match ($request['method'] ?? '') {
         'initialize' => [
             'jsonrpc' => '2.0',
@@ -148,8 +152,8 @@ while ($line = fgets(STDIN)) {
             'result' => [
                 'protocolVersion' => MCP_PROTOCOL_VERSION,
                 'serverInfo' => [
-                    'name' => SERVER_NAME, 
-                    'version' => SERVER_VERSION
+                    'name' => SERVER_NAME,
+                    'version' => SERVER_VERSION,
                 ],
                 'capabilities' => [
                     'tools' => (object) [],
@@ -185,7 +189,7 @@ while ($line = fgets(STDIN)) {
         ],
         default => (
             // Notifications (id=null) don't get error responses
-            (!array_key_exists('id', $request) || $request['id'] === null)
+            ! array_key_exists('id', $request) || $request['id'] === null
                 ? null
                 : [
                     'jsonrpc' => '2.0',
@@ -197,6 +201,7 @@ while ($line = fgets(STDIN)) {
                 ]
         )
     };
+    /** @var McpJsonRpcResponse|null $response */
 
     // Send response (skip for notifications)
     if ($response !== null) {
@@ -216,8 +221,8 @@ while ($line = fgets(STDIN)) {
 
 /**
  * Define your tools here
- * 
- * @return McpToolsList
+ *
+ * @return list<array{name: string, description: string, inputSchema: array<string, mixed>}>
  */
 function getToolDefinitions(): array
 {
@@ -261,32 +266,11 @@ function getToolDefinitions(): array
             ],
         ],
         [
-            'name' => 'echo',
-            'description' => 'Echo back the provided message - useful for testing MCP connectivity',
+            'name' => 'alps_guide',
+            'description' => 'Get ALPS best practices and reference guide. Use when creating or reviewing ALPS profiles.',
             'inputSchema' => [
                 'type' => 'object',
-                'properties' => [
-                    'message' => [
-                        'type' => 'string',
-                        'description' => 'Message to echo back',
-                    ],
-                ],
-                'required' => ['message'],
-            ],
-        ],
-        [
-            'name' => 'test_svg',
-            'description' => 'Display a test SVG diagram - useful for testing SVG rendering',
-            'inputSchema' => [
-                'type' => 'object',
-                'properties' => [
-                    'example' => [
-                        'type' => 'string',
-                        'description' => 'Which example to show',
-                        'enum' => ['bookstore', 'simple'],
-                        'default' => 'bookstore',
-                    ],
-                ],
+                'properties' => (object) [],
                 'required' => [],
             ],
         ],
@@ -300,8 +284,9 @@ function getToolDefinitions(): array
 /**
  * Handle tool calls - implement your business logic here
  *
- * @param McpToolCallParams $params
- * @return McpToolCallResult
+ * @param array{name?: string, arguments?: array<string, mixed>} $params
+ *
+ * @return array{content: list<array{type: string, text: string}>, isError: bool}
  */
 function handleToolCall(array $params): array
 {
@@ -311,8 +296,7 @@ function handleToolCall(array $params): array
     return match ($toolName) {
         'validate_alps' => handleValidateAlps($arguments),
         'alps2svg' => handleAlps2Svg($arguments),
-        'echo' => handleEcho($arguments),
-        'test_svg' => handleTestSvg($arguments),
+        'alps_guide' => handleAlpsGuide(),
         default => [
             'content' => [
                 [
@@ -326,170 +310,17 @@ function handleToolCall(array $params): array
 }
 
 /**
- * Test SVG tool implementation - Display existing working SVG
- *
- * @param array<string, mixed> $args
- * @return McpToolCallResult
- */
-function handleTestSvg(array $args): array
-{
-    $example = $args['example'] ?? 'bookstore';
-    
-    try {
-        $baseDir = dirname(__DIR__);
-        
-        if ($example === 'bookstore') {
-            $svgPath = $baseDir . '/docs/bookstore/alps.svg';
-        } else {
-            // Simple example - create a basic SVG
-            $svgContent = '<?xml version="1.0" encoding="UTF-8"?>
-<svg width="200" height="100" xmlns="http://www.w3.org/2000/svg">
-    <rect width="100%" height="100%" fill="#f0f8ff" stroke="#4169e1" stroke-width="2"/>
-    <text x="100" y="50" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#4169e1">Test SVG</text>
-</svg>';
-
-            return [
-                'content' => [
-                    [
-                        'type' => 'text',
-                        'text' => "✅ Simple test SVG:\n\n```svg\n" . $svgContent . "\n```",
-                    ]
-                ],
-                'isError' => false,
-            ];
-        }
-        
-        if (!file_exists($svgPath)) {
-            return [
-                'content' => [
-                    [
-                        'type' => 'text',
-                        'text' => "Error: SVG file not found at $svgPath",
-                    ],
-                ],
-                'isError' => true,
-            ];
-        }
-        
-        $svgContent = file_get_contents($svgPath);
-        if ($svgContent === false) {
-            return [
-                'content' => [
-                    [
-                        'type' => 'text',
-                        'text' => "Error: Could not read SVG file at $svgPath",
-                    ],
-                ],
-                'isError' => true,
-            ];
-        }
-        
-        // Create HTML wrapper for better display
-        $htmlContent = "<!DOCTYPE html>
-<html>
-<head>
-    <title>Bookstore State Diagram</title>
-    <style>
-        body { 
-            font-family: Arial, sans-serif; 
-            margin: 20px; 
-            background: #f5f5f5; 
-        }
-        .container { 
-            max-width: 1200px; 
-            margin: 0 auto; 
-            background: white; 
-            padding: 20px; 
-            border-radius: 8px; 
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        h1 { color: #333; }
-        svg { 
-            width: 100%; 
-            height: auto; 
-            border: 1px solid #ddd; 
-            border-radius: 4px; 
-        }
-    </style>
-</head>
-<body>
-    <div class=\"container\">
-        <h1>📚 Bookstore Application State Diagram</h1>
-        <p>This diagram shows the state transitions for a bookstore application.</p>
-        $svgContent
-        <hr>
-        <small>Generated at " . date('Y-m-d H:i:s') . " via MCP Server</small>
-    </div>
-</body>
-</html>";
-        
-        return [
-            'content' => [
-                [
-                    'type' => 'text',
-                    'text' => "✅ Bookstore state diagram:\n\n```html\n" . $htmlContent . "\n```",
-                ]
-            ],
-            'isError' => false,
-        ];
-        
-    } catch (Exception $e) {
-        return [
-            'content' => [
-                [
-                    'type' => 'text',
-                    'text' => 'Error displaying test SVG: ' . $e->getMessage(),
-                ],
-            ],
-            'isError' => true,
-        ];
-    }
-}
-
-/**
- * Echo tool implementation
- *
- * @param array<string, mixed> $args
- * @return McpToolCallResult
- */
-function handleEcho(array $args): array
-{
-    $message = $args['message'] ?? '';
-    
-    if (!is_string($message) || $message === '') {
-        return [
-            'content' => [
-                [
-                    'type' => 'text',
-                    'text' => 'Error: message parameter is required and must be a non-empty string',
-                ],
-            ],
-            'isError' => true,
-        ];
-    }
-
-    return [
-        'content' => [
-            [
-                'type' => 'text',
-                'text' => "Echo: $message",
-            ],
-        ],
-        'isError' => false,
-    ];
-}
-
-/**
  * Validate ALPS profile by attempting SVG generation
  *
  * @param array<string, mixed> $args
- * @return McpToolCallResult
+ *
+ * @return array{content: list<array{type: string, text: string}>, isError: bool}
  */
 function handleValidateAlps(array $args): array
 {
     $alpsContent = $args['alps_content'] ?? '';
-    
-    if (!is_string($alpsContent) || $alpsContent === '') {
+
+    if (! is_string($alpsContent) || $alpsContent === '') {
         return [
             'content' => [
                 [
@@ -502,44 +333,46 @@ function handleValidateAlps(array $args): array
     }
 
     try {
-        debugLog("VALIDATE: Processing ALPS content (length: " . strlen($alpsContent) . ")");
-        
+        debugLog('VALIDATE: Processing ALPS content (length: ' . strlen($alpsContent) . ')');
+
         // Generate SVG using existing app-state-diagram library
         // Include autoloader
         $autoloadPath = dirname(__DIR__) . '/vendor/autoload.php';
         debugLog("VALIDATE: Autoloader path: $autoloadPath");
-        
-        if (!file_exists($autoloadPath)) {
+
+        if (! file_exists($autoloadPath)) {
             throw new Exception("Autoloader not found at: $autoloadPath");
         }
+
         require_once $autoloadPath;
-        
+
         // Create temporary file for ALPS content with appropriate extension
         $trimmed = trim($alpsContent);
         if ($trimmed === '') {
             throw new Exception('ALPS content is empty or whitespace-only');
         }
-        $extension = ($trimmed[0] === '{') ? '.json' : '.xml';
+
+        $extension = $trimmed[0] === '{' ? '.json' : '.xml';
         $tempAlpsFile = tempnam(sys_get_temp_dir(), 'mcp_validate_') . $extension;
         file_put_contents($tempAlpsFile, $alpsContent);
-        
+
         debugLog("VALIDATE: ALPS file extension: $extension");
-        
+
         // Create config and generate SVG directly
-        $config = new \Koriym\AppStateDiagram\Config(
+        $config = new Config(
             profile: $tempAlpsFile,
             watch: false,
             outputMode: 'svg',
             port: 3000
         );
-        
-        $profile = new \Koriym\AppStateDiagram\Profile($tempAlpsFile, new \Koriym\AppStateDiagram\LabelName());
-        (new \Koriym\AppStateDiagram\PutDiagram())->drawSvgOnly($config, $profile);
-        
+
+        $profile = new Profile($tempAlpsFile, new LabelName());
+        (new PutDiagram())->drawSvgOnly($config, $profile);
+
         // Get generated SVG file path and read content
         $svgPath = str_replace(['.xml', '.json'], '.svg', $tempAlpsFile);
-        
-        if (!file_exists($svgPath)) {
+
+        if (! file_exists($svgPath)) {
             // Try title version
             $titleSvgPath = str_replace(['.xml', '.json'], '.title.svg', $tempAlpsFile);
             if (file_exists($titleSvgPath)) {
@@ -547,24 +380,25 @@ function handleValidateAlps(array $args): array
             } else {
                 // Clean up temp file
                 unlink($tempAlpsFile);
+
                 return [
                     'content' => [
                         [
                             'type' => 'text',
                             'text' => "❌ ALPS Validation FAILED\n\n**Error**: SVG file not generated - likely ALPS structure issue\n\n**Issues to check**:\n• Missing descriptors referenced by `rt` or `href` attributes\n• Invalid XML/JSON format\n• Missing required ALPS elements\n• Circular references in descriptors\n\n**ALPS Profile**:\n```xml\n" . $alpsContent . "\n```",
-                        ]
+                        ],
                     ],
                     'isError' => true,
                 ];
             }
         }
-        
+
         $svgContent = file_get_contents($svgPath);
-        
+
         // Clean up temp files
         unlink($tempAlpsFile);
         unlink($svgPath);
-        
+
         // Check if it's an empty placeholder (8x8 pixels)
         if (strpos($svgContent, 'width="8pt"') !== false && strpos($svgContent, 'height="8pt"') !== false) {
             return [
@@ -572,27 +406,26 @@ function handleValidateAlps(array $args): array
                     [
                         'type' => 'text',
                         'text' => "⚠️ ALPS Validation WARNING\n\n**Issue**: Generated empty diagram (8x8 pixels)\n\n**Common Causes**:\n• No state transitions defined (missing `rt` attributes)\n• Descriptors not properly linked with `href` attributes\n• Missing semantic descriptors that actions reference\n\n**Recommendation**: Add proper state transitions between descriptors\n\n**ALPS Profile**:\n```xml\n" . $alpsContent . "\n```",
-                    ]
+                    ],
                 ],
                 'isError' => false,
             ];
         }
-        
+
         // Count descriptors and links for detailed feedback
         $descriptorCount = substr_count($alpsContent, '<descriptor') + substr_count($alpsContent, '"descriptor"');
         $linkCount = substr_count($svgContent, 'class="edge"');
-        
+
         return [
             'content' => [
                 [
                     'type' => 'text',
                     'text' => "✅ ALPS Validation SUCCESSFUL\n\n**Results**:\n• SVG generated successfully\n• File size: " . strlen($svgContent) . " bytes\n• Descriptors found: ~$descriptorCount\n• State transitions: $linkCount links\n• Format: " . ($extension === '.json' ? 'JSON' : 'XML') . "\n\n**Status**: Ready for use - ALPS profile is valid and generates proper state diagram!",
-                ]
+                ],
             ],
             'isError' => false,
         ];
-        
-    } catch (Exception $e) {
+    } catch (Throwable $e) {
         return [
             'content' => [
                 [
@@ -609,18 +442,19 @@ function handleValidateAlps(array $args): array
  * ALPS to SVG tool implementation - Convert existing ALPS profile to SVG
  *
  * @param array<string, mixed> $args
- * @return McpToolCallResult
+ *
+ * @return array{content: list<array{type: string, text: string}>, isError: bool}
  */
 function handleAlps2Svg(array $args): array
 {
     $alpsContent = $args['alps_content'] ?? '';
     $alpsPath = $args['alps_path'] ?? '';
     $format = $args['format'] ?? 'svg';
-    
+
     // Support both content string and file path
-    if (!empty($alpsPath) && is_string($alpsPath)) {
+    if (! empty($alpsPath) && is_string($alpsPath)) {
         // Read from file
-        if (!file_exists($alpsPath)) {
+        if (! file_exists($alpsPath)) {
             return [
                 'content' => [
                     [
@@ -631,6 +465,7 @@ function handleAlps2Svg(array $args): array
                 'isError' => true,
             ];
         }
+
         $alpsContent = file_get_contents($alpsPath);
         if ($alpsContent === false) {
             return [
@@ -643,7 +478,7 @@ function handleAlps2Svg(array $args): array
                 'isError' => true,
             ];
         }
-    } elseif (!is_string($alpsContent) || $alpsContent === '') {
+    } elseif (! is_string($alpsContent) || $alpsContent === '') {
         return [
             'content' => [
                 [
@@ -656,39 +491,40 @@ function handleAlps2Svg(array $args): array
     }
 
     try {
-        debugLog("DEBUG: Processing ALPS content directly (length: " . strlen($alpsContent) . ")");
-        
+        debugLog('DEBUG: Processing ALPS content directly (length: ' . strlen($alpsContent) . ')');
+
         // Generate SVG using existing app-state-diagram library
         // Include autoloader
         $autoloadPath = dirname(__DIR__) . '/vendor/autoload.php';
         require_once $autoloadPath;
-        
+
         // Create temporary file for ALPS content with appropriate extension
         $trimmed = trim($alpsContent);
         if ($trimmed === '') {
             throw new Exception('ALPS content is empty or whitespace-only');
         }
-        $extension = ($trimmed[0] === '{') ? '.json' : '.xml';
+
+        $extension = $trimmed[0] === '{' ? '.json' : '.xml';
         $tempAlpsFile = tempnam(sys_get_temp_dir(), 'mcp_alps_') . $extension;
         file_put_contents($tempAlpsFile, $alpsContent);
-        
+
         debugLog("ALPS file extension: $extension");
-        
+
         // Create config and generate SVG directly
-        $config = new \Koriym\AppStateDiagram\Config(
+        $config = new Config(
             profile: $tempAlpsFile,
             watch: false,
             outputMode: 'svg',
             port: 3000
         );
-        
-        $profile = new \Koriym\AppStateDiagram\Profile($tempAlpsFile, new \Koriym\AppStateDiagram\LabelName());
-        (new \Koriym\AppStateDiagram\PutDiagram())->drawSvgOnly($config, $profile);
-        
+
+        $profile = new Profile($tempAlpsFile, new LabelName());
+        (new PutDiagram())->drawSvgOnly($config, $profile);
+
         // Get generated SVG file path and read content
         $svgPath = str_replace(['.xml', '.json'], '.svg', $tempAlpsFile);
-        
-        if (!file_exists($svgPath)) {
+
+        if (! file_exists($svgPath)) {
             // Try title version
             $titleSvgPath = str_replace(['.xml', '.json'], '.title.svg', $tempAlpsFile);
             if (file_exists($titleSvgPath)) {
@@ -697,13 +533,13 @@ function handleAlps2Svg(array $args): array
                 throw new Exception("SVG file not generated at expected paths: $svgPath or $titleSvgPath");
             }
         }
-        
+
         $svgContent = file_get_contents($svgPath);
-        
+
         // Clean up temp files
         unlink($tempAlpsFile);
         unlink($svgPath);
-        
+
         if ($format === 'svg') {
             // Check if it's an empty placeholder (8x8 pixels)
             if (strpos($svgContent, 'width="8pt"') !== false && strpos($svgContent, 'height="8pt"') !== false) {
@@ -712,23 +548,23 @@ function handleAlps2Svg(array $args): array
                         [
                             'type' => 'text',
                             'text' => "⚠️ Generated empty diagram (8x8) - ALPS profile structure issue\n📄 Check ALPS profile:\n\n```xml\n" . $alpsContent . "\n```\n\nThis usually means missing transitions or incorrect descriptor references.",
-                        ]
+                        ],
                     ],
                     'isError' => true,
                 ];
             }
-            
+
             return [
                 'content' => [
                     [
                         'type' => 'text',
                         'text' => "✅ SVG generated successfully\n📊 " . strlen($svgContent) . " bytes\n\n```svg\n" . $svgContent . "\n```",
-                    ]
+                    ],
                 ],
                 'isError' => false,
             ];
         }
-        
+
         // Both ALPS and SVG
         if ($format === 'both') {
             return [
@@ -741,7 +577,7 @@ function handleAlps2Svg(array $args): array
                 'isError' => false,
             ];
         }
-        
+
         return [
             'content' => [
                 [
@@ -751,8 +587,7 @@ function handleAlps2Svg(array $args): array
             ],
             'isError' => true,
         ];
-        
-    } catch (Exception $e) {
+    } catch (Throwable $e) {
         return [
             'content' => [
                 [
@@ -765,64 +600,114 @@ function handleAlps2Svg(array $args): array
     }
 }
 
+/**
+ * Get ALPS best practices guide
+ *
+ * @return array{content: list<array{type: string, text: string}>, isError: bool}
+ */
+function handleAlpsGuide(): array
+{
+    $guide = getAlpsGuideContent();
 
+    return [
+        'content' => [
+            [
+                'type' => 'text',
+                'text' => $guide,
+            ],
+        ],
+        'isError' => false,
+    ];
+}
 
 /**
- * Generate pure SVG from ALPS XML file path
+ * Read ALPS guide content from SKILL.md
  */
-function getSvg(string $alpsFilePath): string
+function getAlpsGuideContent(): string
 {
-    try {
-        // Create profile and generate DOT content
-        $profile = new \Koriym\AppStateDiagram\Profile($alpsFilePath, new \Koriym\AppStateDiagram\LabelName());
-        $drawDiagram = new \Koriym\AppStateDiagram\DrawDiagram();
-        
-        debugLog("Profile created with " . count($profile->descriptors) . " descriptors");
-        
-        // Generate DOT content
-        $dotContent = $drawDiagram($profile, new \Koriym\AppStateDiagram\LabelName());
-        debugLog("DOT content generated, length: " . strlen($dotContent));
-        
-        // Convert DOT to SVG using Graphviz
-        $tempDot = tempnam(sys_get_temp_dir(), 'mcp_dot_') . '.dot';
-        file_put_contents($tempDot, $dotContent);
-        
-        debugLog("Converting DOT to SVG...");
-        $svgContent = shell_exec("dot -Tsvg \"$tempDot\" 2>&1");
-        
-        // Clean up DOT file
-        unlink($tempDot);
-        
-        if (!$svgContent || strpos($svgContent, '<svg') === false) {
-            debugLog("SVG conversion failed: " . ($svgContent ?? 'null'));
-            throw new Exception("Failed to convert DOT to SVG");
-        }
-        
-        return trim($svgContent);
-        
-    } catch (Exception $e) {
-        debugLog("getSvg error: " . $e->getMessage());
-        throw $e;
+    $skillPath = dirname(__DIR__) . '/.claude/skills/alps/SKILL.md';
+
+    if (! file_exists($skillPath)) {
+        return getEmbeddedAlpsGuide();
     }
+
+    $content = file_get_contents($skillPath);
+    if ($content === false) {
+        return getEmbeddedAlpsGuide();
+    }
+
+    // Remove YAML frontmatter
+    $content = preg_replace('/^---\n.*?\n---\n/s', '', $content);
+    if ($content === null) {
+        return getEmbeddedAlpsGuide();
+    }
+
+    return trim($content);
+}
+
+/**
+ * Fallback embedded ALPS guide when SKILL.md is not available
+ */
+function getEmbeddedAlpsGuide(): string
+{
+    return <<<'GUIDE'
+# ALPS Best Practices
+
+## What Makes a Good ALPS
+
+1. **States = What the user sees** (e.g., ProductList, ProductDetail, Cart)
+2. **Transitions = What the user does** (e.g., goProductDetail, doAddToCart)
+3. **Self-documenting** - title explains purpose, doc describes behavior
+4. **No unreachable states** - every state has an entry point
+5. **Necessary and sufficient** - no over-abstraction
+
+## Naming Conventions
+
+| Type | Prefix | Example |
+|------|--------|---------|
+| Safe transition | `go` | `goProductList`, `goHome` |
+| Unsafe transition | `do` | `doCreateUser`, `doAddToCart` |
+| Idempotent transition | `do` | `doUpdateUser`, `doDeleteItem` |
+| State/Page | PascalCase | `HomePage`, `ProductDetail` |
+| Semantic field | camelCase | `userId`, `productName` |
+
+## Three Layers
+
+1. **Ontology** - Semantic descriptors (data fields)
+2. **Taxonomy** - State descriptors (screens/pages)
+3. **Choreography** - Transition descriptors (safe/unsafe/idempotent)
+
+## Output Format (JSON)
+
+```json
+{
+  "$schema": "https://alps-io.github.io/schemas/alps.json",
+  "alps": {
+    "title": "Application Title",
+    "doc": {"value": "Description"},
+    "descriptor": [
+      {"id": "fieldName", "title": "Human Title"},
+      {"id": "StateName", "title": "State Title", "descriptor": [
+        {"href": "#fieldName"},
+        {"href": "#goNextState"}
+      ]},
+      {"id": "goNextState", "type": "safe", "rt": "#TargetState", "title": "Navigate"}
+    ]
+  }
+}
+```
+
+## Important Rules
+
+- Safe transitions (go*) MUST include target state name: `rt="#ProductList"` → `goProductList`
+- Always validate after generation using validate_alps tool
+- Tags are space-separated strings, not arrays
+GUIDE;
 }
 
 /*
  * Utilities
  */
-
-/**
- * Validate and sanitize user input
- * Add your validation logic here
- */
-function validateInput(mixed $input, string $type): bool
-{
-    return match ($type) {
-        'string' => is_string($input),
-        'int' => is_int($input),
-        'array' => is_array($input),
-        default => false,
-    };
-}
 
 /**
  * Log debug information to STDERR
