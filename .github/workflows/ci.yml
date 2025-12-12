@@ -43,7 +43,7 @@ jobs:
         if: matrix.node-version == 20
         uses: codecov/codecov-action@v5
         with:
-          files: ./packages/cli/coverage/lcov.info
+          files: ./packages/cli/coverage/lcov.info,./packages/mcp/coverage/lcov.info
           fail_ci_if_error: false
 
       - name: Run demo (JSON)
