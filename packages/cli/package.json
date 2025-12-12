@@ -1,0 +1,36 @@
+{
+  "name": "@alps-asd/cli",
+  "version": "0.20.0",
+  "description": "ALPS CLI tool - generate documentation from ALPS profiles",
+  "main": "dist/asd.js",
+  "types": "dist/asd.d.ts",
+  "bin": {
+    "asd": "dist/asd.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "clean": "rm -rf dist",
+    "test": "jest",
+    "test:coverage": "jest --coverage"
+  },
+  "keywords": [
+    "alps",
+    "cli",
+    "documentation",
+    "state-diagram"
+  ],
+  "author": "Akihito Koriyama <akihito.koriyama@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "@viz-js/viz": "^3.11.0",
+    "commander": "^11.1.0",
+    "fast-xml-parser": "^4.5.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.8.0",
+    "typescript": "^5.2.2"
+  }
+}
