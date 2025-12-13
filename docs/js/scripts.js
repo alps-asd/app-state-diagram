@@ -462,8 +462,10 @@ Happy modeling! Remember, solid semantics supports the long-term evolution of yo
         const selector = document.getElementById('viewMode');
         if (!selector) return;
 
-        // Always start with Document mode (default)
-        selector.value = 'document';
+        // Use preview mode for asd-generated HTML, document mode for online editor
+        const defaultMode = window.ALPS_INITIAL_CONTENT ? 'preview' : 'document';
+        selector.value = defaultMode;
+        this.applyViewMode(defaultMode);
 
         selector.addEventListener('change', (event) => {
             const mode = event.target.value;
@@ -639,6 +641,13 @@ Happy modeling! Remember, solid semantics supports the long-term evolution of yo
     }
 
     setupDownloadButton() {
+        // Hide download menu in local mode (file:// protocol)
+        if (this.isLocalMode) {
+            const downloadMenu = document.querySelector('.download-menu');
+            if (downloadMenu) downloadMenu.style.display = 'none';
+            return;
+        }
+
         // HTML download - get from iframe (Profile already embedded as hidden)
         document.getElementById('downloadHtml')?.addEventListener('click', () => {
             const iframe = document.getElementById('preview-frame');
@@ -862,8 +871,9 @@ Happy modeling! Remember, solid semantics supports the long-term evolution of yo
     setupDiagramClickHandler() {
         // Listen for messages from iframe diagram
         window.addEventListener('message', (event) => {
-            // Validate origin for defense-in-depth security
-            if (event.origin !== window.location.origin) return;
+            // Validate origin for defense-in-depth security (skip for local/blob URLs)
+            const isLocalOrBlob = this.isLocalMode || event.origin === 'null';
+            if (!isLocalOrBlob && event.origin !== window.location.origin) return;
 
             if (event.data && event.data.type === 'jumpToId') {
                 const id = event.data.id;

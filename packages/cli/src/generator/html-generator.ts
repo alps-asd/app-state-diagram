@@ -454,16 +454,29 @@ document.querySelectorAll('input[name="labelMode"]').forEach(radio => {
     });
 });
 
-// Size mode toggle
+// Size mode toggle - keep selector position stable
 document.querySelectorAll('input[name="sizeMode"]').forEach(radio => {
     radio.addEventListener('change', function() {
+        const selector = this.closest('.selector-container');
+        const selectorRect = selector.getBoundingClientRect();
+        const selectorTopBefore = selectorRect.top;
+
         const svgContainer = document.getElementById('svg-container');
         if (this.value === 'fit') {
             svgContainer.classList.add('fit-width');
         } else {
             svgContainer.classList.remove('fit-width');
-            setTimeout(centerSvgScroll, 10);
         }
+
+        // Adjust scroll to keep selector at same screen position (instant, no animation)
+        requestAnimationFrame(() => {
+            const selectorTopAfter = selector.getBoundingClientRect().top;
+            const scrollDiff = selectorTopAfter - selectorTopBefore;
+            window.scrollTo({ top: window.scrollY + scrollDiff, behavior: 'instant' });
+            if (this.value === 'original') {
+                centerSvgScroll();
+            }
+        });
     });
 });
 

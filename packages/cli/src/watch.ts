@@ -1,7 +1,7 @@
 /**
  * Watch mode - live reload via Chrome DevTools Protocol
  *
- * CLI just sends text to browser, Editor handles parsing and rendering.
+ * Opens the online editor and sends content updates via CDP.
  */
 
 import * as fs from 'fs';
@@ -9,8 +9,8 @@ import * as path from 'path';
 import { spawn } from 'child_process';
 import CDP from 'chrome-remote-interface';
 import { watch } from 'chokidar';
-import { parseAlpsAuto } from './parser/alps-parser';
-import { generateEditorHtml } from './generator/editor-html-generator';
+
+const EDITOR_URL = 'https://editor.app-state-diagram.com';
 
 async function launchChrome(port: number, url: string): Promise<void> {
   const args = [
@@ -35,6 +35,26 @@ async function launchChrome(port: number, url: string): Promise<void> {
   }
 }
 
+async function waitForEditor(port: number): Promise<void> {
+  // Wait for Ace editor to be ready
+  for (let i = 0; i < 20; i++) {
+    try {
+      const client = await CDP({ port });
+      const { Runtime } = client;
+      const result = await Runtime.evaluate({
+        expression: 'typeof ace !== "undefined" && ace.edit("editor") !== null',
+      });
+      await client.close();
+      if (result.result.value === true) {
+        return;
+      }
+    } catch {
+      // Not ready yet
+    }
+    await new Promise(resolve => setTimeout(resolve, 500));
+  }
+}
+
 export async function startWatch(
   inputFile: string,
   options: { port: number; output?: string }
@@ -42,30 +62,21 @@ export async function startWatch(
   const absolutePath = path.resolve(inputFile);
   const port = options.port;
 
-  // Generate initial HTML (editor with pre-loaded content)
-  const content = fs.readFileSync(absolutePath, 'utf-8');
-  const document = parseAlpsAuto(content);
-  const title = document?.alps?.title || 'ALPS Editor';
-  const htmlOutput = generateEditorHtml(content, title);
-  const outputFile = options.output || inputFile.replace(/\.[^.]+$/, '.html');
-  fs.writeFileSync(outputFile, htmlOutput, 'utf-8');
-
-  const fileUrl = `file://${path.resolve(outputFile)}`;
-
   // Check if Chrome is already running with CDP, if not launch it
   try {
     await CDP({ port });
     console.log(`Chrome already running on port ${port}`);
-    spawn('open', ['-a', 'Google Chrome', fileUrl], { detached: true, stdio: 'ignore' });
+    spawn('open', ['-a', 'Google Chrome', EDITOR_URL], { detached: true, stdio: 'ignore' });
   } catch {
     console.log('Launching Chrome with remote debugging...');
-    await launchChrome(port, fileUrl);
+    await launchChrome(port, EDITOR_URL);
   }
 
-  console.log(`Watching ${inputFile} for changes...`);
-  console.log('Press Ctrl+C to stop.\n');
+  // Wait for editor to be ready
+  console.log('Waiting for editor to load...');
+  await waitForEditor(port);
 
-  // Send update to browser via CDP
+  // Send initial content
   const sendToBrowser = async () => {
     try {
       const fileContent = fs.readFileSync(absolutePath, 'utf-8');
@@ -82,6 +93,12 @@ export async function startWatch(
       console.error('Error:', error instanceof Error ? error.message : error);
     }
   };
+
+  // Send initial content
+  await sendToBrowser();
+
+  console.log(`Watching ${inputFile} for changes...`);
+  console.log('Press Ctrl+C to stop.\n');
 
   // Watch for changes
   watch(absolutePath).on('change', sendToBrowser);

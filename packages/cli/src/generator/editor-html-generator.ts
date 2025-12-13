@@ -1,8 +1,11 @@
 /**
- * Editor HTML Generator
+ * Editor HTML Generator (for watch mode only)
  *
  * Generates HTML that loads alps-editor with pre-loaded content.
+ * Used by watch mode for live editing with CDP-based updates.
  * The editor is hosted at https://editor.app-state-diagram.com/
+ *
+ * For standalone HTML output, use html-generator.ts instead.
  */
 
 const EDITOR_BASE_URL = 'https://editor.app-state-diagram.com';
@@ -52,7 +55,7 @@ export function generateEditorHtml(alpsContent: string, title?: string): string 
         <select id="viewMode">
             <option value="document">Document</option>
             <option value="diagram">Diagram</option>
-            <option value="preview">Preview</option>
+            <option value="preview" selected>Preview</option>
         </select>
         <details class="download-menu">
             <summary id="downloadBtn">Download</summary>

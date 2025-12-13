@@ -11,7 +11,7 @@ import * as path from 'path';
 import { parseAlpsAuto } from './parser/alps-parser';
 import { generateDot } from './generator/dot-generator';
 import { dotToSvg, dotToSvgHighQuality } from './generator/svg-generator';
-import { generateEditorHtml } from './generator/editor-html-generator';
+import { generateHtml } from './generator/html-generator';
 import { FileResolver } from './resolver/file-resolver';
 import { startWatch } from './watch';
 import { AlpsValidator } from './validator';
@@ -135,9 +135,9 @@ Options:
         output = await dotToSvgHighQuality(dotContent);
         outputExt = '.svg';
       } else {
-        // HTML: output editor with pre-loaded content
-        const title = document?.alps?.title || 'ALPS Editor';
-        output = generateEditorHtml(content, title);
+        // HTML: output standalone documentation
+        const svgContent = await dotToSvg(dotContent);
+        output = generateHtml(document, svgContent, content);
         outputExt = '.html';
       }
 
