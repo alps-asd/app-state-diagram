@@ -1,0 +1,296 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://alps-asd.github.io/app-state-diagram/schemas/validation-result.json",
+  "title": "ALPS Validation Result",
+  "description": "JSON schema for ALPS validation output from `asd --validate` command",
+  "type": "object",
+  "required": ["valid", "summary", "errors", "warnings", "suggestions", "statistics"],
+  "properties": {
+    "valid": {
+      "type": "boolean",
+      "description": "Overall validation result. true if no errors, false if any errors exist."
+    },
+    "summary": {
+      "type": "string",
+      "description": "Human-readable summary with emoji. Example: '✓ ALPS document is valid (0 errors, 0 warnings)'"
+    },
+    "errors": {
+      "type": "array",
+      "description": "Array of validation errors (must fix)",
+      "items": {
+        "$ref": "#/definitions/ValidationIssue"
+      }
+    },
+    "warnings": {
+      "type": "array",
+      "description": "Array of validation warnings (best practice violations)",
+      "items": {
+        "$ref": "#/definitions/ValidationIssue"
+      }
+    },
+    "suggestions": {
+      "type": "array",
+      "description": "Array of validation suggestions (optional improvements)",
+      "items": {
+        "$ref": "#/definitions/ValidationIssue"
+      }
+    },
+    "statistics": {
+      "type": "object",
+      "description": "Objective metrics about the ALPS profile",
+      "required": ["total_descriptors", "by_type"],
+      "properties": {
+        "total_descriptors": {
+          "type": "integer",
+          "description": "Total number of descriptors in the profile",
+          "minimum": 0
+        },
+        "by_type": {
+          "type": "object",
+          "description": "Breakdown of descriptors by type",
+          "required": ["semantic", "safe", "unsafe", "idempotent", "states"],
+          "properties": {
+            "semantic": {
+              "type": "integer",
+              "description": "Number of semantic descriptors (default type)",
+              "minimum": 0
+            },
+            "safe": {
+              "type": "integer",
+              "description": "Number of safe transitions (GET operations)",
+              "minimum": 0
+            },
+            "unsafe": {
+              "type": "integer",
+              "description": "Number of unsafe transitions (POST operations)",
+              "minimum": 0
+            },
+            "idempotent": {
+              "type": "integer",
+              "description": "Number of idempotent transitions (PUT/DELETE operations)",
+              "minimum": 0
+            },
+            "states": {
+              "type": "integer",
+              "description": "Number of state descriptors (composite descriptors)",
+              "minimum": 0
+            }
+          }
+        },
+        "tag_coverage": {
+          "type": "number",
+          "description": "Percentage of descriptors with tags (0-100)",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "documentation_coverage": {
+          "type": "object",
+          "description": "Percentage coverage of documentation attributes",
+          "properties": {
+            "title": {
+              "type": "number",
+              "description": "Percentage of descriptors with title attribute (0-100)",
+              "minimum": 0,
+              "maximum": 100
+            },
+            "doc": {
+              "type": "number",
+              "description": "Percentage of descriptors with doc attribute (0-100)",
+              "minimum": 0,
+              "maximum": 100
+            },
+            "def": {
+              "type": "number",
+              "description": "Percentage of descriptors with def (schema.org) links (0-100)",
+              "minimum": 0,
+              "maximum": 100
+            }
+          }
+        },
+        "orphaned_descriptors": {
+          "type": "integer",
+          "description": "Number of descriptors defined but never referenced by any state",
+          "minimum": 0
+        },
+        "unreachable_states": {
+          "type": "integer",
+          "description": "Number of states that no transition points to (no rt references)",
+          "minimum": 0
+        }
+      }
+    },
+    "ai-insights": {
+      "type": "object",
+      "description": "Subjective analysis by AI (only present when AI runs validation). This field is model-dependent and may evolve with better AI models.",
+      "properties": {
+        "complexity": {
+          "type": "string",
+          "enum": ["simple", "medium", "high", "very-high"],
+          "description": "Overall complexity assessment of the profile"
+        },
+        "assessment": {
+          "type": "string",
+          "description": "Brief narrative assessment of the profile characteristics. Example: 'Large two-sided marketplace (customer + lawyer). Lawyer-side has complex 8-step workflows.'"
+        },
+        "key_flows": {
+          "type": "array",
+          "description": "Key user journeys and their characteristics",
+          "items": {
+            "type": "string"
+          },
+          "examples": [
+            ["flow-hire: 12 states, longest customer journey", "flow-lawyer-work: 15 states, most complex workflow"]
+          ]
+        },
+        "coverage_gaps": {
+          "type": "array",
+          "description": "Known gaps in coverage (features not modeled or partially modeled)",
+          "items": {
+            "type": "string"
+          },
+          "examples": [
+            ["Team management for multi-lawyer firms (0%)", "Detailed billing/tax management (20%)"]
+          ]
+        },
+        "recommendations": {
+          "type": "array",
+          "description": "Recommendations for improving the profile",
+          "items": {
+            "type": "string"
+          },
+          "examples": [
+            ["Consider splitting lawyer-work into sub-flows", "Add error handling states in quote flow"]
+          ]
+        }
+      }
+    }
+  },
+  "definitions": {
+    "ValidationIssue": {
+      "type": "object",
+      "required": ["code", "message", "path", "severity"],
+      "properties": {
+        "code": {
+          "type": "string",
+          "description": "Error/warning/suggestion code (e.g., E001, W001, S001)",
+          "pattern": "^[EWS]\\d{3}$"
+        },
+        "message": {
+          "type": "string",
+          "description": "Human-readable description of the issue"
+        },
+        "path": {
+          "type": "string",
+          "description": "JSONPath to the descriptor with the issue (e.g., 'alps.descriptor[1]')"
+        },
+        "descriptor_id": {
+          "type": "string",
+          "description": "ID of the descriptor with the issue (if available)"
+        },
+        "severity": {
+          "type": "string",
+          "enum": ["error", "warning", "suggestion"],
+          "description": "Severity level of the issue"
+        }
+      }
+    }
+  },
+  "examples": [
+    {
+      "valid": true,
+      "summary": "✓ ALPS document is valid (0 errors, 0 warnings)",
+      "errors": [],
+      "warnings": [],
+      "suggestions": [],
+      "statistics": {
+        "total_descriptors": 430,
+        "by_type": {
+          "semantic": 214,
+          "safe": 76,
+          "unsafe": 20,
+          "idempotent": 26,
+          "states": 94
+        },
+        "tag_coverage": 87.4,
+        "documentation_coverage": {
+          "title": 100.0,
+          "doc": 98.6,
+          "def": 42.5
+        },
+        "orphaned_descriptors": 0,
+        "unreachable_states": 0
+      },
+      "ai-insights": {
+        "complexity": "high",
+        "assessment": "Large two-sided marketplace (customer + lawyer). Lawyer-side has complex 8-step workflows (consultation → answer → quote → case management → analytics).",
+        "key_flows": [
+          "flow-hire: 12 states, longest customer journey",
+          "flow-lawyer-work: 15 states, most complex workflow"
+        ],
+        "coverage_gaps": [
+          "Team management for multi-lawyer firms (0%)",
+          "Detailed billing/tax management (20%)"
+        ],
+        "recommendations": [
+          "Consider splitting lawyer-work into sub-flows for better modularity",
+          "Add error handling states in quote acceptance flow"
+        ]
+      }
+    },
+    {
+      "valid": false,
+      "summary": "✗ ALPS document has 2 errors",
+      "errors": [
+        {
+          "code": "E002",
+          "message": "Missing rt (return type) for safe transition",
+          "path": "alps.descriptor[1]",
+          "descriptor_id": "goHome",
+          "severity": "error"
+        },
+        {
+          "code": "E005",
+          "message": "Duplicate id: duplicate",
+          "path": "alps.descriptor[3]",
+          "descriptor_id": "duplicate",
+          "severity": "error"
+        }
+      ],
+      "warnings": [
+        {
+          "code": "W001",
+          "message": "Missing title attribute in ALPS document",
+          "path": "alps",
+          "severity": "warning"
+        }
+      ],
+      "suggestions": [
+        {
+          "code": "S001",
+          "message": "Consider adding doc to transition \"goHome\"",
+          "path": "alps.descriptor[1]",
+          "descriptor_id": "goHome",
+          "severity": "suggestion"
+        }
+      ],
+      "statistics": {
+        "total_descriptors": 4,
+        "by_type": {
+          "semantic": 2,
+          "safe": 1,
+          "unsafe": 0,
+          "idempotent": 0,
+          "states": 0
+        },
+        "tag_coverage": 0,
+        "documentation_coverage": {
+          "title": 0,
+          "doc": 0,
+          "def": 0
+        },
+        "orphaned_descriptors": 2,
+        "unreachable_states": 0
+      }
+    }
+  ]
+}

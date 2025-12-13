@@ -57,10 +57,30 @@ This skill responds to natural language requests:
 - "Check my ALPS file for issues"
 - "Review the ALPS profile at docs/api.json"
 
-### Get Improvement Suggestions
+### Analyze or Improve Existing Profile
+- "Analyze this ALPS profile"
 - "Improve this ALPS profile"
 - "Suggest enhancements for my ALPS"
 - "How can I make this ALPS better?"
+
+**Continuous Improvement Loop - AI Inherits the Mission:**
+
+When asked to analyze or improve an existing profile:
+
+1. **Read previous AI's insights** - Run `asd --validate <file>` and check for `ai-insights` field
+2. **Inherit the context** - Previous AI left analysis for you: complexity assessment, coverage gaps, recommendations
+3. **Build upon it** - Don't start from scratch; deepen the analysis based on what's already known
+4. **Update insights** - Add your findings to `ai-insights` for the next AI
+
+```
+AI₁: Creates profile → Generates ai-insights ("coverage_gaps: Team管理 0%")
+  ↓
+AI₂: Reads ai-insights → "Team管理が欠けているのか" → Focuses analysis there → Updates insights
+  ↓
+AI₃: Reads updated insights → Builds on previous work → Adds deeper analysis...
+```
+
+This creates a **knowledge continuity** where each AI builds on the work of previous AIs, just like developers reading code comments left by their predecessors.
 
 ## ALPS Structure Reference
 
@@ -117,6 +137,40 @@ Context clues for AI inference:
 
 ## Generation Guidelines
 
+### Strategy for Large Profiles (200+ descriptors)
+
+For complex, multi-sided platforms or large applications:
+
+1. **Domain Decomposition** - Split into separate ALPS files by functional domain:
+   - `base.json` - Core entities shared across domains
+   - `customer-domain.json` - Customer-facing features
+   - `admin-domain.json` - Admin/management features
+   - `seller-domain.json` - Seller/provider features (for marketplaces)
+
+2. **Design Each Domain Independently** - Focus on one domain at a time with complete context
+
+3. **Merge Using `asd merge`** - Combine domains iteratively:
+   ```bash
+   # Merge customer domain into base
+   asd merge base.json customer-domain.json
+   # customer-domain.json now contains only conflicts (if any)
+
+   # Resolve conflicts in customer-domain.json, then re-merge
+   asd merge base.json customer-domain.json
+   # customer-domain.json is now empty (merge complete)
+
+   # Repeat for other domains
+   asd merge base.json admin-domain.json
+   ```
+
+4. **Validate After Each Merge** - Ensure no broken references or duplicate IDs
+
+**Benefits of this approach:**
+- Focused design per domain
+- AI can maintain full context for each domain
+- Conflicts are explicitly tracked and resolved
+- Final profile is comprehensive and consistent
+
 ### When Creating ALPS from Natural Language
 
 **IMPORTANT**: Structure the ALPS file in three blocks in this order:
@@ -152,11 +206,23 @@ Context clues for AI inference:
    - **Rule of thumb**: If someone unfamiliar with the app would ask "what does this do?" or "what format?", add `doc`
 
 5. **Add Tags for Organization**
-   - **Functional area tags**: Group by feature domain (e.g., `search`, `product`, `cart`, `checkout`, `order`, `account`, `review`)
-   - **Flow tags**: Group by user journey with `flow-` prefix (e.g., `flow-purchase`, `flow-register`, `flow-return`)
+
+   **IMPORTANT**: ALPS describes "what the user experiences" (application-level semantics), not "how it's implemented" (backend details).
+
+   - **Flow tags (PRIMARY)**: Group by user journey/experience with `flow-` prefix
+     - Represents business value and user goals
+     - Example: `flow-purchase`, `flow-hire`, `flow-consult`, `flow-cancel`, `flow-return`
+     - **This is the "lens" through which to understand the application**
+     - Users experience "canceling an order" (`flow-cancel`), not "cancellation batch processing"
+
+   - **Domain tags (SECONDARY, optional)**: Group by technical domain with `domain-` prefix
+     - For organizing implementation and code structure
+     - Example: `domain-search`, `domain-cart`, `domain-payment`, `domain-analytics`
+     - Useful for developers to find related functionality
+
    - States and transitions should have both types where applicable
    - Tags are space-separated strings, not arrays
-   - Example: A cart-related transition might have `"tag": "cart flow-purchase"`
+   - Example: `"tag": "flow-purchase domain-cart"` means "part of purchase journey, implemented in cart domain"
 
 6. **Add Semantic Descriptors to Transitions**
    - Every transition (go/do) should specify its required input parameters as nested descriptors
@@ -173,11 +239,44 @@ Context clues for AI inference:
      ]}
      ```
 
-7. **MANDATORY: Validate After Generation**
-   - After generating ALPS JSON, save it to a temporary file
-   - Run `asd --validate <file>` to validate (outputs JSON per validation-result.json schema)
+7. **MANDATORY: Validate and Review Quality Metrics**
+   - After generating ALPS JSON, save it to a file
+   - Run `asd --validate <file>` to validate and get quality metrics
+   - The validation output includes:
+     - **Errors** (E001-E011): Must fix before proceeding
+     - **Warnings** (W001-W004): Best practice violations
+     - **Suggestions** (S001-S003): Optional improvements
+     - **Statistics**: Total descriptors, breakdown by type, tag coverage, documentation coverage
    - Parse the JSON result and report issues to the user
    - If errors exist, fix them before presenting the final output
+   - Review statistics to ensure comprehensive coverage
+
+8. **Generate Documentation**
+   - After validation passes, generate HTML documentation:
+     ```bash
+     asd profile.json -o profile.html
+     ```
+   - This creates an interactive state diagram for visual review
+   - Check for unreachable states or missing transitions in the diagram
+   - Share the HTML with stakeholders for review
+
+9. **Report Completion with Coverage Estimation**
+   - When completing a large profile, provide honest coverage assessment
+   - Template:
+     ```markdown
+     ✅ Implementation Complete: [X] descriptors
+
+     📊 Coverage Estimation:
+     - [Domain 1]: [X]% ([reasoning])
+     - [Domain 2]: [X]% ([reasoning])
+     - Overall: [X]%
+
+     ❌ Known Gaps:
+     - [Feature not implemented]
+     - [Area requiring more research]
+     ```
+   - Be transparent about what's covered and what's not
+   - For multi-sided platforms, assess coverage per side (customer/admin/seller)
 
 ### Output Format
 
@@ -247,35 +346,46 @@ Generate XML format by default. Use JSON only if explicitly requested.
 }
 ```
 
-## Validation
+## Validation and Quality Metrics
 
-Use `asd --validate <file>` to validate ALPS profiles. Output conforms to the [validation-result.json schema](https://alps-asd.github.io/app-state-diagram/schemas/validation-result.json).
+Use `asd --validate <file>` to validate ALPS profiles and get quality metrics.
 
-### Error Codes (E)
+**Output Format**: JSON (pretty-printed, human-readable)
+**Schema**: [validation-result.json](https://alps-asd.github.io/app-state-diagram/schemas/validation-result.json)
+
+The validation output includes:
+- `valid`: Overall result (boolean)
+- `summary`: Human-readable summary with emoji
+- `errors`, `warnings`, `suggestions`: Validation issues
+- `statistics`: Objective metrics (descriptor counts, coverage percentages)
+- `ai-insights`: **Subjective analysis by AI** (only when AI runs validation)
+  - Helps next AI understand context quickly
+  - Helps humans grasp key characteristics at a glance
+  - Model-dependent and may evolve
+
+### Validation Codes
+
+After generating ALPS, always validate with `asd --validate`. Key codes to watch for:
+
+**Errors (must fix):**
 - E001: Missing id or href
 - E002: Missing rt on transition
 - E003: Invalid type
 - E004: Broken reference
 - E005: Duplicate id
-- E006: Invalid href
-- E007: Invalid rt format
-- E008: Missing alps property in document
-- E009: Descriptor must be an array
-- E010: Invalid XML character in descriptor title
-- E011: Tag must be a string (space-separated), not an array
+- E008: Missing alps property
+- E009: Missing descriptor array
+- E011: Tag must be string (not array)
 
-### Warning Codes (W)
+**Warnings (best practice):**
 - W001: Missing title
-- W002: Safe transition naming (should start with 'go')
-- W003: Unsafe/idempotent naming (should start with 'do')
-- W004: Orphan descriptor
-- W005: Safe transition id does not match rt target (e.g., `goStart` with `rt="#ProductList"` should be `goProductList`)
-- W006: Tag contains comma - may be confused with space-separated format
+- W002: Safe transition should start with 'go'
+- W003: Unsafe/idempotent should start with 'do'
 
-### Suggestion Codes (S)
-- S001: Missing doc on transition
-- S002: Missing ALPS title
-- S003: Missing ALPS doc
+**Suggestions:**
+- S001: Consider adding doc to transition
+
+For detailed error descriptions and solutions, see [Validation Reference](https://alps-asd.github.io/app-state-diagram/llms-full.txt).
 
 ## Example: Blog Application
 
@@ -384,18 +494,7 @@ Output (XML - default):
 
 ## Integration with app-state-diagram
 
-Generated ALPS profiles can be visualized using app-state-diagram:
-
-```bash
-# Generate HTML diagram
-asd profile.json
-
-# Generate with watch mode
-asd --watch profile.json
-
-# Generate markdown documentation
-asd --mode=markdown profile.json
-```
+Generated ALPS profiles can be visualized using app-state-diagram. See [llms.txt](https://alps-asd.github.io/app-state-diagram/llms.txt) for CLI usage, programmatic API, and MCP server setup.
 
 ## Advanced Features
 
