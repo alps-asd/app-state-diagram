@@ -10,7 +10,7 @@ import { spawn } from 'child_process';
 import CDP from 'chrome-remote-interface';
 import { watch } from 'chokidar';
 
-const EDITOR_URL = 'https://editor.app-state-diagram.com';
+const EDITOR_URL = 'https://www.app-state-diagram.com/app-state-diagram/';
 
 async function launchChrome(port: number, url: string): Promise<void> {
   const args = [
@@ -36,13 +36,13 @@ async function launchChrome(port: number, url: string): Promise<void> {
 }
 
 async function waitForEditor(port: number): Promise<void> {
-  // Wait for Ace editor to be ready
-  for (let i = 0; i < 20; i++) {
+  // Wait for Ace editor and viewMode selector to be ready
+  for (let i = 0; i < 30; i++) {
     try {
       const client = await CDP({ port });
       const { Runtime } = client;
       const result = await Runtime.evaluate({
-        expression: 'typeof ace !== "undefined" && ace.edit("editor") !== null',
+        expression: 'typeof ace !== "undefined" && ace.edit("editor") !== null && document.getElementById("viewMode") !== null',
       });
       await client.close();
       if (result.result.value === true) {
@@ -77,6 +77,7 @@ export async function startWatch(
   await waitForEditor(port);
 
   // Send initial content
+  let isFirstSend = true;
   const sendToBrowser = async () => {
     try {
       const fileContent = fs.readFileSync(absolutePath, 'utf-8');
@@ -87,6 +88,15 @@ export async function startWatch(
       await Runtime.evaluate({
         expression: `ace.edit("editor").setValue(${JSON.stringify(fileContent)}, -1)`,
       });
+
+      // Set preview mode on first send
+      if (isFirstSend) {
+        await Runtime.evaluate({
+          expression: `document.getElementById("viewMode").value = "preview"; document.getElementById("viewMode").dispatchEvent(new Event("change"))`,
+        });
+        isFirstSend = false;
+      }
+
       await client.close();
       console.log(`[${new Date().toLocaleTimeString()}] Updated`);
     } catch (error) {
