@@ -1,0 +1,59 @@
+name: CI
+
+on:
+  push:
+    branches: [2.x, v2-suite]
+  pull_request:
+    branches: [2.x]
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18, 20, 22]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build
+        run: pnpm build
+
+      - name: Test
+        run: pnpm test
+
+      - name: Test Coverage
+        run: pnpm test:coverage
+
+      - name: Upload coverage to Codecov
+        if: matrix.node-version == 20
+        uses: codecov/codecov-action@v5
+        with:
+          files: ./packages/cli/coverage/lcov.info,./packages/mcp/coverage/lcov.info
+          fail_ci_if_error: false
+
+      - name: Run demo (JSON)
+        run: node packages/cli/dist/asd.js docs/demo/amazon/amazon.json -o /tmp/amazon.html
+
+      - name: Run demo (SVG)
+        run: node packages/cli/dist/asd.js docs/demo/amazon/amazon.json -m svg -o /tmp/amazon.svg
+
+      - name: Run demo (DOT)
+        run: node packages/cli/dist/asd.js docs/demo/amazon/amazon.json -m dot -o /tmp/amazon.dot
+
+      - name: Validate demo output
+        run: node packages/cli/dist/asd.js docs/demo/amazon/amazon.json --validate

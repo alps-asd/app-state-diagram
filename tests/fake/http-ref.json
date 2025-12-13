@@ -1,0 +1,17 @@
+{
+  "alps": {
+    "title": "HTTP Reference Test",
+    "descriptor": [
+      {
+        "id": "MyStore",
+        "type": "semantic",
+        "descriptor": [
+          {"href": "https://www.app-state-diagram.com/app-state-diagram/bookstore/alps.xml#isbn"},
+          {"href": "https://www.app-state-diagram.com/app-state-diagram/bookstore/alps.xml#author"},
+          {"href": "#goStore"}
+        ]
+      },
+      {"id": "goStore", "type": "safe", "rt": "#MyStore", "title": "View Store"}
+    ]
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "name": "app-state-diagram",
+  "version": "0.1.0",
+  "private": true,
+  "description": "ALPS (Application-Level Profile Semantics) tooling monorepo",
+  "keywords": [
+    "alps",
+    "api",
+    "hypermedia",
+    "rest"
+  ],
+  "author": "Akihito Koriyama <akihito.koriyama@gmail.com>",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "packageManager": "pnpm@9.15.0",
+  "scripts": {
+    "build": "pnpm -r build",
+    "test": "pnpm -r test",
+    "test:coverage": "pnpm -r test:coverage",
+    "clean": "pnpm -r clean"
+  },
+  "devDependencies": {
+    "@types/jest": "^30.0.0",
+    "@types/node": "^20.8.0",
+    "jest": "^30.2.0",
+    "ts-jest": "^29.4.6",
+    "typescript": "^5.2.2"
+  }
+}

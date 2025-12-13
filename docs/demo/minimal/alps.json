@@ -1,0 +1,28 @@
+{
+  "alps": {
+    "title": "Minimal Blog API",
+    "doc": { "value": "A minimal blog API with posts" },
+    "descriptor": [
+      { "id": "id", "def": "https://schema.org/identifier" },
+      { "id": "title", "def": "https://schema.org/title" },
+      { "id": "content", "def": "https://schema.org/articleBody" },
+
+      { "id": "Post", "type": "semantic", "descriptor": [
+        { "href": "#id" },
+        { "href": "#title" },
+        { "href": "#content" }
+      ]},
+
+      { "id": "PostList", "type": "semantic", "descriptor": [
+        { "href": "#Post" },
+        { "href": "#goPost" },
+        { "href": "#doCreatePost" }
+      ]},
+
+      { "id": "goHome", "type": "safe", "rt": "#PostList", "doc": { "value": "Navigate to post list" } },
+      { "id": "goPost", "type": "safe", "rt": "#Post", "doc": { "value": "View a post" } },
+      { "id": "doCreatePost", "type": "unsafe", "rt": "#Post", "doc": { "value": "Create a new post" } },
+      { "id": "doDeletePost", "type": "idempotent", "rt": "#PostList", "doc": { "value": "Delete a post" } }
+    ]
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "alps": {
+    "title": "Blog with External Refs",
+    "descriptor": [
+      {
+        "id": "Blog",
+        "type": "semantic",
+        "descriptor": [
+          {"href": "common.json#id"},
+          {"href": "common.json#title"},
+          {"href": "#goBlog"}
+        ]
+      },
+      {"id": "goBlog", "type": "safe", "rt": "#Blog", "title": "View Blog"}
+    ]
+  }
+}

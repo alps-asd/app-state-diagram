@@ -1,0 +1,205 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "ALPS Schema",
+    "type": "object",
+    "required": ["alps"],
+    "properties": {
+        "alps": {
+            "type": "object",
+            "required": ["descriptor"],
+            "properties": {
+                "version": {
+                    "type": "string",
+                    "errorMessage": "The 'version' must be a string. See https://datatracker.ietf.org/doc/html/draft-amundsen-richardson-foster-alps-07#section-2.2.18"
+                },
+                "doc": {"$ref": "#/definitions/doc"},
+                "ext": {"$ref": "#/definitions/ext"},
+                "link": {"$ref": "#/definitions/link"},
+                "title": {
+                    "type": "string",
+                    "errorMessage": "The 'title' must be a string. See https://datatracker.ietf.org/doc/html/draft-amundsen-richardson-foster-alps-07#section-2.2.15"
+                },
+                "descriptor": {
+                    "type": "array",
+                    "items": {"$ref": "#/definitions/descriptor"},
+                    "errorMessage": "The 'descriptor' must be an array. See https://datatracker.ietf.org/doc/html/draft-amundsen-richardson-foster-alps-07#section-2.2.4"
+                }
+            },
+            "errorMessage": {
+                "required": {
+                    "descriptor": "The 'alps' object must contain a 'descriptor' property. See https://datatracker.ietf.org/doc/html/draft-amundsen-richardson-foster-alps-07#section-2.2.1"
+                }
+            }
+        }
+    },
+    "definitions": {
+        "href": {
+            "type": "string",
+            "format": "uri-reference",
+            "errorMessage": "The 'href' must be a valid URI or URI reference. See https://datatracker.ietf.org/doc/html/draft-amundsen-richardson-foster-alps-07#section-2.2.8"
+        },
+        "doc": {
+            "oneOf": [
+                {
+                    "type": "string",
+                    "errorMessage": "The 'doc' can be a string. See https://datatracker.ietf.org/doc/html/draft-amundsen-richardson-foster-alps-07#section-2.2.5"
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "value": {
+                            "type": "string",
+                            "errorMessage": "The 'value' of 'doc' must be a string. See https://datatracker.ietf.org/doc/html/draft-amundsen-richardson-foster-alps-07#section-2.2.5"
+                        },
+                        "format": {
+                            "type": "string",
+                            "enum": ["text", "markdown", "html", "asciidoc"],
+                            "errorMessage": "The 'format' must be one of the following: 'text', 'markdown', 'html', 'asciidoc'. See https://datatracker.ietf.org/doc/html/draft-amundsen-richardson-foster-alps-07#section-2.2.7"
+                        },
+                        "href": {"$ref": "#/definitions/href"}
+                    },
+                    "required": ["value"],
+                    "errorMessage": {
+                        "required": {
+                            "value": "The 'doc' object must contain a 'value' property. See https://datatracker.ietf.org/doc/html/draft-amundsen-richardson-foster-alps-07#section-2.2.5"
+                        }
+                    }
+                }
+            ]
+        },
+        "ext": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "errorMessage": "The 'id' of 'ext' must be a string. See https://datatracker.ietf.org/doc/html/draft-amundsen-richardson-foster-alps-07#section-2.2.6"
+                    },
+                    "href": { "$ref": "#/definitions/href" },
+                    "value": {
+                        "type": "string",
+                        "errorMessage": "The 'value' of 'ext' must be a string. See https://datatracker.ietf.org/doc/html/draft-amundsen-richardson-foster-alps-07#section-2.2.6"
+                    }
+                },
+                "required": ["id"],
+                "errorMessage": {
+                    "required": {
+                        "id": "Each 'ext' object must contain an 'id' property. See https://datatracker.ietf.org/doc/html/draft-amundsen-richardson-foster-alps-07#section-2.2.6"
+                    }
+                }
+            },
+            "errorMessage": "The 'ext' must be an array of objects. See https://datatracker.ietf.org/doc/html/draft-amundsen-richardson-foster-alps-07#section-2.2.6"
+        },
+        "relType": {
+            "oneOf": [
+                {
+                    "type": "string",
+                    "enum": [
+                        "about", "alternate", "appendix", "archives", "author",
+                        "bookmark", "canonical", "chapter", "collection", "contents",
+                        "copyright", "current", "describedby", "describes", "edit",
+                        "edit-media", "enclosure", "first", "glossary", "help", "hub",
+                        "icon", "index", "item", "last", "latest-version", "license",
+                        "next", "next-archive", "payment", "prev", "preview",
+                        "previous", "privacy-policy", "related", "replies", "section",
+                        "self", "service", "start", "stylesheet", "subsection",
+                        "tag", "terms-of-service", "type", "up", "version-history",
+                        "via", "working-copy", "working-copy-of"
+                    ]
+                },
+                {
+                    "type": "string",
+                    "format": "uri"
+                }
+            ],
+            "errorMessage": "The 'rel' must be a valid registered link relation type or a URI. See https://datatracker.ietf.org/doc/html/draft-amundsen-richardson-foster-alps-07#section-2.2.12"
+        },
+        "link": {
+            "oneOf": [
+                { "$ref": "#/definitions/linkObject" },
+                {
+                    "type": "array",
+                    "items": { "$ref": "#/definitions/linkObject" }
+                }
+            ],
+            "errorMessage": "The 'link' must be an object or an array of objects. See https://datatracker.ietf.org/doc/html/draft-amundsen-richardson-foster-alps-07#section-2.2.10"
+        },
+        "linkObject": {
+            "type": "object",
+            "required": ["href", "rel"],
+            "properties": {
+                "href": { "$ref": "#/definitions/href" },
+                "rel": { "$ref": "#/definitions/relType" },
+                "title": {
+                    "type": "string",
+                    "errorMessage": "If provided, 'title' must be a string. See https://datatracker.ietf.org/doc/html/draft-amundsen-richardson-foster-alps-07#section-2.2.10"
+                },
+                "tag": {
+                    "type": "string",
+                    "errorMessage": "If provided, 'tag' must be a string. See https://datatracker.ietf.org/doc/html/draft-amundsen-richardson-foster-alps-07#section-2.2.14"
+                }
+            },
+            "additionalProperties": false,
+            "errorMessage": {
+                "required": {
+                    "href": "'href' is required in 'link' object. See https://datatracker.ietf.org/doc/html/draft-amundsen-richardson-foster-alps-07#section-2.2.10",
+                    "rel": "'rel' is required in 'link' object. See https://datatracker.ietf.org/doc/html/draft-amundsen-richardson-foster-alps-07#section-2.2.10"
+                },
+                "additionalProperties": "Additional properties are not allowed in 'link' object. See https://datatracker.ietf.org/doc/html/draft-amundsen-richardson-foster-alps-07#section-2.2.10"
+            }
+        },
+        "descriptor": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "errorMessage": "The 'id' of 'descriptor' must be a string. See https://datatracker.ietf.org/doc/html/draft-amundsen-richardson-foster-alps-07#section-2.2.9"
+                },
+                "href": { "$ref": "#/definitions/href" },
+                "doc": { "$ref": "#/definitions/doc" },
+                "ext": { "$ref": "#/definitions/ext" },
+                "name": {
+                    "type": "string",
+                    "errorMessage": "The 'name' of 'descriptor' must be a string. See https://datatracker.ietf.org/doc/html/draft-amundsen-richardson-foster-alps-07#section-2.2.11"
+                },
+                "title": {
+                    "type": "string",
+                    "errorMessage": "The 'title' of 'descriptor' must be a string. See https://datatracker.ietf.org/doc/html/draft-amundsen-richardson-foster-alps-07#section-2.2.15"
+                },
+                "type": {
+                    "type": "string",
+                    "enum": ["semantic", "safe", "idempotent", "unsafe"],
+                    "errorMessage": "The 'type' must be one of the following: 'semantic', 'safe', 'idempotent', 'unsafe'. See https://datatracker.ietf.org/doc/html/draft-amundsen-richardson-foster-alps-07#section-2.2.16"
+                },
+                "rt": {
+                    "type": "string",
+                    "errorMessage": "The 'rt' of 'descriptor' must be a string. See https://datatracker.ietf.org/doc/html/draft-amundsen-richardson-foster-alps-07#section-2.2.13"
+                },
+                "def": {
+                    "type": "string",
+                    "format": "uri-reference",
+                    "errorMessage": "The 'def' of 'descriptor' must be a valid URI. See https://datatracker.ietf.org/doc/html/draft-amundsen-richardson-foster-alps-07#section-2.2.3"
+                },
+                "rel": { "$ref": "#/definitions/relType" },
+                "tag": {
+                    "type": "string",
+                    "errorMessage": "The 'tag' must be a string. See https://datatracker.ietf.org/doc/html/draft-amundsen-richardson-foster-alps-07#section-2.2.14"
+                },
+                "link": { "$ref": "#/definitions/link" },
+                "descriptor": {
+                    "type": "array",
+                    "items": { "$ref": "#/definitions/descriptor" },
+                    "errorMessage": "The nested 'descriptor' must be an array. See https://datatracker.ietf.org/doc/html/draft-amundsen-richardson-foster-alps-07#section-2.2.4"
+                }
+            },
+            "oneOf": [
+                { "required": ["id"] },
+                { "required": ["href"] }
+            ],
+            "errorMessage": {
+                "oneOf": "Each 'descriptor' must have either an 'id' or an 'href'. See https://datatracker.ietf.org/doc/html/draft-amundsen-richardson-foster-alps-07#section-2.2.4"
+            }
+        }
+    }
+}
