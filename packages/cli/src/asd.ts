@@ -15,6 +15,7 @@ import { generateHtml } from './generator/html-generator';
 import { FileResolver } from './resolver/file-resolver';
 import { startWatch } from './watch';
 import { AlpsValidator } from './validator';
+import { AlpsMerger } from './merger';
 
 const program = new Command();
 
@@ -82,19 +83,28 @@ Options:
         const validator = new AlpsValidator();
         const result = validator.validate(document);
 
+        // Helper to generate documentation URL for issue codes
+        const getIssueUrl = (code: string): string => {
+          const anchor = code.toLowerCase();
+          return `https://app-state-diagram.com/docs/issues#${anchor}`;
+        };
+
         // Show errors
         for (const error of result.errors) {
           console.error(`[${error.code}] ${error.message}${error.path ? ` at ${error.path}` : ''}`);
+          console.error(`    ${getIssueUrl(error.code)}`);
         }
 
         // Show warnings
         for (const warning of result.warnings) {
           console.warn(`[${warning.code}] ${warning.message}${warning.path ? ` at ${warning.path}` : ''}`);
+          console.warn(`    ${getIssueUrl(warning.code)}`);
         }
 
         // Show suggestions
         for (const suggestion of result.suggestions) {
           console.log(`[${suggestion.code}] ${suggestion.message}${suggestion.path ? ` at ${suggestion.path}` : ''}`);
+          console.log(`    ${getIssueUrl(suggestion.code)}`);
         }
 
         if (result.isValid) {
@@ -148,6 +158,69 @@ Options:
         const outputFile = options.output || inputFile.replace(/\.[^.]+$/, outputExt);
         fs.writeFileSync(outputFile, output, 'utf-8');
         console.log(`ASD generated. ${path.resolve(outputFile)}`);
+      }
+    } catch (error) {
+      console.error('Error:', error instanceof Error ? error.message : error);
+      process.exit(1);
+    }
+  });
+
+// Merge command
+program
+  .command('merge <base> <source>')
+  .description('Merge ALPS profiles (modifies source file)')
+  .action(async (baseFile: string, sourceFile: string) => {
+    try {
+      // Read files
+      const basePath = path.resolve(baseFile);
+      const sourcePath = path.resolve(sourceFile);
+
+      if (!fs.existsSync(basePath)) {
+        console.error(`Base file not found: ${baseFile}`);
+        process.exit(1);
+      }
+
+      if (!fs.existsSync(sourcePath)) {
+        console.error(`Source file not found: ${sourceFile}`);
+        process.exit(1);
+      }
+
+      const baseContent = fs.readFileSync(basePath, 'utf-8');
+      const sourceContent = fs.readFileSync(sourcePath, 'utf-8');
+
+      // Parse documents
+      const baseDoc = parseAlpsAuto(baseContent);
+      const sourceDoc = parseAlpsAuto(sourceContent);
+
+      // Merge
+      const merger = new AlpsMerger();
+      const result = merger.merge(baseDoc, sourceDoc);
+
+      // Write merged base
+      fs.writeFileSync(basePath, JSON.stringify(result.merged, null, 2), 'utf-8');
+
+      // Write conflicts to source file (or empty if no conflicts)
+      const conflictsDoc = {
+        ...sourceDoc,
+        alps: {
+          ...sourceDoc.alps,
+          descriptor: result.conflicts,
+        },
+      };
+      fs.writeFileSync(sourcePath, JSON.stringify(conflictsDoc, null, 2), 'utf-8');
+
+      // Report
+      console.log(`Merge complete:`);
+      console.log(`  Added: ${result.stats.added} descriptors`);
+      console.log(`  Skipped: ${result.stats.skipped} duplicates`);
+      console.log(`  Conflicts: ${result.stats.conflicts}`);
+
+      if (result.stats.conflicts > 0) {
+        console.log(`\nConflicts written to ${sourceFile}`);
+        console.log('Resolve conflicts and run merge again');
+        process.exit(1);
+      } else {
+        console.log(`\n${sourceFile} is now empty (merge successful)`);
       }
     } catch (error) {
       console.error('Error:', error instanceof Error ? error.message : error);

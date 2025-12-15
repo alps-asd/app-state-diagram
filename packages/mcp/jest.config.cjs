@@ -9,4 +9,11 @@ module.exports = {
   moduleNameMapper: {
     '^@alps-asd/cli/(.*)$': '<rootDir>/../cli/dist/$1'
   },
+  globals: {
+    'ts-jest': {
+      tsconfig: {
+        module: 'commonjs',
+      },
+    },
+  },
 };

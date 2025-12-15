@@ -60,6 +60,12 @@ asd [options] <profile.json|profile.xml>
 | `--validate` | Validate ALPS profile only |
 | `--echo` | Output to stdout |
 
+### Subcommands
+
+```bash
+asd merge <base.json> <partial.json>  # Merge partial ALPS into base profile
+```
+
 ## Watch Mode
 
 Start watch mode with automatic Chrome launch and live reload:
@@ -74,14 +80,11 @@ Chrome opens automatically with remote debugging enabled. Changes to the ALPS fi
 
 The validator checks for errors, warnings, and suggestions:
 
-### Errors (E001-E011)
-- Missing id/href, missing rt, invalid type, broken references, duplicate ids, etc.
+- **Errors (E001-E011)** - Missing id/href, missing rt, invalid type, broken references, duplicate ids, etc.
+- **Warnings (W001-W004)** - Missing title, naming conventions (go*/do* prefixes), orphan descriptors
+- **Suggestions (S001-S003)** - Consider adding doc/title to improve documentation
 
-### Warnings (W001-W004)
-- Missing title, naming conventions (go*/do* prefixes), orphan descriptors
-
-### Suggestions (S001-S003)
-- Consider adding doc/title to improve documentation
+See [Validation Issues Reference](docs/issues.md) for detailed explanations and how to fix each issue.
 
 ```bash
 asd profile.json --validate
