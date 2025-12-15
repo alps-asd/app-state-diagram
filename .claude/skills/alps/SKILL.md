@@ -52,6 +52,19 @@ This skill responds to natural language requests:
 - "Generate ALPS for an e-commerce cart system"
 - "Design an ALPS profile for user authentication"
 
+### Generate ALPS from Website (NEW - alps-surveyor mode)
+- "Crawl https://example.com and generate ALPS profile"
+- "Survey website structure and create ALPS"
+- "Extract ALPS profile from existing website"
+
+**How it works:**
+1. **Efficient crawling**: Uses URL pattern classification to avoid redundant analysis
+2. **Token optimization**: Only analyzes unique page types (e.g., /products/123 and /products/456 analyzed once)
+3. **AI-powered extraction**: Analyzes DOM structure to infer states, transitions, and semantic fields
+4. **Handover protocol**: Records progress in handover.json for continuity across sessions
+
+See "ALPS Surveyor Mode" section below for details.
+
 ### Validate Existing Profile
 - "Validate this ALPS profile" (with file path or content)
 - "Check my ALPS file for issues"
@@ -68,16 +81,28 @@ This skill responds to natural language requests:
 When asked to analyze or improve an existing profile:
 
 1. **Read previous AI's insights** - Run `asd --validate <file>` and check for `ai-insights` field
-2. **Inherit the context** - Previous AI left analysis for you: complexity assessment, coverage gaps, recommendations
-3. **Build upon it** - Don't start from scratch; deepen the analysis based on what's already known
-4. **Update insights** - Add your findings to `ai-insights` for the next AI
+2. **Read handover.json if exists** - Check for previous session's progress, warnings, and advice (per ADR 0006)
+3. **Inherit the context** - Previous AI left analysis for you: complexity assessment, coverage gaps, recommendations
+4. **Identify gaps** - Explore the website/documentation to find missing features or incomplete flows
+5. **Make improvements** - Add missing descriptors, enhance documentation, fix issues
+6. **MANDATORY: Validate ALPS** - Run `asd --validate <file>` to ensure no errors were introduced
+7. **MANDATORY: Generate HTML** - Run `asd <file> -o <file>.html` to create visual diagram for review
+8. **Update handover.json** - Record what was done, what's left, and advice for next AI (per ADR 0006)
+9. **MANDATORY: Validate handover.json** - Verify JSON syntax and schema compliance:
+   ```bash
+   node -e "JSON.parse(require('fs').readFileSync('handover.json', 'utf8')); console.log('✓ Valid JSON')"
+   ```
+   Schema: [handover-protocol.json](https://alps-asd.github.io/app-state-diagram/schemas/handover-protocol.json)
+10. **Report completion** - Provide statistics (before/after), coverage estimation, and next steps
+
+**CRITICAL**: Steps 6-9 are MANDATORY for every improvement session. Never skip validation of both ALPS profile and handover.json.
 
 ```
-AI₁: Creates profile → Generates ai-insights ("coverage_gaps: Team管理 0%")
+AI₁: Creates profile → Validates → Generates HTML → Creates handover.json
   ↓
-AI₂: Reads ai-insights → "Team管理が欠けているのか" → Focuses analysis there → Updates insights
+AI₂: Reads handover.json → Identifies gaps → Improves → Validates → Generates HTML → Updates handover.json
   ↓
-AI₃: Reads updated insights → Builds on previous work → Adds deeper analysis...
+AI₃: Reads handover.json → Builds on previous work → Improves → Validates → Generates HTML → Updates handover.json
 ```
 
 This creates a **knowledge continuity** where each AI builds on the work of previous AIs, just like developers reading code comments left by their predecessors.
@@ -549,8 +574,152 @@ Link attributes:
 6. **Consider pagination** - List states should support pagination
 7. **Tag descriptors** - Use `tag` attribute to group related descriptors
 
+## ALPS Surveyor Mode (Website Crawling)
+
+### Overview
+
+The alps-surveyor mode extracts ALPS profiles from existing websites by analyzing their structure. This is useful when:
+- Reverse engineering an existing web application
+- Creating API documentation from a live site
+- Understanding application state flows from user-facing pages
+
+### Efficient Crawling Strategy
+
+**Problem**: Crawling every URL wastes tokens analyzing duplicate page types.
+
+**Solution**: Three-layer strategy minimizes AI calls:
+
+#### Strategy 1: URL Pattern Classification (No AI)
+- Detects patterns like `/products/{id}`, `/users/{username}`
+- Groups URLs by type before fetching
+- Example: `/products/123`, `/products/456` → same pattern, only analyze once
+
+#### Strategy 2: DOM Structure Extraction (Lightweight)
+- Removes all text content from HTML
+- Extracts only:
+  - HTML tag hierarchy
+  - CSS classes and IDs
+  - Form input names and types
+  - Link destination patterns
+- Minimizes tokens sent to AI
+
+#### Strategy 3: ALPS Generation (AI-Powered)
+- AI analyzes DOM skeleton (not full HTML)
+- Infers:
+  - **State**: Page role (e.g., "ProductDetail")
+  - **Semantics**: Data fields from forms (e.g., "quantity", "productId")
+  - **Transitions**: Actions from forms and links (e.g., "doAddToCart", "goProductList")
+
+### Usage Example
+
+```
+User: "Crawl https://www.bengo4.com and generate ALPS profile"
+
+AI workflow:
+1. Fetch homepage
+2. Classify URLs: /lawyers/{id}, /area/{prefecture}/{city}, etc.
+3. For each unique pattern:
+   - Fetch ONE example URL
+   - Extract DOM skeleton
+   - Call AI to generate ALPS descriptors
+4. Merge all descriptors into unified ALPS profile
+5. Validate and generate HTML diagram
+6. Save progress to handover.json
+```
+
+### Handover Protocol
+
+The surveyor mode uses handover.json (per ADR 0006) to enable multi-session work. The handover uses a sessions array format to preserve historical context:
+
+```json
+{
+  "$schema": "handover-protocol.json",
+  "task": {
+    "type": "alps-surveyor",
+    "target": "example.com ALPS profile"
+  },
+  "current_state": {
+    "session_id": "example-session-002",
+    "total_sessions": 2,
+    "alps_profile": {
+      "total_descriptors": 480,
+      "validation_status": "valid"
+    }
+  },
+  "sessions": [
+    {
+      "session_id": "example-session-001",
+      "timestamp": "2025-12-14T10:00:00Z",
+      "handover_note": {
+        "summary": "Initial crawl: search, consultation flows. 450 descriptors.",
+        "advice": "Bookmark feature needs attention - saw /bookmarks/* URLs"
+      },
+      "descriptors_added": 450
+    },
+    {
+      "session_id": "example-session-002",
+      "timestamp": "2025-12-14T14:00:00Z",
+      "handover_note": {
+        "summary": "Added bookmark and billing features using asd merge. Profile now at 480 descriptors.",
+        "advice": "Remaining: payment flows, mobile features, error states"
+      },
+      "descriptors_added": 30
+    }
+  ],
+  "shared_context": {
+    "patterns_learned": {
+      "lawyer_profile": {"pattern": "/lawyers/{id}", "confidence": "high"}
+    }
+  },
+  "pending_work": {
+    "frontier_queue": [
+      "https://example.com/payment/checkout",
+      "https://example.com/dashboard"
+    ]
+  },
+  "tools_available": {
+    "crawler": {"command": "node packages/crawler/test.mjs <url>"},
+    "merge": {"command": "asd merge <base> <source>"}
+  }
+}
+```
+
+**Key points:**
+- Each session is appended to the `sessions` array
+- `current_state` provides quick access to latest status
+- `shared_context` accumulates patterns learned across all sessions
+- Never overwrite sessions - always append new ones
+
+### Best Practices for Surveyor Mode
+
+1. **Start small**: Use `max_depth: 2` initially to test
+2. **Exclude admin/auth pages**: Add to `exclude_patterns` to avoid login walls
+3. **Review patterns**: Check `frontier_queue` in handover.json to verify coverage
+4. **Iterative refinement**: Survey core features first, then expand in subsequent sessions
+5. **Validate frequently**: Run `asd --validate` after each session to catch errors early
+
+### Limitations
+
+- Cannot access pages behind authentication (unless cookies provided)
+- JavaScript-heavy SPAs may not be fully analyzed
+- External services (e.g., chat.example.com) are noted but not crawled
+- AI inference may miss domain-specific semantics (manual review recommended)
+
+### Implementation Status
+
+✅ Core library implemented:
+- `packages/cli/src/crawler/url-pattern-classifier.ts`
+- `packages/cli/src/crawler/dom-skeleton-extractor.ts`
+- `packages/cli/src/crawler/alps-descriptor-generator.ts`
+
+⏳ Integration in progress:
+- MCP tool (basic structure added)
+- CLI command (`asd crawl`)
+- ALPS skill support
+
 ## References
 
 - [ALPS Specification](http://alps.io/spec/)
 - [Schema.org](https://schema.org/)
 - [app-state-diagram](https://github.com/alps-asd/app-state-diagram)
+- [ADR 0006: Handover Protocol](../../dev-docs/adr/0006-handover-protocol-for-ai-agent-continuity.md)
