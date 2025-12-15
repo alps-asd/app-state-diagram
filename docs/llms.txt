@@ -1,0 +1,54 @@
+# app-state-diagram
+
+> A tool that generates interactive state diagrams and documentation from ALPS (Application-Level Profile Semantics) profiles. Visualizes RESTful application state transitions from XML or JSON profiles.
+
+## Quick Start
+
+Install via npm (`npm install -g @alps-asd/cli`) or Homebrew (`brew install alps-asd/asd/asd`).
+
+```bash
+asd profile.json           # Generate HTML documentation
+asd profile.json -m svg    # Generate SVG diagram
+asd profile.json --validate # Validate only
+asd -w profile.json        # Watch mode with live reload
+```
+
+## ALPS Descriptor Types
+
+| Type | Color | Naming | Purpose |
+|------|-------|--------|---------|
+| semantic | White | PascalCase | Data/State (Post, User, HomePage) |
+| safe | Green | goXxx | Read-only navigation (goHome, goPost) |
+| unsafe | Red | doXxx | State-changing action (doCreate, doDelete) |
+| idempotent | Yellow | doXxx | Repeatable action (doUpdate, doPut) |
+
+## Validation Codes
+
+Errors (must fix): E001 (missing id/href), E002 (missing rt), E003 (invalid type), E004 (broken ref), E005 (duplicate id), E008 (missing alps), E009 (missing descriptor), E011 (tag not string)
+
+Warnings (best practice): W001 (missing title), W002 (safe should start with go), W003 (unsafe/idempotent should start with do)
+
+## ALPS Specification
+
+- [ALPS Manual & Resources](https://www.app-state-diagram.com/llms.txt): Comprehensive ALPS specification, schemas, and guides
+- [ALPS Creation Guide](https://alps-asd.github.io/app-state-diagram/alps-skill.md): How to write good ALPS profiles (design principles, naming conventions, examples)
+
+## Documentation
+
+- [Full Documentation](https://alps-asd.github.io/app-state-diagram/llms-full.txt): Complete reference (all sections expanded)
+- [README](https://github.com/alps-asd/app-state-diagram/blob/2.x/README.md): Installation, CLI options, quick start
+- [CLI Package](https://github.com/alps-asd/app-state-diagram/blob/2.x/packages/cli/README.md): Programmatic API (parser, validator, generator)
+- [MCP Server](https://github.com/alps-asd/app-state-diagram/blob/2.x/packages/mcp/README.md): AI integration via Model Context Protocol
+- [Validation Reference](https://github.com/alps-asd/app-state-diagram/blob/2.x/dev-docs/validation-reference.md): All error codes with examples
+- [Architecture](https://github.com/alps-asd/app-state-diagram/blob/2.x/dev-docs/architecture.md): Internal design and data flow
+
+## Examples
+
+- [Minimal Blog API (JSON)](https://github.com/alps-asd/app-state-diagram/blob/2.x/docs/demo/minimal/alps.json): 29-line starter template
+- [Bookstore (XML)](https://github.com/alps-asd/app-state-diagram/blob/2.x/docs/demo/bookstore/alps.xml): XML format example
+- [Amazon (JSON)](https://github.com/alps-asd/app-state-diagram/blob/2.x/docs/demo/amazon/amazon.json): Large-scale profile
+
+## Optional
+
+- [ADR: Editor-first Architecture](https://github.com/alps-asd/app-state-diagram/blob/2.x/dev-docs/adr/0001-monorepo-architecture.md): Why browser code is SSOT
+- [Online Editor](https://editor.app-state-diagram.com/): No-install browser-based editor
