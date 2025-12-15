@@ -23,3 +23,8 @@ npm-debug.log*
 
 # Test output
 *.tgz
+# Generated demo files
+_site/
+alps-download.html
+docs/demo/minimal/alps.html
+docs/test-asd.html
