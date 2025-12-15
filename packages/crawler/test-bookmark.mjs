@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Test crawler with bengo4.com bookmark page
+ * Test crawler with example.com bookmark page
  */
 
 import { DomSkeletonExtractor } from './dist/dom-skeleton-extractor.js';
@@ -11,32 +11,32 @@ const bookmarkHtml = `
 <!DOCTYPE html>
 <html>
 <head>
-  <title>お気に入りの弁護士 - 弁護士ドットコム</title>
-  <meta name="description" content="お気に入りに登録した弁護士の一覧">
+  <title>Favorite Lawyers - Example Corp</title>
+  <meta name="description" content="List of favorite lawyers">
 </head>
 <body>
   <nav>
-    <a href="/">ホーム</a>
-    <a href="/private/bookmark/lawyer/">お気に入り弁護士</a>
-    <a href="/private/bookmark/question/">お気に入り質問</a>
+    <a href="/">Home</a>
+    <a href="/private/bookmark/lawyer/">Favorite Lawyers</a>
+    <a href="/private/bookmark/question/">Favorite Questions</a>
   </nav>
 
   <main>
-    <h1>お気に入りの弁護士</h1>
+    <h1>Favorite Lawyers</h1>
 
     <!-- Bookmark list -->
     <div class="bookmark-list">
       <div class="bookmark-item" data-bookmark-id="1">
-        <a href="/lawyers/12345">山田太郎 弁護士</a>
-        <p>専門: 離婚・男女問題</p>
-        <p>登録日: 2024-01-15</p>
+        <a href="/lawyers/12345">John Doe</a>
+        <p>Specialty: Divorce</p>
+        <p>Registered: 2024-01-15</p>
         <form action="/private/bookmark/lawyer/remove" method="POST">
           <input type="hidden" name="lawyerId" value="12345">
           <input type="hidden" name="bookmarkId" value="1">
-          <button type="submit">お気に入り解除</button>
+          <button type="submit">Remove Bookmark</button>
         </form>
-        <textarea name="bookmarkNote" placeholder="メモを追加"></textarea>
-        <button class="save-note">メモを保存</button>
+        <textarea name="bookmarkNote" placeholder="Add note"></textarea>
+        <button class="save-note">Save Note</button>
       </div>
     </div>
 
@@ -44,22 +44,22 @@ const bookmarkHtml = `
     <div style="display:none" id="add-bookmark-template">
       <form action="/private/bookmark/lawyer/add" method="POST">
         <input type="hidden" name="lawyerId" required>
-        <textarea name="bookmarkNote" placeholder="メモ（任意）"></textarea>
-        <button type="submit">お気に入りに追加</button>
+        <textarea name="bookmarkNote" placeholder="Note (Optional)"></textarea>
+        <button type="submit">Add to Favorites</button>
       </form>
     </div>
   </main>
 
-  <footer>フッター</footer>
+  <footer>Footer</footer>
 </body>
 </html>
 `;
 
-console.log('🧪 Testing crawler with bengo4.com bookmark page\n');
+console.log('🧪 Testing crawler with example.com bookmark page\n');
 
 // Extract DOM skeleton
 const extractor = new DomSkeletonExtractor();
-const skeleton = extractor.extract(bookmarkHtml, 'https://www.bengo4.com/private/bookmark/lawyer/');
+const skeleton = extractor.extract(bookmarkHtml, 'https://www.example.com/private/bookmark/lawyer/');
 
 console.log('📋 DOM Skeleton Extracted:');
 console.log('==========================');

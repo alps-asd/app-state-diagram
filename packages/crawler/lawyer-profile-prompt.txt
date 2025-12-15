@@ -204,13 +204,13 @@ Return only the JSON object, no additional text.
 
 ```json
 {
-  "title": "松村大介 弁護士 - 東京都豊島区 | 弁護士ドットコム",
-  "description": "松村大介弁護士のプロフィール。国際・外国人問題、刑事事件、インターネット問題等を扱う。中国語対応可能。",
+  "title": "John Doe Lawyer - Tokyo, Toshima Ward | Example Lawyer Search",
+  "description": "Profile of Lawyer John Doe. Handles international/foreign issues, criminal cases, internet issues, etc. Supports Chinese.",
   "urlPattern": "/tokyo/a_{area_id}/l_{lawyer_id}/",
   "forms": [
     {
       "id": "add-bookmark",
-      "action": "https://www.bengo4.com/private/bookmark/lawyer/add",
+      "action": "https://www.example.com/private/bookmark/lawyer/add",
       "method": "POST",
       "inputs": [
         "lawyerId:hidden",
@@ -219,7 +219,7 @@ Return only the JSON object, no additional text.
     },
     {
       "id": "quote-request",
-      "action": "https://www.bengo4.com/quote/submit",
+      "action": "https://www.example.com/quote/submit",
       "method": "POST",
       "inputs": [
         "lawyerId:hidden*",
@@ -232,7 +232,7 @@ Return only the JSON object, no additional text.
     },
     {
       "id": "free-consultation",
-      "action": "https://www.bengo4.com/consultation/request",
+      "action": "https://www.example.com/consultation/request",
       "method": "POST",
       "inputs": [
         "lawyerId:hidden*",
@@ -246,59 +246,59 @@ Return only the JSON object, no additional text.
   "links": [
     {
       "type": "navigation",
-      "href": "https://www.bengo4.com/"
+      "href": "https://www.example.com/"
     },
     {
       "type": "navigation",
-      "href": "https://www.bengo4.com/tokyo/"
+      "href": "https://www.example.com/tokyo/"
     },
     {
       "type": "navigation",
-      "href": "https://www.bengo4.com/area/{id}/{id}/"
+      "href": "https://www.example.com/area/{id}/{id}/"
     },
     {
       "type": "navigation",
-      "href": "https://www.bengo4.com/specialty/kokusai/"
+      "href": "https://www.example.com/specialty/international/"
     },
     {
       "type": "navigation",
-      "href": "https://www.bengo4.com/private/bookmark/lawyer/"
+      "href": "https://www.example.com/private/bookmark/lawyer/"
     },
     {
       "type": "navigation",
-      "href": "https://www.bengo4.com/specialty/keiji/"
+      "href": "https://www.example.com/specialty/criminal/"
     },
     {
       "type": "navigation",
-      "href": "https://www.bengo4.com/specialty/internet/"
+      "href": "https://www.example.com/specialty/internet/"
     },
     {
       "type": "navigation",
-      "href": "https://www.bengo4.com/specialty/rikon/"
+      "href": "https://www.example.com/specialty/divorce/"
     },
     {
       "type": "navigation",
-      "href": "https://www.bengo4.com/specialty/roudou/"
+      "href": "https://www.example.com/specialty/labor/"
     },
     {
       "type": "navigation",
-      "href": "https://www.bengo4.com/tokyo/a_13116/"
+      "href": "https://www.example.com/tokyo/a_13116/"
     },
     {
       "type": "navigation",
-      "href": "https://www.bengo4.com/lawyers/"
+      "href": "https://www.example.com/lawyers/"
     },
     {
       "type": "navigation",
-      "href": "https://www.bengo4.com/about/"
+      "href": "https://www.example.com/about/"
     },
     {
       "type": "navigation",
-      "href": "https://www.bengo4.com/privacy/"
+      "href": "https://www.example.com/privacy/"
     },
     {
       "type": "navigation",
-      "href": "https://www.bengo4.com/support/"
+      "href": "https://www.example.com/support/"
     }
   ],
   "landmarks": [

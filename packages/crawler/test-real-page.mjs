@@ -1,118 +1,118 @@
 #!/usr/bin/env node
 /**
- * Test crawler with realistic bengo4.com lawyer profile page
- * Based on actual page structure from https://www.bengo4.com/tokyo/a_13116/l_1467010/
+ * Test crawler with realistic example.com lawyer profile page
+ * Based on actual page structure from https://www.example.com/tokyo/a_13116/l_1467010/
  */
 
 import { DomSkeletonExtractor } from './dist/dom-skeleton-extractor.js';
 import { generatePrompt } from './dist/alps-descriptor-generator.js';
 import fs from 'fs';
 
-// Realistic HTML based on actual bengo4.com lawyer profile
+// Realistic HTML based on actual lawyer profile
 const lawyerProfileHtml = `
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="en">
 <head>
-  <title>松村大介 弁護士 - 東京都豊島区 | 弁護士ドットコム</title>
-  <meta name="description" content="松村大介弁護士のプロフィール。国際・外国人問題、刑事事件、インターネット問題等を扱う。中国語対応可能。">
+  <title>John Doe Lawyer - Tokyo, Toshima Ward | Example Lawyer Search</title>
+  <meta name="description" content="Profile of Lawyer John Doe. Handles international/foreign issues, criminal cases, internet issues, etc. Supports Chinese.">
 </head>
 <body>
   <nav>
-    <a href="/">ホーム</a>
-    <a href="/tokyo/">東京</a>
-    <a href="/area/13/13116/">豊島区</a>
-    <a href="/specialty/kokusai/">国際・外国人問題</a>
-    <a href="/private/bookmark/lawyer/">お気に入り弁護士</a>
+    <a href="/">Home</a>
+    <a href="/tokyo/">Tokyo</a>
+    <a href="/area/13/13116/">Toshima Ward</a>
+    <a href="/specialty/international/">International/Foreign Issues</a>
+    <a href="/private/bookmark/lawyer/">Favorite Lawyers</a>
   </nav>
 
   <main>
-    <h1>松村大介 弁護士</h1>
+    <h1>Lawyer John Doe</h1>
 
     <!-- Lawyer Info -->
     <section class="lawyer-info">
-      <p>第一東京弁護士会 / 2019年登録</p>
-      <p>慶應義塾大学法科大学院 / 2017年卒業</p>
-      <p>中国語対応可能</p>
+      <p>Tokyo Bar Association / Registered 2019</p>
+      <p>Example Law School / Graduated 2017</p>
+      <p>Chinese language support available</p>
     </section>
 
     <!-- Practice Areas -->
     <section class="practice-areas">
-      <h2>取扱分野</h2>
+      <h2>Practice Areas</h2>
       <ul>
-        <li><a href="/specialty/kokusai/">国際・外国人問題</a></li>
-        <li><a href="/specialty/keiji/">刑事事件</a></li>
-        <li><a href="/specialty/internet/">インターネット問題</a></li>
-        <li><a href="/specialty/rikon/">離婚・男女問題</a></li>
-        <li><a href="/specialty/roudou/">労働問題</a></li>
+        <li><a href="/specialty/international/">International/Foreign Issues</a></li>
+        <li><a href="/specialty/criminal/">Criminal Cases</a></li>
+        <li><a href="/specialty/internet/">Internet Issues</a></li>
+        <li><a href="/specialty/divorce/">Divorce/Gender Issues</a></li>
+        <li><a href="/specialty/labor/">Labor Issues</a></li>
       </ul>
     </section>
 
     <!-- Add to Bookmark Form -->
     <form id="add-bookmark" action="/private/bookmark/lawyer/add" method="POST">
       <input type="hidden" name="lawyerId" value="1467010">
-      <textarea name="bookmarkNote" placeholder="メモ（任意）"></textarea>
-      <button type="submit">お気に入りに追加</button>
+      <textarea name="bookmarkNote" placeholder="Note (Optional)"></textarea>
+      <button type="submit">Add to Favorites</button>
     </form>
 
     <!-- Contact/Quote Request Form -->
     <form id="quote-request" action="/quote/submit" method="POST">
-      <h3>見積もり依頼</h3>
+      <h3>Request Quote</h3>
       <input type="hidden" name="lawyerId" value="1467010" required>
-      <input type="text" name="userName" placeholder="お名前" required>
-      <input type="email" name="email" placeholder="メールアドレス" required>
-      <input type="tel" name="phone" placeholder="電話番号">
+      <input type="text" name="userName" placeholder="Name" required>
+      <input type="email" name="email" placeholder="Email" required>
+      <input type="tel" name="phone" placeholder="Phone Number">
       <select name="consultationType" required>
-        <option value="">相談内容を選択</option>
-        <option value="kokusai">国際・外国人問題</option>
-        <option value="keiji">刑事事件</option>
-        <option value="internet">インターネット問題</option>
+        <option value="">Select Consultation Content</option>
+        <option value="international">International/Foreign Issues</option>
+        <option value="criminal">Criminal Cases</option>
+        <option value="internet">Internet Issues</option>
       </select>
-      <textarea name="inquiryContent" placeholder="相談内容の詳細" required></textarea>
-      <button type="submit">見積もりを依頼する</button>
+      <textarea name="inquiryContent" placeholder="Details of Consultation" required></textarea>
+      <button type="submit">Request Quote</button>
     </form>
 
     <!-- Free Consultation Form -->
     <form id="free-consultation" action="/consultation/request" method="POST">
-      <h3>無料相談（初回15分）</h3>
+      <h3>Free Consultation (First 15 mins)</h3>
       <input type="hidden" name="lawyerId" value="1467010" required>
-      <input type="text" name="userName" placeholder="お名前" required>
-      <input type="tel" name="phone" placeholder="電話番号" required>
+      <input type="text" name="userName" placeholder="Name" required>
+      <input type="tel" name="phone" placeholder="Phone Number" required>
       <select name="preferredTime" required>
-        <option value="">希望時間帯</option>
-        <option value="morning">午前</option>
-        <option value="afternoon">午後</option>
-        <option value="evening">夕方・夜間</option>
+        <option value="">Preferred Time</option>
+        <option value="morning">Morning</option>
+        <option value="afternoon">Afternoon</option>
+        <option value="evening">Evening/Night</option>
       </select>
-      <textarea name="briefDescription" placeholder="相談内容（簡単に）"></textarea>
-      <button type="submit">無料相談を申し込む</button>
+      <textarea name="briefDescription" placeholder="Consultation Content (Briefly)"></textarea>
+      <button type="submit">Request Free Consultation</button>
     </form>
 
     <!-- Navigation Links -->
     <div class="navigation">
-      <a href="/tokyo/a_13116/">豊島区の弁護士一覧へ</a>
-      <a href="/specialty/kokusai/">国際・外国人問題の弁護士一覧へ</a>
-      <a href="/lawyers/">弁護士検索トップへ</a>
+      <a href="/tokyo/a_13116/">Lawyers in Toshima Ward</a>
+      <a href="/specialty/international/">Lawyers for International Issues</a>
+      <a href="/lawyers/">Lawyer Search Top</a>
     </div>
   </main>
 
   <footer>
-    <a href="/about/">運営会社</a>
-    <a href="/privacy/">プライバシーポリシー</a>
-    <a href="/support/">お問い合わせ</a>
+    <a href="/about/">Operating Company</a>
+    <a href="/privacy/">Privacy Policy</a>
+    <a href="/support/">Contact Us</a>
   </footer>
 </body>
 </html>
 `;
 
 console.log('🧪 Testing Crawler with Realistic Lawyer Profile Page\n');
-console.log('=' .repeat(70));
+console.log('='.repeat(70));
 
 // 1. Extract DOM Skeleton
 console.log('\n📝 Step 1: Extract DOM Skeleton');
 console.log('-'.repeat(70));
 
 const extractor = new DomSkeletonExtractor();
-const skeleton = extractor.extract(lawyerProfileHtml, 'https://www.bengo4.com/tokyo/a_13116/l_1467010/');
+const skeleton = extractor.extract(lawyerProfileHtml, 'https://www.example.com/tokyo/a_13116/l_1467010/');
 
 console.log('Title:', skeleton.title);
 console.log('Description:', skeleton.description);
