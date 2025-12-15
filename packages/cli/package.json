@@ -1,5 +1,5 @@
 {
-  "name": "@alps-asd/cli",
+  "name": "@alps-asd/app-state-diagram",
   "version": "0.20.0",
   "description": "ALPS CLI tool - generate documentation from ALPS profiles",
   "main": "dist/asd.js",

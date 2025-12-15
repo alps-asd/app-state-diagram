@@ -16,10 +16,10 @@ import * as path from "path";
 import { fileURLToPath } from "url";
 
 // Import from CLI package
-import { parseAlpsAuto } from "@alps-asd/cli/parser/alps-parser.js";
-import { AlpsValidator } from "@alps-asd/cli/validator/index.js";
-import { generateDot } from "@alps-asd/cli/generator/dot-generator.js";
-import { dotToSvg } from "@alps-asd/cli/generator/svg-generator.js";
+import { parseAlpsAuto } from "@alps-asd/app-state-diagram/parser/alps-parser.js";
+import { AlpsValidator } from "@alps-asd/app-state-diagram/validator/index.js";
+import { generateDot } from "@alps-asd/app-state-diagram/generator/dot-generator.js";
+import { dotToSvg } from "@alps-asd/app-state-diagram/generator/svg-generator.js";
 
 // Import from Crawler package
 import { AlpsCrawler } from "@alps-asd/crawler";
