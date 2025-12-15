@@ -54,41 +54,79 @@ Introduce a **Handover Protocol** - a standardized JSON schema for AI agents to 
    - Code analysis
    - Data migration
 
-### Handover Schema (Core)
+### Handover Schema (Core) - Sessions Array Format
+
+**Updated 2025-12-14**: The handover protocol now uses a sessions array format to preserve complete historical context across all sessions.
 
 ```json
 {
   "$schema": "handover-protocol.json",
-  "session_id": "unique-session-identifier",
-  "task_type": "alps-surveyor | code-analysis | doc-generation | ...",
-
-  "handover_note": {
-    "summary": "What I accomplished this session",
-    "advice": "Specific guidance for my successor (the 'gut feeling' that machines can't infer)",
-    "warnings": ["Things to watch out for", "Potential pitfalls"]
+  "task": {
+    "type": "alps-surveyor | code-analysis | doc-generation | ...",
+    "target": "Brief description of the task target"
   },
 
-  "progress": {
-    "completed": ["list", "of", "completed", "items"],
-    "in_progress": ["items", "started", "but", "not", "finished"],
-    "pending": ["items", "not", "yet", "started"]
+  "current_state": {
+    "session_id": "task-session-N",
+    "total_sessions": N,
+    "summary": "Quick summary of current status"
   },
 
-  "context": {
-    // Task-specific structured data
-    // For ALPS Surveyor: alps_profile, frontier_queue, graveyard
-    // For Code Analysis: analyzed_files, dependency_graph
-    // etc.
+  "sessions": [
+    {
+      "session_id": "task-session-001",
+      "timestamp": "2025-12-13T14:30:00Z",
+      "model": "claude-sonnet-4.5",
+      "handover_note": {
+        "summary": "What I accomplished this session",
+        "advice": "Guidance for successor",
+        "warnings": ["Things to watch out for"]
+      },
+      "accomplishments": ["list", "of", "completed", "items"],
+      "descriptors_added": 50
+    },
+    {
+      "session_id": "task-session-002",
+      "timestamp": "2025-12-14T10:00:00Z",
+      "model": "claude-sonnet-4.5",
+      "handover_note": {
+        "summary": "Built upon session-001 work",
+        "advice": "Next steps and recommendations",
+        "warnings": ["New insights"]
+      },
+      "accomplishments": ["more", "completed", "items"],
+      "descriptors_added": 30
+    }
+  ],
+
+  "shared_context": {
+    // Task-specific data accumulated across all sessions
+    // For ALPS Surveyor: website_info, patterns_learned
+    // For Code Analysis: dependency_graph, common_patterns
   },
 
-  "metadata": {
-    "timestamp": "2025-12-13T14:30:00Z",
-    "model": "claude-sonnet-4.5",
-    "tokens_used": 95000,
-    "session_count": 5
+  "pending_work": {
+    // What still needs to be done
+    "frontier_queue": ["items", "to", "explore"],
+    "graveyard": []
+  },
+
+  "tools_available": {
+    // Tools created/used during the task
+    "tool_name": {
+      "command": "command to run",
+      "created_in": "session-001"
+    }
   }
 }
 ```
+
+**Key changes from original format:**
+- **Sessions array**: Each session is appended, never overwritten
+- **Historical preservation**: All session notes, advice, and warnings are kept
+- **current_state**: Quick access to latest status without parsing sessions
+- **shared_context**: Data that persists and accumulates across sessions
+- **Append-only**: New AIs add to `sessions`, never delete old entries
 
 ### Application Example: ALPS Surveyor
 
@@ -237,8 +275,20 @@ The work continues.
 ## References
 
 - [ADR 0005: AI-Insights in Validation Output](./0005-ai-insights-in-validation-output.md)
-- [Handover Protocol Schema](../../docs/schemas/handover-protocol.json) (to be created)
+- [Handover Protocol Schema](../../docs/schemas/handover-protocol.json) - JSON Schema for validation
 - Inspiration: Medical handover protocols, surveyor field notes, relay race baton pass
+
+## Validation
+
+To validate a handover.json file against the schema:
+
+```bash
+# Simple JSON syntax check
+node -e "JSON.parse(require('fs').readFileSync('handover.json', 'utf8')); console.log('✓ Valid JSON')"
+
+# Full schema validation (requires ajv or similar)
+# See docs/schemas/handover-protocol.json for schema details
+```
 
 ## Future Work
 
