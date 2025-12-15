@@ -192,9 +192,10 @@ export async function handleValidateAlps(args: Record<string, unknown> | undefin
       isError: !result.isValid,
     };
   } catch (error) {
+    /* istanbul ignore next */
+    const errorMessage = error instanceof Error ? error.message : String(error);
     return {
-      /* istanbul ignore next */
-      content: [{ type: "text", text: `Error: ${error instanceof Error ? error.message : error}` }],
+      content: [{ type: "text", text: `Error: ${errorMessage}` }],
       isError: true,
     };
   }
@@ -232,9 +233,10 @@ export async function handleAlps2Svg(args: Record<string, unknown> | undefined) 
       isError: false,
     };
   } catch (error) {
+    /* istanbul ignore next */
+    const errorMessage = error instanceof Error ? error.message : String(error);
     return {
-      /* istanbul ignore next */
-      content: [{ type: "text", text: `Error: ${error instanceof Error ? error.message : error}` }],
+      content: [{ type: "text", text: `Error: ${errorMessage}` }],
       isError: true,
     };
   }

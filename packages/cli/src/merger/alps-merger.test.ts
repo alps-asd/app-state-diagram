@@ -308,5 +308,62 @@ describe('AlpsMerger', () => {
       expect(result.stats.skipped).toBe(1);
       expect(result.stats.conflicts).toBe(0);
     });
+
+    it('should handle missing descriptor property in alps document', () => {
+      const base: AlpsDocument = { alps: {} } as any;
+      const source: AlpsDocument = { alps: {} } as any;
+
+      const result = merger.merge(base, source);
+
+      expect(result.merged.alps.descriptor).toHaveLength(0);
+      expect(result.stats.added).toBe(0);
+    });
+
+    it('should normalize descriptors with array properties containing primitives', () => {
+      const base: AlpsDocument = {
+        alps: {
+          descriptor: [
+            { id: 'item', tag: ['a', 'b'] } as any
+          ]
+        }
+      };
+      const source: AlpsDocument = {
+        alps: {
+          descriptor: [
+            { id: 'item', tag: ['a', 'b'] } as any
+          ]
+        }
+      };
+
+      const result = merger.merge(base, source);
+
+      expect(result.merged.alps.descriptor).toHaveLength(1);
+      expect(result.stats.skipped).toBe(1);
+    });
+
+    it('should ignore descriptors without id in base document', () => {
+      const base: AlpsDocument = {
+        alps: {
+          descriptor: [
+            { title: 'No ID' }
+          ]
+        }
+      };
+      const source: AlpsDocument = {
+        alps: {
+          descriptor: [
+            { id: 'item' }
+          ]
+        }
+      };
+
+      const result = merger.merge(base, source);
+
+      // The no-id descriptor is ignored for conflict checking but preserved in output?
+      // Wait, code: if (desc.id) baseIds.set... else nothing. 
+      // It is NOT removed from baseDescriptors array.
+      // So output should have 2 descriptors.
+      expect(result.merged.alps.descriptor).toHaveLength(2);
+    });
   });
 });

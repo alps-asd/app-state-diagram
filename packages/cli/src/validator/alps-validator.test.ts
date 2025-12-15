@@ -131,6 +131,19 @@ describe('AlpsValidator', () => {
       const result = validator.validate(alps);
       expect(result.errors.filter(e => e.code === 'E004')).toHaveLength(0);
     });
+    it('should pass for valid internal references', () => {
+      const alps = {
+        alps: {
+          descriptor: [
+            { id: 'target' },
+            { id: 'ref', href: '#target' }
+          ]
+        }
+      };
+      const result = validator.validate(alps);
+      expect(result.errors.filter(e => e.code === 'E004')).toHaveLength(0);
+    });
+
   });
 
   describe('E005 - Duplicate id', () => {

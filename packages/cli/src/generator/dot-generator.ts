@@ -20,13 +20,19 @@ export function generateDot(alpsData: AlpsDocument, labelMode: LabelMode = 'id')
   const rtTargets = new Set(transitions.map(t => t.rt!.replace('#', '')));
 
   // States are descriptors that are referenced as rt targets
-  const states = descriptors.filter(d => d.id && rtTargets.has(d.id));
+  let states = descriptors.filter(d => d.id && rtTargets.has(d.id));
+
+  // If there are no transitions, include all descriptors with an id as states
+  if (states.length === 0) {
+    // Exclude descriptors that look like transitions (have safe/unsafe/idempotent type)
+    states = descriptors.filter(d => d.id && (!d.type || d.type === 'semantic'));
+  }
 
   const getLabel = (descriptor: AlpsDescriptor): string => {
-    if (labelMode === 'title') {
-      return descriptor.title || descriptor.id || '';
+    if (labelMode === 'title' && descriptor.title) {
+      return descriptor.title;
     }
-    return descriptor.id || '';
+    return descriptor.id!;
   };
 
   let dot = `digraph application_state_diagram {
@@ -40,17 +46,17 @@ export function generateDot(alpsData: AlpsDocument, labelMode: LabelMode = 'id')
 
   // Add state nodes
   for (const state of states) {
-    if (state.id) {
-      dot += `    ${state.id} [margin=0.1, label="${getLabel(state)}", shape=box, URL="#${state.id}"]\n`;
-    }
+    // state.id is guaranteed by the filter above
+    dot += `    ${state.id} [margin=0.1, label="${getLabel(state)}", shape=box, URL="#${state.id}"]\n`;
   }
 
   dot += '\n';
 
   // Add transitions
   for (const trans of transitions) {
-    if (trans.id && trans.rt) {
-      const targetState = trans.rt.replace('#', '');
+    // trans.rt is guaranteed by filter. trans.id is needed for valid DOT node ID.
+    if (trans.id) {
+      const targetState = trans.rt!.replace('#', '');
       const sourceStates = findSourceStatesForTransition(trans.id, descriptors);
       const color = getTransitionColor(trans.type);
       const transLabel = getLabel(trans);
@@ -65,9 +71,8 @@ export function generateDot(alpsData: AlpsDocument, labelMode: LabelMode = 'id')
 
   // Add basic state nodes again (for compatibility)
   for (const state of states) {
-    if (state.id) {
-      dot += `    ${state.id} [label="${getLabel(state)}" URL="#${state.id}"]\n`;
-    }
+    // state.id is guaranteed by the filter above
+    dot += `    ${state.id} [label="${getLabel(state)}" URL="#${state.id}"]\n`;
   }
 
   dot += '\n}';
