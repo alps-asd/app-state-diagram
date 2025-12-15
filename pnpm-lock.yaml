@@ -63,7 +63,7 @@ importers:
 
   packages/mcp:
     dependencies:
-      '@alps-asd/cli':
+      '@alps-asd/app-state-diagram':
         specifier: workspace:*
         version: link:../cli
       '@alps-asd/crawler':
