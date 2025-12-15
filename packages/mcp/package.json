@@ -15,7 +15,8 @@
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.0.0",
-    "@alps-asd/cli": "workspace:*"
+    "@alps-asd/cli": "workspace:*",
+    "@alps-asd/crawler": "workspace:*"
   },
   "devDependencies": {
     "@types/jest": "^30.0.0",

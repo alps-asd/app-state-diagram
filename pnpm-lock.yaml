@@ -52,11 +52,23 @@ importers:
         specifier: ^5.2.2
         version: 5.9.3
 
+  packages/crawler:
+    devDependencies:
+      '@types/node':
+        specifier: ^20.8.0
+        version: 20.19.26
+      typescript:
+        specifier: ^5.2.2
+        version: 5.9.3
+
   packages/mcp:
     dependencies:
       '@alps-asd/cli':
         specifier: workspace:*
         version: link:../cli
+      '@alps-asd/crawler':
+        specifier: workspace:*
+        version: link:../crawler
       '@modelcontextprotocol/sdk':
         specifier: ^1.0.0
         version: 1.24.3(zod@4.1.13)
