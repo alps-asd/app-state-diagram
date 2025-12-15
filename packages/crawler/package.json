@@ -1,6 +1,7 @@
 {
   "name": "@alps-asd/crawler",
   "version": "0.1.0",
+  "private": true,
   "description": "ALPS Website Crawler - Extract ALPS profiles from existing websites",
   "type": "module",
   "main": "dist/index.js",
