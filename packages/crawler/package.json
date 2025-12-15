@@ -1,0 +1,35 @@
+{
+  "name": "@alps-asd/crawler",
+  "version": "0.1.0",
+  "description": "ALPS Website Crawler - Extract ALPS profiles from existing websites",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": "./dist/index.js",
+    "./url-classifier": "./dist/url-pattern-classifier.js",
+    "./dom-extractor": "./dist/dom-skeleton-extractor.js",
+    "./alps-generator": "./dist/alps-descriptor-generator.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "clean": "rm -rf dist"
+  },
+  "keywords": [
+    "alps",
+    "crawler",
+    "web-scraping",
+    "state-diagram",
+    "reverse-engineering"
+  ],
+  "author": "Akihito Koriyama <akihito.koriyama@gmail.com>",
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {
+    "@types/node": "^20.8.0",
+    "typescript": "^5.2.2"
+  }
+}
