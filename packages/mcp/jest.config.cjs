@@ -6,8 +6,9 @@ module.exports = {
   testMatch: ['**/*.test.ts'],
   moduleFileExtensions: ['ts', 'js'],
   coverageReporters: ['text', 'lcov'],
+  forceExit: true,
   moduleNameMapper: {
-    '^@alps-asd/cli/(.*)$': '<rootDir>/../cli/dist/$1'
+    '^@alps-asd/app-state-diagram/(.*)$': '<rootDir>/../cli/dist/$1'
   },
   globals: {
     'ts-jest': {
