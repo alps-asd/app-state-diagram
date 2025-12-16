@@ -76,7 +76,7 @@ See "ALPS Surveyor Mode" section below for details.
 - "Suggest enhancements for my ALPS"
 - "How can I make this ALPS better?"
 
-**Continuous Improvement Loop - AI Inherits the Mission:**
+### Continuous Improvement Loop - AI Inherits the Mission
 
 When asked to analyze or improve an existing profile:
 
@@ -195,6 +195,82 @@ For complex, multi-sided platforms or large applications:
 - AI can maintain full context for each domain
 - Conflicts are explicitly tracked and resolved
 - Final profile is comprehensive and consistent
+
+#### Handover Protocol for Multi-Session Work
+
+When a task exceeds token limits or requires multiple sessions (e.g., 200+ descriptors, multi-sided platforms), use the **Handover Protocol** (ADR 0006) to maintain continuity.
+
+**The Relay Race Metaphor:**
+
+Each AI session is a relay runner:
+1. **Receive the baton** - Read `handover.json` from previous session
+2. **Run your leg** - Work as far as you can within token limits
+3. **Pass the baton** - Update `handover.json` for next session
+4. **Scatter** - Your session ends, but the work continues
+
+**Basic handover.json structure:**
+
+```json
+{
+  "task": {
+    "type": "alps-generation",
+    "description": "E-commerce platform ALPS profile"
+  },
+  "current_state": {
+    "session_id": "ecommerce-003",
+    "total_sessions": 3,
+    "alps_profile": {
+      "total_descriptors": 180,
+      "validation_status": "valid"
+    }
+  },
+  "sessions": [
+    {
+      "session_id": "ecommerce-001",
+      "timestamp": "2025-12-17T10:00:00Z",
+      "handover_note": {
+        "summary": "Created ontology and customer domain (120 descriptors)",
+        "advice": "Admin domain needs careful planning - multiple user roles"
+      },
+      "descriptors_added": 120
+    },
+    {
+      "session_id": "ecommerce-002",
+      "timestamp": "2025-12-17T14:00:00Z",
+      "handover_note": {
+        "summary": "Added admin domain (60 descriptors). Validated successfully.",
+        "advice": "Seller domain remains. Consider splitting into sub-domains."
+      },
+      "descriptors_added": 60
+    }
+  ],
+  "pending_work": {
+    "domains": ["seller-domain", "payment-flows"],
+    "notes": "Seller domain may need 80+ descriptors"
+  }
+}
+```
+
+**Key principles:**
+- Each session appends to the `sessions` array (never overwrite)
+- Leave clear advice for your successor
+- Be honest about coverage and remaining work
+- Validate `handover.json` syntax: `node -e "JSON.parse(require('fs').readFileSync('handover.json', 'utf8'))"`
+
+**The Surveyor's Oath:**
+
+```
+I am a relay runner in an endless race.
+I carry the torch from my predecessor.
+I run as far as I can.
+I mark the map with what I learned.
+I pass the torch to my successor.
+I scatter.
+
+The work continues.
+```
+
+For web surveying tasks (ALPS from website analysis), see the detailed [ALPS Surveyor Mode](#alps-surveyor-mode-website-crawling) section below.
 
 ### When Creating ALPS from Natural Language
 
@@ -411,6 +487,57 @@ After generating ALPS, always validate with `asd --validate`. Key codes to watch
 - S001: Consider adding doc to transition
 
 For detailed error descriptions and solutions, see [Validation Reference](https://alps-asd.github.io/app-state-diagram/llms-full.txt).
+
+### AI Continuity: ai-insights vs handover.json
+
+Two complementary mechanisms help AI sessions build on previous work:
+
+**ai-insights (ADR 0005)** - Analysis embedded in validation results:
+- **Purpose**: Subjective assessment of completed ALPS profiles
+- **Location**: Embedded in `asd --validate` JSON output
+- **Usage**: Read-only consumption by AI
+- **Contains**: Complexity assessment, coverage gaps, key flows, recommendations
+- **When to use**: Analyzing or improving existing ALPS profiles
+
+**handover.json (ADR 0006)** - State for ongoing multi-session tasks:
+- **Purpose**: Progress tracking for incomplete work across sessions
+- **Location**: Separate `handover.json` file in working directory
+- **Usage**: Read-write lifecycle (AI updates after each session)
+- **Contains**: Session history, progress, pending work, advice for successor
+- **When to use**: Large ALPS generation (200+ descriptors), web surveying, multi-session tasks
+
+**Relationship:**
+
+```
+Single Session (Simple ALPS):
+  AI creates profile → Validates → ai-insights generated in validation output ✓
+
+Multi-Session (Large ALPS):
+  Session 1: AI reads handover.json (if exists) → Works → Validates → Updates handover.json
+  Session 2: AI reads handover.json → Continues work → Validates → Updates handover.json
+  Session 3: AI reads handover.json → Completes → Validates → Final ai-insights in validation
+```
+
+**Example workflow:**
+
+```bash
+# Session 1: Start large ALPS project
+asd base.json --validate  # Creates ai-insights in validation result
+# Create handover.json manually with initial task description
+
+# Session 2: Continue work
+# AI reads handover.json, adds customer domain
+asd merge base.json customer-domain.json
+asd base.json --validate  # Check for errors
+# AI updates handover.json with progress
+
+# Session 3: Complete work
+# AI reads handover.json, adds remaining domains
+asd base.json --validate  # Final validation with comprehensive ai-insights
+# handover.json marks task complete
+```
+
+Both mechanisms create **knowledge continuity**, preventing each AI session from starting from scratch.
 
 ## Example: Blog Application
 
