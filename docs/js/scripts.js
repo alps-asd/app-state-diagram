@@ -673,6 +673,16 @@ Happy modeling! Remember, solid semantics supports the long-term evolution of yo
             this.closeDownloadMenu();
         });
 
+        // Mermaid download - generate from ALPS content
+        document.getElementById('downloadMermaid')?.addEventListener('click', () => {
+            const content = this.editor.getValue();
+            const mermaid = this.generateMermaid(content);
+            if (mermaid) {
+                this.downloadFile(mermaid, 'alps-diagram.mmd', 'text/plain');
+                this.closeDownloadMenu();
+            }
+        });
+
         // Profile download - ALPS source from editor
         document.getElementById('downloadProfile')?.addEventListener('click', () => {
             const content = this.editor.getValue();
@@ -682,6 +692,173 @@ Happy modeling! Remember, solid semantics supports the long-term evolution of yo
             this.downloadFile(content, filename, mimeType);
             this.closeDownloadMenu();
         });
+    }
+
+    generateMermaid(content) {
+        const EMOJI = {
+            semantic: '⬜',
+            safe: '🟩',
+            unsafe: '🟥',
+            idempotent: '🟨',
+        };
+
+        try {
+            let alpsData;
+            const fileType = this.detectFileType(content);
+
+            if (fileType === 'JSON') {
+                alpsData = JSON.parse(content);
+            } else if (fileType === 'XML') {
+                alpsData = this.parseXmlToAlps(content);
+            } else {
+                alert('Unknown file type');
+                return null;
+            }
+
+            const descriptors = alpsData.alps?.descriptor || [];
+
+            // Get all transition targets (rt values) - these are the actual states
+            const transitions = descriptors.filter(d => d.type && d.rt);
+            const rtTargets = new Set(transitions.map(t => t.rt.replace('#', '')));
+
+            // States are descriptors that are referenced as rt targets
+            let states = descriptors.filter(d => d.id && rtTargets.has(d.id));
+
+            // If there are no transitions, include all semantic descriptors as states
+            if (states.length === 0) {
+                states = descriptors.filter(d => d.id && (!d.type || d.type === 'semantic'));
+            }
+
+            // Build a map of descriptor id to descriptor for quick lookup
+            const descriptorMap = new Map();
+            for (const d of descriptors) {
+                if (d.id) {
+                    descriptorMap.set(d.id, d);
+                }
+            }
+
+            let mermaid = 'classDiagram\n';
+
+            // Add class definitions for each state
+            for (const state of states) {
+                if (!state.id) continue;
+
+                mermaid += `    class ${state.id} {\n`;
+
+                // Get child descriptors and sort by type
+                const children = this.getChildDescriptors(state, descriptorMap);
+                const sorted = this.sortByType(children);
+
+                for (const child of sorted) {
+                    const emoji = EMOJI[child.type] || EMOJI.semantic;
+                    mermaid += `        ${emoji} ${child.id}\n`;
+                }
+
+                mermaid += '    }\n';
+            }
+
+            mermaid += '\n';
+
+            // Add transitions (edges)
+            for (const trans of transitions) {
+                if (!trans.id || !trans.rt) continue;
+
+                const targetState = trans.rt.replace('#', '');
+                const sourceStates = this.findSourceStatesForTransition(trans.id, descriptors);
+                const emoji = EMOJI[trans.type] || EMOJI.semantic;
+
+                for (const sourceState of sourceStates) {
+                    if (sourceState !== 'UnknownState') {
+                        mermaid += `    ${sourceState} --> ${targetState} : ${emoji} ${trans.id}\n`;
+                    }
+                }
+            }
+
+            return mermaid;
+        } catch (error) {
+            alert('Failed to generate Mermaid: ' + error.message);
+            return null;
+        }
+    }
+
+    parseXmlToAlps(xmlContent) {
+        const parser = new DOMParser();
+        const xmlDoc = parser.parseFromString(xmlContent, 'text/xml');
+
+        const parseDescriptor = (element) => {
+            const descriptor = {};
+            if (element.getAttribute('id')) descriptor.id = element.getAttribute('id');
+            if (element.getAttribute('href')) descriptor.href = element.getAttribute('href');
+            if (element.getAttribute('type')) descriptor.type = element.getAttribute('type');
+            if (element.getAttribute('rt')) descriptor.rt = element.getAttribute('rt');
+
+            const childDescriptors = element.querySelectorAll(':scope > descriptor');
+            if (childDescriptors.length > 0) {
+                descriptor.descriptor = Array.from(childDescriptors).map(parseDescriptor);
+            }
+
+            return descriptor;
+        };
+
+        const alpsElement = xmlDoc.querySelector('alps');
+        const descriptorElements = alpsElement?.querySelectorAll(':scope > descriptor') || [];
+
+        return {
+            alps: {
+                descriptor: Array.from(descriptorElements).map(parseDescriptor)
+            }
+        };
+    }
+
+    getChildDescriptors(state, descriptorMap) {
+        const children = [];
+
+        if (!state.descriptor || !Array.isArray(state.descriptor)) {
+            return children;
+        }
+
+        for (const child of state.descriptor) {
+            let childId = child.href || child.id;
+            if (childId?.startsWith('#')) {
+                childId = childId.substring(1);
+            }
+
+            if (childId) {
+                const resolved = descriptorMap.get(childId);
+                children.push({
+                    id: childId,
+                    type: resolved?.type || child.type || 'semantic',
+                });
+            }
+        }
+
+        return children;
+    }
+
+    sortByType(descriptors) {
+        const order = { semantic: 0, safe: 1, unsafe: 2, idempotent: 3 };
+        return [...descriptors].sort((a, b) => {
+            const aOrder = order[a.type] ?? 0;
+            const bOrder = order[b.type] ?? 0;
+            return aOrder - bOrder;
+        });
+    }
+
+    findSourceStatesForTransition(transitionId, descriptors) {
+        const sources = [];
+
+        for (const desc of descriptors) {
+            if (desc.descriptor && Array.isArray(desc.descriptor)) {
+                const hasTransition = desc.descriptor.some(nested =>
+                    nested.href === `#${transitionId}` || nested.id === transitionId
+                );
+                if (hasTransition && desc.id) {
+                    sources.push(desc.id);
+                }
+            }
+        }
+
+        return sources.length > 0 ? sources : ['UnknownState'];
     }
 
     downloadFile(content, filename, mimeType) {
