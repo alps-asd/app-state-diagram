@@ -50,10 +50,13 @@ jobs:
         run: node packages/cli/dist/asd.js docs/demo/amazon/amazon.json -o /tmp/amazon.html
 
       - name: Run demo (SVG)
-        run: node packages/cli/dist/asd.js docs/demo/amazon/amazon.json -m svg -o /tmp/amazon.svg
+        run: node packages/cli/dist/asd.js docs/demo/amazon/amazon.json -f svg -o /tmp/amazon.svg
+
+      - name: Run demo (Mermaid)
+        run: node packages/cli/dist/asd.js docs/demo/amazon/amazon.json -f mermaid -o /tmp/amazon.mmd
 
       - name: Run demo (DOT)
-        run: node packages/cli/dist/asd.js docs/demo/amazon/amazon.json -m dot -o /tmp/amazon.dot
+        run: node packages/cli/dist/asd.js docs/demo/amazon/amazon.json -f dot -o /tmp/amazon.dot
 
       - name: Install Graphviz
         run: sudo apt-get install -y graphviz
