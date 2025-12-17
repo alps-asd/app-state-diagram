@@ -66,3 +66,11 @@ jobs:
 
       - name: Validate demo output
         run: node packages/cli/dist/asd.js docs/demo/amazon/amazon.json --validate
+
+      - name: Generate demo Mermaid files
+        if: matrix.node-version == 20
+        run: |
+          node packages/cli/dist/asd.js docs/demo/amazon/amazon.json -f mermaid -o docs/demo/amazon/alps.mmd
+          node packages/cli/dist/asd.js docs/demo/bookstore/alps.xml -f mermaid -o docs/demo/bookstore/alps.mmd
+          node packages/cli/dist/asd.js docs/demo/lms/alps.xml -f mermaid -o docs/demo/lms/alps.mmd
+          node packages/cli/dist/asd.js docs/demo/minimal/alps.json -f mermaid -o docs/demo/minimal/alps.mmd
