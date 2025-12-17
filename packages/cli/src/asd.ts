@@ -10,6 +10,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { parseAlpsAuto } from './parser/alps-parser';
 import { generateDot } from './generator/dot-generator';
+import { generateMermaid } from './generator/mermaid-generator';
 import { dotToSvg, dotToSvgHighQuality } from './generator/svg-generator';
 import { generateHtml } from './generator/html-generator';
 import { FileResolver } from './resolver/file-resolver';
@@ -38,7 +39,7 @@ program
 program
   .argument('[input]')
   .option('-e, --echo', 'Output to stdout instead of file')
-  .option('-m, --mode <mode>', 'Output mode (html|svg|dot)')
+  .option('-f, --format <format>', 'Output format (html|svg|dot|mermaid)')
   .option('-o, --output <file>', 'Output file (default: <input>.html)')
   .option('--label <mode>', 'Label mode: id or title')
   .option('--validate', 'Validate ALPS profile')
@@ -52,7 +53,7 @@ program
 Options:
   -e, --echo              Output to stdout instead of file
   -w, --watch             Watch mode with live reload
-  -m, --mode <mode>       Output mode (html|svg|dot)
+  -f, --format <format>   Output format (html|svg|dot|mermaid)
   -o, --output <file>     Output file (default: <input>.html)
   --port <port>           CDP port for watch mode (default: 9222)
   --label <mode>          Label mode: id or title
@@ -136,11 +137,14 @@ Options:
       let output: string;
       let outputExt: string;
 
-      const mode = options.mode || 'html';
-      if (mode === 'dot') {
+      const format = options.format || 'html';
+      if (format === 'mermaid') {
+        output = generateMermaid(document);
+        outputExt = '.mmd';
+      } else if (format === 'dot') {
         output = dotContent;
         outputExt = '.dot';
-      } else if (mode === 'svg') {
+      } else if (format === 'svg') {
         // Use high quality (local dot) for standalone SVG output
         output = await dotToSvgHighQuality(dotContent);
         outputExt = '.svg';
@@ -157,7 +161,7 @@ Options:
       } else {
         const outputFile = options.output || inputFile.replace(/\.[^.]+$/, outputExt);
         fs.writeFileSync(outputFile, output, 'utf-8');
-        console.log(`ASD generated. ${path.resolve(outputFile)}`);
+        console.log(`Generated: ${path.resolve(outputFile)}`);
       }
     } catch (error) {
       console.error('Error:', error instanceof Error ? error.message : error);

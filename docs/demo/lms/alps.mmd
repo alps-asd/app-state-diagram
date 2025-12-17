@@ -1,0 +1,446 @@
+classDiagram
+    class Home {
+        ⬜ course
+        ⬜ notification
+        🟩 goCourseList
+        🟩 goUserProfile
+        🟩 goMessageCenter
+        🟩 goNotifications
+        🟩 goSettings
+        🟩 goReportCenter
+    }
+    class Login {
+        ⬜ userEmail
+        ⬜ userPassword
+        🟩 goRegister
+        🟥 doLogin
+        🟥 doResetPassword
+    }
+    class Register {
+        ⬜ userName
+        ⬜ userEmail
+        ⬜ userPassword
+        ⬜ userRole
+        🟩 goLogin
+        🟥 doRegister
+    }
+    class UserProfile {
+        ⬜ user
+        🟩 goHome
+        🟩 goEnrolledCourses
+        🟨 doUpdateProfile
+    }
+    class UserList {
+        ⬜ user
+        🟩 goUserDetail
+        🟩 goHome
+        🟥 doCreateUser
+        🟨 doDeleteUser
+        🟨 doUpdateUser
+    }
+    class UserDetail {
+        ⬜ user
+        🟩 goUserList
+        🟨 doUpdateUser
+        🟨 doDeleteUser
+    }
+    class CourseList {
+        ⬜ course
+        🟩 goFilterCourses
+        🟩 goCourseDetail
+        🟩 goCreateCourse
+        🟩 goHome
+    }
+    class CourseDetail {
+        ⬜ course
+        ⬜ module
+        ⬜ assignment
+        ⬜ discussion
+        ⬜ instructor
+        🟩 goModuleDetail
+        🟩 goAssignmentList
+        🟩 goDiscussionList
+        🟩 goEditCourse
+        🟩 goCourseList
+        🟩 goProgressDashboard
+        🟩 goWebinarSchedule
+        🟩 goAnalyticsDashboard
+        🟩 goAnnouncementCreation
+        🟩 goGradebook
+        🟥 doEnrollCourse
+    }
+    class CourseCreation {
+        ⬜ course
+        🟩 goCourseList
+        🟥 doCreateCourse
+        🟨 doSaveDraftCourse
+    }
+    class CourseEdit {
+        ⬜ course
+        🟩 goCourseDetail
+        🟨 doUpdateCourse
+        🟨 doDeleteCourse
+        🟨 doSaveDraftCourse
+        🟨 doPublishCourse
+    }
+    class ModuleList {
+        ⬜ module
+        🟩 goModuleDetail
+        🟩 goCourseDetail
+        🟥 doCreateModule
+    }
+    class ModuleDetail {
+        ⬜ module
+        ⬜ content
+        🟩 goContentDetail
+        🟩 goCreateContent
+        🟩 goModuleList
+        🟨 doUpdateModule
+        🟨 doDeleteModule
+    }
+    class ContentCreation {
+        ⬜ content
+        ⬜ contentType
+        ⬜ contentAccessibility
+        🟩 goPreviewContent
+        🟩 goModuleDetail
+        🟥 doCreateContent
+        🟨 doSaveDraftContent
+    }
+    class ContentDetail {
+        ⬜ content
+        🟩 goPreviewContent
+        🟩 goModuleDetail
+        🟨 doUpdateContent
+        🟨 doDeleteContent
+    }
+    class EnrolledCourses {
+        ⬜ course
+        ⬜ progress
+        🟩 goCourseDetail
+        🟩 goHome
+    }
+    class ProgressDashboard {
+        ⬜ course
+        ⬜ module
+        ⬜ progress
+        🟩 goCourseDetail
+        🟩 goModuleDetail
+        🟩 goEnrolledCourses
+    }
+    class ClassProgress {
+        ⬜ student
+        ⬜ course
+        ⬜ progress
+        🟩 goFilterStudents
+        🟩 goStudentProgress
+        🟩 goCourseDetail
+    }
+    class StudentProgress {
+        ⬜ student
+        ⬜ course
+        ⬜ module
+        ⬜ progress
+        🟩 goClassProgress
+        🟨 doExtendDeadline
+    }
+    class AssignmentList {
+        ⬜ assignment
+        🟩 goFilterAssignments
+        🟩 goAssignmentDetail
+        🟩 goCreateAssignment
+        🟩 goCourseDetail
+    }
+    class AssignmentCreation {
+        ⬜ assignment
+        ⬜ assignmentType
+        ⬜ rubric
+        🟩 goAssignmentList
+        🟥 doCreateAssignment
+        🟥 doCreateRubric
+    }
+    class AssignmentDetail {
+        ⬜ assignment
+        ⬜ rubric
+        ⬜ submission
+        🟩 goSubmissionList
+        🟩 goAssignmentList
+        🟥 doSubmitAssignment
+        🟨 doUpdateAssignment
+        🟨 doDeleteAssignment
+    }
+    class SubmissionList {
+        ⬜ submission
+        🟩 goFilterSubmissions
+        🟩 goSubmissionDetail
+        🟩 goAssignmentDetail
+    }
+    class SubmissionDetail {
+        ⬜ submission
+        ⬜ grade
+        ⬜ feedback
+        ⬜ rubric
+        🟩 goSubmissionList
+        🟨 doGradeSubmission
+        🟨 doProvideFeedback
+    }
+    class Gradebook {
+        ⬜ student
+        ⬜ assignment
+        ⬜ grade
+        🟩 goSubmissionDetail
+        🟩 goCourseDetail
+        🟨 doExportGrades
+        🟨 doCalculateOverallGrades
+    }
+    class DiscussionList {
+        ⬜ discussion
+        🟩 goFilterDiscussions
+        🟩 goDiscussionDetail
+        🟩 goCreateDiscussion
+        🟩 goCourseDetail
+    }
+    class DiscussionDetail {
+        ⬜ discussion
+        ⬜ post
+        🟩 goDiscussionList
+        🟥 doCreatePost
+        🟥 doReplyToPost
+    }
+    class AnnouncementCreation {
+        ⬜ notification
+        🟩 goCourseDetail
+        🟥 doCreateAnnouncement
+    }
+    class MessageCenter {
+        ⬜ message
+        🟩 goFilterMessages
+        🟩 goCreateMessage
+        🟩 goMessageDetail
+        🟩 goHome
+    }
+    class MessageDetail {
+        ⬜ message
+        🟩 goMessageCenter
+        🟥 doReplyToMessage
+        🟥 doAttachFile
+    }
+    class GroupManagement {
+        ⬜ group
+        🟩 goGroupDetail
+        🟩 goCourseDetail
+        🟥 doCreateGroup
+        🟨 doUpdateGroup
+        🟨 doDeleteGroup
+    }
+    class GroupDetail {
+        ⬜ group
+        ⬜ groupWorkspace
+        🟩 goGroupManagement
+        🟥 doAddGroupMember
+        🟨 doRemoveGroupMember
+    }
+    class WebinarSchedule {
+        ⬜ webinar
+        🟩 goWebinarDetail
+        🟩 goCourseDetail
+        🟥 doCreateWebinar
+        🟨 doUpdateWebinar
+        🟨 doDeleteWebinar
+    }
+    class WebinarDetail {
+        ⬜ webinar
+        ⬜ webinarRecording
+        🟩 goViewRecording
+        🟩 goWebinarSchedule
+        🟨 doJoinWebinar
+    }
+    class AnalyticsDashboard {
+        ⬜ analytics
+        ⬜ student
+        ⬜ course
+        🟩 goFilterAnalytics
+        🟩 goCourseDetail
+        🟨 doExportAnalytics
+    }
+    class ReportCenter {
+        ⬜ report
+        🟩 goReportDetail
+        🟩 goHome
+        🟥 doGenerateReport
+        🟨 doExportReport
+    }
+    class ReportDetail {
+        ⬜ report
+        🟩 goReportCenter
+        🟨 doExportReport
+    }
+    class Settings {
+        ⬜ language
+        ⬜ accessibilityFeature
+        ⬜ userPreferences
+        🟩 goUserProfile
+        🟨 doUpdateSettings
+    }
+    class WebinarView {
+        ⬜ webinar
+        🟩 goWebinarDetail
+    }
+    class RecordingView {
+        ⬜ webinarRecording
+        🟩 goWebinarDetail
+    }
+    class MobileAccess {
+        ⬜ course
+        ⬜ notification
+        ⬜ offlineContent
+        🟩 goHome
+        🟩 goCourseList
+        🟩 goEnrolledCourses
+        🟥 doDownloadContent
+        🟨 doEnableNotifications
+    }
+
+    Login --> Home : 🟥 doLogin
+    Register --> Login : 🟥 doRegister
+    Login --> Login : 🟥 doResetPassword
+    UserProfile --> Home : 🟩 goHome
+    UserList --> Home : 🟩 goHome
+    CourseList --> Home : 🟩 goHome
+    EnrolledCourses --> Home : 🟩 goHome
+    MessageCenter --> Home : 🟩 goHome
+    ReportCenter --> Home : 🟩 goHome
+    MobileAccess --> Home : 🟩 goHome
+    Register --> Login : 🟩 goLogin
+    Login --> Register : 🟩 goRegister
+    Home --> Settings : 🟩 goSettings
+    Home --> ReportCenter : 🟩 goReportCenter
+    ReportDetail --> ReportCenter : 🟩 goReportCenter
+    CourseDetail --> ProgressDashboard : 🟩 goProgressDashboard
+    CourseDetail --> AnalyticsDashboard : 🟩 goAnalyticsDashboard
+    CourseDetail --> AnnouncementCreation : 🟩 goAnnouncementCreation
+    CourseDetail --> Gradebook : 🟩 goGradebook
+    ReportCenter --> ReportDetail : 🟩 goReportDetail
+    Home --> UserProfile : 🟩 goUserProfile
+    Settings --> UserProfile : 🟩 goUserProfile
+    UserDetail --> UserList : 🟩 goUserList
+    UserList --> UserDetail : 🟩 goUserDetail
+    Home --> CourseList : 🟩 goCourseList
+    CourseDetail --> CourseList : 🟩 goCourseList
+    CourseCreation --> CourseList : 🟩 goCourseList
+    MobileAccess --> CourseList : 🟩 goCourseList
+    CourseList --> CourseDetail : 🟩 goCourseDetail
+    CourseEdit --> CourseDetail : 🟩 goCourseDetail
+    ModuleList --> CourseDetail : 🟩 goCourseDetail
+    EnrolledCourses --> CourseDetail : 🟩 goCourseDetail
+    ProgressDashboard --> CourseDetail : 🟩 goCourseDetail
+    ClassProgress --> CourseDetail : 🟩 goCourseDetail
+    AssignmentList --> CourseDetail : 🟩 goCourseDetail
+    Gradebook --> CourseDetail : 🟩 goCourseDetail
+    DiscussionList --> CourseDetail : 🟩 goCourseDetail
+    AnnouncementCreation --> CourseDetail : 🟩 goCourseDetail
+    GroupManagement --> CourseDetail : 🟩 goCourseDetail
+    WebinarSchedule --> CourseDetail : 🟩 goCourseDetail
+    AnalyticsDashboard --> CourseDetail : 🟩 goCourseDetail
+    CourseList --> CourseCreation : 🟩 goCreateCourse
+    CourseDetail --> CourseEdit : 🟩 goEditCourse
+    ModuleDetail --> ModuleList : 🟩 goModuleList
+    CourseDetail --> ModuleDetail : 🟩 goModuleDetail
+    ModuleList --> ModuleDetail : 🟩 goModuleDetail
+    ContentCreation --> ModuleDetail : 🟩 goModuleDetail
+    ContentDetail --> ModuleDetail : 🟩 goModuleDetail
+    ProgressDashboard --> ModuleDetail : 🟩 goModuleDetail
+    ModuleDetail --> ContentCreation : 🟩 goCreateContent
+    ModuleDetail --> ContentDetail : 🟩 goContentDetail
+    UserProfile --> EnrolledCourses : 🟩 goEnrolledCourses
+    ProgressDashboard --> EnrolledCourses : 🟩 goEnrolledCourses
+    MobileAccess --> EnrolledCourses : 🟩 goEnrolledCourses
+    CourseDetail --> AssignmentList : 🟩 goAssignmentList
+    AssignmentCreation --> AssignmentList : 🟩 goAssignmentList
+    AssignmentDetail --> AssignmentList : 🟩 goAssignmentList
+    AssignmentList --> AssignmentCreation : 🟩 goCreateAssignment
+    AssignmentList --> AssignmentDetail : 🟩 goAssignmentDetail
+    SubmissionList --> AssignmentDetail : 🟩 goAssignmentDetail
+    AssignmentDetail --> SubmissionList : 🟩 goSubmissionList
+    SubmissionDetail --> SubmissionList : 🟩 goSubmissionList
+    SubmissionList --> SubmissionDetail : 🟩 goSubmissionDetail
+    Gradebook --> SubmissionDetail : 🟩 goSubmissionDetail
+    CourseDetail --> DiscussionList : 🟩 goDiscussionList
+    DiscussionDetail --> DiscussionList : 🟩 goDiscussionList
+    DiscussionList --> DiscussionDetail : 🟩 goDiscussionDetail
+    DiscussionList --> DiscussionDetail : 🟩 goCreateDiscussion
+    Home --> MessageCenter : 🟩 goMessageCenter
+    MessageDetail --> MessageCenter : 🟩 goMessageCenter
+    MessageCenter --> MessageDetail : 🟩 goCreateMessage
+    MessageCenter --> MessageDetail : 🟩 goMessageDetail
+    GroupDetail --> GroupManagement : 🟩 goGroupManagement
+    GroupManagement --> GroupDetail : 🟩 goGroupDetail
+    CourseDetail --> WebinarSchedule : 🟩 goWebinarSchedule
+    WebinarDetail --> WebinarSchedule : 🟩 goWebinarSchedule
+    WebinarSchedule --> WebinarDetail : 🟩 goWebinarDetail
+    WebinarView --> WebinarDetail : 🟩 goWebinarDetail
+    RecordingView --> WebinarDetail : 🟩 goWebinarDetail
+    Home --> MessageCenter : 🟩 goNotifications
+    StudentProgress --> ClassProgress : 🟩 goClassProgress
+    ClassProgress --> StudentProgress : 🟩 goStudentProgress
+    CourseCreation --> CourseDetail : 🟥 doCreateCourse
+    CourseEdit --> CourseDetail : 🟨 doUpdateCourse
+    CourseEdit --> CourseList : 🟨 doDeleteCourse
+    ModuleList --> ModuleDetail : 🟥 doCreateModule
+    ModuleDetail --> ModuleDetail : 🟨 doUpdateModule
+    ModuleDetail --> ModuleList : 🟨 doDeleteModule
+    ContentCreation --> ContentDetail : 🟥 doCreateContent
+    ContentDetail --> ContentDetail : 🟨 doUpdateContent
+    ContentDetail --> ModuleDetail : 🟨 doDeleteContent
+    CourseCreation --> CourseEdit : 🟨 doSaveDraftCourse
+    CourseEdit --> CourseEdit : 🟨 doSaveDraftCourse
+    ContentCreation --> ContentCreation : 🟨 doSaveDraftContent
+    ContentCreation --> ContentDetail : 🟩 goPreviewContent
+    ContentDetail --> ContentDetail : 🟩 goPreviewContent
+    CourseEdit --> CourseDetail : 🟨 doPublishCourse
+    CourseDetail --> EnrolledCourses : 🟥 doEnrollCourse
+    StudentProgress --> StudentProgress : 🟨 doExtendDeadline
+    AssignmentCreation --> AssignmentDetail : 🟥 doCreateAssignment
+    AssignmentDetail --> AssignmentDetail : 🟨 doUpdateAssignment
+    AssignmentDetail --> AssignmentList : 🟨 doDeleteAssignment
+    AssignmentCreation --> AssignmentDetail : 🟥 doCreateRubric
+    AssignmentDetail --> AssignmentDetail : 🟥 doSubmitAssignment
+    SubmissionDetail --> SubmissionDetail : 🟨 doGradeSubmission
+    SubmissionDetail --> SubmissionDetail : 🟨 doProvideFeedback
+    Gradebook --> Gradebook : 🟨 doExportGrades
+    Gradebook --> Gradebook : 🟨 doCalculateOverallGrades
+    DiscussionDetail --> DiscussionDetail : 🟥 doCreatePost
+    DiscussionDetail --> DiscussionDetail : 🟥 doReplyToPost
+    AnnouncementCreation --> CourseDetail : 🟥 doCreateAnnouncement
+    MessageDetail --> MessageDetail : 🟥 doReplyToMessage
+    MessageDetail --> MessageDetail : 🟥 doAttachFile
+    GroupManagement --> GroupDetail : 🟥 doCreateGroup
+    GroupManagement --> GroupDetail : 🟨 doUpdateGroup
+    GroupManagement --> GroupManagement : 🟨 doDeleteGroup
+    GroupDetail --> GroupDetail : 🟥 doAddGroupMember
+    GroupDetail --> GroupDetail : 🟨 doRemoveGroupMember
+    WebinarSchedule --> WebinarDetail : 🟥 doCreateWebinar
+    WebinarSchedule --> WebinarDetail : 🟨 doUpdateWebinar
+    WebinarSchedule --> WebinarSchedule : 🟨 doDeleteWebinar
+    WebinarDetail --> WebinarView : 🟨 doJoinWebinar
+    WebinarDetail --> RecordingView : 🟩 goViewRecording
+    AnalyticsDashboard --> AnalyticsDashboard : 🟩 goFilterAnalytics
+    AnalyticsDashboard --> AnalyticsDashboard : 🟨 doExportAnalytics
+    ReportCenter --> ReportDetail : 🟥 doGenerateReport
+    ReportCenter --> ReportDetail : 🟨 doExportReport
+    ReportDetail --> ReportDetail : 🟨 doExportReport
+    CourseList --> CourseList : 🟩 goFilterCourses
+    ClassProgress --> ClassProgress : 🟩 goFilterStudents
+    AssignmentList --> AssignmentList : 🟩 goFilterAssignments
+    SubmissionList --> SubmissionList : 🟩 goFilterSubmissions
+    DiscussionList --> DiscussionList : 🟩 goFilterDiscussions
+    MessageCenter --> MessageCenter : 🟩 goFilterMessages
+    UserProfile --> UserProfile : 🟨 doUpdateProfile
+    UserList --> UserDetail : 🟥 doCreateUser
+    UserList --> UserDetail : 🟨 doUpdateUser
+    UserDetail --> UserDetail : 🟨 doUpdateUser
+    UserList --> UserList : 🟨 doDeleteUser
+    UserDetail --> UserList : 🟨 doDeleteUser
+    Settings --> Settings : 🟨 doUpdateSettings
+    MobileAccess --> MobileAccess : 🟥 doDownloadContent
+    MobileAccess --> MobileAccess : 🟨 doEnableNotifications

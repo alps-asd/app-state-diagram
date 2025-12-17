@@ -646,7 +646,26 @@ Output (XML - default):
 
 ## Integration with app-state-diagram
 
-Generated ALPS profiles can be visualized using app-state-diagram. See [llms.txt](https://alps-asd.github.io/app-state-diagram/llms.txt) for CLI usage, programmatic API, and MCP server setup.
+Generated ALPS profiles can be visualized using app-state-diagram:
+
+```bash
+# Generate HTML documentation (default)
+asd profile.json
+
+# Generate SVG state diagram
+asd profile.json -f svg
+
+# Generate Mermaid classDiagram (GitHub/VSCode compatible)
+asd profile.json -f mermaid
+
+# Generate DOT format
+asd profile.json -f dot
+
+# Generate with watch mode
+asd --watch profile.json
+```
+
+See [llms.txt](https://alps-asd.github.io/app-state-diagram/llms.txt) for CLI usage, programmatic API, and MCP server setup.
 
 ## Advanced Features
 

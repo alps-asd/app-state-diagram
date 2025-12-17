@@ -7,6 +7,7 @@
 const {
   handleValidateAlps,
   handleAlps2Svg,
+  handleAlps2Mermaid,
   handleAlpsGuide,
   handleCrawlAndExtract,
   getEmbeddedGuide,
@@ -173,6 +174,90 @@ describe('MCP Handler Functions', () => {
       });
 
       const result = await handleAlps2Svg({
+        alps_content: alpsContent,
+        alps_path: '/should/not/be/used.json',
+      });
+
+      expect(result.isError).toBe(false);
+      expect(mockFs.readFileSync).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('handleAlps2Mermaid', () => {
+    it('should generate Mermaid from alps_content', async () => {
+      const alpsContent = JSON.stringify({
+        alps: {
+          descriptor: [
+            { id: 'Home', type: 'semantic' },
+            { id: 'goHome', type: 'safe', rt: '#Home' },
+          ],
+        },
+      });
+
+      const result = await handleAlps2Mermaid({ alps_content: alpsContent });
+
+      expect(result.isError).toBe(false);
+      expect(result.content[0].text).toContain('✅ Mermaid classDiagram generated');
+      expect(result.content[0].text).toContain('```mermaid');
+      expect(result.content[0].text).toContain('classDiagram');
+    });
+
+    it('should read from alps_path when provided', async () => {
+      const alpsContent = JSON.stringify({
+        alps: {
+          descriptor: [{ id: 'test', type: 'semantic' }],
+        },
+      });
+
+      mockFs.readFileSync.mockReturnValue(alpsContent);
+
+      const result = await handleAlps2Mermaid({ alps_path: '/path/to/alps.json' });
+
+      expect(result.isError).toBe(false);
+      expect(mockFs.readFileSync).toHaveBeenCalledWith('/path/to/alps.json', 'utf-8');
+      expect(result.content[0].text).toContain('✅ Mermaid classDiagram generated');
+    });
+
+    it('should return error when file cannot be read', async () => {
+      mockFs.readFileSync.mockImplementation(() => {
+        throw new Error('File not found');
+      });
+
+      const result = await handleAlps2Mermaid({ alps_path: '/invalid/path.json' });
+
+      expect(result.isError).toBe(true);
+      expect(result.content[0].text).toContain('Error: Cannot read file');
+    });
+
+    it('should return error when both alps_content and alps_path are missing', async () => {
+      const result = await handleAlps2Mermaid({});
+
+      expect(result.isError).toBe(true);
+      expect(result.content[0].text).toContain('Error: alps_content or alps_path is required');
+    });
+
+    it('should return error when args is undefined', async () => {
+      const result = await handleAlps2Mermaid(undefined);
+
+      expect(result.isError).toBe(true);
+      expect(result.content[0].text).toContain('Error: alps_content or alps_path is required');
+    });
+
+    it('should handle parse errors', async () => {
+      const result = await handleAlps2Mermaid({ alps_content: 'invalid content' });
+
+      expect(result.isError).toBe(true);
+      expect(result.content[0].text).toContain('Error:');
+    });
+
+    it('should prefer alps_content over alps_path', async () => {
+      const alpsContent = JSON.stringify({
+        alps: {
+          descriptor: [{ id: 'test', type: 'semantic' }],
+        },
+      });
+
+      const result = await handleAlps2Mermaid({
         alps_content: alpsContent,
         alps_path: '/should/not/be/used.json',
       });

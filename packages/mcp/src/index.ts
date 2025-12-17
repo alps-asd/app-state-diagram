@@ -20,6 +20,7 @@ import { parseAlpsAuto } from "@alps-asd/app-state-diagram/parser/alps-parser.js
 import { AlpsValidator } from "@alps-asd/app-state-diagram/validator/index.js";
 import { generateDot } from "@alps-asd/app-state-diagram/generator/dot-generator.js";
 import { dotToSvg } from "@alps-asd/app-state-diagram/generator/svg-generator.js";
+import { generateMermaid } from "@alps-asd/app-state-diagram/generator/mermaid-generator.js";
 
 // Import from Crawler package
 import { AlpsCrawler } from "@alps-asd/crawler";
@@ -86,6 +87,23 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
         },
       },
       {
+        name: "alps2mermaid",
+        description: "Convert ALPS profile to Mermaid classDiagram format (GitHub/VSCode compatible)",
+        inputSchema: {
+          type: "object" as const,
+          properties: {
+            alps_content: {
+              type: "string",
+              description: "ALPS profile content (XML or JSON format)",
+            },
+            alps_path: {
+              type: "string",
+              description: "Path to ALPS profile file (alternative to alps_content)",
+            },
+          },
+        },
+      },
+      {
         name: "alps_guide",
         description: "Get ALPS best practices and reference guide",
         inputSchema: {
@@ -132,6 +150,8 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       return handleValidateAlps(args);
     case "alps2svg":
       return handleAlps2Svg(args);
+    case "alps2mermaid":
+      return handleAlps2Mermaid(args);
     case "alps_guide":
       return handleAlpsGuide();
     case "crawl_and_extract_alps":
@@ -230,6 +250,46 @@ export async function handleAlps2Svg(args: Record<string, unknown> | undefined) 
 
     return {
       content: [{ type: "text", text: `✅ SVG generated (${svg.length} bytes)\n\n\`\`\`svg\n${svg}\n\`\`\`` }],
+      isError: false,
+    };
+  } catch (error) {
+    /* istanbul ignore next */
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    return {
+      content: [{ type: "text", text: `Error: ${errorMessage}` }],
+      isError: true,
+    };
+  }
+}
+
+export async function handleAlps2Mermaid(args: Record<string, unknown> | undefined) {
+  let alpsContent = args?.alps_content as string | undefined;
+  const alpsPath = args?.alps_path as string | undefined;
+
+  if (alpsPath && !alpsContent) {
+    try {
+      alpsContent = fs.readFileSync(alpsPath, "utf-8");
+    } catch {
+      return {
+        content: [{ type: "text", text: `Error: Cannot read file: ${alpsPath}` }],
+        isError: true,
+      };
+    }
+  }
+
+  if (!alpsContent) {
+    return {
+      content: [{ type: "text", text: "Error: alps_content or alps_path is required" }],
+      isError: true,
+    };
+  }
+
+  try {
+    const document = parseAlpsAuto(alpsContent);
+    const mermaid = generateMermaid(document);
+
+    return {
+      content: [{ type: "text", text: `✅ Mermaid classDiagram generated\n\n\`\`\`mermaid\n${mermaid}\`\`\`` }],
       isError: false,
     };
   } catch (error) {

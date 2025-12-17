@@ -32,10 +32,13 @@ asd profile.json
 asd profile.xml -o output.html
 
 # Generate SVG diagram
-asd profile.json -m svg
+asd profile.json -f svg
+
+# Generate Mermaid classDiagram (GitHub/VSCode compatible)
+asd profile.json -f mermaid
 
 # Generate DOT format
-asd profile.json -m dot
+asd profile.json -f dot
 
 # Validate only
 asd profile.json --validate
@@ -92,6 +95,7 @@ docs/
 
 **Generator** (`generator/`):
 - `dot-generator.ts` - Generates Graphviz DOT from ALPS
+- `mermaid-generator.ts` - Generates Mermaid classDiagram from ALPS
 - `html-generator.ts` - Creates HTML with embedded alps-editor
 - Uses @viz-js/viz for WASM-based SVG generation
 
@@ -104,6 +108,7 @@ docs/
 Provides AI tools for ALPS development:
 - `validate_alps` - Validate ALPS profiles
 - `alps2svg` - Generate SVG diagrams
+- `alps2mermaid` - Generate Mermaid classDiagram
 - `alps_guide` - ALPS best practices guide
 
 ## Descriptor Types
