@@ -1,0 +1,1061 @@
+classDiagram
+    class Home {
+        ⬜ searchQuery
+        ⬜ searchSuggestion
+        ⬜ categoryPath
+        ⬜ sponsoredProducts
+        ⬜ browsingHistoryItem
+        🟩 goSearchResults
+        🟩 goCategoryBrowse
+        🟩 goDeals
+        🟩 goRanking
+        🟩 goCart
+        🟩 goAccount
+        🟩 goWishlist
+        🟩 goBrowsingHistory
+    }
+    class SearchSuggest {
+        ⬜ searchQuery
+        ⬜ searchSuggestion
+        ⬜ searchHistory
+        🟩 goSearchResults
+        🟨 doClearSearchHistory
+    }
+    class SearchResults {
+        ⬜ searchQuery
+        ⬜ searchCorrection
+        ⬜ searchResultCount
+        ⬜ ProductTile
+        ⬜ sponsoredProducts
+        ⬜ filterPriceMin
+        ⬜ filterPriceMax
+        ⬜ filterPrime
+        ⬜ filterRating
+        ⬜ filterBrand
+        ⬜ filterCondition
+        ⬜ filterColor
+        ⬜ filterSize
+        ⬜ sortOrder
+        ⬜ pageNumber
+        🟩 goHome
+        🟩 goProductDetail
+        🟩 goApplyFilter
+        🟩 goClearFilters
+        🟥 doAddToCart
+        🟥 doAddToWishlist
+    }
+    class CategoryBrowse {
+        ⬜ categoryId
+        ⬜ categoryName
+        ⬜ categoryPath
+        ⬜ breadcrumb
+        🟩 goHome
+        🟩 goProductList
+    }
+    class ProductList {
+        ⬜ categoryId
+        ⬜ breadcrumb
+        ⬜ ProductTile
+        ⬜ filterPriceMin
+        ⬜ filterPriceMax
+        ⬜ filterPrime
+        ⬜ filterRating
+        ⬜ sortOrder
+        ⬜ pageNumber
+        🟩 goHome
+        🟩 goProductDetail
+        🟩 goApplyFilter
+        🟥 doAddToCart
+    }
+    class Deals {
+        ⬜ ProductTile
+        ⬜ lightningDealEndTime
+        ⬜ lightningDealProgress
+        🟩 goHome
+        🟩 goLightningDeals
+        🟩 goCouponPage
+        🟩 goProductDetail
+    }
+    class LightningDeals {
+        ⬜ ProductTile
+        ⬜ lightningDealEndTime
+        ⬜ lightningDealProgress
+        🟩 goDeals
+        🟩 goProductDetail
+        🟥 doJoinWaitlist
+        🟥 doAddToCart
+    }
+    class CouponPage {
+        ⬜ couponCode
+        ⬜ couponValue
+        ⬜ ProductTile
+        🟩 goDeals
+        🟩 goProductDetail
+        🟥 doClipCoupon
+    }
+    class Ranking {
+        ⬜ rankingType
+        ⬜ categoryId
+        ⬜ ProductTile
+        ⬜ rankingPosition
+        🟩 goHome
+        🟩 goBestSellers
+        🟩 goNewReleases
+        🟩 goProductDetail
+    }
+    class BestSellers {
+        ⬜ categoryId
+        ⬜ ProductTile
+        ⬜ bestSellerRank
+        🟩 goRanking
+        🟩 goProductDetail
+    }
+    class NewReleases {
+        ⬜ categoryId
+        ⬜ ProductTile
+        🟩 goRanking
+        🟩 goProductDetail
+    }
+    class ProductDetail {
+        ⬜ productId
+        ⬜ asin
+        ⬜ productName
+        ⬜ productDescription
+        ⬜ bulletPoints
+        ⬜ mainImage
+        ⬜ imageGallery
+        ⬜ video360
+        ⬜ productVideo
+        ⬜ price
+        ⬜ listPrice
+        ⬜ discountPercent
+        ⬜ primePrice
+        ⬜ couponValue
+        ⬜ pointsEarned
+        ⬜ VariantSelector
+        ⬜ stock
+        ⬜ stockAlert
+        ⬜ deliveryDate
+        ⬜ primeDelivery
+        ⬜ BuyBox
+        ⬜ averageRating
+        ⬜ reviewCount
+        ⬜ ratingDistribution
+        ⬜ topPositiveReview
+        ⬜ topCriticalReview
+        ⬜ frequentlyBoughtTogether
+        ⬜ customersAlsoBought
+        ⬜ sponsoredProducts
+        ⬜ breadcrumb
+        ⬜ brandName
+        ⬜ categoryRank
+        🟩 goHome
+        🟩 goImageGallery
+        🟩 goSizeChart
+        🟩 goReviewList
+        🟩 goQuestionList
+        🟩 goOtherSellers
+        🟩 goBrandStore
+        🟩 goCart
+        🟩 goSelectVariant
+        🟩 goShare
+        🟥 doAddToCart
+        🟥 doBuyNow
+        🟥 doOneClickBuy
+        🟥 doAddToWishlist
+        🟥 doSubscribe
+        🟥 doClipCoupon
+        🟥 doSetPriceAlert
+    }
+    class ImageGallery {
+        ⬜ productId
+        ⬜ imageGallery
+        ⬜ video360
+        ⬜ productVideo
+        🟩 goProductDetail
+    }
+    class SizeChart {
+        ⬜ productId
+        ⬜ sizeChart
+        ⬜ sizeOption
+        🟩 goProductDetail
+    }
+    class OtherSellers {
+        ⬜ productId
+        ⬜ SellerOffer
+        🟩 goProductDetail
+        🟩 goSellerProfile
+        🟥 doAddToCart
+    }
+    class SellerProfile {
+        ⬜ sellerId
+        ⬜ sellerName
+        ⬜ sellerRating
+        ⬜ sellerPositivePercent
+        🟩 goOtherSellers
+        🟩 goSellerProducts
+        🟥 doContactSeller
+    }
+    class SellerProducts {
+        ⬜ sellerId
+        ⬜ ProductTile
+        🟩 goSellerProfile
+        🟩 goProductDetail
+    }
+    class BrandStore {
+        ⬜ brandId
+        ⬜ brandName
+        ⬜ ProductTile
+        🟩 goHome
+        🟩 goProductDetail
+    }
+    class ReviewList {
+        ⬜ productId
+        ⬜ averageRating
+        ⬜ reviewCount
+        ⬜ ratingDistribution
+        ⬜ Review
+        ⬜ filterRating
+        ⬜ sortOrder
+        ⬜ pageNumber
+        🟩 goProductDetail
+        🟩 goWriteReview
+        🟩 goFilterReviews
+    }
+    class WriteReview {
+        ⬜ productId
+        ⬜ rating
+        ⬜ reviewTitle
+        ⬜ reviewBody
+        ⬜ reviewImages
+        🟩 goReviewList
+        🟥 doSubmitReview
+    }
+    class QuestionList {
+        ⬜ productId
+        ⬜ Question
+        ⬜ pageNumber
+        🟩 goProductDetail
+        🟥 doAskQuestion
+    }
+    class Cart {
+        ⬜ CartItem
+        ⬜ SavedForLater
+        ⬜ itemCount
+        ⬜ cartTotal
+        ⬜ cartSavings
+        ⬜ frequentlyBoughtTogether
+        ⬜ appliedCoupons
+        🟩 goHome
+        🟩 goProductDetail
+        🟩 goSavedItems
+        🟩 goCheckout
+        🟩 goAddGiftOption
+        🟥 doSaveForLater
+        🟥 doApplyCoupon
+        🟨 doUpdateQuantity
+        🟨 doRemoveFromCart
+    }
+    class SavedItems {
+        ⬜ SavedForLater
+        🟩 goCart
+        🟩 goProductDetail
+        🟥 doMoveToCart
+        🟥 doMoveAllToCart
+    }
+    class GiftOptions {
+        ⬜ cartItemId
+        ⬜ giftOption
+        ⬜ giftWrap
+        ⬜ giftMessage
+        🟩 goCart
+        🟨 doSaveGiftOptions
+    }
+    class Checkout {
+        ⬜ CartItem
+        ⬜ ShippingAddress
+        ⬜ PaymentMethod
+        ⬜ DeliveryOption
+        ⬜ orderSubtotal
+        ⬜ orderShipping
+        ⬜ orderTax
+        ⬜ orderDiscount
+        ⬜ orderTotal
+        ⬜ appliedCoupons
+        ⬜ pointsToUse
+        🟩 goCart
+        🟩 goSelectAddress
+        🟩 goSelectPayment
+        🟩 goSelectDelivery
+        🟩 goApplyCoupon
+        🟩 goApplyGiftCard
+        🟥 doPlaceOrder
+        🟨 doUsePoints
+    }
+    class SelectAddress {
+        ⬜ ShippingAddress
+        ⬜ isDefaultAddress
+        🟩 goCheckout
+        🟩 goAddAddress
+        🟩 goEditAddress
+        🟩 goSelectHub
+        🟨 doSelectAddress
+    }
+    class AddAddress {
+        ⬜ recipientName
+        ⬜ postalCode
+        ⬜ prefecture
+        ⬜ city
+        ⬜ addressLine1
+        ⬜ addressLine2
+        ⬜ phoneNumber
+        ⬜ deliveryInstructions
+        ⬜ isDefaultAddress
+        🟩 goSelectAddress
+        🟥 doSaveAddress
+    }
+    class EditAddress {
+        ⬜ addressId
+        ⬜ recipientName
+        ⬜ postalCode
+        ⬜ prefecture
+        ⬜ city
+        ⬜ addressLine1
+        ⬜ addressLine2
+        ⬜ phoneNumber
+        ⬜ deliveryInstructions
+        🟩 goSelectAddress
+        🟨 doUpdateAddress
+        🟨 doDeleteAddress
+    }
+    class SelectHub {
+        ⬜ hubId
+        ⬜ hubName
+        ⬜ hubAddress
+        ⬜ hubType
+        🟩 goSelectAddress
+        🟨 doSelectHub
+    }
+    class PlacementOptions {
+        ⬜ placementOption
+        ⬜ placementFront
+        ⬜ placementLocker
+        ⬜ deliveryInstructions
+        🟩 goSelectDelivery
+        🟨 doSavePlacement
+    }
+    class SelectDelivery {
+        ⬜ DeliveryOption
+        🟩 goCheckout
+        🟩 goPlacementOptions
+        🟩 goScheduleDelivery
+        🟨 doSelectDelivery
+    }
+    class ScheduleDelivery {
+        ⬜ deliveryDate
+        ⬜ scheduledDelivery
+        🟩 goSelectDelivery
+        🟨 doSelectSchedule
+    }
+    class SelectPayment {
+        ⬜ PaymentMethod
+        ⬜ pointsBalance
+        ⬜ giftCardBalance
+        🟩 goCheckout
+        🟩 goAddCard
+        🟩 goConveniencePayment
+        🟩 goPaidyPayment
+        🟩 goCarrierBilling
+        🟨 doSelectPayment
+    }
+    class AddCard {
+        ⬜ cardNumber
+        ⬜ cardExpiry
+        ⬜ cardCvv
+        ⬜ cardBrand
+        ⬜ isDefaultPayment
+        🟩 goSelectPayment
+        🟥 doSaveCard
+    }
+    class ConveniencePayment {
+        ⬜ convenienceStore
+        🟩 goSelectPayment
+        🟨 doSelectConvenience
+    }
+    class PaidyPayment {
+        ⬜ paidyInstallments
+        🟩 goSelectPayment
+        🟨 doSelectPaidy
+    }
+    class CarrierBilling {
+        ⬜ carrierType
+        🟩 goSelectPayment
+        🟨 doSelectCarrier
+    }
+    class ApplyCouponCode {
+        ⬜ couponCode
+        ⬜ appliedCoupons
+        🟩 goCheckout
+        🟥 doApplyCouponCode
+    }
+    class ApplyGiftCard {
+        ⬜ giftCardCode
+        ⬜ giftCardBalance
+        🟩 goCheckout
+        🟥 doApplyGiftCard
+    }
+    class OrderComplete {
+        ⬜ orderId
+        ⬜ orderDate
+        ⬜ orderTotal
+        ⬜ deliveryDate
+        ⬜ ShippingAddress
+        🟩 goHome
+        🟩 goOrderDetail
+    }
+    class OrderHistory {
+        ⬜ OrderSummary
+        ⬜ pageNumber
+        🟩 goHome
+        🟩 goAccount
+        🟩 goOrderDetail
+        🟩 goBuyAgain
+    }
+    class OrderDetail {
+        ⬜ orderId
+        ⬜ orderDate
+        ⬜ orderStatus
+        ⬜ OrderItem
+        ⬜ ShippingAddress
+        ⬜ PaymentMethod
+        ⬜ orderSubtotal
+        ⬜ orderShipping
+        ⬜ orderTax
+        ⬜ orderDiscount
+        ⬜ orderTotal
+        ⬜ trackingNumber
+        🟩 goOrderHistory
+        🟩 goTrackPackage
+        🟩 goInvoice
+        🟩 goWriteReview
+        🟥 doReturnItem
+        🟥 doBuyAgain
+        🟨 doCancelOrder
+        🟨 doArchiveOrder
+    }
+    class TrackPackage {
+        ⬜ orderId
+        ⬜ trackingNumber
+        ⬜ carrier
+        ⬜ shipmentStatus
+        ⬜ estimatedDelivery
+        ⬜ actualDelivery
+        ⬜ deliveryPhoto
+        ⬜ TrackingEvent
+        🟩 goOrderDetail
+        🟩 goRedelivery
+        🟩 goContactCarrier
+    }
+    class Redelivery {
+        ⬜ orderId
+        ⬜ redeliveryDate
+        ⬜ redeliveryTimeSlot
+        🟩 goTrackPackage
+        🟥 doScheduleRedelivery
+    }
+    class Invoice {
+        ⬜ orderId
+        ⬜ orderDate
+        ⬜ OrderItem
+        ⬜ orderTotal
+        ⬜ ShippingAddress
+        🟩 goOrderDetail
+        🟩 goPrintInvoice
+        🟩 goDownloadInvoice
+    }
+    class CancelOrder {
+        ⬜ orderId
+        ⬜ OrderItem
+        🟩 goOrderDetail
+        🟨 doConfirmCancel
+    }
+    class ReturnItem {
+        ⬜ orderId
+        ⬜ productId
+        ⬜ returnReason
+        ⬜ returnMethod
+        🟩 goOrderDetail
+        🟩 goSelectReturnMethod
+        🟥 doSubmitReturn
+    }
+    class SelectReturnMethod {
+        ⬜ returnMethod
+        ⬜ hubId
+        🟩 goReturnItem
+        🟨 doSelectReturnMethod
+    }
+    class ReturnLabel {
+        ⬜ orderId
+        ⬜ returnLabel
+        🟩 goOrderDetail
+        🟩 goPrintLabel
+    }
+    class RefundStatus {
+        ⬜ orderId
+        ⬜ refundAmount
+        ⬜ refundStatus
+        🟩 goOrderDetail
+    }
+    class BuyAgain {
+        ⬜ purchaseHistoryItem
+        ⬜ ProductTile
+        🟩 goOrderHistory
+        🟩 goProductDetail
+        🟥 doAddToCart
+    }
+    class BrowsingHistory {
+        ⬜ browsingHistoryItem
+        ⬜ ProductTile
+        ⬜ viewedDate
+        🟩 goHome
+        🟩 goProductDetail
+        🟨 doRemoveFromHistory
+        🟨 doClearHistory
+    }
+    class Wishlist {
+        ⬜ wishlistId
+        ⬜ wishlistName
+        ⬜ wishlistPrivacy
+        ⬜ WishlistItem
+        🟩 goHome
+        🟩 goAccount
+        🟩 goProductDetail
+        🟩 goManageWishlists
+        🟩 goShareWishlist
+        🟥 doAddToCart
+        🟨 doRemoveFromWishlist
+        🟨 doSetPriority
+    }
+    class ManageWishlists {
+        ⬜ wishlistId
+        ⬜ wishlistName
+        ⬜ wishlistPrivacy
+        🟩 goWishlist
+        🟥 doCreateWishlist
+        🟨 doRenameWishlist
+        🟨 doDeleteWishlist
+    }
+    class ShareWishlist {
+        ⬜ wishlistId
+        ⬜ wishlistShareUrl
+        🟩 goWishlist
+        🟩 goCopyShareUrl
+    }
+    class PriceAlert {
+        ⬜ priceAlertId
+        ⬜ productId
+        ⬜ productName
+        ⬜ price
+        ⬜ targetPrice
+        🟩 goProductDetail
+        🟨 doEditPriceAlert
+        🟨 doDeletePriceAlert
+    }
+    class Account {
+        ⬜ customerId
+        ⬜ email
+        ⬜ primeStatus
+        🟩 goHome
+        🟩 goOrderHistory
+        🟩 goAddressBook
+        🟩 goPaymentMethods
+        🟩 goWishlist
+        🟩 goBrowsingHistory
+        🟩 goCustomerService
+        🟩 goLogin
+    }
+    class AddressBook {
+        ⬜ ShippingAddress
+        ⬜ isDefaultAddress
+        🟩 goAccount
+        🟩 goAddAddress
+        🟩 goEditAddress
+        🟨 doSetDefaultAddress
+        🟨 doDeleteAddress
+    }
+    class PaymentMethods {
+        ⬜ PaymentMethod
+        ⬜ giftCardBalance
+        ⬜ pointsBalance
+        🟩 goAccount
+        🟩 goAddCard
+        🟨 doSetDefaultPayment
+        🟨 doDeletePayment
+    }
+    class Login {
+        ⬜ email
+        ⬜ password
+        🟩 goHome
+        🟩 goRegister
+        🟩 goForgotPassword
+        🟥 doLogin
+    }
+    class Register {
+        ⬜ email
+        ⬜ password
+        🟩 goLogin
+        🟥 doRegister
+    }
+    class ForgotPassword {
+        ⬜ email
+        🟩 goLogin
+        🟥 doResetPassword
+    }
+    class CustomerService {
+        🟩 goHome
+        🟩 goFaqCategories
+        🟩 goInquiryHistory
+        🟩 goStartChat
+        🟩 goClaimList
+        🟩 goOrderHistory
+        🟩 goSelectInquiryTopic
+    }
+    class FaqCategories {
+        ⬜ faqCategoryId
+        ⬜ faqCategoryName
+        🟩 goCustomerService
+        🟩 goFaqList
+    }
+    class FaqList {
+        ⬜ faqCategoryId
+        ⬜ FaqItem
+        ⬜ pageNumber
+        🟩 goFaqCategories
+        🟩 goFaqDetail
+    }
+    class FaqDetail {
+        ⬜ faqQuestion
+        ⬜ faqAnswer
+        ⬜ faqHelpful
+        🟩 goFaqList
+        🟩 goStartChat
+        🟩 goSelectInquiryTopic
+        🟥 doMarkFaqHelpful
+    }
+    class SelectInquiryTopic {
+        ⬜ inquiryCategory
+        ⬜ orderId
+        🟩 goCustomerService
+        🟩 goSelectOrder
+        🟩 goInquiryForm
+    }
+    class SelectOrder {
+        ⬜ OrderSummary
+        🟩 goSelectInquiryTopic
+        🟩 goInquiryForm
+    }
+    class InquiryForm {
+        ⬜ inquiryCategory
+        ⬜ orderId
+        ⬜ inquirySubject
+        ⬜ inquiryBody
+        ⬜ attachmentFile
+        🟩 goSelectInquiryTopic
+        🟥 doSubmitInquiry
+    }
+    class InquiryComplete {
+        ⬜ inquiryId
+        🟩 goCustomerService
+        🟩 goInquiryDetail
+    }
+    class InquiryHistory {
+        ⬜ InquirySummary
+        ⬜ pageNumber
+        🟩 goCustomerService
+        🟩 goInquiryDetail
+    }
+    class InquiryDetail {
+        ⬜ inquiryId
+        ⬜ inquirySubject
+        ⬜ inquiryBody
+        ⬜ inquiryCategory
+        ⬜ inquiryStatus
+        ⬜ inquiryDate
+        ⬜ InquiryResponse
+        ⬜ attachmentFile
+        🟩 goInquiryHistory
+        🟩 goStartChat
+        🟥 doReplyInquiry
+        🟨 doCloseInquiry
+    }
+    class ChatLobby {
+        ⬜ inquiryCategory
+        ⬜ orderId
+        ⬜ estimatedWaitTime
+        ⬜ agentAvailable
+        🟩 goCustomerService
+        🟩 goSelectChatTopic
+        🟥 doStartBotChat
+    }
+    class SelectChatTopic {
+        ⬜ inquiryCategory
+        🟩 goCustomerService
+        🟩 goChatLobby
+    }
+    class BotChat {
+        ⬜ chatSessionId
+        ⬜ ChatMessage
+        ⬜ chatBotResponse
+        🟩 goCustomerService
+        🟥 doSendBotMessage
+        🟥 doRequestAgent
+    }
+    class LiveChat {
+        ⬜ chatSessionId
+        ⬜ ChatMessage
+        ⬜ agentName
+        🟩 goCustomerService
+        🟥 doSendChatMessage
+        🟥 doEndChat
+        🟥 doUploadChatFile
+    }
+    class ChatEnd {
+        ⬜ chatSessionId
+        ⬜ feedbackRating
+        ⬜ feedbackComment
+        🟩 goCustomerService
+        🟥 doSubmitChatFeedback
+    }
+    class ClaimList {
+        ⬜ ClaimSummary
+        ⬜ pageNumber
+        🟩 goCustomerService
+        🟩 goClaimDetail
+        🟩 goFileNewClaim
+    }
+    class FileNewClaim {
+        ⬜ orderId
+        ⬜ productId
+        ⬜ claimType
+        ⬜ claimReason
+        ⬜ claimEvidence
+        🟩 goClaimList
+        🟩 goSelectClaimOrder
+        🟥 doSubmitClaim
+    }
+    class SelectClaimOrder {
+        ⬜ OrderSummary
+        🟩 goClaimList
+        🟩 goFileNewClaim
+    }
+    class ClaimDetail {
+        ⬜ claimId
+        ⬜ claimType
+        ⬜ claimReason
+        ⬜ claimStatus
+        ⬜ claimDate
+        ⬜ claimDeadline
+        ⬜ orderId
+        ⬜ productId
+        ⬜ claimEvidence
+        ⬜ sellerResponse
+        ⬜ amazonDecision
+        ⬜ claimResolution
+        ⬜ claimRefundAmount
+        🟩 goClaimList
+        🟥 doAddClaimEvidence
+        🟥 doRespondToClaim
+        🟥 doEscalateClaim
+    }
+
+    SearchResults --> Home : 🟩 goHome
+    CategoryBrowse --> Home : 🟩 goHome
+    ProductList --> Home : 🟩 goHome
+    Deals --> Home : 🟩 goHome
+    Ranking --> Home : 🟩 goHome
+    ProductDetail --> Home : 🟩 goHome
+    BrandStore --> Home : 🟩 goHome
+    Cart --> Home : 🟩 goHome
+    OrderComplete --> Home : 🟩 goHome
+    OrderHistory --> Home : 🟩 goHome
+    BrowsingHistory --> Home : 🟩 goHome
+    Wishlist --> Home : 🟩 goHome
+    Account --> Home : 🟩 goHome
+    Login --> Home : 🟩 goHome
+    CustomerService --> Home : 🟩 goHome
+    Home --> SearchResults : 🟩 goSearchResults
+    SearchSuggest --> SearchResults : 🟩 goSearchResults
+    Home --> CategoryBrowse : 🟩 goCategoryBrowse
+    CategoryBrowse --> ProductList : 🟩 goProductList
+    SearchResults --> ProductDetail : 🟩 goProductDetail
+    ProductList --> ProductDetail : 🟩 goProductDetail
+    Deals --> ProductDetail : 🟩 goProductDetail
+    LightningDeals --> ProductDetail : 🟩 goProductDetail
+    CouponPage --> ProductDetail : 🟩 goProductDetail
+    Ranking --> ProductDetail : 🟩 goProductDetail
+    BestSellers --> ProductDetail : 🟩 goProductDetail
+    NewReleases --> ProductDetail : 🟩 goProductDetail
+    ImageGallery --> ProductDetail : 🟩 goProductDetail
+    SizeChart --> ProductDetail : 🟩 goProductDetail
+    OtherSellers --> ProductDetail : 🟩 goProductDetail
+    SellerProducts --> ProductDetail : 🟩 goProductDetail
+    BrandStore --> ProductDetail : 🟩 goProductDetail
+    FrequentlyBoughtTogether --> ProductDetail : 🟩 goProductDetail
+    ReviewList --> ProductDetail : 🟩 goProductDetail
+    QuestionList --> ProductDetail : 🟩 goProductDetail
+    Cart --> ProductDetail : 🟩 goProductDetail
+    SavedItems --> ProductDetail : 🟩 goProductDetail
+    BuyAgain --> ProductDetail : 🟩 goProductDetail
+    BrowsingHistory --> ProductDetail : 🟩 goProductDetail
+    Wishlist --> ProductDetail : 🟩 goProductDetail
+    PriceAlert --> ProductDetail : 🟩 goProductDetail
+    ProductDetail --> ImageGallery : 🟩 goImageGallery
+    ProductDetail --> SizeChart : 🟩 goSizeChart
+    Home --> Deals : 🟩 goDeals
+    LightningDeals --> Deals : 🟩 goDeals
+    CouponPage --> Deals : 🟩 goDeals
+    Deals --> LightningDeals : 🟩 goLightningDeals
+    Deals --> CouponPage : 🟩 goCouponPage
+    Home --> Ranking : 🟩 goRanking
+    BestSellers --> Ranking : 🟩 goRanking
+    NewReleases --> Ranking : 🟩 goRanking
+    Ranking --> BestSellers : 🟩 goBestSellers
+    Ranking --> NewReleases : 🟩 goNewReleases
+    ProductDetail --> OtherSellers : 🟩 goOtherSellers
+    BuyBox --> OtherSellers : 🟩 goOtherSellers
+    SellerProfile --> OtherSellers : 🟩 goOtherSellers
+    OtherSellers --> SellerProfile : 🟩 goSellerProfile
+    SellerProducts --> SellerProfile : 🟩 goSellerProfile
+    SellerProfile --> SellerProducts : 🟩 goSellerProducts
+    ProductDetail --> BrandStore : 🟩 goBrandStore
+    ProductDetail --> ReviewList : 🟩 goReviewList
+    WriteReview --> ReviewList : 🟩 goReviewList
+    ReviewList --> WriteReview : 🟩 goWriteReview
+    OrderDetail --> WriteReview : 🟩 goWriteReview
+    ProductDetail --> QuestionList : 🟩 goQuestionList
+    Home --> Cart : 🟩 goCart
+    ProductDetail --> Cart : 🟩 goCart
+    SavedItems --> Cart : 🟩 goCart
+    GiftOptions --> Cart : 🟩 goCart
+    Checkout --> Cart : 🟩 goCart
+    Cart --> SavedItems : 🟩 goSavedItems
+    Cart --> Checkout : 🟩 goCheckout
+    SelectAddress --> Checkout : 🟩 goCheckout
+    SelectDelivery --> Checkout : 🟩 goCheckout
+    SelectPayment --> Checkout : 🟩 goCheckout
+    ApplyCouponCode --> Checkout : 🟩 goCheckout
+    ApplyGiftCard --> Checkout : 🟩 goCheckout
+    Checkout --> SelectAddress : 🟩 goSelectAddress
+    AddAddress --> SelectAddress : 🟩 goSelectAddress
+    EditAddress --> SelectAddress : 🟩 goSelectAddress
+    SelectHub --> SelectAddress : 🟩 goSelectAddress
+    SelectAddress --> AddAddress : 🟩 goAddAddress
+    AddressBook --> AddAddress : 🟩 goAddAddress
+    SelectAddress --> EditAddress : 🟩 goEditAddress
+    AddressBook --> EditAddress : 🟩 goEditAddress
+    SelectAddress --> SelectHub : 🟩 goSelectHub
+    SelectDelivery --> PlacementOptions : 🟩 goPlacementOptions
+    Checkout --> SelectDelivery : 🟩 goSelectDelivery
+    PlacementOptions --> SelectDelivery : 🟩 goSelectDelivery
+    ScheduleDelivery --> SelectDelivery : 🟩 goSelectDelivery
+    SelectDelivery --> ScheduleDelivery : 🟩 goScheduleDelivery
+    Checkout --> SelectPayment : 🟩 goSelectPayment
+    AddCard --> SelectPayment : 🟩 goSelectPayment
+    ConveniencePayment --> SelectPayment : 🟩 goSelectPayment
+    PaidyPayment --> SelectPayment : 🟩 goSelectPayment
+    CarrierBilling --> SelectPayment : 🟩 goSelectPayment
+    SelectPayment --> AddCard : 🟩 goAddCard
+    PaymentMethods --> AddCard : 🟩 goAddCard
+    SelectPayment --> ConveniencePayment : 🟩 goConveniencePayment
+    SelectPayment --> PaidyPayment : 🟩 goPaidyPayment
+    SelectPayment --> CarrierBilling : 🟩 goCarrierBilling
+    Checkout --> ApplyCouponCode : 🟩 goApplyCoupon
+    Checkout --> ApplyGiftCard : 🟩 goApplyGiftCard
+    OrderDetail --> OrderHistory : 🟩 goOrderHistory
+    BuyAgain --> OrderHistory : 🟩 goOrderHistory
+    Account --> OrderHistory : 🟩 goOrderHistory
+    CustomerService --> OrderHistory : 🟩 goOrderHistory
+    OrderComplete --> OrderDetail : 🟩 goOrderDetail
+    ConveniencePaymentInstructions --> OrderDetail : 🟩 goOrderDetail
+    OrderHistory --> OrderDetail : 🟩 goOrderDetail
+    TrackPackage --> OrderDetail : 🟩 goOrderDetail
+    Invoice --> OrderDetail : 🟩 goOrderDetail
+    CancelOrder --> OrderDetail : 🟩 goOrderDetail
+    ReturnItem --> OrderDetail : 🟩 goOrderDetail
+    ReturnLabel --> OrderDetail : 🟩 goOrderDetail
+    RefundStatus --> OrderDetail : 🟩 goOrderDetail
+    OrderDetail --> TrackPackage : 🟩 goTrackPackage
+    Redelivery --> TrackPackage : 🟩 goTrackPackage
+    TrackPackage --> Redelivery : 🟩 goRedelivery
+    OrderDetail --> Invoice : 🟩 goInvoice
+    SelectReturnMethod --> ReturnItem : 🟩 goReturnItem
+    ReturnItem --> SelectReturnMethod : 🟩 goSelectReturnMethod
+    OrderHistory --> BuyAgain : 🟩 goBuyAgain
+    Home --> BrowsingHistory : 🟩 goBrowsingHistory
+    Account --> BrowsingHistory : 🟩 goBrowsingHistory
+    Home --> Wishlist : 🟩 goWishlist
+    ManageWishlists --> Wishlist : 🟩 goWishlist
+    ShareWishlist --> Wishlist : 🟩 goWishlist
+    Account --> Wishlist : 🟩 goWishlist
+    Wishlist --> ManageWishlists : 🟩 goManageWishlists
+    Wishlist --> ShareWishlist : 🟩 goShareWishlist
+    Home --> Account : 🟩 goAccount
+    OrderHistory --> Account : 🟩 goAccount
+    Wishlist --> Account : 🟩 goAccount
+    AddressBook --> Account : 🟩 goAccount
+    PaymentMethods --> Account : 🟩 goAccount
+    Account --> AddressBook : 🟩 goAddressBook
+    Account --> PaymentMethods : 🟩 goPaymentMethods
+    Account --> Login : 🟩 goLogin
+    Register --> Login : 🟩 goLogin
+    ForgotPassword --> Login : 🟩 goLogin
+    Login --> Register : 🟩 goRegister
+    Login --> ForgotPassword : 🟩 goForgotPassword
+    Account --> CustomerService : 🟩 goCustomerService
+    FaqCategories --> CustomerService : 🟩 goCustomerService
+    SelectInquiryTopic --> CustomerService : 🟩 goCustomerService
+    InquiryComplete --> CustomerService : 🟩 goCustomerService
+    InquiryHistory --> CustomerService : 🟩 goCustomerService
+    ChatLobby --> CustomerService : 🟩 goCustomerService
+    SelectChatTopic --> CustomerService : 🟩 goCustomerService
+    BotChat --> CustomerService : 🟩 goCustomerService
+    LiveChat --> CustomerService : 🟩 goCustomerService
+    ChatEnd --> CustomerService : 🟩 goCustomerService
+    ClaimList --> CustomerService : 🟩 goCustomerService
+    ClaimResolved --> CustomerService : 🟩 goCustomerService
+    CustomerService --> FaqCategories : 🟩 goFaqCategories
+    FaqList --> FaqCategories : 🟩 goFaqCategories
+    FaqCategories --> FaqList : 🟩 goFaqList
+    FaqDetail --> FaqList : 🟩 goFaqList
+    FaqList --> FaqDetail : 🟩 goFaqDetail
+    CustomerService --> SelectInquiryTopic : 🟩 goSelectInquiryTopic
+    FaqDetail --> SelectInquiryTopic : 🟩 goSelectInquiryTopic
+    SelectOrder --> SelectInquiryTopic : 🟩 goSelectInquiryTopic
+    InquiryForm --> SelectInquiryTopic : 🟩 goSelectInquiryTopic
+    SelectInquiryTopic --> SelectOrder : 🟩 goSelectOrder
+    SelectInquiryTopic --> InquiryForm : 🟩 goInquiryForm
+    SelectOrder --> InquiryForm : 🟩 goInquiryForm
+    CustomerService --> InquiryHistory : 🟩 goInquiryHistory
+    InquiryDetail --> InquiryHistory : 🟩 goInquiryHistory
+    InquiryComplete --> InquiryDetail : 🟩 goInquiryDetail
+    InquiryHistory --> InquiryDetail : 🟩 goInquiryDetail
+    CustomerService --> ChatLobby : 🟩 goStartChat
+    FaqDetail --> ChatLobby : 🟩 goStartChat
+    InquiryDetail --> ChatLobby : 🟩 goStartChat
+    ChatLobby --> SelectChatTopic : 🟩 goSelectChatTopic
+    SelectChatTopic --> ChatLobby : 🟩 goChatLobby
+    CustomerService --> ClaimList : 🟩 goClaimList
+    FileNewClaim --> ClaimList : 🟩 goClaimList
+    SelectClaimOrder --> ClaimList : 🟩 goClaimList
+    ClaimDetail --> ClaimList : 🟩 goClaimList
+    ClaimResolved --> ClaimList : 🟩 goClaimList
+    ClaimList --> ClaimDetail : 🟩 goClaimDetail
+    ClaimList --> FileNewClaim : 🟩 goFileNewClaim
+    SelectClaimOrder --> FileNewClaim : 🟩 goFileNewClaim
+    FileNewClaim --> SelectClaimOrder : 🟩 goSelectClaimOrder
+    Login --> Home : 🟥 doLogin
+    Register --> Home : 🟥 doRegister
+    ForgotPassword --> Login : 🟥 doResetPassword
+    SearchSuggest --> SearchSuggest : 🟨 doClearSearchHistory
+    SearchResults --> SearchResults : 🟩 goApplyFilter
+    ProductList --> SearchResults : 🟩 goApplyFilter
+    SearchResults --> SearchResults : 🟩 goClearFilters
+    ProductDetail --> ProductDetail : 🟩 goSelectVariant
+    SearchResults --> Cart : 🟥 doAddToCart
+    ProductList --> Cart : 🟥 doAddToCart
+    LightningDeals --> Cart : 🟥 doAddToCart
+    ProductDetail --> Cart : 🟥 doAddToCart
+    BuyBox --> Cart : 🟥 doAddToCart
+    OtherSellers --> Cart : 🟥 doAddToCart
+    BuyAgain --> Cart : 🟥 doAddToCart
+    Wishlist --> Cart : 🟥 doAddToCart
+    FrequentlyBoughtTogether --> Cart : 🟥 doAddBundleToCart
+    ProductDetail --> Checkout : 🟥 doBuyNow
+    BuyBox --> Checkout : 🟥 doBuyNow
+    ProductDetail --> OrderComplete : 🟥 doOneClickBuy
+    SearchResults --> Wishlist : 🟥 doAddToWishlist
+    ProductDetail --> Wishlist : 🟥 doAddToWishlist
+    ProductDetail --> Cart : 🟥 doSubscribe
+    BuyBox --> Cart : 🟥 doSubscribe
+    CouponPage --> ProductDetail : 🟥 doClipCoupon
+    ProductDetail --> ProductDetail : 🟥 doClipCoupon
+    ProductDetail --> PriceAlert : 🟥 doSetPriceAlert
+    ProductDetail --> ProductDetail : 🟩 goShare
+    LightningDeals --> LightningDeals : 🟥 doJoinWaitlist
+    ReviewList --> ReviewList : 🟩 goFilterReviews
+    Review --> ReviewList : 🟥 doMarkHelpful
+    Review --> ReviewList : 🟥 doReportReview
+    WriteReview --> ReviewList : 🟥 doSubmitReview
+    QuestionList --> QuestionList : 🟥 doAskQuestion
+    Question --> QuestionList : 🟥 doAnswerQuestion
+    Answer --> QuestionList : 🟥 doMarkAnswerHelpful
+    SellerProfile --> SellerProfile : 🟥 doContactSeller
+    Cart --> Cart : 🟨 doUpdateQuantity
+    Cart --> Cart : 🟨 doRemoveFromCart
+    Cart --> Cart : 🟥 doSaveForLater
+    SavedForLater --> Cart : 🟥 doMoveToCart
+    SavedItems --> Cart : 🟥 doMoveToCart
+    SavedItems --> Cart : 🟥 doMoveAllToCart
+    SavedForLater --> SavedItems : 🟨 doRemoveFromSaved
+    Cart --> Cart : 🟥 doApplyCoupon
+    Cart --> GiftOptions : 🟩 goAddGiftOption
+    GiftOptions --> Cart : 🟨 doSaveGiftOptions
+    SelectAddress --> Checkout : 🟨 doSelectAddress
+    AddAddress --> SelectAddress : 🟥 doSaveAddress
+    EditAddress --> SelectAddress : 🟨 doUpdateAddress
+    EditAddress --> AddressBook : 🟨 doDeleteAddress
+    AddressBook --> AddressBook : 🟨 doDeleteAddress
+    AddressBook --> AddressBook : 🟨 doSetDefaultAddress
+    SelectHub --> Checkout : 🟨 doSelectHub
+    PlacementOptions --> SelectDelivery : 🟨 doSavePlacement
+    SelectDelivery --> Checkout : 🟨 doSelectDelivery
+    ScheduleDelivery --> SelectDelivery : 🟨 doSelectSchedule
+    SelectPayment --> Checkout : 🟨 doSelectPayment
+    AddCard --> SelectPayment : 🟥 doSaveCard
+    PaymentMethods --> PaymentMethods : 🟨 doSetDefaultPayment
+    PaymentMethods --> PaymentMethods : 🟨 doDeletePayment
+    ConveniencePayment --> SelectPayment : 🟨 doSelectConvenience
+    PaidyPayment --> SelectPayment : 🟨 doSelectPaidy
+    CarrierBilling --> SelectPayment : 🟨 doSelectCarrier
+    ApplyCouponCode --> Checkout : 🟥 doApplyCouponCode
+    ApplyGiftCard --> Checkout : 🟥 doApplyGiftCard
+    Checkout --> Checkout : 🟨 doUsePoints
+    Checkout --> OrderComplete : 🟥 doPlaceOrder
+    OrderDetail --> OrderDetail : 🟨 doCancelOrder
+    CancelOrder --> OrderHistory : 🟨 doConfirmCancel
+    OrderDetail --> ReturnItem : 🟥 doReturnItem
+    SelectReturnMethod --> ReturnItem : 🟨 doSelectReturnMethod
+    ReturnItem --> ReturnLabel : 🟥 doSubmitReturn
+    ReturnLabel --> ReturnLabel : 🟩 goPrintLabel
+    OrderDetail --> Cart : 🟥 doBuyAgain
+    OrderDetail --> OrderHistory : 🟨 doArchiveOrder
+    Redelivery --> TrackPackage : 🟥 doScheduleRedelivery
+    TrackPackage --> TrackPackage : 🟩 goContactCarrier
+    Invoice --> Invoice : 🟩 goPrintInvoice
+    Invoice --> Invoice : 🟩 goDownloadInvoice
+    BrowsingHistory --> BrowsingHistory : 🟨 doRemoveFromHistory
+    BrowsingHistory --> BrowsingHistory : 🟨 doClearHistory
+    Wishlist --> Wishlist : 🟨 doRemoveFromWishlist
+    Wishlist --> Wishlist : 🟨 doSetPriority
+    ManageWishlists --> ManageWishlists : 🟥 doCreateWishlist
+    ManageWishlists --> ManageWishlists : 🟨 doRenameWishlist
+    ManageWishlists --> ManageWishlists : 🟨 doDeleteWishlist
+    ShareWishlist --> ShareWishlist : 🟩 goCopyShareUrl
+    PriceAlert --> PriceAlert : 🟨 doEditPriceAlert
+    PriceAlert --> PriceAlert : 🟨 doDeletePriceAlert
+    FaqDetail --> FaqDetail : 🟥 doMarkFaqHelpful
+    InquiryForm --> InquiryComplete : 🟥 doSubmitInquiry
+    InquiryDetail --> InquiryDetail : 🟥 doReplyInquiry
+    InquiryDetail --> InquiryHistory : 🟨 doCloseInquiry
+    ChatLobby --> BotChat : 🟥 doStartBotChat
+    BotChat --> BotChat : 🟥 doSendBotMessage
+    BotChat --> LiveChat : 🟥 doRequestAgent
+    LiveChat --> LiveChat : 🟥 doSendChatMessage
+    LiveChat --> LiveChat : 🟥 doUploadChatFile
+    LiveChat --> ChatEnd : 🟥 doEndChat
+    ChatEnd --> CustomerService : 🟥 doSubmitChatFeedback
+    FileNewClaim --> ClaimDetail : 🟥 doSubmitClaim
+    ClaimDetail --> ClaimDetail : 🟥 doAddClaimEvidence
+    ClaimDetail --> ClaimDetail : 🟥 doRespondToClaim
+    ClaimDetail --> ClaimDetail : 🟥 doEscalateClaim
+    ClaimResolved --> CustomerService : 🟥 doSubmitClaimFeedback

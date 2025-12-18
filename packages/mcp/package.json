@@ -1,0 +1,47 @@
+{
+  "name": "@alps-asd/mcp",
+  "version": "0.1.0",
+  "description": "ALPS MCP Server - Model Context Protocol server for ALPS profile tools",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "bin": {
+    "alps-mcp": "dist/index.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "keywords": [
+    "alps",
+    "mcp",
+    "model-context-protocol",
+    "ai-tools",
+    "state-diagram"
+  ],
+  "author": "Akihito Koriyama <akihito.koriyama@gmail.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/alps-asd/app-state-diagram.git",
+    "directory": "packages/mcp"
+  },
+  "homepage": "https://github.com/alps-asd/app-state-diagram#readme",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "test": "jest",
+    "test:coverage": "jest --coverage"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "@alps-asd/app-state-diagram": "workspace:*",
+    "@alps-asd/crawler": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/jest": "^30.0.0",
+    "@types/node": "^20.0.0",
+    "jest": "^30.0.0",
+    "ts-jest": "^29.4.0",
+    "typescript": "^5.2.0"
+  }
+}
