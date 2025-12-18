@@ -4,6 +4,15 @@
   "description": "ALPS CLI tool - generate documentation from ALPS profiles",
   "main": "dist/asd.js",
   "types": "dist/asd.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/alps-asd/app-state-diagram.git",
+    "directory": "packages/cli"
+  },
+  "homepage": "https://github.com/alps-asd/app-state-diagram#readme",
+  "publishConfig": {
+    "access": "public"
+  },
   "exports": {
     ".": "./dist/asd.js",
     "./parser/*": "./dist/parser/*",

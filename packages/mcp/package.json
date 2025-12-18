@@ -26,6 +26,9 @@
     "directory": "packages/mcp"
   },
   "homepage": "https://github.com/alps-asd/app-state-diagram#readme",
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch",
