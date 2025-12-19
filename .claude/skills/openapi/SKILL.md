@@ -1,0 +1,1 @@
+../../../docs/skills/openapi/SKILL.md
