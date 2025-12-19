@@ -37,8 +37,7 @@
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.0.0",
-    "@alps-asd/app-state-diagram": "workspace:*",
-    "@alps-asd/crawler": "workspace:*"
+    "@alps-asd/app-state-diagram": "^0.20.2"
   },
   "devDependencies": {
     "@types/jest": "^30.0.0",

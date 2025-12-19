@@ -22,8 +22,8 @@ import { generateDot } from "@alps-asd/app-state-diagram/generator/dot-generator
 import { dotToSvg } from "@alps-asd/app-state-diagram/generator/svg-generator.js";
 import { generateMermaid } from "@alps-asd/app-state-diagram/generator/mermaid-generator.js";
 
-// Import from Crawler package
-import { AlpsCrawler } from "@alps-asd/crawler";
+// Crawler package is optional (not yet published)
+// import { AlpsCrawler } from "@alps-asd/crawler";
 
 // moduleDir is only needed at runtime for reading SKILL.md
 // In tests, we'll use the embedded guide fallback
