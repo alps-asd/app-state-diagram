@@ -1,0 +1,68 @@
+classDiagram
+    class Home {
+        🟩 goToCatalog
+        🟩 goToCart
+    }
+    class Catalog {
+        ⬜ Book
+        🟩 goListBooks
+        🟩 goSearchBooks
+        🟩 goGetCategories
+        🟩 goToBookDetails
+        🟩 goToCategory
+        🟩 goToCart
+    }
+    class Book {
+        ⬜ id
+        ⬜ title
+        ⬜ author
+        ⬜ isbn
+        ⬜ price
+        ⬜ category
+        🟩 goToCatalog
+        🟥 doAddToCart
+    }
+    class Category {
+        ⬜ id
+        ⬜ title
+        🟩 goToCatalog
+        🟩 goToBookDetails
+    }
+    class ShoppingCart {
+        ⬜ totalAmount
+        🟩 goListCartItems
+        🟩 goToCheckout
+        🟩 goToCatalog
+        🟨 doUpdateQuantity
+        🟨 doRemoveFromCart
+    }
+    class Checkout {
+        🟩 goToPayment
+        🟩 goToCart
+        🟥 doUserInfo
+        🟥 doShippingInfo
+    }
+    class Payment {
+        ⬜ paymentMethod
+        🟩 goOrderDetails
+        🟩 goToHome
+        🟩 goToCart
+        🟥 doPaymentInfo
+        🟥 doPlaceOrder
+    }
+
+    Home --> Catalog : 🟩 goToCatalog
+    Home --> ShoppingCart : 🟩 goToCart
+    Payment --> Home : 🟩 goToHome
+    Catalog --> Book : 🟩 goToBookDetails
+    Catalog --> Category : 🟩 goToCategory
+    Catalog --> ShoppingCart : 🟩 goToCart
+    Book --> Catalog : 🟩 goToCatalog
+    Book --> ShoppingCart : 🟥 doAddToCart
+    Category --> Catalog : 🟩 goToCatalog
+    Category --> Book : 🟩 goToBookDetails
+    ShoppingCart --> Catalog : 🟩 goToCatalog
+    ShoppingCart --> Checkout : 🟩 goToCheckout
+    Checkout --> ShoppingCart : 🟩 goToCart
+    Checkout --> Payment : 🟩 goToPayment
+    Payment --> ShoppingCart : 🟩 goToCart

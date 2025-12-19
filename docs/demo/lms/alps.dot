@@ -1,0 +1,237 @@
+digraph application_state_diagram {
+    graph [
+        labelloc="t";
+        fontname="Helvetica"
+    ];
+    node [shape = box, style = "bold,filled" fillcolor="lightgray", margin="0.3,0.1"];
+
+    Home [margin=0.1, label="Home", shape=box, URL="#Home"]
+    Login [margin=0.1, label="Login", shape=box, URL="#Login"]
+    Register [margin=0.1, label="Register", shape=box, URL="#Register"]
+    UserProfile [margin=0.1, label="UserProfile", shape=box, URL="#UserProfile"]
+    UserList [margin=0.1, label="UserList", shape=box, URL="#UserList"]
+    UserDetail [margin=0.1, label="UserDetail", shape=box, URL="#UserDetail"]
+    CourseList [margin=0.1, label="CourseList", shape=box, URL="#CourseList"]
+    CourseDetail [margin=0.1, label="CourseDetail", shape=box, URL="#CourseDetail"]
+    CourseCreation [margin=0.1, label="CourseCreation", shape=box, URL="#CourseCreation"]
+    CourseEdit [margin=0.1, label="CourseEdit", shape=box, URL="#CourseEdit"]
+    ModuleList [margin=0.1, label="ModuleList", shape=box, URL="#ModuleList"]
+    ModuleDetail [margin=0.1, label="ModuleDetail", shape=box, URL="#ModuleDetail"]
+    ContentCreation [margin=0.1, label="ContentCreation", shape=box, URL="#ContentCreation"]
+    ContentDetail [margin=0.1, label="ContentDetail", shape=box, URL="#ContentDetail"]
+    EnrolledCourses [margin=0.1, label="EnrolledCourses", shape=box, URL="#EnrolledCourses"]
+    ProgressDashboard [margin=0.1, label="ProgressDashboard", shape=box, URL="#ProgressDashboard"]
+    ClassProgress [margin=0.1, label="ClassProgress", shape=box, URL="#ClassProgress"]
+    StudentProgress [margin=0.1, label="StudentProgress", shape=box, URL="#StudentProgress"]
+    AssignmentList [margin=0.1, label="AssignmentList", shape=box, URL="#AssignmentList"]
+    AssignmentCreation [margin=0.1, label="AssignmentCreation", shape=box, URL="#AssignmentCreation"]
+    AssignmentDetail [margin=0.1, label="AssignmentDetail", shape=box, URL="#AssignmentDetail"]
+    SubmissionList [margin=0.1, label="SubmissionList", shape=box, URL="#SubmissionList"]
+    SubmissionDetail [margin=0.1, label="SubmissionDetail", shape=box, URL="#SubmissionDetail"]
+    Gradebook [margin=0.1, label="Gradebook", shape=box, URL="#Gradebook"]
+    DiscussionList [margin=0.1, label="DiscussionList", shape=box, URL="#DiscussionList"]
+    DiscussionDetail [margin=0.1, label="DiscussionDetail", shape=box, URL="#DiscussionDetail"]
+    AnnouncementCreation [margin=0.1, label="AnnouncementCreation", shape=box, URL="#AnnouncementCreation"]
+    MessageCenter [margin=0.1, label="MessageCenter", shape=box, URL="#MessageCenter"]
+    MessageDetail [margin=0.1, label="MessageDetail", shape=box, URL="#MessageDetail"]
+    GroupManagement [margin=0.1, label="GroupManagement", shape=box, URL="#GroupManagement"]
+    GroupDetail [margin=0.1, label="GroupDetail", shape=box, URL="#GroupDetail"]
+    WebinarSchedule [margin=0.1, label="WebinarSchedule", shape=box, URL="#WebinarSchedule"]
+    WebinarDetail [margin=0.1, label="WebinarDetail", shape=box, URL="#WebinarDetail"]
+    AnalyticsDashboard [margin=0.1, label="AnalyticsDashboard", shape=box, URL="#AnalyticsDashboard"]
+    ReportCenter [margin=0.1, label="ReportCenter", shape=box, URL="#ReportCenter"]
+    ReportDetail [margin=0.1, label="ReportDetail", shape=box, URL="#ReportDetail"]
+    Settings [margin=0.1, label="Settings", shape=box, URL="#Settings"]
+    WebinarView [margin=0.1, label="WebinarView", shape=box, URL="#WebinarView"]
+    RecordingView [margin=0.1, label="RecordingView", shape=box, URL="#RecordingView"]
+    MobileAccess [margin=0.1, label="MobileAccess", shape=box, URL="#MobileAccess"]
+
+    Login -> Home [label="doLogin" URL="#doLogin" fontsize=13 class="doLogin" penwidth=1.5 color="#FF4136"];
+    Register -> Login [label="doRegister" URL="#doRegister" fontsize=13 class="doRegister" penwidth=1.5 color="#FF4136"];
+    Login -> Login [label="doResetPassword" URL="#doResetPassword" fontsize=13 class="doResetPassword" penwidth=1.5 color="#FF4136"];
+    UnknownState -> Login [label="doLogout" URL="#doLogout" fontsize=13 class="doLogout" penwidth=1.5 color="#D4A000"];
+    UserProfile -> Home [label="goHome" URL="#goHome" fontsize=13 class="goHome" penwidth=1.5 color="#00A86B"];
+    UserList -> Home [label="goHome" URL="#goHome" fontsize=13 class="goHome" penwidth=1.5 color="#00A86B"];
+    CourseList -> Home [label="goHome" URL="#goHome" fontsize=13 class="goHome" penwidth=1.5 color="#00A86B"];
+    EnrolledCourses -> Home [label="goHome" URL="#goHome" fontsize=13 class="goHome" penwidth=1.5 color="#00A86B"];
+    MessageCenter -> Home [label="goHome" URL="#goHome" fontsize=13 class="goHome" penwidth=1.5 color="#00A86B"];
+    ReportCenter -> Home [label="goHome" URL="#goHome" fontsize=13 class="goHome" penwidth=1.5 color="#00A86B"];
+    MobileAccess -> Home [label="goHome" URL="#goHome" fontsize=13 class="goHome" penwidth=1.5 color="#00A86B"];
+    Register -> Login [label="goLogin" URL="#goLogin" fontsize=13 class="goLogin" penwidth=1.5 color="#00A86B"];
+    Login -> Register [label="goRegister" URL="#goRegister" fontsize=13 class="goRegister" penwidth=1.5 color="#00A86B"];
+    Home -> Settings [label="goSettings" URL="#goSettings" fontsize=13 class="goSettings" penwidth=1.5 color="#00A86B"];
+    Home -> ReportCenter [label="goReportCenter" URL="#goReportCenter" fontsize=13 class="goReportCenter" penwidth=1.5 color="#00A86B"];
+    ReportDetail -> ReportCenter [label="goReportCenter" URL="#goReportCenter" fontsize=13 class="goReportCenter" penwidth=1.5 color="#00A86B"];
+    CourseDetail -> ProgressDashboard [label="goProgressDashboard" URL="#goProgressDashboard" fontsize=13 class="goProgressDashboard" penwidth=1.5 color="#00A86B"];
+    CourseDetail -> AnalyticsDashboard [label="goAnalyticsDashboard" URL="#goAnalyticsDashboard" fontsize=13 class="goAnalyticsDashboard" penwidth=1.5 color="#00A86B"];
+    CourseDetail -> AnnouncementCreation [label="goAnnouncementCreation" URL="#goAnnouncementCreation" fontsize=13 class="goAnnouncementCreation" penwidth=1.5 color="#00A86B"];
+    CourseDetail -> Gradebook [label="goGradebook" URL="#goGradebook" fontsize=13 class="goGradebook" penwidth=1.5 color="#00A86B"];
+    ReportCenter -> ReportDetail [label="goReportDetail" URL="#goReportDetail" fontsize=13 class="goReportDetail" penwidth=1.5 color="#00A86B"];
+    Home -> UserProfile [label="goUserProfile" URL="#goUserProfile" fontsize=13 class="goUserProfile" penwidth=1.5 color="#00A86B"];
+    Settings -> UserProfile [label="goUserProfile" URL="#goUserProfile" fontsize=13 class="goUserProfile" penwidth=1.5 color="#00A86B"];
+    UserDetail -> UserList [label="goUserList" URL="#goUserList" fontsize=13 class="goUserList" penwidth=1.5 color="#00A86B"];
+    UserList -> UserDetail [label="goUserDetail" URL="#goUserDetail" fontsize=13 class="goUserDetail" penwidth=1.5 color="#00A86B"];
+    Home -> CourseList [label="goCourseList" URL="#goCourseList" fontsize=13 class="goCourseList" penwidth=1.5 color="#00A86B"];
+    CourseDetail -> CourseList [label="goCourseList" URL="#goCourseList" fontsize=13 class="goCourseList" penwidth=1.5 color="#00A86B"];
+    CourseCreation -> CourseList [label="goCourseList" URL="#goCourseList" fontsize=13 class="goCourseList" penwidth=1.5 color="#00A86B"];
+    MobileAccess -> CourseList [label="goCourseList" URL="#goCourseList" fontsize=13 class="goCourseList" penwidth=1.5 color="#00A86B"];
+    CourseList -> CourseDetail [label="goCourseDetail" URL="#goCourseDetail" fontsize=13 class="goCourseDetail" penwidth=1.5 color="#00A86B"];
+    CourseEdit -> CourseDetail [label="goCourseDetail" URL="#goCourseDetail" fontsize=13 class="goCourseDetail" penwidth=1.5 color="#00A86B"];
+    ModuleList -> CourseDetail [label="goCourseDetail" URL="#goCourseDetail" fontsize=13 class="goCourseDetail" penwidth=1.5 color="#00A86B"];
+    EnrolledCourses -> CourseDetail [label="goCourseDetail" URL="#goCourseDetail" fontsize=13 class="goCourseDetail" penwidth=1.5 color="#00A86B"];
+    ProgressDashboard -> CourseDetail [label="goCourseDetail" URL="#goCourseDetail" fontsize=13 class="goCourseDetail" penwidth=1.5 color="#00A86B"];
+    ClassProgress -> CourseDetail [label="goCourseDetail" URL="#goCourseDetail" fontsize=13 class="goCourseDetail" penwidth=1.5 color="#00A86B"];
+    AssignmentList -> CourseDetail [label="goCourseDetail" URL="#goCourseDetail" fontsize=13 class="goCourseDetail" penwidth=1.5 color="#00A86B"];
+    Gradebook -> CourseDetail [label="goCourseDetail" URL="#goCourseDetail" fontsize=13 class="goCourseDetail" penwidth=1.5 color="#00A86B"];
+    DiscussionList -> CourseDetail [label="goCourseDetail" URL="#goCourseDetail" fontsize=13 class="goCourseDetail" penwidth=1.5 color="#00A86B"];
+    AnnouncementCreation -> CourseDetail [label="goCourseDetail" URL="#goCourseDetail" fontsize=13 class="goCourseDetail" penwidth=1.5 color="#00A86B"];
+    GroupManagement -> CourseDetail [label="goCourseDetail" URL="#goCourseDetail" fontsize=13 class="goCourseDetail" penwidth=1.5 color="#00A86B"];
+    WebinarSchedule -> CourseDetail [label="goCourseDetail" URL="#goCourseDetail" fontsize=13 class="goCourseDetail" penwidth=1.5 color="#00A86B"];
+    AnalyticsDashboard -> CourseDetail [label="goCourseDetail" URL="#goCourseDetail" fontsize=13 class="goCourseDetail" penwidth=1.5 color="#00A86B"];
+    CourseList -> CourseCreation [label="goCreateCourse" URL="#goCreateCourse" fontsize=13 class="goCreateCourse" penwidth=1.5 color="#00A86B"];
+    CourseDetail -> CourseEdit [label="goEditCourse" URL="#goEditCourse" fontsize=13 class="goEditCourse" penwidth=1.5 color="#00A86B"];
+    ModuleDetail -> ModuleList [label="goModuleList" URL="#goModuleList" fontsize=13 class="goModuleList" penwidth=1.5 color="#00A86B"];
+    CourseDetail -> ModuleDetail [label="goModuleDetail" URL="#goModuleDetail" fontsize=13 class="goModuleDetail" penwidth=1.5 color="#00A86B"];
+    ModuleList -> ModuleDetail [label="goModuleDetail" URL="#goModuleDetail" fontsize=13 class="goModuleDetail" penwidth=1.5 color="#00A86B"];
+    ContentCreation -> ModuleDetail [label="goModuleDetail" URL="#goModuleDetail" fontsize=13 class="goModuleDetail" penwidth=1.5 color="#00A86B"];
+    ContentDetail -> ModuleDetail [label="goModuleDetail" URL="#goModuleDetail" fontsize=13 class="goModuleDetail" penwidth=1.5 color="#00A86B"];
+    ProgressDashboard -> ModuleDetail [label="goModuleDetail" URL="#goModuleDetail" fontsize=13 class="goModuleDetail" penwidth=1.5 color="#00A86B"];
+    ModuleDetail -> ContentCreation [label="goCreateContent" URL="#goCreateContent" fontsize=13 class="goCreateContent" penwidth=1.5 color="#00A86B"];
+    ModuleDetail -> ContentDetail [label="goContentDetail" URL="#goContentDetail" fontsize=13 class="goContentDetail" penwidth=1.5 color="#00A86B"];
+    UserProfile -> EnrolledCourses [label="goEnrolledCourses" URL="#goEnrolledCourses" fontsize=13 class="goEnrolledCourses" penwidth=1.5 color="#00A86B"];
+    ProgressDashboard -> EnrolledCourses [label="goEnrolledCourses" URL="#goEnrolledCourses" fontsize=13 class="goEnrolledCourses" penwidth=1.5 color="#00A86B"];
+    MobileAccess -> EnrolledCourses [label="goEnrolledCourses" URL="#goEnrolledCourses" fontsize=13 class="goEnrolledCourses" penwidth=1.5 color="#00A86B"];
+    CourseDetail -> AssignmentList [label="goAssignmentList" URL="#goAssignmentList" fontsize=13 class="goAssignmentList" penwidth=1.5 color="#00A86B"];
+    AssignmentCreation -> AssignmentList [label="goAssignmentList" URL="#goAssignmentList" fontsize=13 class="goAssignmentList" penwidth=1.5 color="#00A86B"];
+    AssignmentDetail -> AssignmentList [label="goAssignmentList" URL="#goAssignmentList" fontsize=13 class="goAssignmentList" penwidth=1.5 color="#00A86B"];
+    AssignmentList -> AssignmentCreation [label="goCreateAssignment" URL="#goCreateAssignment" fontsize=13 class="goCreateAssignment" penwidth=1.5 color="#00A86B"];
+    AssignmentList -> AssignmentDetail [label="goAssignmentDetail" URL="#goAssignmentDetail" fontsize=13 class="goAssignmentDetail" penwidth=1.5 color="#00A86B"];
+    SubmissionList -> AssignmentDetail [label="goAssignmentDetail" URL="#goAssignmentDetail" fontsize=13 class="goAssignmentDetail" penwidth=1.5 color="#00A86B"];
+    AssignmentDetail -> SubmissionList [label="goSubmissionList" URL="#goSubmissionList" fontsize=13 class="goSubmissionList" penwidth=1.5 color="#00A86B"];
+    SubmissionDetail -> SubmissionList [label="goSubmissionList" URL="#goSubmissionList" fontsize=13 class="goSubmissionList" penwidth=1.5 color="#00A86B"];
+    SubmissionList -> SubmissionDetail [label="goSubmissionDetail" URL="#goSubmissionDetail" fontsize=13 class="goSubmissionDetail" penwidth=1.5 color="#00A86B"];
+    Gradebook -> SubmissionDetail [label="goSubmissionDetail" URL="#goSubmissionDetail" fontsize=13 class="goSubmissionDetail" penwidth=1.5 color="#00A86B"];
+    CourseDetail -> DiscussionList [label="goDiscussionList" URL="#goDiscussionList" fontsize=13 class="goDiscussionList" penwidth=1.5 color="#00A86B"];
+    DiscussionDetail -> DiscussionList [label="goDiscussionList" URL="#goDiscussionList" fontsize=13 class="goDiscussionList" penwidth=1.5 color="#00A86B"];
+    DiscussionList -> DiscussionDetail [label="goDiscussionDetail" URL="#goDiscussionDetail" fontsize=13 class="goDiscussionDetail" penwidth=1.5 color="#00A86B"];
+    DiscussionList -> DiscussionDetail [label="goCreateDiscussion" URL="#goCreateDiscussion" fontsize=13 class="goCreateDiscussion" penwidth=1.5 color="#00A86B"];
+    Home -> MessageCenter [label="goMessageCenter" URL="#goMessageCenter" fontsize=13 class="goMessageCenter" penwidth=1.5 color="#00A86B"];
+    MessageDetail -> MessageCenter [label="goMessageCenter" URL="#goMessageCenter" fontsize=13 class="goMessageCenter" penwidth=1.5 color="#00A86B"];
+    MessageCenter -> MessageDetail [label="goCreateMessage" URL="#goCreateMessage" fontsize=13 class="goCreateMessage" penwidth=1.5 color="#00A86B"];
+    MessageCenter -> MessageDetail [label="goMessageDetail" URL="#goMessageDetail" fontsize=13 class="goMessageDetail" penwidth=1.5 color="#00A86B"];
+    GroupDetail -> GroupManagement [label="goGroupManagement" URL="#goGroupManagement" fontsize=13 class="goGroupManagement" penwidth=1.5 color="#00A86B"];
+    GroupManagement -> GroupDetail [label="goGroupDetail" URL="#goGroupDetail" fontsize=13 class="goGroupDetail" penwidth=1.5 color="#00A86B"];
+    CourseDetail -> WebinarSchedule [label="goWebinarSchedule" URL="#goWebinarSchedule" fontsize=13 class="goWebinarSchedule" penwidth=1.5 color="#00A86B"];
+    WebinarDetail -> WebinarSchedule [label="goWebinarSchedule" URL="#goWebinarSchedule" fontsize=13 class="goWebinarSchedule" penwidth=1.5 color="#00A86B"];
+    WebinarSchedule -> WebinarDetail [label="goWebinarDetail" URL="#goWebinarDetail" fontsize=13 class="goWebinarDetail" penwidth=1.5 color="#00A86B"];
+    WebinarView -> WebinarDetail [label="goWebinarDetail" URL="#goWebinarDetail" fontsize=13 class="goWebinarDetail" penwidth=1.5 color="#00A86B"];
+    RecordingView -> WebinarDetail [label="goWebinarDetail" URL="#goWebinarDetail" fontsize=13 class="goWebinarDetail" penwidth=1.5 color="#00A86B"];
+    Home -> MessageCenter [label="goNotifications" URL="#goNotifications" fontsize=13 class="goNotifications" penwidth=1.5 color="#00A86B"];
+    StudentProgress -> ClassProgress [label="goClassProgress" URL="#goClassProgress" fontsize=13 class="goClassProgress" penwidth=1.5 color="#00A86B"];
+    ClassProgress -> StudentProgress [label="goStudentProgress" URL="#goStudentProgress" fontsize=13 class="goStudentProgress" penwidth=1.5 color="#00A86B"];
+    CourseCreation -> CourseDetail [label="doCreateCourse" URL="#doCreateCourse" fontsize=13 class="doCreateCourse" penwidth=1.5 color="#FF4136"];
+    CourseEdit -> CourseDetail [label="doUpdateCourse" URL="#doUpdateCourse" fontsize=13 class="doUpdateCourse" penwidth=1.5 color="#D4A000"];
+    CourseEdit -> CourseList [label="doDeleteCourse" URL="#doDeleteCourse" fontsize=13 class="doDeleteCourse" penwidth=1.5 color="#D4A000"];
+    ModuleList -> ModuleDetail [label="doCreateModule" URL="#doCreateModule" fontsize=13 class="doCreateModule" penwidth=1.5 color="#FF4136"];
+    ModuleDetail -> ModuleDetail [label="doUpdateModule" URL="#doUpdateModule" fontsize=13 class="doUpdateModule" penwidth=1.5 color="#D4A000"];
+    ModuleDetail -> ModuleList [label="doDeleteModule" URL="#doDeleteModule" fontsize=13 class="doDeleteModule" penwidth=1.5 color="#D4A000"];
+    ContentCreation -> ContentDetail [label="doCreateContent" URL="#doCreateContent" fontsize=13 class="doCreateContent" penwidth=1.5 color="#FF4136"];
+    ContentDetail -> ContentDetail [label="doUpdateContent" URL="#doUpdateContent" fontsize=13 class="doUpdateContent" penwidth=1.5 color="#D4A000"];
+    ContentDetail -> ModuleDetail [label="doDeleteContent" URL="#doDeleteContent" fontsize=13 class="doDeleteContent" penwidth=1.5 color="#D4A000"];
+    CourseCreation -> CourseEdit [label="doSaveDraftCourse" URL="#doSaveDraftCourse" fontsize=13 class="doSaveDraftCourse" penwidth=1.5 color="#D4A000"];
+    CourseEdit -> CourseEdit [label="doSaveDraftCourse" URL="#doSaveDraftCourse" fontsize=13 class="doSaveDraftCourse" penwidth=1.5 color="#D4A000"];
+    ContentCreation -> ContentCreation [label="doSaveDraftContent" URL="#doSaveDraftContent" fontsize=13 class="doSaveDraftContent" penwidth=1.5 color="#D4A000"];
+    ContentCreation -> ContentDetail [label="goPreviewContent" URL="#goPreviewContent" fontsize=13 class="goPreviewContent" penwidth=1.5 color="#00A86B"];
+    ContentDetail -> ContentDetail [label="goPreviewContent" URL="#goPreviewContent" fontsize=13 class="goPreviewContent" penwidth=1.5 color="#00A86B"];
+    CourseEdit -> CourseDetail [label="doPublishCourse" URL="#doPublishCourse" fontsize=13 class="doPublishCourse" penwidth=1.5 color="#D4A000"];
+    CourseDetail -> EnrolledCourses [label="doEnrollCourse" URL="#doEnrollCourse" fontsize=13 class="doEnrollCourse" penwidth=1.5 color="#FF4136"];
+    UnknownState -> EnrolledCourses [label="doUnenrollCourse" URL="#doUnenrollCourse" fontsize=13 class="doUnenrollCourse" penwidth=1.5 color="#D4A000"];
+    StudentProgress -> StudentProgress [label="doExtendDeadline" URL="#doExtendDeadline" fontsize=13 class="doExtendDeadline" penwidth=1.5 color="#D4A000"];
+    AssignmentCreation -> AssignmentDetail [label="doCreateAssignment" URL="#doCreateAssignment" fontsize=13 class="doCreateAssignment" penwidth=1.5 color="#FF4136"];
+    AssignmentDetail -> AssignmentDetail [label="doUpdateAssignment" URL="#doUpdateAssignment" fontsize=13 class="doUpdateAssignment" penwidth=1.5 color="#D4A000"];
+    AssignmentDetail -> AssignmentList [label="doDeleteAssignment" URL="#doDeleteAssignment" fontsize=13 class="doDeleteAssignment" penwidth=1.5 color="#D4A000"];
+    AssignmentCreation -> AssignmentDetail [label="doCreateRubric" URL="#doCreateRubric" fontsize=13 class="doCreateRubric" penwidth=1.5 color="#FF4136"];
+    AssignmentDetail -> AssignmentDetail [label="doSubmitAssignment" URL="#doSubmitAssignment" fontsize=13 class="doSubmitAssignment" penwidth=1.5 color="#FF4136"];
+    SubmissionDetail -> SubmissionDetail [label="doGradeSubmission" URL="#doGradeSubmission" fontsize=13 class="doGradeSubmission" penwidth=1.5 color="#D4A000"];
+    SubmissionDetail -> SubmissionDetail [label="doProvideFeedback" URL="#doProvideFeedback" fontsize=13 class="doProvideFeedback" penwidth=1.5 color="#D4A000"];
+    Gradebook -> Gradebook [label="doExportGrades" URL="#doExportGrades" fontsize=13 class="doExportGrades" penwidth=1.5 color="#D4A000"];
+    Gradebook -> Gradebook [label="doCalculateOverallGrades" URL="#doCalculateOverallGrades" fontsize=13 class="doCalculateOverallGrades" penwidth=1.5 color="#D4A000"];
+    UnknownState -> DiscussionDetail [label="doCreateDiscussion" URL="#doCreateDiscussion" fontsize=13 class="doCreateDiscussion" penwidth=1.5 color="#FF4136"];
+    DiscussionDetail -> DiscussionDetail [label="doCreatePost" URL="#doCreatePost" fontsize=13 class="doCreatePost" penwidth=1.5 color="#FF4136"];
+    DiscussionDetail -> DiscussionDetail [label="doReplyToPost" URL="#doReplyToPost" fontsize=13 class="doReplyToPost" penwidth=1.5 color="#FF4136"];
+    AnnouncementCreation -> CourseDetail [label="doCreateAnnouncement" URL="#doCreateAnnouncement" fontsize=13 class="doCreateAnnouncement" penwidth=1.5 color="#FF4136"];
+    MessageDetail -> MessageDetail [label="doReplyToMessage" URL="#doReplyToMessage" fontsize=13 class="doReplyToMessage" penwidth=1.5 color="#FF4136"];
+    MessageDetail -> MessageDetail [label="doAttachFile" URL="#doAttachFile" fontsize=13 class="doAttachFile" penwidth=1.5 color="#FF4136"];
+    GroupManagement -> GroupDetail [label="doCreateGroup" URL="#doCreateGroup" fontsize=13 class="doCreateGroup" penwidth=1.5 color="#FF4136"];
+    GroupManagement -> GroupDetail [label="doUpdateGroup" URL="#doUpdateGroup" fontsize=13 class="doUpdateGroup" penwidth=1.5 color="#D4A000"];
+    GroupManagement -> GroupManagement [label="doDeleteGroup" URL="#doDeleteGroup" fontsize=13 class="doDeleteGroup" penwidth=1.5 color="#D4A000"];
+    GroupDetail -> GroupDetail [label="doAddGroupMember" URL="#doAddGroupMember" fontsize=13 class="doAddGroupMember" penwidth=1.5 color="#FF4136"];
+    GroupDetail -> GroupDetail [label="doRemoveGroupMember" URL="#doRemoveGroupMember" fontsize=13 class="doRemoveGroupMember" penwidth=1.5 color="#D4A000"];
+    WebinarSchedule -> WebinarDetail [label="doCreateWebinar" URL="#doCreateWebinar" fontsize=13 class="doCreateWebinar" penwidth=1.5 color="#FF4136"];
+    WebinarSchedule -> WebinarDetail [label="doUpdateWebinar" URL="#doUpdateWebinar" fontsize=13 class="doUpdateWebinar" penwidth=1.5 color="#D4A000"];
+    WebinarSchedule -> WebinarSchedule [label="doDeleteWebinar" URL="#doDeleteWebinar" fontsize=13 class="doDeleteWebinar" penwidth=1.5 color="#D4A000"];
+    WebinarDetail -> WebinarView [label="doJoinWebinar" URL="#doJoinWebinar" fontsize=13 class="doJoinWebinar" penwidth=1.5 color="#D4A000"];
+    WebinarDetail -> RecordingView [label="goViewRecording" URL="#goViewRecording" fontsize=13 class="goViewRecording" penwidth=1.5 color="#00A86B"];
+    AnalyticsDashboard -> AnalyticsDashboard [label="goFilterAnalytics" URL="#goFilterAnalytics" fontsize=13 class="goFilterAnalytics" penwidth=1.5 color="#00A86B"];
+    AnalyticsDashboard -> AnalyticsDashboard [label="doExportAnalytics" URL="#doExportAnalytics" fontsize=13 class="doExportAnalytics" penwidth=1.5 color="#D4A000"];
+    ReportCenter -> ReportDetail [label="doGenerateReport" URL="#doGenerateReport" fontsize=13 class="doGenerateReport" penwidth=1.5 color="#FF4136"];
+    ReportCenter -> ReportDetail [label="doExportReport" URL="#doExportReport" fontsize=13 class="doExportReport" penwidth=1.5 color="#D4A000"];
+    ReportDetail -> ReportDetail [label="doExportReport" URL="#doExportReport" fontsize=13 class="doExportReport" penwidth=1.5 color="#D4A000"];
+    CourseList -> CourseList [label="goFilterCourses" URL="#goFilterCourses" fontsize=13 class="goFilterCourses" penwidth=1.5 color="#00A86B"];
+    ClassProgress -> ClassProgress [label="goFilterStudents" URL="#goFilterStudents" fontsize=13 class="goFilterStudents" penwidth=1.5 color="#00A86B"];
+    AssignmentList -> AssignmentList [label="goFilterAssignments" URL="#goFilterAssignments" fontsize=13 class="goFilterAssignments" penwidth=1.5 color="#00A86B"];
+    SubmissionList -> SubmissionList [label="goFilterSubmissions" URL="#goFilterSubmissions" fontsize=13 class="goFilterSubmissions" penwidth=1.5 color="#00A86B"];
+    DiscussionList -> DiscussionList [label="goFilterDiscussions" URL="#goFilterDiscussions" fontsize=13 class="goFilterDiscussions" penwidth=1.5 color="#00A86B"];
+    MessageCenter -> MessageCenter [label="goFilterMessages" URL="#goFilterMessages" fontsize=13 class="goFilterMessages" penwidth=1.5 color="#00A86B"];
+    UserProfile -> UserProfile [label="doUpdateProfile" URL="#doUpdateProfile" fontsize=13 class="doUpdateProfile" penwidth=1.5 color="#D4A000"];
+    UserList -> UserDetail [label="doCreateUser" URL="#doCreateUser" fontsize=13 class="doCreateUser" penwidth=1.5 color="#FF4136"];
+    UserList -> UserDetail [label="doUpdateUser" URL="#doUpdateUser" fontsize=13 class="doUpdateUser" penwidth=1.5 color="#D4A000"];
+    UserDetail -> UserDetail [label="doUpdateUser" URL="#doUpdateUser" fontsize=13 class="doUpdateUser" penwidth=1.5 color="#D4A000"];
+    UserList -> UserList [label="doDeleteUser" URL="#doDeleteUser" fontsize=13 class="doDeleteUser" penwidth=1.5 color="#D4A000"];
+    UserDetail -> UserList [label="doDeleteUser" URL="#doDeleteUser" fontsize=13 class="doDeleteUser" penwidth=1.5 color="#D4A000"];
+    Settings -> Settings [label="doUpdateSettings" URL="#doUpdateSettings" fontsize=13 class="doUpdateSettings" penwidth=1.5 color="#D4A000"];
+    MobileAccess -> MobileAccess [label="doDownloadContent" URL="#doDownloadContent" fontsize=13 class="doDownloadContent" penwidth=1.5 color="#FF4136"];
+    MobileAccess -> MobileAccess [label="doEnableNotifications" URL="#doEnableNotifications" fontsize=13 class="doEnableNotifications" penwidth=1.5 color="#D4A000"];
+
+    Home [label="Home" URL="#Home"]
+    Login [label="Login" URL="#Login"]
+    Register [label="Register" URL="#Register"]
+    UserProfile [label="UserProfile" URL="#UserProfile"]
+    UserList [label="UserList" URL="#UserList"]
+    UserDetail [label="UserDetail" URL="#UserDetail"]
+    CourseList [label="CourseList" URL="#CourseList"]
+    CourseDetail [label="CourseDetail" URL="#CourseDetail"]
+    CourseCreation [label="CourseCreation" URL="#CourseCreation"]
+    CourseEdit [label="CourseEdit" URL="#CourseEdit"]
+    ModuleList [label="ModuleList" URL="#ModuleList"]
+    ModuleDetail [label="ModuleDetail" URL="#ModuleDetail"]
+    ContentCreation [label="ContentCreation" URL="#ContentCreation"]
+    ContentDetail [label="ContentDetail" URL="#ContentDetail"]
+    EnrolledCourses [label="EnrolledCourses" URL="#EnrolledCourses"]
+    ProgressDashboard [label="ProgressDashboard" URL="#ProgressDashboard"]
+    ClassProgress [label="ClassProgress" URL="#ClassProgress"]
+    StudentProgress [label="StudentProgress" URL="#StudentProgress"]
+    AssignmentList [label="AssignmentList" URL="#AssignmentList"]
+    AssignmentCreation [label="AssignmentCreation" URL="#AssignmentCreation"]
+    AssignmentDetail [label="AssignmentDetail" URL="#AssignmentDetail"]
+    SubmissionList [label="SubmissionList" URL="#SubmissionList"]
+    SubmissionDetail [label="SubmissionDetail" URL="#SubmissionDetail"]
+    Gradebook [label="Gradebook" URL="#Gradebook"]
+    DiscussionList [label="DiscussionList" URL="#DiscussionList"]
+    DiscussionDetail [label="DiscussionDetail" URL="#DiscussionDetail"]
+    AnnouncementCreation [label="AnnouncementCreation" URL="#AnnouncementCreation"]
+    MessageCenter [label="MessageCenter" URL="#MessageCenter"]
+    MessageDetail [label="MessageDetail" URL="#MessageDetail"]
+    GroupManagement [label="GroupManagement" URL="#GroupManagement"]
+    GroupDetail [label="GroupDetail" URL="#GroupDetail"]
+    WebinarSchedule [label="WebinarSchedule" URL="#WebinarSchedule"]
+    WebinarDetail [label="WebinarDetail" URL="#WebinarDetail"]
+    AnalyticsDashboard [label="AnalyticsDashboard" URL="#AnalyticsDashboard"]
+    ReportCenter [label="ReportCenter" URL="#ReportCenter"]
+    ReportDetail [label="ReportDetail" URL="#ReportDetail"]
+    Settings [label="Settings" URL="#Settings"]
+    WebinarView [label="WebinarView" URL="#WebinarView"]
+    RecordingView [label="RecordingView" URL="#RecordingView"]
+    MobileAccess [label="MobileAccess" URL="#MobileAccess"]
+
+}

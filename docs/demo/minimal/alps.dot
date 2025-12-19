@@ -1,0 +1,19 @@
+digraph application_state_diagram {
+    graph [
+        labelloc="t";
+        fontname="Helvetica"
+    ];
+    node [shape = box, style = "bold,filled" fillcolor="lightgray", margin="0.3,0.1"];
+
+    Post [margin=0.1, label="Post", shape=box, URL="#Post"]
+    PostList [margin=0.1, label="PostList", shape=box, URL="#PostList"]
+
+    UnknownState -> PostList [label="goHome" URL="#goHome" fontsize=13 class="goHome" penwidth=1.5 color="#00A86B"];
+    PostList -> Post [label="goPost" URL="#goPost" fontsize=13 class="goPost" penwidth=1.5 color="#00A86B"];
+    PostList -> Post [label="doCreatePost" URL="#doCreatePost" fontsize=13 class="doCreatePost" penwidth=1.5 color="#FF4136"];
+    UnknownState -> PostList [label="doDeletePost" URL="#doDeletePost" fontsize=13 class="doDeletePost" penwidth=1.5 color="#D4A000"];
+
+    Post [label="Post" URL="#Post"]
+    PostList [label="PostList" URL="#PostList"]
+
+}

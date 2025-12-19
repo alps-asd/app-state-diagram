@@ -1,0 +1,63 @@
+flowchart TB
+    %% States
+    Home[Home]
+    SearchSuggest[SearchSuggest]
+    SearchResults[SearchResults]
+    CategoryBrowse[CategoryBrowse]
+    ProductList[ProductList]
+    ProductDetail[ProductDetail]
+    Cart[Cart]
+    Checkout[Checkout]
+    OrderComplete[OrderComplete]
+    OrderHistory[OrderHistory]
+    OrderDetail[OrderDetail]
+    Account[Account]
+    Login[Login]
+    Register[Register]
+
+    %% Home transitions
+    Home -- "goSearchResults" --> SearchResults
+    Home -- "goCategoryBrowse" --> CategoryBrowse
+    Home -- "goCart" --> Cart
+    Home -- "goAccount" --> Account
+
+    %% Search flow
+    SearchSuggest -- "goSearchResults" --> SearchResults
+    SearchResults -- "goProductDetail" --> ProductDetail
+    SearchResults -- "goHome" --> Home
+
+    %% Category flow
+    CategoryBrowse -- "goProductList" --> ProductList
+    CategoryBrowse -- "goHome" --> Home
+    ProductList -- "goProductDetail" --> ProductDetail
+    ProductList -- "goHome" --> Home
+
+    %% Product flow
+    ProductDetail -- "goCart" --> Cart
+    ProductDetail -- "goHome" --> Home
+
+    %% Cart & Checkout flow
+    Cart -- "goCheckout" --> Checkout
+    Cart -- "goHome" --> Home
+    Checkout -- "doPlaceOrder" --> OrderComplete
+
+    %% Order flow
+    OrderComplete -- "goOrderDetail" --> OrderDetail
+    OrderComplete -- "goHome" --> Home
+    OrderHistory -- "goOrderDetail" --> OrderDetail
+    OrderHistory -- "goHome" --> Home
+    OrderDetail -- "goOrderHistory" --> OrderHistory
+
+    %% Account flow
+    Account -- "goLogin" --> Login
+    Account -- "goOrderHistory" --> OrderHistory
+    Account -- "goHome" --> Home
+    Login -- "goRegister" --> Register
+    Login -- "doLogin" --> Home
+    Register -- "doRegister" --> Home
+
+    %% Link styles (safe=green, unsafe=red, idempotent=yellow)
+    %% Safe transitions (green)
+    linkStyle 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23 stroke:#00A86B,stroke-width:2px
+    %% Unsafe transitions (red)
+    linkStyle 24,25,26 stroke:#FF4136,stroke-width:2px

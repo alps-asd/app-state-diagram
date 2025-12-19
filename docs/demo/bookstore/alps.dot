@@ -1,0 +1,51 @@
+digraph application_state_diagram {
+    graph [
+        labelloc="t";
+        fontname="Helvetica"
+    ];
+    node [shape = box, style = "bold,filled" fillcolor="lightgray", margin="0.3,0.1"];
+
+    Home [margin=0.1, label="Home", shape=box, URL="#Home"]
+    Catalog [margin=0.1, label="Catalog", shape=box, URL="#Catalog"]
+    Book [margin=0.1, label="Book", shape=box, URL="#Book"]
+    Category [margin=0.1, label="Category", shape=box, URL="#Category"]
+    ShoppingCart [margin=0.1, label="ShoppingCart", shape=box, URL="#ShoppingCart"]
+    Checkout [margin=0.1, label="Checkout", shape=box, URL="#Checkout"]
+    Payment [margin=0.1, label="Payment", shape=box, URL="#Payment"]
+
+    Payment -> Home [label="goToHome" URL="#goToHome" fontsize=13 class="goToHome" penwidth=1.5 color="#00A86B"];
+    Home -> Catalog [label="goToCatalog" URL="#goToCatalog" fontsize=13 class="goToCatalog" penwidth=1.5 color="#00A86B"];
+    Book -> Catalog [label="goToCatalog" URL="#goToCatalog" fontsize=13 class="goToCatalog" penwidth=1.5 color="#00A86B"];
+    Category -> Catalog [label="goToCatalog" URL="#goToCatalog" fontsize=13 class="goToCatalog" penwidth=1.5 color="#00A86B"];
+    ShoppingCart -> Catalog [label="goToCatalog" URL="#goToCatalog" fontsize=13 class="goToCatalog" penwidth=1.5 color="#00A86B"];
+    Catalog -> Book [label="goToBookDetails" URL="#goToBookDetails" fontsize=13 class="goToBookDetails" penwidth=1.5 color="#00A86B"];
+    Category -> Book [label="goToBookDetails" URL="#goToBookDetails" fontsize=13 class="goToBookDetails" penwidth=1.5 color="#00A86B"];
+    Home -> ShoppingCart [label="goToCart" URL="#goToCart" fontsize=13 class="goToCart" penwidth=1.5 color="#00A86B"];
+    Catalog -> ShoppingCart [label="goToCart" URL="#goToCart" fontsize=13 class="goToCart" penwidth=1.5 color="#00A86B"];
+    Checkout -> ShoppingCart [label="goToCart" URL="#goToCart" fontsize=13 class="goToCart" penwidth=1.5 color="#00A86B"];
+    Payment -> ShoppingCart [label="goToCart" URL="#goToCart" fontsize=13 class="goToCart" penwidth=1.5 color="#00A86B"];
+    ShoppingCart -> Checkout [label="goToCheckout" URL="#goToCheckout" fontsize=13 class="goToCheckout" penwidth=1.5 color="#00A86B"];
+    Checkout -> Payment [label="goToPayment" URL="#goToPayment" fontsize=13 class="goToPayment" penwidth=1.5 color="#00A86B"];
+    Catalog -> Catalog [label="goListBooks" URL="#goListBooks" fontsize=13 class="goListBooks" penwidth=1.5 color="#00A86B"];
+    Catalog -> Catalog [label="goSearchBooks" URL="#goSearchBooks" fontsize=13 class="goSearchBooks" penwidth=1.5 color="#00A86B"];
+    Catalog -> Catalog [label="goGetCategories" URL="#goGetCategories" fontsize=13 class="goGetCategories" penwidth=1.5 color="#00A86B"];
+    Catalog -> Category [label="goToCategory" URL="#goToCategory" fontsize=13 class="goToCategory" penwidth=1.5 color="#00A86B"];
+    Book -> ShoppingCart [label="doAddToCart" URL="#doAddToCart" fontsize=13 class="doAddToCart" penwidth=1.5 color="#FF4136"];
+    ShoppingCart -> ShoppingCart [label="goListCartItems" URL="#goListCartItems" fontsize=13 class="goListCartItems" penwidth=1.5 color="#00A86B"];
+    ShoppingCart -> ShoppingCart [label="doUpdateQuantity" URL="#doUpdateQuantity" fontsize=13 class="doUpdateQuantity" penwidth=1.5 color="#D4A000"];
+    ShoppingCart -> ShoppingCart [label="doRemoveFromCart" URL="#doRemoveFromCart" fontsize=13 class="doRemoveFromCart" penwidth=1.5 color="#D4A000"];
+    Checkout -> Checkout [label="doUserInfo" URL="#doUserInfo" fontsize=13 class="doUserInfo" penwidth=1.5 color="#FF4136"];
+    Checkout -> Checkout [label="doShippingInfo" URL="#doShippingInfo" fontsize=13 class="doShippingInfo" penwidth=1.5 color="#FF4136"];
+    Payment -> Payment [label="doPaymentInfo" URL="#doPaymentInfo" fontsize=13 class="doPaymentInfo" penwidth=1.5 color="#FF4136"];
+    Payment -> Payment [label="doPlaceOrder" URL="#doPlaceOrder" fontsize=13 class="doPlaceOrder" penwidth=1.5 color="#FF4136"];
+    Payment -> Payment [label="goOrderDetails" URL="#goOrderDetails" fontsize=13 class="goOrderDetails" penwidth=1.5 color="#00A86B"];
+
+    Home [label="Home" URL="#Home"]
+    Catalog [label="Catalog" URL="#Catalog"]
+    Book [label="Book" URL="#Book"]
+    Category [label="Category" URL="#Category"]
+    ShoppingCart [label="ShoppingCart" URL="#ShoppingCart"]
+    Checkout [label="Checkout" URL="#Checkout"]
+    Payment [label="Payment" URL="#Payment"]
+
+}
