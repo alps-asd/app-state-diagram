@@ -1,8 +1,8 @@
 {
   "mcpServers": {
-    "chrome-devtools": {
+    "alps": {
       "command": "npx",
-      "args": ["-y", "chrome-devtools-mcp@latest"]
+      "args": ["@alps-asd/mcp"]
     }
   }
 }
