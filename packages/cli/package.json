@@ -1,6 +1,6 @@
 {
   "name": "@alps-asd/app-state-diagram",
-  "version": "0.20.0",
+  "version": "0.20.2",
   "description": "ALPS CLI tool - generate documentation from ALPS profiles",
   "main": "dist/asd.js",
   "types": "dist/asd.d.ts",
@@ -41,10 +41,12 @@
   "license": "MIT",
   "dependencies": {
     "@viz-js/viz": "^3.11.0",
-    "chokidar": "3",
-    "chrome-remote-interface": "^0.33.3",
     "commander": "^11.1.0",
     "fast-xml-parser": "^4.5.0"
+  },
+  "optionalDependencies": {
+    "chokidar": "3",
+    "chrome-remote-interface": "^0.33.3"
   },
   "devDependencies": {
     "@types/chrome-remote-interface": "^0.33.0",

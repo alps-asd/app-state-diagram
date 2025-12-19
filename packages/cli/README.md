@@ -1,17 +1,17 @@
-# @alps-asd/cli
+# @alps-asd/app-state-diagram
 
 CLI tool and programmatic API for generating documentation and diagrams from [ALPS](http://alps.io/) profiles.
 
 ## Installation
 
 ```bash
-npm install @alps-asd/cli
+npm install @alps-asd/app-state-diagram
 ```
 
 Or use globally:
 
 ```bash
-npm install -g @alps-asd/cli
+npm install -g @alps-asd/app-state-diagram
 ```
 
 ## CLI Usage
@@ -87,7 +87,7 @@ asd merge base.json admin-domain.json
 Parse ALPS profiles from JSON or XML:
 
 ```typescript
-import { parseAlps, parseAlpsAuto } from '@alps-asd/cli/parser/alps-parser.js';
+import { parseAlps, parseAlpsAuto } from '@alps-asd/app-state-diagram/parser/alps-parser.js';
 
 // Parse with explicit format
 const docFromJson = parseAlps(jsonContent, 'JSON');
@@ -128,7 +128,7 @@ interface AlpsDescriptor {
 Validate ALPS profiles:
 
 ```typescript
-import { AlpsValidator } from '@alps-asd/cli/validator/index.js';
+import { AlpsValidator } from '@alps-asd/app-state-diagram/validator/index.js';
 
 const validator = new AlpsValidator();
 const result = validator.validate(document);
@@ -166,8 +166,8 @@ See [Validation Reference](../../dev-docs/validation-reference.md) for details o
 Generate DOT and SVG from ALPS profiles:
 
 ```typescript
-import { generateDot } from '@alps-asd/cli/generator/dot-generator.js';
-import { dotToSvg } from '@alps-asd/cli/generator/svg-generator.js';
+import { generateDot } from '@alps-asd/app-state-diagram/generator/dot-generator.js';
+import { dotToSvg } from '@alps-asd/app-state-diagram/generator/svg-generator.js';
 
 // Generate DOT format
 const dot = generateDot(document);
@@ -179,10 +179,10 @@ const svg = await dotToSvg(dot);
 ## Complete Example
 
 ```typescript
-import { parseAlpsAuto } from '@alps-asd/cli/parser/alps-parser.js';
-import { AlpsValidator } from '@alps-asd/cli/validator/index.js';
-import { generateDot } from '@alps-asd/cli/generator/dot-generator.js';
-import { dotToSvg } from '@alps-asd/cli/generator/svg-generator.js';
+import { parseAlpsAuto } from '@alps-asd/app-state-diagram/parser/alps-parser.js';
+import { AlpsValidator } from '@alps-asd/app-state-diagram/validator/index.js';
+import { generateDot } from '@alps-asd/app-state-diagram/generator/dot-generator.js';
+import { dotToSvg } from '@alps-asd/app-state-diagram/generator/svg-generator.js';
 import fs from 'fs';
 
 // Load and parse
