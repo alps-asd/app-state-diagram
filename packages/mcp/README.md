@@ -4,7 +4,7 @@
 
 ## Requirements
 
-- Node.js 18 or higher
+- Node.js 20 or higher
 
 ## Installation
 
@@ -44,14 +44,14 @@ Or if installed globally:
 If you encounter errors, first verify your Node.js version:
 
 ```bash
-node --version  # Should be v18.0.0 or higher
+node --version  # Should be v20.0.0 or higher
 which npx       # Verify npx is in your PATH
 ```
 
 If using nvm, ensure the correct version is active:
 
 ```bash
-nvm use 18
+nvm use 20
 ```
 
 ## Available Tools

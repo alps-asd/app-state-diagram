@@ -1,7 +1,7 @@
 # Repository Guidelines
 
 ## Project Structure & Module Organization
-- Root is a pnpm workspace (`pnpm-workspace.yaml`, `tsconfig.base.json`) targeting Node 18+. Shared dev docs live in `dev-docs/`; published docs and static assets are under `docs/`, `public/`, and `_site/`.
+- Root is a pnpm workspace (`pnpm-workspace.yaml`, `tsconfig.base.json`) targeting Node 20+. Shared dev docs live in `dev-docs/`; published docs and static assets are under `docs/`, `public/`, and `_site/`.
 - Core packages sit in `packages/`: `cli/` (TypeScript CLI that parses/validates ALPS and generates diagrams) and `mcp/` (Model Context Protocol server that wraps the CLI). Each has `src/`, `dist/`, and its own Jest/TS config.
 - Example ALPS profiles for manual/integration checks are in `tests/fake/`. Avoid editing generated `dist/` outputs directly—rebuild instead.
 

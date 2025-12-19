@@ -37,7 +37,7 @@ Warnings (best practice): W001 (missing title), W002 (safe should start with go)
 
 - [Full Documentation](https://alps-asd.github.io/app-state-diagram/llms-full.txt): Complete reference (all sections expanded)
 - [README](https://github.com/alps-asd/app-state-diagram/blob/2.x/README.md): Installation, CLI options, quick start
-- [CLI Package](https://github.com/alps-asd/app-state-diagram/blob/2.x/packages/cli/README.md): Programmatic API (parser, validator, generator)
+- [CLI Package](https://github.com/alps-asd/app-state-diagram/blob/2.x/packages/app-state-diagram/README.md): Programmatic API (parser, validator, generator)
 - [MCP Server](https://github.com/alps-asd/app-state-diagram/blob/2.x/packages/mcp/README.md): AI integration via Model Context Protocol
 - [Validation Reference](https://github.com/alps-asd/app-state-diagram/blob/2.x/dev-docs/validation-reference.md): All error codes with examples
 - [Architecture](https://github.com/alps-asd/app-state-diagram/blob/2.x/dev-docs/architecture.md): Internal design and data flow

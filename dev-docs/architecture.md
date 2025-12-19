@@ -4,7 +4,7 @@ This document describes the architecture of app-state-diagram.
 
 ## Design Philosophy
 
-**Editor-first, CLI as adapter**: The browser-based editor (`/public/`) is the source of truth for all UI logic. The CLI (`/packages/cli/`) is a Node.js adapter that provides command-line access using the same algorithms.
+**Editor-first, CLI as adapter**: The browser-based editor (`/public/`) is the source of truth for all UI logic. The CLI (`/packages/app-state-diagram/`) is a Node.js adapter that provides command-line access using the same algorithms.
 
 ## Project Structure
 
@@ -74,7 +74,7 @@ Both browser and CLI implement the same algorithms:
            │                                                  │
            ▼                                                  ▼
 ┌─────────────────────────┐                    ┌─────────────────────────┐
-│  Browser (public/js/)   │                    │   CLI (packages/cli/)   │
+│  Browser (public/js/)   │                    │   CLI (packages/app-state-diagram/)   │
 │  ┌───────────────────┐  │                    │  ┌───────────────────┐  │
 │  │ DOMParser (XML)   │  │                    │  │ fast-xml-parser   │  │
 │  │ JSON.parse (JSON) │  │                    │  │ JSON.parse        │  │

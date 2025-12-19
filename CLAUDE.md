@@ -122,7 +122,7 @@ Provides AI tools for ALPS development:
 
 ## Dependencies
 
-- Node.js 18+
+- Node.js 20+
 - pnpm for workspace management
 - @viz-js/viz for Graphviz WASM
 - fast-xml-parser for XML parsing

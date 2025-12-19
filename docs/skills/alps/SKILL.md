@@ -873,9 +873,9 @@ The surveyor mode uses handover.json (per ADR 0006) to enable multi-session work
 ### Implementation Status
 
 ✅ Core library implemented:
-- `packages/cli/src/crawler/url-pattern-classifier.ts`
-- `packages/cli/src/crawler/dom-skeleton-extractor.ts`
-- `packages/cli/src/crawler/alps-descriptor-generator.ts`
+- `packages/app-state-diagram/src/crawler/url-pattern-classifier.ts`
+- `packages/app-state-diagram/src/crawler/dom-skeleton-extractor.ts`
+- `packages/app-state-diagram/src/crawler/alps-descriptor-generator.ts`
 
 ⏳ Integration in progress:
 - MCP tool (basic structure added)
