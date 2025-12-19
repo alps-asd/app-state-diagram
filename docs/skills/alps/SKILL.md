@@ -379,6 +379,25 @@ For web surveying tasks (ALPS from website analysis), see the detailed [ALPS Sur
    - Be transparent about what's covered and what's not
    - For multi-sided platforms, assess coverage per side (customer/admin/seller)
 
+### Output File Convention
+
+**File name**: Always `alps.json` or `alps.xml` (fixed)
+
+**Directory**:
+- If `alps/` directory exists → use it
+- Otherwise → create `{app-name}/` directory (e.g., `todo/`, `blog/`, `ecommerce/`)
+
+**Format selection**:
+1. If existing ALPS file exists → follow its format
+2. Otherwise → ask user: "Output format: XML (recommended) or JSON?"
+
+**Examples**:
+```
+todo/alps.json
+blog/alps.xml
+ecommerce/alps.xml
+```
+
 ### Output Format
 
 Generate XML format by default. Use JSON only if explicitly requested.
