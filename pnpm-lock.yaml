@@ -29,18 +29,19 @@ importers:
       '@viz-js/viz':
         specifier: ^3.11.0
         version: 3.23.0
-      chokidar:
-        specifier: '3'
-        version: 3.6.0
-      chrome-remote-interface:
-        specifier: ^0.33.3
-        version: 0.33.3
       commander:
         specifier: ^11.1.0
         version: 11.1.0
       fast-xml-parser:
         specifier: ^4.5.0
         version: 4.5.3
+    optionalDependencies:
+      chokidar:
+        specifier: '3'
+        version: 3.6.0
+      chrome-remote-interface:
+        specifier: ^0.33.3
+        version: 0.33.3
     devDependencies:
       '@types/chrome-remote-interface':
         specifier: ^0.33.0
@@ -64,11 +65,8 @@ importers:
   packages/mcp:
     dependencies:
       '@alps-asd/app-state-diagram':
-        specifier: workspace:*
-        version: link:../cli
-      '@alps-asd/crawler':
-        specifier: workspace:*
-        version: link:../crawler
+        specifier: ^0.20.2
+        version: 0.20.2
       '@modelcontextprotocol/sdk':
         specifier: ^1.0.0
         version: 1.24.3(zod@4.1.13)
@@ -90,6 +88,10 @@ importers:
         version: 5.9.3
 
 packages:
+
+  '@alps-asd/app-state-diagram@0.20.2':
+    resolution: {integrity: sha512-dryorbYdVs+BMjjKFQLhABuP9xwsiixoSqxmyGgT9lLai1CJUdZYThKSQNPF3kLicpQBTlS2rkZ8eVeQyMGw2g==}
+    hasBin: true
 
   '@babel/code-frame@7.27.1':
     resolution: {integrity: sha512-cjQ7ZlQ0Mv3b47hABuTevyTuYN4i+loJKGeV9flcCgIK37cCXRh+L1bd3iBHlynerhQ7BhCkn2BPbQUL+rGqFg==}
@@ -1778,6 +1780,18 @@ packages:
 
 snapshots:
 
+  '@alps-asd/app-state-diagram@0.20.2':
+    dependencies:
+      '@viz-js/viz': 3.23.0
+      commander: 11.1.0
+      fast-xml-parser: 4.5.3
+    optionalDependencies:
+      chokidar: 3.6.0
+      chrome-remote-interface: 0.33.3
+    transitivePeerDependencies:
+      - bufferutil
+      - utf-8-validate
+
   '@babel/code-frame@7.27.1':
     dependencies:
       '@babel/helper-validator-identifier': 7.28.5
@@ -2458,7 +2472,8 @@ snapshots:
 
   baseline-browser-mapping@2.9.6: {}
 
-  binary-extensions@2.3.0: {}
+  binary-extensions@2.3.0:
+    optional: true
 
   body-parser@2.2.1:
     dependencies:
@@ -2543,6 +2558,7 @@ snapshots:
       readdirp: 3.6.0
     optionalDependencies:
       fsevents: 2.3.3
+    optional: true
 
   chrome-remote-interface@0.33.3:
     dependencies:
@@ -2551,6 +2567,7 @@ snapshots:
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
+    optional: true
 
   ci-info@4.3.1: {}
 
@@ -2574,7 +2591,8 @@ snapshots:
 
   commander@11.1.0: {}
 
-  commander@2.11.0: {}
+  commander@2.11.0:
+    optional: true
 
   concat-map@0.0.1: {}
 
@@ -2800,6 +2818,7 @@ snapshots:
   glob-parent@5.1.2:
     dependencies:
       is-glob: 4.0.3
+    optional: true
 
   glob@10.5.0:
     dependencies:
@@ -2877,8 +2896,10 @@ snapshots:
   is-binary-path@2.1.0:
     dependencies:
       binary-extensions: 2.3.0
+    optional: true
 
-  is-extglob@2.1.1: {}
+  is-extglob@2.1.1:
+    optional: true
 
   is-fullwidth-code-point@3.0.0: {}
 
@@ -2887,6 +2908,7 @@ snapshots:
   is-glob@4.0.3:
     dependencies:
       is-extglob: 2.1.1
+    optional: true
 
   is-number@7.0.0: {}
 
@@ -3439,6 +3461,7 @@ snapshots:
   readdirp@3.6.0:
     dependencies:
       picomatch: 2.3.1
+    optional: true
 
   require-directory@2.1.1: {}
 
@@ -3718,7 +3741,8 @@ snapshots:
       imurmurhash: 0.1.4
       signal-exit: 4.1.0
 
-  ws@7.5.10: {}
+  ws@7.5.10:
+    optional: true
 
   y18n@5.0.8: {}
 
