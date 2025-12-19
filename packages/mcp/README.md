@@ -2,6 +2,10 @@
 
 [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) server for ALPS profile development. Provides AI assistants with tools to validate and generate diagrams from ALPS profiles.
 
+## Requirements
+
+- Node.js 18 or higher
+
 ## Installation
 
 ```bash
@@ -33,6 +37,21 @@ Or if installed globally:
     }
   }
 }
+```
+
+### Troubleshooting
+
+If you encounter errors, first verify your Node.js version:
+
+```bash
+node --version  # Should be v18.0.0 or higher
+which npx       # Verify npx is in your PATH
+```
+
+If using nvm, ensure the correct version is active:
+
+```bash
+nvm use 18
 ```
 
 ## Available Tools
@@ -107,7 +126,7 @@ See [Validation Reference](../../dev-docs/validation-reference.md) for detailed 
 ## Dependencies
 
 - [@modelcontextprotocol/sdk](https://github.com/anthropics/mcp-sdk) - MCP SDK
-- [@alps-asd/cli](../cli) - ALPS parser, validator, and generator
+- [@alps-asd/app-state-diagram](https://www.npmjs.com/package/@alps-asd/app-state-diagram) - ALPS parser, validator, and generator
 
 ## License
 

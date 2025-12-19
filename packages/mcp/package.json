@@ -1,6 +1,6 @@
 {
   "name": "@alps-asd/mcp",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "ALPS MCP Server - Model Context Protocol server for ALPS profile tools",
   "type": "module",
   "main": "dist/index.js",
@@ -20,6 +20,9 @@
   ],
   "author": "Akihito Koriyama <akihito.koriyama@gmail.com>",
   "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/alps-asd/app-state-diagram.git",
