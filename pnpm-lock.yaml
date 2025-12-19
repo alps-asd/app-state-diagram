@@ -24,7 +24,7 @@ importers:
         specifier: ^5.2.2
         version: 5.9.3
 
-  packages/cli:
+  packages/app-state-diagram:
     dependencies:
       '@viz-js/viz':
         specifier: ^3.11.0

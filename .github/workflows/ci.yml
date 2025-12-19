@@ -43,20 +43,20 @@ jobs:
         if: matrix.node-version == 20
         uses: codecov/codecov-action@v5
         with:
-          files: ./packages/cli/coverage/lcov.info,./packages/mcp/coverage/lcov.info
+          files: ./packages/app-state-diagram/coverage/lcov.info,./packages/mcp/coverage/lcov.info
           fail_ci_if_error: false
 
       - name: Run demo (JSON)
-        run: node packages/cli/dist/asd.js docs/demo/amazon/amazon.json -o /tmp/amazon.html
+        run: node packages/app-state-diagram/dist/asd.js docs/demo/amazon/amazon.json -o /tmp/amazon.html
 
       - name: Run demo (SVG)
-        run: node packages/cli/dist/asd.js docs/demo/amazon/amazon.json -f svg -o /tmp/amazon.svg
+        run: node packages/app-state-diagram/dist/asd.js docs/demo/amazon/amazon.json -f svg -o /tmp/amazon.svg
 
       - name: Run demo (Mermaid)
-        run: node packages/cli/dist/asd.js docs/demo/amazon/amazon.json -f mermaid -o /tmp/amazon.mmd
+        run: node packages/app-state-diagram/dist/asd.js docs/demo/amazon/amazon.json -f mermaid -o /tmp/amazon.mmd
 
       - name: Run demo (DOT)
-        run: node packages/cli/dist/asd.js docs/demo/amazon/amazon.json -f dot -o /tmp/amazon.dot
+        run: node packages/app-state-diagram/dist/asd.js docs/demo/amazon/amazon.json -f dot -o /tmp/amazon.dot
 
       - name: Install Graphviz
         run: sudo apt-get install -y graphviz
@@ -65,12 +65,12 @@ jobs:
         run: dot -Tsvg /tmp/amazon.dot -o /dev/null
 
       - name: Validate demo output
-        run: node packages/cli/dist/asd.js docs/demo/amazon/amazon.json --validate
+        run: node packages/app-state-diagram/dist/asd.js docs/demo/amazon/amazon.json --validate
 
       - name: Generate demo Mermaid files
         if: matrix.node-version == 20
         run: |
-          node packages/cli/dist/asd.js docs/demo/amazon/amazon.json -f mermaid -o docs/demo/amazon/alps.mmd
-          node packages/cli/dist/asd.js docs/demo/bookstore/alps.xml -f mermaid -o docs/demo/bookstore/alps.mmd
-          node packages/cli/dist/asd.js docs/demo/lms/alps.xml -f mermaid -o docs/demo/lms/alps.mmd
-          node packages/cli/dist/asd.js docs/demo/minimal/alps.json -f mermaid -o docs/demo/minimal/alps.mmd
+          node packages/app-state-diagram/dist/asd.js docs/demo/amazon/amazon.json -f mermaid -o docs/demo/amazon/alps.mmd
+          node packages/app-state-diagram/dist/asd.js docs/demo/bookstore/alps.xml -f mermaid -o docs/demo/bookstore/alps.mmd
+          node packages/app-state-diagram/dist/asd.js docs/demo/lms/alps.xml -f mermaid -o docs/demo/lms/alps.mmd
+          node packages/app-state-diagram/dist/asd.js docs/demo/minimal/alps.json -f mermaid -o docs/demo/minimal/alps.mmd
