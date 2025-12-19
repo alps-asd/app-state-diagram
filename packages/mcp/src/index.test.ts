@@ -10,13 +10,20 @@ const {
   handleAlps2Mermaid,
   handleAlpsGuide,
   handleCrawlAndExtract,
+  handleValidateOpenapi,
   getEmbeddedGuide,
 } = require('./index');
 const fs = require('fs');
+const childProcess = require('child_process');
+const util = require('util');
 
 // Mock fs for file reading tests
 jest.mock('fs');
 const mockFs = fs as jest.Mocked<typeof fs>;
+
+// Mock child_process.exec for Spectral tests
+jest.mock('child_process');
+const mockChildProcess = childProcess as jest.Mocked<typeof childProcess>;
 
 describe('MCP Handler Functions', () => {
   beforeEach(() => {
@@ -351,6 +358,180 @@ describe('MCP Handler Functions', () => {
       expect(guide).toContain('goProductList');
       expect(guide).toContain('doCreateUser');
       expect(guide).toContain('HomePage');
+    });
+  });
+
+  describe('handleValidateOpenapi', () => {
+    beforeEach(() => {
+      // Mock fs.writeFileSync and fs.unlinkSync for temp file handling
+      mockFs.writeFileSync.mockImplementation(() => {});
+      mockFs.unlinkSync.mockImplementation(() => {});
+    });
+
+    it('should return error when openapi_content is missing', async () => {
+      const result = await handleValidateOpenapi({});
+
+      expect(result.isError).toBe(true);
+      expect(result.content[0].text).toContain('Error: openapi_content or openapi_path is required');
+    });
+
+    it('should return error when args is undefined', async () => {
+      const result = await handleValidateOpenapi(undefined);
+
+      expect(result.isError).toBe(true);
+      expect(result.content[0].text).toContain('Error: openapi_content or openapi_path is required');
+    });
+
+    it('should return error when file cannot be read', async () => {
+      mockFs.readFileSync.mockImplementation(() => {
+        throw new Error('File not found');
+      });
+
+      const result = await handleValidateOpenapi({ openapi_path: '/invalid/path.yaml' });
+
+      expect(result.isError).toBe(true);
+      expect(result.content[0].text).toContain('Error: Cannot read file');
+    });
+
+    it('should validate OpenAPI and return success', async () => {
+      const openapiContent = `openapi: 3.1.0
+info:
+  title: Test API
+  version: 1.0.0
+paths: {}`;
+
+      mockChildProcess.exec.mockImplementation((cmd: string, opts: unknown, callback: (err: Error | null, result: { stdout: string; stderr: string }) => void) => {
+        callback(null, { stdout: 'No results with a severity of', stderr: '' });
+      });
+
+      const result = await handleValidateOpenapi({ openapi_content: openapiContent });
+
+      expect(result.isError).toBe(false);
+      expect(result.content[0].text).toContain('✅ OpenAPI Validation SUCCESSFUL');
+    });
+
+    it('should return validation errors from Spectral', async () => {
+      const openapiContent = `openapi: 3.1.0
+info:
+  title: Test API
+paths: {}`;
+
+      mockChildProcess.exec.mockImplementation((cmd: string, opts: unknown, callback: (err: Error | null, result: { stdout: string; stderr: string }) => void) => {
+        callback(null, { stdout: '1:1 error oas3-schema "version" property is required', stderr: '' });
+      });
+
+      const result = await handleValidateOpenapi({ openapi_content: openapiContent });
+
+      expect(result.isError).toBe(true);
+      expect(result.content[0].text).toContain('❌ OpenAPI Validation FAILED');
+    });
+
+    it('should return warnings from Spectral without errors', async () => {
+      const openapiContent = `openapi: 3.1.0
+info:
+  title: Test API
+  version: 1.0.0
+paths: {}`;
+
+      mockChildProcess.exec.mockImplementation((cmd: string, opts: unknown, callback: (err: Error | null, result: { stdout: string; stderr: string }) => void) => {
+        callback(null, { stdout: '1:1 warning info-description OpenAPI "info.description" is missing', stderr: '' });
+      });
+
+      const result = await handleValidateOpenapi({ openapi_content: openapiContent });
+
+      expect(result.isError).toBe(false);
+      expect(result.content[0].text).toContain('⚠️ OpenAPI Validation completed with warnings');
+    });
+
+    it('should read from openapi_path when provided', async () => {
+      const openapiContent = `openapi: 3.1.0
+info:
+  title: Test API
+  version: 1.0.0
+paths: {}`;
+
+      mockFs.readFileSync.mockReturnValue(openapiContent);
+      mockChildProcess.exec.mockImplementation((cmd: string, opts: unknown, callback: (err: Error | null, result: { stdout: string; stderr: string }) => void) => {
+        callback(null, { stdout: 'No results with a severity of', stderr: '' });
+      });
+
+      const result = await handleValidateOpenapi({ openapi_path: '/path/to/openapi.yaml' });
+
+      expect(result.isError).toBe(false);
+      expect(mockFs.readFileSync).toHaveBeenCalledWith('/path/to/openapi.yaml', 'utf-8');
+    });
+
+    it('should prefer openapi_content over openapi_path', async () => {
+      const openapiContent = `openapi: 3.1.0
+info:
+  title: Test API
+  version: 1.0.0
+paths: {}`;
+
+      mockChildProcess.exec.mockImplementation((cmd: string, opts: unknown, callback: (err: Error | null, result: { stdout: string; stderr: string }) => void) => {
+        callback(null, { stdout: 'No results with a severity of', stderr: '' });
+      });
+
+      const result = await handleValidateOpenapi({
+        openapi_content: openapiContent,
+        openapi_path: '/should/not/be/used.yaml',
+      });
+
+      expect(result.isError).toBe(false);
+      expect(mockFs.readFileSync).not.toHaveBeenCalled();
+    });
+
+    it('should handle Spectral exit with error in message', async () => {
+      const openapiContent = `openapi: 3.1.0
+info:
+  title: Test
+paths: {}`;
+
+      const errorWithOutput = new Error('Command failed: 1:1 error oas3-schema missing version');
+      mockChildProcess.exec.mockImplementation((cmd: string, opts: unknown, callback: (err: Error | null, result: { stdout: string; stderr: string }) => void) => {
+        callback(errorWithOutput, { stdout: '', stderr: '' });
+      });
+
+      const result = await handleValidateOpenapi({ openapi_content: openapiContent });
+
+      expect(result.isError).toBe(true);
+      expect(result.content[0].text).toContain('❌ OpenAPI Validation FAILED');
+    });
+
+    it('should handle Spectral exit with warning in message', async () => {
+      const openapiContent = `openapi: 3.1.0
+info:
+  title: Test
+  version: 1.0.0
+paths: {}`;
+
+      const errorWithWarning = new Error('Command failed: 1:1 warning info-description missing');
+      mockChildProcess.exec.mockImplementation((cmd: string, opts: unknown, callback: (err: Error | null, result: { stdout: string; stderr: string }) => void) => {
+        callback(errorWithWarning, { stdout: '', stderr: '' });
+      });
+
+      const result = await handleValidateOpenapi({ openapi_content: openapiContent });
+
+      expect(result.isError).toBe(false);
+      expect(result.content[0].text).toContain('⚠️ OpenAPI Validation completed with warnings');
+    });
+
+    it('should handle general Spectral execution error', async () => {
+      const openapiContent = `openapi: 3.1.0
+info:
+  title: Test
+  version: 1.0.0
+paths: {}`;
+
+      const generalError = new Error('npx: command not found');
+      mockChildProcess.exec.mockImplementation((cmd: string, opts: unknown, callback: (err: Error | null, result: { stdout: string; stderr: string }) => void) => {
+        callback(generalError, { stdout: '', stderr: '' });
+      });
+
+      const result = await handleValidateOpenapi({ openapi_content: openapiContent });
+
+      expect(result.isError).toBe(true);
+      expect(result.content[0].text).toContain('Error running Spectral');
     });
   });
 });

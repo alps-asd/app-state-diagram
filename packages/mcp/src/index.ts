@@ -14,6 +14,10 @@ import {
 import * as fs from "fs";
 import * as path from "path";
 import { fileURLToPath } from "url";
+import { exec } from "child_process";
+import { promisify } from "util";
+
+const execAsync = promisify(exec);
 
 // Import from CLI package
 import { parseAlpsAuto } from "@alps-asd/app-state-diagram/parser/alps-parser.js";
@@ -136,6 +140,23 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
           required: ["url"],
         },
       },
+      {
+        name: "validate_openapi",
+        description: "Validate OpenAPI specification using Spectral linter",
+        inputSchema: {
+          type: "object" as const,
+          properties: {
+            openapi_content: {
+              type: "string",
+              description: "OpenAPI specification content (YAML or JSON)",
+            },
+            openapi_path: {
+              type: "string",
+              description: "Path to OpenAPI file (alternative to openapi_content)",
+            },
+          },
+        },
+      },
     ],
   };
 });
@@ -156,6 +177,8 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       return handleAlpsGuide();
     case "crawl_and_extract_alps":
       return handleCrawlAndExtract(args);
+    case "validate_openapi":
+      return handleValidateOpenapi(args);
     default:
       return {
         content: [{ type: "text", text: `Unknown tool: ${name}` }],
@@ -394,6 +417,103 @@ asd crawl ${url} --output profile.json --max-depth ${maxDepth}
     /* istanbul ignore next */
     return {
       content: [{ type: "text", text: `Error: ${error instanceof Error ? error.message : error}` }],
+      isError: true,
+    };
+  }
+}
+
+export async function handleValidateOpenapi(args: Record<string, unknown> | undefined) {
+  let openapiContent = args?.openapi_content as string | undefined;
+  const openapiPath = args?.openapi_path as string | undefined;
+
+  // If path provided, read file
+  if (openapiPath && !openapiContent) {
+    try {
+      openapiContent = fs.readFileSync(openapiPath, "utf-8");
+    } catch {
+      return {
+        content: [{ type: "text", text: `Error: Cannot read file: ${openapiPath}` }],
+        isError: true,
+      };
+    }
+  }
+
+  if (!openapiContent) {
+    return {
+      content: [{ type: "text", text: "Error: openapi_content or openapi_path is required" }],
+      isError: true,
+    };
+  }
+
+  // Write to temp file for Spectral
+  const tempFile = path.join("/tmp", `openapi-${Date.now()}.yaml`);
+
+  try {
+    fs.writeFileSync(tempFile, openapiContent, "utf-8");
+
+    // Run Spectral
+    const { stdout, stderr } = await execAsync(
+      `npx @stoplight/spectral-cli lint "${tempFile}" --format text`,
+      { timeout: 60000 }
+    );
+
+    // Clean up temp file
+    fs.unlinkSync(tempFile);
+
+    /* istanbul ignore next -- stderr fallback for edge cases */
+    const output = stdout || stderr;
+
+    // Check if validation passed
+    /* istanbul ignore next -- empty output is rare but valid success case */
+    if (output.includes("No results with a severity of") || output.trim() === "") {
+      return {
+        content: [{ type: "text", text: "✅ OpenAPI Validation SUCCESSFUL\n\nNo errors or warnings found." }],
+        isError: false,
+      };
+    }
+
+    // Parse output for errors/warnings
+    /* istanbul ignore next -- ✖ is alternative error marker */
+    const hasErrors = output.includes("error") || output.includes("✖");
+
+    return {
+      content: [{
+        type: "text",
+        text: hasErrors
+          ? `❌ OpenAPI Validation FAILED\n\n${output}`
+          : `⚠️ OpenAPI Validation completed with warnings\n\n${output}`
+      }],
+      isError: hasErrors,
+    };
+  } catch (error) {
+    // Clean up temp file on error
+    try {
+      fs.unlinkSync(tempFile);
+    } catch {
+      /* istanbul ignore next -- cleanup errors are safely ignored */
+    }
+
+    /* istanbul ignore next -- non-Error throws are rare */
+    const errorMessage = error instanceof Error ? error.message : String(error);
+
+    // Spectral returns non-zero exit code on validation errors
+    // Check if it's actual validation output
+    if (errorMessage.includes("error") || errorMessage.includes("warning")) {
+      /* istanbul ignore next -- ✖ is alternative error marker */
+      const hasErrors = errorMessage.includes("error") || errorMessage.includes("✖");
+      return {
+        content: [{
+          type: "text",
+          text: hasErrors
+            ? `❌ OpenAPI Validation FAILED\n\n${errorMessage}`
+            : `⚠️ OpenAPI Validation completed with warnings\n\n${errorMessage}`
+        }],
+        isError: hasErrors,
+      };
+    }
+
+    return {
+      content: [{ type: "text", text: `Error running Spectral: ${errorMessage}` }],
       isError: true,
     };
   }
