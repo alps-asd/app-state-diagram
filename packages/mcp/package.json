@@ -1,6 +1,6 @@
 {
   "name": "@alps-asd/mcp",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "ALPS MCP Server - Model Context Protocol server for ALPS profile tools",
   "type": "module",
   "main": "dist/index.js",
@@ -40,7 +40,7 @@
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.0.0",
-    "@alps-asd/app-state-diagram": "^0.20.2"
+    "@alps-asd/app-state-diagram": "^0.21.0"
   },
   "devDependencies": {
     "@types/jest": "^30.0.0",
