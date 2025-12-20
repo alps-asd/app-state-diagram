@@ -65,8 +65,8 @@ importers:
   packages/mcp:
     dependencies:
       '@alps-asd/app-state-diagram':
-        specifier: ^0.20.2
-        version: 0.20.2
+        specifier: ^0.21.0
+        version: 0.21.0
       '@modelcontextprotocol/sdk':
         specifier: ^1.0.0
         version: 1.24.3(zod@4.1.13)
@@ -89,8 +89,8 @@ importers:
 
 packages:
 
-  '@alps-asd/app-state-diagram@0.20.2':
-    resolution: {integrity: sha512-dryorbYdVs+BMjjKFQLhABuP9xwsiixoSqxmyGgT9lLai1CJUdZYThKSQNPF3kLicpQBTlS2rkZ8eVeQyMGw2g==}
+  '@alps-asd/app-state-diagram@0.21.0':
+    resolution: {integrity: sha512-csUW1adQHsIzSgMLfUQPTTcBNeOks3RjzQCxZhlaebWxIFlgls5Z92nAxs9pJA+x2LZraJ4WR07uQhqQAmL0OA==}
     hasBin: true
 
   '@babel/code-frame@7.27.1':
@@ -1780,7 +1780,7 @@ packages:
 
 snapshots:
 
-  '@alps-asd/app-state-diagram@0.20.2':
+  '@alps-asd/app-state-diagram@0.21.0':
     dependencies:
       '@viz-js/viz': 3.23.0
       commander: 11.1.0
