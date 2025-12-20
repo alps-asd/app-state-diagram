@@ -316,6 +316,8 @@ a{cursor:pointer;}
 #svg-graph svg{display:block;max-width:none;}
 #svg-container.fit-width #svg-graph svg{max-width:100% !important;width:100% !important;height:auto !important;}
 #svg-container.fit-width #svg-graph{flex-shrink:1;width:100%;}
+#svg-container.half-size #svg-graph svg{max-width:60% !important;width:60% !important;height:auto !important;}
+#svg-container.half-size #svg-graph{flex-shrink:0;}
 h1,h2{margin-top:0;}
 /* Legend */
 .legend{display:flex;gap:20px;margin:20px 0;flex-wrap:wrap;}
@@ -673,6 +675,7 @@ document.addEventListener('DOMContentLoaded', function() {
     <div class="selector-row">
         <span class="selector-label">Size:</span>
         <span class="selector-option"><input type="radio" name="sizeMode" value="original" checked><label> Original</label></span>
+        <span class="selector-option"><input type="radio" name="sizeMode" value="half"><label> Compact</label></span>
         <span class="selector-option"><input type="radio" name="sizeMode" value="fit"><label> Fit to width</label></span>
     </div>
 ${tagSelectorHtml ? `    <div class="selector-row">${tagSelectorHtml}</div>` : ''}
@@ -865,10 +868,11 @@ document.querySelectorAll('input[name="sizeMode"]').forEach(radio => {
         const selectorTopBefore = selectorRect.top;
 
         const svgContainer = document.getElementById('svg-container');
+        svgContainer.classList.remove('fit-width', 'half-size');
         if (this.value === 'fit') {
             svgContainer.classList.add('fit-width');
-        } else {
-            svgContainer.classList.remove('fit-width');
+        } else if (this.value === 'half') {
+            svgContainer.classList.add('half-size');
         }
 
         // Adjust scroll to keep selector at same screen position (instant, no animation)
@@ -876,7 +880,7 @@ document.querySelectorAll('input[name="sizeMode"]').forEach(radio => {
             const selectorTopAfter = selector.getBoundingClientRect().top;
             const scrollDiff = selectorTopAfter - selectorTopBefore;
             window.scrollTo({ top: window.scrollY + scrollDiff, behavior: 'instant' });
-            if (this.value === 'original') {
+            if (this.value === 'original' || this.value === 'half') {
                 centerSvgScroll();
             }
         });
@@ -889,16 +893,22 @@ function autoSelectSizeMode() {
     const svgElement = document.querySelector('#svg-graph svg');
     const fitRadio = document.querySelector('input[name="sizeMode"][value="fit"]');
     const originalRadio = document.querySelector('input[name="sizeMode"][value="original"]');
+    const halfOption = document.querySelector('input[name="sizeMode"][value="half"]')?.closest('.selector-option');
 
     if (!svgContainer || !svgElement) return;
 
     // Temporarily remove fit-width to measure SVG's natural size
-    svgContainer.classList.remove('fit-width');
+    svgContainer.classList.remove('fit-width', 'half-size');
 
     // Use setTimeout to allow reflow before measuring
     setTimeout(() => {
         const svgWidth = svgElement.getBoundingClientRect().width;
         const containerWidth = svgContainer.clientWidth;
+
+        // Show 50% option only when SVG is wider than container
+        if (halfOption) {
+            halfOption.style.display = svgWidth > containerWidth ? 'inline-block' : 'none';
+        }
 
         // If SVG is wider than container, auto-select Fit to width
         if (svgWidth > containerWidth) {
