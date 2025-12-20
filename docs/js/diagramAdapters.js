@@ -893,7 +893,7 @@ function autoSelectSizeMode() {
     const svgElement = document.querySelector('#svg-graph svg');
     const fitRadio = document.querySelector('input[name="sizeMode"][value="fit"]');
     const originalRadio = document.querySelector('input[name="sizeMode"][value="original"]');
-    const halfOption = document.querySelector('input[name="sizeMode"][value="half"]')?.closest('.selector-option');
+    const compactOption = document.querySelector('input[name="sizeMode"][value="half"]')?.closest('.selector-option');
 
     if (!svgContainer || !svgElement) return;
 
@@ -905,9 +905,9 @@ function autoSelectSizeMode() {
         const svgWidth = svgElement.getBoundingClientRect().width;
         const containerWidth = svgContainer.clientWidth;
 
-        // Show 50% option only when SVG is wider than container
-        if (halfOption) {
-            halfOption.style.display = svgWidth > containerWidth ? 'inline-block' : 'none';
+        // Show Compact option only when SVG is wider than container
+        if (compactOption) {
+            compactOption.style.display = svgWidth > containerWidth ? 'inline-block' : 'none';
         }
 
         // If SVG is wider than container, auto-select Fit to width
