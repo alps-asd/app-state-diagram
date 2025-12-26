@@ -13,15 +13,14 @@ import { watch } from 'chokidar';
 const EDITOR_URL = 'https://www.app-state-diagram.com/app-state-diagram/';
 
 async function launchChrome(port: number, url: string): Promise<void> {
+  const chromePath = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
   const args = [
-    '-a', 'Google Chrome',
-    '--args',
     `--remote-debugging-port=${port}`,
-    '--user-data-dir=/tmp/chrome-debug',
+    '--user-data-dir=/tmp/asd-chrome-debug',
     url
   ];
 
-  spawn('open', args, { detached: true, stdio: 'ignore' });
+  spawn(chromePath, args, { detached: true, stdio: 'ignore' });
 
   // Wait for Chrome to start
   for (let i = 0; i < 10; i++) {
@@ -64,9 +63,12 @@ export async function startWatch(
 
   // Check if Chrome is already running with CDP, if not launch it
   try {
-    await CDP({ port });
+    const client = await CDP({ port });
     console.log(`Chrome already running on port ${port}`);
-    spawn('open', ['-a', 'Google Chrome', EDITOR_URL], { detached: true, stdio: 'ignore' });
+    // Open new tab via CDP
+    const { Target } = client;
+    await Target.createTarget({ url: EDITOR_URL });
+    await client.close();
   } catch {
     console.log('Launching Chrome with remote debugging...');
     await launchChrome(port, EDITOR_URL);
