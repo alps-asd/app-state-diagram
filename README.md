@@ -7,7 +7,7 @@
 
 **app-state-diagram** is a tool that visualizes state transitions and information structures of RESTful applications. It generates interactive state diagrams and hyperlinked documentation from ALPS (Application-Level Profile Semantics) profiles written in XML or JSON.
 
-[![App State Diagram](https://www.app-state-diagram.com/app-state-diagram/bookstore/alps.svg)](https://www.app-state-diagram.com/app-state-diagram/bookstore/)
+[![App State Diagram](https://editor.app-state-diagram.com/demo/bookstore/alps.svg)](https://editor.app-state-diagram.com/)
 
 ## Key Benefits
 
@@ -53,12 +53,12 @@ asd [options] <profile.json|profile.xml>
 | Option | Description |
 |--------|-------------|
 | `-o, --output <file>` | Output file path |
-| `-m, --mode <mode>` | Output mode: `html` (default), `svg`, `dot` |
+| `-f, --format <format>` | Output format: `html` (default), `svg`, `dot`, `mermaid` |
 | `-w, --watch` | Watch mode with live reload |
-| `-p, --port <port>` | Development server port (default: 3000) |
+| `--port <port>` | CDP port for watch mode (default: 9222) |
 | `--label <mode>` | Label mode: `id` (default) or `title` |
 | `--validate` | Validate ALPS profile only |
-| `--echo` | Output to stdout |
+| `-e, --echo` | Output to stdout |
 
 ### Subcommands
 
