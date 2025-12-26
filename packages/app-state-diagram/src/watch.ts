@@ -17,6 +17,13 @@ const DEFAULT_CHROME_PATH = '/Applications/Google Chrome.app/Contents/MacOS/Goog
 async function launchChrome(port: number, url: string): Promise<void> {
   const chromePath = process.env.CHROME_PATH || DEFAULT_CHROME_PATH;
   const userDataDir = path.join(os.tmpdir(), 'asd-chrome-debug');
+
+  if (!fs.existsSync(chromePath)) {
+    console.error(`Chrome not found at: ${chromePath}`);
+    console.error('Set CHROME_PATH environment variable to your Chrome executable.');
+    process.exit(1);
+  }
+
   const args = [
     `--remote-debugging-port=${port}`,
     `--user-data-dir=${userDataDir}`,
@@ -35,6 +42,7 @@ async function launchChrome(port: number, url: string): Promise<void> {
       // Chrome not ready yet
     }
   }
+  throw new Error('Failed to launch Chrome. Make sure Chrome is installed.');
 }
 
 async function waitForEditor(port: number): Promise<void> {
@@ -55,6 +63,7 @@ async function waitForEditor(port: number): Promise<void> {
     }
     await new Promise(resolve => setTimeout(resolve, 500));
   }
+  throw new Error('Editor failed to load. Check your network connection.');
 }
 
 export async function startWatch(
