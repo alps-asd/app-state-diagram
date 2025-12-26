@@ -65,8 +65,8 @@ importers:
   packages/mcp:
     dependencies:
       '@alps-asd/app-state-diagram':
-        specifier: ^0.21.0
-        version: 0.21.0
+        specifier: workspace:*
+        version: link:../app-state-diagram
       '@modelcontextprotocol/sdk':
         specifier: ^1.0.0
         version: 1.24.3(zod@4.1.13)
@@ -88,10 +88,6 @@ importers:
         version: 5.9.3
 
 packages:
-
-  '@alps-asd/app-state-diagram@0.21.0':
-    resolution: {integrity: sha512-csUW1adQHsIzSgMLfUQPTTcBNeOks3RjzQCxZhlaebWxIFlgls5Z92nAxs9pJA+x2LZraJ4WR07uQhqQAmL0OA==}
-    hasBin: true
 
   '@babel/code-frame@7.27.1':
     resolution: {integrity: sha512-cjQ7ZlQ0Mv3b47hABuTevyTuYN4i+loJKGeV9flcCgIK37cCXRh+L1bd3iBHlynerhQ7BhCkn2BPbQUL+rGqFg==}
@@ -1779,18 +1775,6 @@ packages:
     resolution: {integrity: sha512-AvvthqfqrAhNH9dnfmrfKzX5upOdjUVJYFqNSlkmGf64gRaTzlPwz99IHYnVs28qYAybvAlBV+H7pn0saFY4Ig==}
 
 snapshots:
-
-  '@alps-asd/app-state-diagram@0.21.0':
-    dependencies:
-      '@viz-js/viz': 3.23.0
-      commander: 11.1.0
-      fast-xml-parser: 4.5.3
-    optionalDependencies:
-      chokidar: 3.6.0
-      chrome-remote-interface: 0.33.3
-    transitivePeerDependencies:
-      - bufferutil
-      - utf-8-validate
 
   '@babel/code-frame@7.27.1':
     dependencies:

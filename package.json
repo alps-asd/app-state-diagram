@@ -1,6 +1,6 @@
 {
   "name": "app-state-diagram",
-  "version": "0.1.0",
+  "version": "2.0.0-alpha.1",
   "private": true,
   "description": "ALPS (Application-Level Profile Semantics) tooling monorepo",
   "keywords": [
