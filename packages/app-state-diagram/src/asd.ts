@@ -17,6 +17,7 @@ import { FileResolver } from './resolver/file-resolver';
 import { startWatch } from './watch';
 import { AlpsValidator } from './validator';
 import { AlpsMerger } from './merger';
+import { version } from '../package.json';
 
 const program = new Command();
 
@@ -31,7 +32,7 @@ program
     outputError: (str, write) => write(str.replace('error: ', '')),
   })
   .usage('[options] alps_file')
-  .version('0.20.0', '-v, --version', 'Show version information')
+  .version(version, '-v, --version', 'Show version information')
   .helpOption('-h, --help', 'Show this help message')
   .addHelpText('after', '\n@see https://github.com/alps-asd/app-state-diagram#usage')
   .addHelpText('beforeAll', 'usage: asd [options] alps_file\n\nOptions:');
