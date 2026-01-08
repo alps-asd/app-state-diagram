@@ -23,7 +23,6 @@ const smoothScrollTo = (targetElement) => {
     };
 
     requestAnimationFrame(animate);
-    history.pushState(null, null, '#' + targetElement.getAttribute('name'));
 };
 
 const applySmoothScrollToLinks = (links) => {
