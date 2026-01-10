@@ -1,0 +1,37 @@
+{
+  "$schema": "https://alps-io.github.io/schemas/alps.json",
+  "alps": {
+    "title": "ALPS Blog (Test)",
+    "doc": {"value": "An ALPS profile for testing remote profile loading"},
+    "descriptor": [
+      {"id": "id", "type": "semantic", "def": "https://schema.org/identifier"},
+      {"id": "articleBody", "type": "semantic", "def": "https://schema.org/articleBody"},
+      {"id": "dateCreated", "type": "semantic", "def": "https://schema.org/dateCreated"},
+
+      {"id": "About", "type": "semantic", "descriptor": [
+        {"href": "#goBlog"}
+      ]},
+      {"id": "Blog", "type": "semantic", "def": "https://schema.org/Blog", "title": "Blog post list", "descriptor": [
+        {"href": "#BlogPosting"},
+        {"href": "#goBlogPosting"},
+        {"href": "#goAbout"},
+        {"href": "#doPost"}
+      ]},
+      {"id": "BlogPosting", "type": "semantic", "title": "Blog post item", "def": "https://schema.org/BlogPosting", "descriptor": [
+        {"href": "#id"},
+        {"href": "#articleBody"},
+        {"href": "#dateCreated"},
+        {"href": "#goBlog"}
+      ]},
+
+      {"id": "goBlog", "type": "safe", "rt": "#Blog", "title": "Go to Blog"},
+      {"id": "goAbout", "type": "safe", "rt": "#About", "title": "Go to About"},
+      {"id": "goBlogPosting", "type": "safe", "rt": "#BlogPosting", "title": "Go to Blog Posting", "descriptor": [
+        {"href": "#id"}
+      ]},
+      {"id": "doPost", "type": "unsafe", "rt": "#Blog", "title": "Create Post", "descriptor": [
+        {"href": "#articleBody"}
+      ]}
+    ]
+  }
+}
