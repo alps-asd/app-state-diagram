@@ -1,0 +1,14 @@
+{
+  "name": "alps",
+  "description": "Create, validate, and improve ALPS profiles. Generate from natural language (nl2alps), validate existing profiles, and get improvement suggestions.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Akihito Koriyama",
+    "email": "akihito.koriyama@gmail.com"
+  },
+  "homepage": "https://www.app-state-diagram.com/",
+  "repository": "https://github.com/alps-asd/app-state-diagram",
+  "license": "MIT",
+  "keywords": ["alps", "api-design", "rest", "hypermedia", "state-diagram", "documentation"],
+  "skills": "./skills/"
+}

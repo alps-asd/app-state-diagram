@@ -99,6 +99,22 @@ The validator checks for:
 - `S002` - Consider adding title to ALPS document
 - `S003` - Consider adding doc to ALPS document
 
+## Claude Code Plugin
+
+Install the ALPS skill for Claude Code:
+
+```bash
+/plugin marketplace add alps-asd/app-state-diagram
+/plugin install alps@app-state-diagram
+```
+
+The ALPS skill enables:
+- Generate ALPS profiles from natural language descriptions
+- Validate existing ALPS profiles
+- Get improvement suggestions for your API design
+
+See [AI Integration Guide](https://www.app-state-diagram.com/app-state-diagram/ai-integration.html) for more options.
+
 ## Programmatic Usage
 
 ```typescript

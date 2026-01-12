@@ -1,0 +1,18 @@
+{
+  "name": "app-state-diagram",
+  "owner": {
+    "name": "Akihito Koriyama",
+    "email": "akihito.koriyama@gmail.com"
+  },
+  "metadata": {
+    "description": "ALPS profile tools for API design and documentation"
+  },
+  "plugins": [
+    {
+      "name": "alps",
+      "source": "./",
+      "description": "Create, validate, and improve ALPS profiles. Generate from natural language (nl2alps), validate existing profiles, and get improvement suggestions.",
+      "version": "1.0.0"
+    }
+  ]
+}
