@@ -1,5 +1,5 @@
 ---
-name: alps2openapi
+name: alps-to-openapi
 description: Generate OpenAPI specification from ALPS profile. Converts ALPS semantic descriptors to RESTful API definitions with automatic validation.
 ---
 
