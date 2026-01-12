@@ -98,17 +98,19 @@ See [live demos](docs/demo/) or visit [app-state-diagram.com](https://www.app-st
 
 ### Claude Code Plugin
 
-Install the ALPS skill for Claude Code:
+Install ALPS skills for Claude Code:
 
 ```bash
 /plugin marketplace add alps-asd/app-state-diagram
 /plugin install alps@app-state-diagram
 ```
 
-The ALPS skill enables:
-- Generate ALPS profiles from natural language descriptions
-- Validate existing ALPS profiles
-- Get improvement suggestions for your API design
+**Available skills:**
+
+| Skill | Description |
+|-------|-------------|
+| `alps` | Generate, validate, and improve ALPS profiles |
+| `alps-to-openapi` | Convert ALPS profiles to OpenAPI specifications |
 
 See [AI Integration Guide](https://www.app-state-diagram.com/app-state-diagram/ai-integration.html) for more options.
 
