@@ -1,0 +1,596 @@
+# app-state-diagram
+
+> A tool that generates interactive state diagrams and documentation from ALPS (Application-Level Profile Semantics) profiles. Visualizes RESTful application state transitions from XML or JSON profiles.
+
+## Key Benefits
+
+- **Application Overview**: Visually grasp complex RESTful applications and understand the big picture
+- **Clear Information Semantics**: See how data flows and what each element means
+- **Enhanced Team Communication**: Both technical and business teams can discuss using the same visual representation
+- **Design Consistency**: Represent application structures uniformly and discover design issues early
+
+## Quick Start
+
+### Installation
+
+```bash
+# Homebrew (recommended, auto-updates)
+brew install alps-asd/asd/asd
+
+# npm
+npm install -g @alps-asd/cli
+```
+
+### Basic Usage
+
+```bash
+asd profile.json           # Generate HTML documentation
+asd profile.json -m svg    # Generate SVG diagram
+asd profile.json -m dot    # Generate DOT format (Graphviz)
+asd profile.json --validate # Validate only
+asd -w profile.json        # Watch mode with live reload
+```
+
+### CLI Options
+
+| Option | Description |
+|--------|-------------|
+| `-o, --output <file>` | Output file path |
+| `-m, --mode <mode>` | Output mode: `html` (default), `svg`, `dot` |
+| `-w, --watch` | Watch mode with live reload |
+| `-p, --port <port>` | Development server port (default: 3000) |
+| `--label <mode>` | Label mode: `id` (default) or `title` |
+| `--validate` | Validate ALPS profile only |
+| `--echo` | Output to stdout |
+
+## ALPS Descriptor Types
+
+| Type | Color | Naming | Purpose |
+|------|-------|--------|---------|
+| semantic | White | PascalCase | Data/State (Post, User, HomePage) |
+| safe | #00A86B (green) | goXxx | Read-only navigation (goHome, goPost) |
+| unsafe | #FF4136 (red) | doXxx | State-changing action (doCreate, doDelete) |
+| idempotent | #D4A000 (yellow) | doXxx | Repeatable action (doUpdate, doPut) |
+
+---
+
+# Programmatic API (@alps-asd/cli)
+
+## Installation
+
+```bash
+npm install @alps-asd/cli
+```
+
+## Parser
+
+Parse ALPS profiles from JSON or XML:
+
+```typescript
+import { parseAlps, parseAlpsAuto } from '@alps-asd/cli/parser/alps-parser.js';
+
+// Parse with explicit format
+const docFromJson = parseAlps(jsonContent, 'JSON');
+const docFromXml = parseAlps(xmlContent, 'XML');
+
+// Auto-detect format
+const doc = parseAlpsAuto(content);
+```
+
+### Types
+
+```typescript
+interface AlpsDocument {
+  alps: {
+    title?: string;
+    doc?: string | { value: string };
+    descriptor?: AlpsDescriptor[];
+    link?: AlpsLink | AlpsLink[];
+  };
+}
+
+interface AlpsDescriptor {
+  id?: string;
+  type?: 'semantic' | 'safe' | 'unsafe' | 'idempotent';
+  title?: string;
+  def?: string;
+  doc?: string | { value: string };
+  rel?: string;
+  rt?: string;
+  tag?: string;
+  href?: string;
+  descriptor?: AlpsDescriptor[];
+}
+```
+
+## Validator
+
+```typescript
+import { AlpsValidator } from '@alps-asd/cli/validator/index.js';
+
+const validator = new AlpsValidator();
+const result = validator.validate(document);
+
+if (!result.isValid) {
+  console.log('Errors:', result.errors);
+  console.log('Warnings:', result.warnings);
+  console.log('Suggestions:', result.suggestions);
+}
+```
+
+### Validation Result
+
+```typescript
+interface ValidationResult {
+  isValid: boolean;
+  errors: ValidationIssue[];
+  warnings: ValidationIssue[];
+  suggestions: ValidationIssue[];
+}
+
+interface ValidationIssue {
+  code: string;      // E001, W001, S001, etc.
+  severity: 'error' | 'warning' | 'suggestion';
+  message: string;
+  path?: string;     // JSON path to the issue
+  id?: string;       // Descriptor id if applicable
+}
+```
+
+## Generator
+
+```typescript
+import { generateDot } from '@alps-asd/cli/generator/dot-generator.js';
+import { dotToSvg } from '@alps-asd/cli/generator/svg-generator.js';
+
+// Generate DOT format
+const dot = generateDot(document);
+
+// Convert DOT to SVG
+const svg = await dotToSvg(dot);
+```
+
+## Complete Example
+
+```typescript
+import { parseAlpsAuto } from '@alps-asd/cli/parser/alps-parser.js';
+import { AlpsValidator } from '@alps-asd/cli/validator/index.js';
+import { generateDot } from '@alps-asd/cli/generator/dot-generator.js';
+import { dotToSvg } from '@alps-asd/cli/generator/svg-generator.js';
+import fs from 'fs';
+
+// Load and parse
+const content = fs.readFileSync('profile.json', 'utf-8');
+const document = parseAlpsAuto(content);
+
+// Validate
+const validator = new AlpsValidator();
+const result = validator.validate(document);
+
+if (!result.isValid) {
+  for (const error of result.errors) {
+    console.error(`[${error.code}] ${error.message}`);
+  }
+  process.exit(1);
+}
+
+// Generate diagram
+const dot = generateDot(document);
+const svg = await dotToSvg(dot);
+fs.writeFileSync('diagram.svg', svg);
+```
+
+---
+
+# MCP Server (@alps-asd/mcp)
+
+Model Context Protocol server for AI integration.
+
+## Installation
+
+```bash
+npm install @alps-asd/mcp
+```
+
+## Claude Desktop Configuration
+
+Add to `~/Library/Application Support/Claude/claude_desktop_config.json`:
+
+```json
+{
+  "mcpServers": {
+    "alps": {
+      "command": "npx",
+      "args": ["@alps-asd/mcp"]
+    }
+  }
+}
+```
+
+## Available Tools
+
+### validate_alps
+
+Validate an ALPS profile and get detailed error feedback.
+
+**Parameters:**
+- `alps_content` (required): ALPS profile content (XML or JSON format)
+
+### alps2svg
+
+Generate an SVG state diagram from an ALPS profile.
+
+**Parameters:**
+- `alps_content`: ALPS profile content (XML or JSON format)
+- `alps_path`: Path to ALPS profile file (alternative to alps_content)
+
+### alps_guide
+
+Get ALPS best practices and reference guide.
+
+**Parameters:** None
+
+---
+
+# Validation Reference
+
+## Errors (E-codes)
+
+Errors indicate problems that must be fixed for the ALPS profile to be valid.
+
+### E001: Missing id or href
+
+**Message:** `Descriptor must have either id or href`
+
+**Cause:** A descriptor element lacks both `id` and `href` attributes.
+
+**Solution:** Add either an `id` (for definitions) or `href` (for references).
+
+```json
+// Invalid
+{ "type": "semantic" }
+
+// Valid - with id
+{ "id": "userName", "type": "semantic" }
+
+// Valid - with href
+{ "href": "#userName" }
+```
+
+### E002: Missing rt for transition
+
+**Message:** `Missing rt (return type) for {type} transition`
+
+**Cause:** A transition descriptor (`safe`, `unsafe`, or `idempotent`) is missing the `rt` attribute.
+
+**Solution:** Add an `rt` attribute pointing to the target state.
+
+```json
+// Invalid
+{ "id": "goHome", "type": "safe" }
+
+// Valid
+{ "id": "goHome", "type": "safe", "rt": "#HomePage" }
+```
+
+### E003: Invalid type value
+
+**Message:** `Invalid type value: {value}. Must be one of: semantic, safe, unsafe, idempotent`
+
+**Cause:** The `type` attribute has an invalid value.
+
+**Solution:** Use one of the valid types: `semantic`, `safe`, `unsafe`, or `idempotent`.
+
+```json
+// Invalid
+{ "id": "doSubmit", "type": "action" }
+
+// Valid
+{ "id": "doSubmit", "type": "unsafe", "rt": "#Result" }
+```
+
+### E004: Broken reference
+
+**Message:** `Broken reference: {ref} does not exist`
+
+**Cause:** An `href` or `rt` attribute references a descriptor ID that doesn't exist.
+
+**Solution:** Ensure the referenced descriptor is defined, or fix the reference.
+
+```json
+// Invalid - #UserProfile doesn't exist
+{ "id": "goProfile", "type": "safe", "rt": "#UserProfile" }
+
+// Valid - #UserProfile is defined
+{
+  "descriptor": [
+    { "id": "UserProfile", "type": "semantic" },
+    { "id": "goProfile", "type": "safe", "rt": "#UserProfile" }
+  ]
+}
+```
+
+### E005: Duplicate id
+
+**Message:** `Duplicate id: {id}`
+
+**Cause:** Multiple descriptors share the same `id` value.
+
+**Solution:** Ensure each descriptor has a unique `id`.
+
+```json
+// Invalid
+{
+  "descriptor": [
+    { "id": "name", "type": "semantic" },
+    { "id": "name", "type": "semantic" }
+  ]
+}
+
+// Valid
+{
+  "descriptor": [
+    { "id": "userName", "type": "semantic" },
+    { "id": "productName", "type": "semantic" }
+  ]
+}
+```
+
+### E008: Missing alps property
+
+**Message:** `Missing alps property`
+
+**Cause:** The root document is missing the `alps` property.
+
+**Solution:** Wrap your profile in an `alps` object.
+
+```json
+// Invalid
+{ "descriptor": [...] }
+
+// Valid
+{ "alps": { "descriptor": [...] } }
+```
+
+### E009: Missing descriptor array
+
+**Message:** `Missing descriptor array`
+
+**Cause:** The `alps` object is missing the `descriptor` array.
+
+**Solution:** Add a `descriptor` array containing your descriptors.
+
+```json
+// Invalid
+{ "alps": { "title": "My API" } }
+
+// Valid
+{ "alps": { "title": "My API", "descriptor": [...] } }
+```
+
+### E011: Tag must be string
+
+**Message:** `Tag must be a space-separated string, not an array`
+
+**Cause:** The `tag` attribute is an array instead of a string.
+
+**Solution:** Use a space-separated string for tags.
+
+```json
+// Invalid
+{ "id": "userId", "tag": ["ontology", "identifier"] }
+
+// Valid
+{ "id": "userId", "tag": "ontology identifier" }
+```
+
+## Warnings (W-codes)
+
+Warnings indicate potential issues or deviations from best practices.
+
+### W001: Missing title
+
+**Message:** `Missing title attribute in ALPS document`
+
+**Solution:** Add a `title` to describe your API.
+
+```json
+// No warning
+{ "alps": { "title": "User Management API", "descriptor": [...] } }
+```
+
+### W002: Safe transition naming
+
+**Message:** `Safe transition "{id}" should start with "go"`
+
+**Solution:** Rename the transition to start with `go`.
+
+```json
+// Triggers warning
+{ "id": "viewProduct", "type": "safe", "rt": "#Product" }
+
+// No warning
+{ "id": "goProduct", "type": "safe", "rt": "#Product" }
+```
+
+### W003: Unsafe/idempotent transition naming
+
+**Message:** `{type} transition "{id}" should start with "do"`
+
+**Solution:** Rename the transition to start with `do`.
+
+```json
+// Triggers warning
+{ "id": "submitOrder", "type": "unsafe", "rt": "#Confirmation" }
+
+// No warning
+{ "id": "doSubmitOrder", "type": "unsafe", "rt": "#Confirmation" }
+```
+
+## Suggestions (S-codes)
+
+### S001: Missing doc for transition
+
+**Message:** `Consider adding doc to transition "{id}"`
+
+**Solution:** Add a `doc` element to describe the transition's purpose.
+
+```json
+// No suggestion
+{
+  "id": "goCheckout",
+  "type": "safe",
+  "rt": "#Checkout",
+  "doc": { "value": "Navigate to the checkout page" }
+}
+```
+
+## Validation Code Summary
+
+| Code | Severity | Description |
+|------|----------|-------------|
+| E001 | Error | Missing id or href |
+| E002 | Error | Missing rt for transition |
+| E003 | Error | Invalid type value |
+| E004 | Error | Broken reference |
+| E005 | Error | Duplicate id |
+| E008 | Error | Missing alps property |
+| E009 | Error | Missing descriptor array |
+| E011 | Error | Tag must be string |
+| W001 | Warning | Missing title |
+| W002 | Warning | Safe transition should start with "go" |
+| W003 | Warning | Unsafe/idempotent should start with "do" |
+| S001 | Suggestion | Consider adding doc to transition |
+
+---
+
+# Architecture
+
+## Design Philosophy
+
+**Editor-first, CLI as adapter**: The browser-based editor is the source of truth for all UI logic. The CLI is a Node.js adapter that provides command-line access using the same algorithms.
+
+## Project Structure
+
+```
+app-state-diagram/
+├── public/                     # Browser-based editor (GitHub Pages)
+│   ├── index.html              # Main editor page
+│   └── js/
+│       ├── scripts.js          # Editor UI (Ace, validation)
+│       ├── diagramAdapters.js  # DOT/SVG/HTML generation
+│       └── descriptor2table.js # Table generation utilities
+│
+├── packages/
+│   ├── cli/                    # @alps-asd/cli (Node.js)
+│   │   └── src/
+│   │       ├── asd.ts          # CLI entry point
+│   │       ├── parser/         # ALPS parsing (fast-xml-parser)
+│   │       ├── generator/      # DOT, SVG, HTML generation
+│   │       └── resolver/       # External reference resolution
+│   │
+│   └── mcp/                    # @alps-asd/mcp (MCP Server)
+│       └── src/
+│           └── index.ts        # MCP server with validate/generate tools
+│
+└── docs/demo/                  # Example ALPS profiles
+```
+
+## Data Flow
+
+```
+ALPS Input (JSON/XML)
+        │
+        ▼
+┌───────────────────┐
+│   Parser          │ (fast-xml-parser / JSON.parse)
+└───────────────────┘
+        │
+        ▼
+┌───────────────────┐
+│  AlpsDocument     │ (Normalized structure)
+└───────────────────┘
+        │
+   ┌────┴────┬────────────┐
+   ▼         ▼            ▼
+DOT Gen   Table Gen   Validator
+   │         │            │
+   ▼         │            │
+SVG Gen      │            │
+   │         │            │
+   └────┬────┴────────────┘
+        ▼
+┌───────────────────┐
+│  HTML Output      │
+│  • SVG diagram    │
+│  • Descriptor tbl │
+│  • Tag filtering  │
+└───────────────────┘
+```
+
+## Shared Logic (Browser & CLI)
+
+| Function | Browser (diagramAdapters.js) | CLI (TypeScript) |
+|----------|------------------------------|------------------|
+| ALPS parsing | DOMParser / JSON.parse | fast-xml-parser / JSON.parse |
+| DOT generation | generateDotFromAlps() | dot-generator.ts |
+| SVG generation | Viz.js (CDN) | @viz-js/viz (WASM) |
+| HTML generation | inline template | html-generator.ts |
+| Table generation | descriptor2table.js | table-functions.ts |
+
+---
+
+# Example: Minimal Blog API
+
+```json
+{
+  "alps": {
+    "title": "Minimal Blog API",
+    "doc": { "value": "A minimal blog API with posts" },
+    "descriptor": [
+      { "id": "id", "def": "https://schema.org/identifier" },
+      { "id": "title", "def": "https://schema.org/title" },
+      { "id": "content", "def": "https://schema.org/articleBody" },
+
+      { "id": "Post", "type": "semantic", "descriptor": [
+        { "href": "#id" },
+        { "href": "#title" },
+        { "href": "#content" }
+      ]},
+
+      { "id": "PostList", "type": "semantic", "descriptor": [
+        { "href": "#Post" },
+        { "href": "#goPost" },
+        { "href": "#doCreatePost" }
+      ]},
+
+      { "id": "goHome", "type": "safe", "rt": "#PostList", "doc": { "value": "Navigate to post list" } },
+      { "id": "goPost", "type": "safe", "rt": "#Post", "doc": { "value": "View a post" } },
+      { "id": "doCreatePost", "type": "unsafe", "rt": "#Post", "doc": { "value": "Create a new post" } },
+      { "id": "doDeletePost", "type": "idempotent", "rt": "#PostList", "doc": { "value": "Delete a post" } }
+    ]
+  }
+}
+```
+
+This example demonstrates:
+- **Ontology**: Semantic descriptors (`id`, `title`, `content`) with Schema.org definitions
+- **Taxonomy**: State descriptors (`Post`, `PostList`) with nested references
+- **Choreography**: Transitions (`goHome`, `goPost`, `doCreatePost`, `doDeletePost`) with proper naming and `rt` targets
+
+---
+
+# ALPS Specification
+
+For comprehensive ALPS specification, schemas, and guides:
+- [ALPS Manual & Resources](https://www.app-state-diagram.com/llms.txt)
+- [ALPS Creation Guide](https://alps-asd.github.io/app-state-diagram/alps-skill.md): How to write good ALPS profiles
+
+---
+
+# Resources
+
+- [Online Editor](https://editor.app-state-diagram.com/): No-install browser-based editor
+- [Official Documentation](https://www.app-state-diagram.com/manuals/1.0/en/index.html)
+- [ALPS Specification](http://alps.io/)
+- [GitHub Repository](https://github.com/alps-asd/app-state-diagram)

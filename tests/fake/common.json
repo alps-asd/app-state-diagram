@@ -1,0 +1,9 @@
+{
+  "alps": {
+    "descriptor": [
+      {"id": "id", "type": "semantic", "title": "Identifier"},
+      {"id": "title", "type": "semantic", "title": "Title"},
+      {"id": "dateCreated", "type": "semantic", "title": "Created Date"}
+    ]
+  }
+}

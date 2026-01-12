@@ -1,0 +1,14 @@
+classDiagram
+    class PostList {
+        Post
+        goPost
+        doCreatePost
+    }
+    class Post {
+        id
+        title
+        content
+    }
+
+    PostList --> Post : goPost
+    PostList --> Post : doCreatePost

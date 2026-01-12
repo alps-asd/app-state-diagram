@@ -1,0 +1,232 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://alps-asd.github.io/app-state-diagram/schemas/handover-protocol.json",
+  "title": "Handover Protocol (Sessions Array Format)",
+  "description": "Schema for AI agent handover protocol (ADR 0006). Enables knowledge continuity across AI sessions. Updated 2025-12-14 to use sessions array format for historical preservation.",
+  "type": "object",
+  "required": ["task", "current_state", "sessions"],
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "JSON Schema reference"
+    },
+    "task": {
+      "type": "object",
+      "description": "Task information",
+      "required": ["type"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "Type of task being performed",
+          "enum": [
+            "alps-surveyor",
+            "code-analysis",
+            "doc-generation",
+            "test-coverage",
+            "refactoring",
+            "migration",
+            "tool-development"
+          ]
+        },
+        "target": {
+          "type": "string",
+          "description": "Brief description of the task target",
+          "minLength": 1
+        },
+        "description": {
+          "type": "string",
+          "description": "Detailed description of the task"
+        }
+      }
+    },
+    "current_state": {
+      "type": "object",
+      "description": "Current state of the task (latest session summary)",
+      "required": ["session_id", "total_sessions"],
+      "properties": {
+        "session_id": {
+          "type": "string",
+          "description": "ID of the most recent session",
+          "minLength": 1
+        },
+        "total_sessions": {
+          "type": "integer",
+          "description": "Total number of sessions completed",
+          "minimum": 1
+        },
+        "summary": {
+          "type": "string",
+          "description": "Quick summary of current status"
+        },
+        "alps_profile": {
+          "type": "object",
+          "description": "ALPS profile status (for alps-surveyor tasks)",
+          "properties": {
+            "file_path": {"type": "string"},
+            "total_descriptors": {"type": "integer"},
+            "validation_status": {"type": "string"}
+          }
+        }
+      }
+    },
+    "sessions": {
+      "type": "array",
+      "description": "Array of all sessions (append-only, never delete)",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["session_id", "timestamp", "model"],
+        "properties": {
+          "session_id": {
+            "type": "string",
+            "description": "Unique identifier for this session",
+            "minLength": 1
+          },
+          "timestamp": {
+            "type": "string",
+            "description": "ISO 8601 timestamp",
+            "format": "date-time"
+          },
+          "model": {
+            "type": "string",
+            "description": "AI model used (e.g., 'claude-sonnet-4.5')",
+            "minLength": 1
+          },
+          "task_type": {
+            "type": "string",
+            "description": "Type of work done in this session"
+          },
+          "handover_note": {
+            "type": "object",
+            "description": "Human-readable notes for next AI",
+            "properties": {
+              "summary": {
+                "type": "string",
+                "description": "What was accomplished",
+                "minLength": 1
+              },
+              "advice": {
+                "type": "string",
+                "description": "Guidance for successor AI",
+                "minLength": 1
+              },
+              "warnings": {
+                "type": "array",
+                "description": "Things to watch out for",
+                "items": {"type": "string"}
+              }
+            }
+          },
+          "accomplishments": {
+            "type": "array",
+            "description": "List of completed items in this session",
+            "items": {"type": "string"}
+          },
+          "tools_created": {
+            "type": "object",
+            "description": "Tools created/used in this session",
+            "additionalProperties": true
+          },
+          "descriptors_added": {
+            "type": "integer",
+            "description": "Number of ALPS descriptors added (for alps-surveyor)",
+            "minimum": 0
+          },
+          "files_created": {
+            "type": "array",
+            "description": "Files created in this session",
+            "items": {"type": "string"}
+          },
+          "files_modified": {
+            "type": "array",
+            "description": "Files modified in this session",
+            "items": {"type": "string"}
+          },
+          "validation_result": {
+            "type": "object",
+            "description": "ALPS validation result (for alps-surveyor)",
+            "properties": {
+              "errors": {"type": "integer"},
+              "warnings": {"type": "integer"},
+              "suggestions": {"type": "integer"},
+              "status": {"type": "string"}
+            }
+          }
+        }
+      }
+    },
+    "shared_context": {
+      "type": "object",
+      "description": "Data accumulated across all sessions",
+      "additionalProperties": true,
+      "properties": {
+        "website_info": {
+          "type": "object",
+          "description": "Website information (for alps-surveyor)",
+          "properties": {
+            "url": {"type": "string"},
+            "description": {"type": "string"}
+          }
+        },
+        "patterns_learned": {
+          "type": "object",
+          "description": "URL patterns learned (for alps-surveyor)",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "pattern": {"type": "string"},
+              "confidence": {"type": "string"},
+              "discovered_in": {"type": "string"}
+            }
+          }
+        }
+      }
+    },
+    "pending_work": {
+      "type": "object",
+      "description": "Work that still needs to be done",
+      "properties": {
+        "features": {
+          "type": "array",
+          "description": "Features not yet implemented",
+          "items": {"type": "string"}
+        },
+        "frontier_queue": {
+          "type": "array",
+          "description": "Items to explore next",
+          "items": {"type": "string"}
+        },
+        "graveyard": {
+          "type": "array",
+          "description": "Items marked as out of scope",
+          "items": {
+            "oneOf": [
+              {"type": "string"},
+              {
+                "type": "object",
+                "properties": {
+                  "url": {"type": "string"},
+                  "reason": {"type": "string"},
+                  "note": {"type": "string"}
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "tools_available": {
+      "type": "object",
+      "description": "Tools created during the task",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "command": {"type": "string"},
+          "package": {"type": "string"},
+          "purpose": {"type": "string"},
+          "created_in": {"type": "string"}
+        }
+      }
+    }
+  }
+}

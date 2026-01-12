@@ -1,0 +1,56 @@
+{
+  "name": "@alps-asd/app-state-diagram",
+  "version": "2.0.0-alpha.2",
+  "description": "ALPS CLI tool - generate documentation from ALPS profiles",
+  "main": "dist/asd.js",
+  "types": "dist/asd.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/alps-asd/app-state-diagram.git",
+    "directory": "packages/app-state-diagram"
+  },
+  "homepage": "https://github.com/alps-asd/app-state-diagram#readme",
+  "publishConfig": {
+    "access": "public"
+  },
+  "exports": {
+    ".": "./dist/asd.js",
+    "./parser/*": "./dist/parser/*",
+    "./validator/*": "./dist/validator/*",
+    "./generator/*": "./dist/generator/*"
+  },
+  "bin": {
+    "asd": "dist/asd.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "clean": "rm -rf dist",
+    "test": "jest",
+    "test:coverage": "jest --coverage"
+  },
+  "keywords": [
+    "alps",
+    "cli",
+    "documentation",
+    "state-diagram"
+  ],
+  "author": "Akihito Koriyama <akihito.koriyama@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "@viz-js/viz": "^3.11.0",
+    "commander": "^11.1.0",
+    "fast-xml-parser": "^4.5.0"
+  },
+  "optionalDependencies": {
+    "chokidar": "3",
+    "chrome-remote-interface": "^0.33.3"
+  },
+  "devDependencies": {
+    "@types/chrome-remote-interface": "^0.33.0",
+    "@types/node": "^20.8.0",
+    "typescript": "^5.2.2"
+  }
+}

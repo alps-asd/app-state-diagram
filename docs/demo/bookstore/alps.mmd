@@ -1,0 +1,79 @@
+classDiagram
+    class Home {
+        🟩 goToCatalog
+        🟩 goToCart
+    }
+    class Catalog {
+        ⬜ Book
+        🟩 goListBooks
+        🟩 goSearchBooks
+        🟩 goGetCategories
+        🟩 goToBookDetails
+        🟩 goToCategory
+        🟩 goToCart
+    }
+    class Book {
+        ⬜ id
+        ⬜ title
+        ⬜ author
+        ⬜ isbn
+        ⬜ price
+        ⬜ category
+        🟩 goToCatalog
+        🟥 doAddToCart
+    }
+    class Category {
+        ⬜ id
+        ⬜ title
+        🟩 goToCatalog
+        🟩 goToBookDetails
+    }
+    class ShoppingCart {
+        ⬜ totalAmount
+        🟩 goListCartItems
+        🟩 goToCheckout
+        🟩 goToCatalog
+        🟨 doUpdateQuantity
+        🟨 doRemoveFromCart
+    }
+    class Checkout {
+        🟩 goToPayment
+        🟩 goToCart
+        🟥 doUserInfo
+        🟥 doShippingInfo
+    }
+    class Payment {
+        ⬜ paymentMethod
+        🟩 goOrderDetails
+        🟩 goToHome
+        🟩 goToCart
+        🟥 doPaymentInfo
+        🟥 doPlaceOrder
+    }
+
+    Payment --> Home : 🟩 goToHome
+    Home --> Catalog : 🟩 goToCatalog
+    Book --> Catalog : 🟩 goToCatalog
+    Category --> Catalog : 🟩 goToCatalog
+    ShoppingCart --> Catalog : 🟩 goToCatalog
+    Catalog --> Book : 🟩 goToBookDetails
+    Category --> Book : 🟩 goToBookDetails
+    Home --> ShoppingCart : 🟩 goToCart
+    Catalog --> ShoppingCart : 🟩 goToCart
+    Checkout --> ShoppingCart : 🟩 goToCart
+    Payment --> ShoppingCart : 🟩 goToCart
+    ShoppingCart --> Checkout : 🟩 goToCheckout
+    Checkout --> Payment : 🟩 goToPayment
+    Catalog --> Catalog : 🟩 goListBooks
+    Catalog --> Catalog : 🟩 goSearchBooks
+    Catalog --> Catalog : 🟩 goGetCategories
+    Catalog --> Category : 🟩 goToCategory
+    Book --> ShoppingCart : 🟥 doAddToCart
+    ShoppingCart --> ShoppingCart : 🟩 goListCartItems
+    ShoppingCart --> ShoppingCart : 🟨 doUpdateQuantity
+    ShoppingCart --> ShoppingCart : 🟨 doRemoveFromCart
+    Checkout --> Checkout : 🟥 doUserInfo
+    Checkout --> Checkout : 🟥 doShippingInfo
+    Payment --> Payment : 🟥 doPaymentInfo
+    Payment --> Payment : 🟥 doPlaceOrder
+    Payment --> Payment : 🟩 goOrderDetails
