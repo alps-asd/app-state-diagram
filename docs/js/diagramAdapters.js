@@ -780,9 +780,14 @@ function escapeDotId(id) {
 function escapeDotLabel(label) {
     return label
         .replace(/\\\\/g, '\\\\\\\\')
-        .replace(/"/g, '\\\\"')
-        .replace(/</g, '\\\\<')
-        .replace(/>/g, '\\\\>');
+        .replace(/"/g, '\\\\"');
+}
+
+// Escape a string for use in a DOT attribute value (inside double quotes)
+function escapeDotAttr(value) {
+    return value
+        .replace(/\\\\/g, '\\\\\\\\')
+        .replace(/"/g, '\\\\"');
 }
 
 function generateDotFromAlps(alpsData, labelMode) {
@@ -810,7 +815,8 @@ function generateDotFromAlps(alpsData, labelMode) {
         if (state.id) {
             const nodeId = escapeDotId(state.id);
             const nodeLabel = escapeDotLabel(getLabel(state));
-            dot += '    ' + nodeId + ' [margin=0.1, label="' + nodeLabel + '", shape=box, URL="#' + state.id + '"]\\n';
+            const nodeUrl = escapeDotAttr('#' + state.id);
+            dot += '    ' + nodeId + ' [margin=0.1, label="' + nodeLabel + '", shape=box, URL="' + nodeUrl + '"]\\n';
         }
     });
 
@@ -822,10 +828,12 @@ function generateDotFromAlps(alpsData, labelMode) {
             const sourceStates = findSourceStatesForTransition(trans.id, descriptors);
             const color = getTransitionColor(trans.type);
             const transLabel = escapeDotLabel(getLabel(trans));
+            const transUrl = escapeDotAttr('#' + trans.id);
+            const transClass = escapeDotAttr(trans.id);
             sourceStates.forEach(sourceState => {
                 const srcId = escapeDotId(sourceState);
                 const tgtId = escapeDotId(targetState);
-                dot += '    ' + srcId + ' -> ' + tgtId + ' [label="' + transLabel + '" URL="#' + trans.id + '" fontsize=13 class="' + trans.id + '" penwidth=1.5 color="' + color + '"];\\n';
+                dot += '    ' + srcId + ' -> ' + tgtId + ' [label="' + transLabel + '" URL="' + transUrl + '" fontsize=13 class="' + transClass + '" penwidth=1.5 color="' + color + '"];\\n';
             });
         }
     });
@@ -835,7 +843,8 @@ function generateDotFromAlps(alpsData, labelMode) {
         if (state.id) {
             const nodeId = escapeDotId(state.id);
             const nodeLabel = escapeDotLabel(getLabel(state));
-            dot += '    ' + nodeId + ' [label="' + nodeLabel + '" URL="#' + state.id + '"]\\n';
+            const nodeUrl = escapeDotAttr('#' + state.id);
+            dot += '    ' + nodeId + ' [label="' + nodeLabel + '" URL="' + nodeUrl + '"]\\n';
         }
     });
     dot += '\\n}';
@@ -1099,9 +1108,14 @@ window.addEventListener('resize', autoSelectSizeMode);
     escapeDotLabel(label) {
         return label
             .replace(/\\/g, '\\\\')
-            .replace(/"/g, '\\"')
-            .replace(/</g, '\\<')
-            .replace(/>/g, '\\>');
+            .replace(/"/g, '\\"');
+    }
+
+    // Escape a string for use in a DOT attribute value (inside double quotes)
+    escapeDotAttr(value) {
+        return value
+            .replace(/\\/g, '\\\\')
+            .replace(/"/g, '\\"');
     }
 
     generateDotFromAlps(alpsData, labelMode = 'id') {
@@ -1139,7 +1153,8 @@ window.addEventListener('resize', autoSelectSizeMode);
             if (state.id) {
                 const nodeId = this.escapeDotId(state.id);
                 const nodeLabel = this.escapeDotLabel(getLabel(state));
-                dot += `    ${nodeId} [margin=0.1, label="${nodeLabel}", shape=box, URL="#${state.id}"]\n`;
+                const nodeUrl = this.escapeDotAttr(`#${state.id}`);
+                dot += `    ${nodeId} [margin=0.1, label="${nodeLabel}", shape=box, URL="${nodeUrl}"]\n`;
             }
         });
 
@@ -1154,11 +1169,13 @@ window.addEventListener('resize', autoSelectSizeMode);
                 sourceStates.forEach(sourceState => {
                     const color = this.getTransitionColor(trans.type);
                     const transLabel = this.escapeDotLabel(getLabel(trans));
+                    const transUrl = this.escapeDotAttr(`#${trans.id}`);
+                    const transClass = this.escapeDotAttr(trans.id);
                     const srcId = this.escapeDotId(sourceState);
                     const tgtId = this.escapeDotId(targetState);
 
                     // Color-coded edges without symbol
-                    dot += `    ${srcId} -> ${tgtId} [label="${transLabel}" URL="#${trans.id}" fontsize=13 class="${trans.id}" penwidth=1.5 color="${color}"];\n`;
+                    dot += `    ${srcId} -> ${tgtId} [label="${transLabel}" URL="${transUrl}" fontsize=13 class="${transClass}" penwidth=1.5 color="${color}"];\n`;
                 });
             }
         });
@@ -1170,7 +1187,8 @@ window.addEventListener('resize', autoSelectSizeMode);
             if (state.id) {
                 const nodeId = this.escapeDotId(state.id);
                 const nodeLabel = this.escapeDotLabel(getLabel(state));
-                dot += `    ${nodeId} [label="${nodeLabel}" URL="#${state.id}"]\n`;
+                const nodeUrl = this.escapeDotAttr(`#${state.id}`);
+                dot += `    ${nodeId} [label="${nodeLabel}" URL="${nodeUrl}"]\n`;
             }
         });
 

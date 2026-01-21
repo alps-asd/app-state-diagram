@@ -25,14 +25,22 @@ function escapeDotId(id: string): string {
 
 /**
  * Escape a string for use as a DOT label (inside double quotes).
- * Escapes backslashes, double quotes, and angle brackets.
+ * Escapes backslashes and double quotes.
  */
 function escapeDotLabel(label: string): string {
   return label
     .replace(/\\/g, '\\\\')
-    .replace(/"/g, '\\"')
-    .replace(/</g, '\\<')
-    .replace(/>/g, '\\>');
+    .replace(/"/g, '\\"');
+}
+
+/**
+ * Escape a string for use in a DOT attribute value (inside double quotes).
+ * Same as escapeDotLabel - escapes backslashes and double quotes.
+ */
+function escapeDotAttr(value: string): string {
+  return value
+    .replace(/\\/g, '\\\\')
+    .replace(/"/g, '\\"');
 }
 
 /**
@@ -75,7 +83,8 @@ export function generateDot(alpsData: AlpsDocument, labelMode: LabelMode = 'id')
     // state.id is guaranteed by the filter above
     const nodeId = escapeDotId(state.id!);
     const nodeLabel = escapeDotLabel(getLabel(state));
-    dot += `    ${nodeId} [margin=0.1, label="${nodeLabel}", shape=box, URL="#${state.id}"]\n`;
+    const nodeUrl = escapeDotAttr(`#${state.id}`);
+    dot += `    ${nodeId} [margin=0.1, label="${nodeLabel}", shape=box, URL="${nodeUrl}"]\n`;
   }
 
   dot += '\n';
@@ -88,11 +97,13 @@ export function generateDot(alpsData: AlpsDocument, labelMode: LabelMode = 'id')
       const sourceStates = findSourceStatesForTransition(trans.id, descriptors);
       const color = getTransitionColor(trans.type);
       const transLabel = escapeDotLabel(getLabel(trans));
+      const transUrl = escapeDotAttr(`#${trans.id}`);
+      const transClass = escapeDotAttr(trans.id);
 
       for (const sourceState of sourceStates) {
         const srcId = escapeDotId(sourceState);
         const tgtId = escapeDotId(targetState);
-        dot += `    ${srcId} -> ${tgtId} [label="${transLabel}" URL="#${trans.id}" fontsize=13 class="${trans.id}" penwidth=1.5 color="${color}"];\n`;
+        dot += `    ${srcId} -> ${tgtId} [label="${transLabel}" URL="${transUrl}" fontsize=13 class="${transClass}" penwidth=1.5 color="${color}"];\n`;
       }
     }
   }
@@ -104,7 +115,8 @@ export function generateDot(alpsData: AlpsDocument, labelMode: LabelMode = 'id')
     // state.id is guaranteed by the filter above
     const nodeId = escapeDotId(state.id!);
     const nodeLabel = escapeDotLabel(getLabel(state));
-    dot += `    ${nodeId} [label="${nodeLabel}" URL="#${state.id}"]\n`;
+    const nodeUrl = escapeDotAttr(`#${state.id}`);
+    dot += `    ${nodeId} [label="${nodeLabel}" URL="${nodeUrl}"]\n`;
   }
 
   dot += '\n}';
