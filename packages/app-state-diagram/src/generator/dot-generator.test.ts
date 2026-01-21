@@ -412,4 +412,18 @@ describe('DotGenerator', () => {
     expect(map.childrenOf).toEqual({});
   });
 
+  it('should escape IDs with special characters', () => {
+    const alps: AlpsDocument = {
+      alps: {
+        descriptor: [
+          { id: 'my-state' }, // contains hyphen
+          { id: 'goToState', type: 'safe', rt: '#my-state' }
+        ]
+      }
+    };
+    const dot = generateDot(alps);
+    // ID should be quoted because it contains a hyphen
+    expect(dot).toContain('"my-state"');
+  });
+
 });
