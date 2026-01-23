@@ -768,6 +768,12 @@ setupTagTrigger();
 // Label mode switching
 const alpsData = ${escapeJsonForScript(alpsData)};
 
+// NOTE: The escape functions below use double-escaped patterns (e.g., /\\\\\\\\/g instead of /\\\\/g)
+// because this code is embedded in a JavaScript template literal within the HTML generator.
+// The first level of escaping is consumed when the template literal is evaluated,
+// leaving the correct single-escaped patterns at runtime.
+// Compare with Alps2DotAdapter class methods which run directly and use single escaping.
+
 // Escape a string for use as a DOT ID
 function escapeDotId(id) {
     if (/^[a-zA-Z_][a-zA-Z0-9_]*$/.test(id)) {
