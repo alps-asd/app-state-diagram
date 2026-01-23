@@ -423,17 +423,18 @@ document.addEventListener('keydown', function(event) {
     }
 });
 
-document.addEventListener('DOMContentLoaded', function() {
+// Setup SVG event handlers - extracted to be reusable after SVG regeneration
+function setupSvgEventHandlers() {
     // Add click handlers to all SVG elements with href="#something"
     const svgLinks = document.querySelectorAll('svg a[href^="#"], svg a[*|href^="#"]');
     console.log('Found SVG links:', svgLinks.length);
-    
+
     svgLinks.forEach(link => {
         link.addEventListener('click', function(e) {
             e.preventDefault();
             e.stopPropagation();
             console.log('SVG link clicked:', this);
-            
+
             const href = this.getAttribute('href') || this.getAttributeNS('http://www.w3.org/1999/xlink', 'href');
             if (href && href.startsWith('#')) {
                 const id = href.substring(1);
@@ -453,6 +454,11 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Setup SVG event handlers on initial load
+    setupSvgEventHandlers();
 
     // Handle table internal links
     document.querySelectorAll('table a[href^="#"]').forEach(link => {
@@ -762,6 +768,34 @@ setupTagTrigger();
 // Label mode switching
 const alpsData = ${escapeJsonForScript(alpsData)};
 
+// NOTE: The escape functions below use double-escaped patterns (e.g., /\\\\\\\\/g instead of /\\\\/g)
+// because this code is embedded in a JavaScript template literal within the HTML generator.
+// The first level of escaping is consumed when the template literal is evaluated,
+// leaving the correct single-escaped patterns at runtime.
+// Compare with Alps2DotAdapter class methods which run directly and use single escaping.
+
+// Escape a string for use as a DOT ID
+function escapeDotId(id) {
+    if (/^[a-zA-Z_][a-zA-Z0-9_]*$/.test(id)) {
+        return id;
+    }
+    return '"' + id.replace(/\\\\/g, '\\\\\\\\').replace(/"/g, '\\\\"') + '"';
+}
+
+// Escape a string for use as a DOT label (inside double quotes)
+function escapeDotLabel(label) {
+    return label
+        .replace(/\\\\/g, '\\\\\\\\')
+        .replace(/"/g, '\\\\"');
+}
+
+// Escape a string for use in a DOT attribute value (inside double quotes)
+function escapeDotAttr(value) {
+    return value
+        .replace(/\\\\/g, '\\\\\\\\')
+        .replace(/"/g, '\\\\"');
+}
+
 function generateDotFromAlps(alpsData, labelMode) {
     const descriptors = alpsData.alps?.descriptor || [];
 
@@ -785,7 +819,10 @@ function generateDotFromAlps(alpsData, labelMode) {
 
     states.forEach(state => {
         if (state.id) {
-            dot += '    ' + state.id + ' [margin=0.1, label="' + getLabel(state) + '", shape=box, URL="#' + state.id + '"]\\n';
+            const nodeId = escapeDotId(state.id);
+            const nodeLabel = escapeDotLabel(getLabel(state));
+            const nodeUrl = escapeDotAttr('#' + state.id);
+            dot += '    ' + nodeId + ' [margin=0.1, label="' + nodeLabel + '", shape=box, URL="' + nodeUrl + '"]\\n';
         }
     });
 
@@ -796,9 +833,13 @@ function generateDotFromAlps(alpsData, labelMode) {
             const targetState = trans.rt.replace('#', '');
             const sourceStates = findSourceStatesForTransition(trans.id, descriptors);
             const color = getTransitionColor(trans.type);
-            const transLabel = getLabel(trans);
+            const transLabel = escapeDotLabel(getLabel(trans));
+            const transUrl = escapeDotAttr('#' + trans.id);
+            const transClass = escapeDotAttr(trans.id);
             sourceStates.forEach(sourceState => {
-                dot += '    ' + sourceState + ' -> ' + targetState + ' [label="' + transLabel + '" URL="#' + trans.id + '" fontsize=13 class="' + trans.id + '" penwidth=1.5 color="' + color + '"];\\n';
+                const srcId = escapeDotId(sourceState);
+                const tgtId = escapeDotId(targetState);
+                dot += '    ' + srcId + ' -> ' + tgtId + ' [label="' + transLabel + '" URL="' + transUrl + '" fontsize=13 class="' + transClass + '" penwidth=1.5 color="' + color + '"];\\n';
             });
         }
     });
@@ -806,7 +847,10 @@ function generateDotFromAlps(alpsData, labelMode) {
     dot += '\\n';
     states.forEach(state => {
         if (state.id) {
-            dot += '    ' + state.id + ' [label="' + getLabel(state) + '" URL="#' + state.id + '"]\\n';
+            const nodeId = escapeDotId(state.id);
+            const nodeLabel = escapeDotLabel(getLabel(state));
+            const nodeUrl = escapeDotAttr('#' + state.id);
+            dot += '    ' + nodeId + ' [label="' + nodeLabel + '" URL="' + nodeUrl + '"]\\n';
         }
     });
     dot += '\\n}';
@@ -848,6 +892,8 @@ async function regenerateSvg(labelMode) {
         const svgString = await vizInstance.renderString(dotContent, { format: 'svg' });
         svgGraph.innerHTML = svgString;
         console.log('SVG regenerated with labelMode:', labelMode);
+        // Re-attach SVG event handlers after regeneration
+        setupSvgEventHandlers();
     } catch (error) {
         console.error('Error regenerating SVG:', error);
         svgGraph.innerHTML = '<p style="color:red;">Error regenerating diagram: ' + error.message + '</p>';
@@ -1056,6 +1102,28 @@ window.addEventListener('resize', autoSelectSizeMode);
         return result;
     }
 
+    // Escape a string for use as a DOT ID
+    escapeDotId(id) {
+        if (/^[a-zA-Z_][a-zA-Z0-9_]*$/.test(id)) {
+            return id;
+        }
+        return '"' + id.replace(/\\/g, '\\\\').replace(/"/g, '\\"') + '"';
+    }
+
+    // Escape a string for use as a DOT label (inside double quotes)
+    escapeDotLabel(label) {
+        return label
+            .replace(/\\/g, '\\\\')
+            .replace(/"/g, '\\"');
+    }
+
+    // Escape a string for use in a DOT attribute value (inside double quotes)
+    escapeDotAttr(value) {
+        return value
+            .replace(/\\/g, '\\\\')
+            .replace(/"/g, '\\"');
+    }
+
     generateDotFromAlps(alpsData, labelMode = 'id') {
         const descriptors = alpsData.alps?.descriptor || [];
 
@@ -1089,7 +1157,10 @@ window.addEventListener('resize', autoSelectSizeMode);
         // Add state nodes
         states.forEach(state => {
             if (state.id) {
-                dot += `    ${state.id} [margin=0.1, label="${getLabel(state)}", shape=box, URL="#${state.id}"]\n`;
+                const nodeId = this.escapeDotId(state.id);
+                const nodeLabel = this.escapeDotLabel(getLabel(state));
+                const nodeUrl = this.escapeDotAttr(`#${state.id}`);
+                dot += `    ${nodeId} [margin=0.1, label="${nodeLabel}", shape=box, URL="${nodeUrl}"]\n`;
             }
         });
 
@@ -1103,10 +1174,14 @@ window.addEventListener('resize', autoSelectSizeMode);
 
                 sourceStates.forEach(sourceState => {
                     const color = this.getTransitionColor(trans.type);
-                    const transLabel = getLabel(trans);
+                    const transLabel = this.escapeDotLabel(getLabel(trans));
+                    const transUrl = this.escapeDotAttr(`#${trans.id}`);
+                    const transClass = this.escapeDotAttr(trans.id);
+                    const srcId = this.escapeDotId(sourceState);
+                    const tgtId = this.escapeDotId(targetState);
 
                     // Color-coded edges without symbol
-                    dot += `    ${sourceState} -> ${targetState} [label="${transLabel}" URL="#${trans.id}" fontsize=13 class="${trans.id}" penwidth=1.5 color="${color}"];\n`;
+                    dot += `    ${srcId} -> ${tgtId} [label="${transLabel}" URL="${transUrl}" fontsize=13 class="${transClass}" penwidth=1.5 color="${color}"];\n`;
                 });
             }
         });
@@ -1116,7 +1191,10 @@ window.addEventListener('resize', autoSelectSizeMode);
         // Add basic state nodes again (for compatibility)
         states.forEach(state => {
             if (state.id) {
-                dot += `    ${state.id} [label="${getLabel(state)}" URL="#${state.id}"]\n`;
+                const nodeId = this.escapeDotId(state.id);
+                const nodeLabel = this.escapeDotLabel(getLabel(state));
+                const nodeUrl = this.escapeDotAttr(`#${state.id}`);
+                dot += `    ${nodeId} [label="${nodeLabel}" URL="${nodeUrl}"]\n`;
             }
         });
 
