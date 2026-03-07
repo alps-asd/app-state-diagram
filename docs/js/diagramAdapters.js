@@ -245,20 +245,20 @@ class Alps2DotAdapter extends DiagramAdapter {
             const dotContent = this.generateDotFromAlps(alpsData);
             console.log('Generated DOT content:', dotContent.substring(0, 200) + '...');
 
-            // Wait for Viz.js to be available in main page context
+            // Wait for Viz.js v3 to be available in main page context
             console.log('Checking Viz.js availability...');
             let viz = window.Viz;
-            for (let i = 0; i < 50 && (!viz || typeof viz !== 'function'); i++) {
+            for (let i = 0; i < 50 && (!viz || typeof viz.instance !== 'function'); i++) {
                 await new Promise(r => setTimeout(r, 100));
                 viz = window.Viz;
                 console.log(`Attempt ${i + 1}: Viz available = ${typeof viz}`);
             }
 
-            if (viz && typeof viz === 'function') {
-                console.log('Main page: Using pre-loaded Viz.js to generate SVG...');
+            if (viz && typeof viz.instance === 'function') {
+                console.log('Main page: Using pre-loaded Viz.js v3 to generate SVG...');
                 try {
-                    const vizInstance = new viz();
-                    const svgString = await vizInstance.renderString(dotContent, { format: 'svg' });
+                    const vizInstance = await viz.instance();
+                    const svgString = vizInstance.renderString(dotContent, { format: 'svg' });
                     console.log('Main page: SVG generated successfully');
                     
                     // Create relationship data for highlighting
@@ -782,18 +782,21 @@ function escapeDotId(id) {
     return '"' + id.replace(/\\\\/g, '\\\\\\\\').replace(/"/g, '\\\\"') + '"';
 }
 
-// Escape a string for use as a DOT label (inside double quotes)
+// Escape a string for use as a DOT quoted string (label="...", URL="...")
 function escapeDotLabel(label) {
     return label
         .replace(/\\\\/g, '\\\\\\\\')
         .replace(/"/g, '\\\\"');
 }
 
-// Escape a string for use in a DOT attribute value (inside double quotes)
-function escapeDotAttr(value) {
-    return value
-        .replace(/\\\\/g, '\\\\\\\\')
-        .replace(/"/g, '\\\\"');
+// Escape a string for use inside a DOT HTML label text (<<TABLE>...>)
+function escapeHtmlLabel(s) {
+    return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+// Escape a string for use in a DOT HTML attribute value (HREF, TOOLTIP)
+function escapeHtmlAttr(s) {
+    return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
 function generateDotFromAlps(alpsData, labelMode) {
@@ -828,19 +831,46 @@ function generateDotFromAlps(alpsData, labelMode) {
 
     dot += '\\n';
 
+    // Group transitions by (source, target) pair
+    const edgeGroups = {};
     transitions.forEach(trans => {
         if (trans.id && trans.rt) {
             const targetState = trans.rt.replace('#', '');
             const sourceStates = findSourceStatesForTransition(trans.id, descriptors);
             const color = getTransitionColor(trans.type);
-            const transLabel = escapeDotLabel(getLabel(trans));
-            const transUrl = escapeDotAttr('#' + trans.id);
-            const transClass = escapeDotAttr(trans.id);
+            const transLabel = getLabel(trans);
             sourceStates.forEach(sourceState => {
-                const srcId = escapeDotId(sourceState);
-                const tgtId = escapeDotId(targetState);
-                dot += '    ' + srcId + ' -> ' + tgtId + ' [label="' + transLabel + '" URL="' + transUrl + '" fontsize=13 class="' + transClass + '" penwidth=1.5 color="' + color + '"];\\n';
+                const key = sourceState + '\\t' + targetState;
+                if (!edgeGroups[key]) {
+                    edgeGroups[key] = { ids: [], labels: [], colors: [], types: [], titles: [] };
+                }
+                edgeGroups[key].ids.push(trans.id);
+                edgeGroups[key].labels.push(transLabel);
+                edgeGroups[key].colors.push(color);
+                edgeGroups[key].types.push(trans.type || '');
+                edgeGroups[key].titles.push(trans.title || trans.id);
             });
+        }
+    });
+
+    // Render grouped edges with HTML TABLE labels
+    Object.keys(edgeGroups).forEach(key => {
+        const group = edgeGroups[key];
+        const parts = key.split('\\t');
+        const sourceState = parts[0];
+        const targetState = parts[1];
+        const edgeColor = group.ids.length === 1 ? getEdgeColor(group.types[0]) : getGroupEdgeColor(group.types);
+
+        if (group.ids.length === 1) {
+            const tableLabel = '<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0" CELLPADDING="0"><TR><TD VALIGN="MIDDLE" HREF="#' + escapeHtmlAttr(group.ids[0]) + '" TOOLTIP="' + escapeHtmlAttr(group.titles[0]) + ' (' + group.types[0] + ')"><FONT COLOR="' + group.colors[0] + '">\\u25A0</FONT> ' + escapeHtmlLabel(group.labels[0]) + '</TD></TR></TABLE>';
+            dot += '    ' + escapeDotId(sourceState) + ' -> ' + escapeDotId(targetState) + ' [label=<' + tableLabel + '> URL="#' + escapeHtmlAttr(group.ids[0]) + '" fontsize=13 class="' + escapeHtmlAttr(group.ids[0]) + '" penwidth=1.3 color="' + edgeColor + '"];\\n';
+        } else {
+            let rows = '';
+            for (let i = 0; i < group.ids.length; i++) {
+                rows += '<TR><TD VALIGN="MIDDLE" ALIGN="LEFT" HREF="#' + escapeHtmlAttr(group.ids[i]) + '" TOOLTIP="' + escapeHtmlAttr(group.titles[i]) + ' (' + group.types[i] + ')"><FONT COLOR="' + group.colors[i] + '">\\u25A0</FONT> ' + escapeHtmlLabel(group.labels[i]) + '</TD></TR>';
+            }
+            const tableLabel = '<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0" CELLPADDING="0">' + rows + '</TABLE>';
+            dot += '    ' + escapeDotId(sourceState) + ' -> ' + escapeDotId(targetState) + ' [label=<' + tableLabel + '> URL="#' + escapeHtmlAttr(group.ids[0]) + '" fontsize=13 class="' + escapeHtmlAttr(group.ids[0]) + '" penwidth=1.3 color="' + edgeColor + '"];\\n';
         }
     });
 
@@ -849,8 +879,7 @@ function generateDotFromAlps(alpsData, labelMode) {
         if (state.id) {
             const nodeId = escapeDotId(state.id);
             const nodeLabel = escapeDotLabel(getLabel(state));
-            const nodeUrl = escapeDotAttr('#' + state.id);
-            dot += '    ' + nodeId + ' [label="' + nodeLabel + '" URL="' + nodeUrl + '"]\\n';
+            dot += '    ' + nodeId + ' [label="' + nodeLabel + '" URL="#' + escapeDotLabel(state.id) + '"]\\n';
         }
     });
     dot += '\\n}';
@@ -882,14 +911,22 @@ function getTransitionColor(type) {
     }
 }
 
+function getEdgeColor(type) {
+    return (type === 'unsafe' || type === 'idempotent') ? '#000000' : '#99999977';
+}
+
+function getGroupEdgeColor(types) {
+    return (types.includes('unsafe') || types.includes('idempotent')) ? '#000000' : '#99999977';
+}
+
 async function regenerateSvg(labelMode) {
     const svgGraph = document.getElementById('svg-graph');
     svgGraph.innerHTML = '<p>Regenerating diagram...</p>';
 
     try {
         const dotContent = generateDotFromAlps(alpsData, labelMode);
-        const vizInstance = new Viz();
-        const svgString = await vizInstance.renderString(dotContent, { format: 'svg' });
+        const vizInstance = await Viz.instance();
+        const svgString = vizInstance.renderString(dotContent, { format: 'svg' });
         svgGraph.innerHTML = svgString;
         console.log('SVG regenerated with labelMode:', labelMode);
         // Re-attach SVG event handlers after regeneration
@@ -1166,23 +1203,50 @@ window.addEventListener('resize', autoSelectSizeMode);
 
         dot += '\n';
 
-        // Add transitions
+        // Group transitions by (source, target) pair
+        const edgeGroups = {};
         transitions.forEach(trans => {
             if (trans.id && trans.rt) {
                 const targetState = trans.rt.replace('#', '');
                 const sourceStates = this.findSourceStatesForTransition(trans.id, descriptors);
-
+                const color = this.getTransitionColor(trans.type);
+                const transLabel = getLabel(trans);
                 sourceStates.forEach(sourceState => {
-                    const color = this.getTransitionColor(trans.type);
-                    const transLabel = this.escapeDotLabel(getLabel(trans));
-                    const transUrl = this.escapeDotAttr(`#${trans.id}`);
-                    const transClass = this.escapeDotAttr(trans.id);
-                    const srcId = this.escapeDotId(sourceState);
-                    const tgtId = this.escapeDotId(targetState);
-
-                    // Color-coded edges without symbol
-                    dot += `    ${srcId} -> ${tgtId} [label="${transLabel}" URL="${transUrl}" fontsize=13 class="${transClass}" penwidth=1.5 color="${color}"];\n`;
+                    const key = `${sourceState}\t${targetState}`;
+                    if (!edgeGroups[key]) {
+                        edgeGroups[key] = { ids: [], labels: [], colors: [], types: [], titles: [] };
+                    }
+                    edgeGroups[key].ids.push(trans.id);
+                    edgeGroups[key].labels.push(transLabel);
+                    edgeGroups[key].colors.push(color);
+                    edgeGroups[key].types.push(trans.type || '');
+                    edgeGroups[key].titles.push(trans.title || trans.id);
                 });
+            }
+        });
+
+        const escHtmlLabel = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        const escHtmlAttr = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        const edgeColorFn = type => (type === 'unsafe' || type === 'idempotent') ? '#000000' : '#99999977';
+        const groupEdgeColorFn = types => (types.includes('unsafe') || types.includes('idempotent')) ? '#000000' : '#99999977';
+
+        Object.keys(edgeGroups).forEach(key => {
+            const group = edgeGroups[key];
+            const [sourceState, targetState] = key.split('\t');
+            const srcId = this.escapeDotId(sourceState);
+            const tgtId = this.escapeDotId(targetState);
+            const edgeColor = group.ids.length === 1 ? edgeColorFn(group.types[0]) : groupEdgeColorFn(group.types);
+
+            if (group.ids.length === 1) {
+                const tableLabel = `<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0" CELLPADDING="0"><TR><TD VALIGN="MIDDLE" HREF="#${escHtmlAttr(group.ids[0])}" TOOLTIP="${escHtmlAttr(group.titles[0])} (${group.types[0]})"><FONT COLOR="${group.colors[0]}">■</FONT> ${escHtmlLabel(group.labels[0])}</TD></TR></TABLE>`;
+                dot += `    ${srcId} -> ${tgtId} [label=<${tableLabel}> URL="#${escHtmlAttr(group.ids[0])}" fontsize=13 class="${escHtmlAttr(group.ids[0])}" penwidth=1.3 color="${edgeColor}"];\n`;
+            } else {
+                let rows = '';
+                for (let i = 0; i < group.ids.length; i++) {
+                    rows += `<TR><TD VALIGN="MIDDLE" ALIGN="LEFT" HREF="#${escHtmlAttr(group.ids[i])}" TOOLTIP="${escHtmlAttr(group.titles[i])} (${group.types[i]})"><FONT COLOR="${group.colors[i]}">■</FONT> ${escHtmlLabel(group.labels[i])}</TD></TR>`;
+                }
+                const tableLabel = `<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0" CELLPADDING="0">${rows}</TABLE>`;
+                dot += `    ${srcId} -> ${tgtId} [label=<${tableLabel}> URL="#${escHtmlAttr(group.ids[0])}" fontsize=13 class="${escHtmlAttr(group.ids[0])}" penwidth=1.3 color="${edgeColor}"];\n`;
             }
         });
 
@@ -1193,8 +1257,7 @@ window.addEventListener('resize', autoSelectSizeMode);
             if (state.id) {
                 const nodeId = this.escapeDotId(state.id);
                 const nodeLabel = this.escapeDotLabel(getLabel(state));
-                const nodeUrl = this.escapeDotAttr(`#${state.id}`);
-                dot += `    ${nodeId} [label="${nodeLabel}" URL="${nodeUrl}"]\n`;
+                dot += `    ${nodeId} [label="${nodeLabel}" URL="#${this.escapeDotLabel(state.id)}"]\n`;
             }
         });
 
