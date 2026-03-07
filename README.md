@@ -7,7 +7,7 @@
 
 **app-state-diagram** is a tool that visualizes state transitions and information structures of RESTful applications. It generates interactive state diagrams and hyperlinked documentation from ALPS (Application-Level Profile Semantics) profiles written in XML or JSON.
 
-[![App State Diagram](docs/demo/bookstore/alps.svg)](https://editor.app-state-diagram.com/)
+[![App State Diagram](docs/demo/bookstore/alps.svg)](https://www.app-state-diagram.com/index.html)
 
 ## Key Benefits
 
