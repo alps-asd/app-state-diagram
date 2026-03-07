@@ -666,8 +666,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
-<script src="https://unpkg.com/viz.js@2.1.2/viz.js"></script>
-<script src="https://unpkg.com/viz.js@2.1.2/lite.render.js"></script>
+<script src="https://unpkg.com/@viz-js/viz@3/dist/viz-global.js"></script>
 </head><body><div class="markdown-body">
 <h1>${safeAlpsTitle}</h1>
 <p>${safeAlpsDoc}</p>
@@ -824,8 +823,7 @@ function generateDotFromAlps(alpsData, labelMode) {
         if (state.id) {
             const nodeId = escapeDotId(state.id);
             const nodeLabel = escapeDotLabel(getLabel(state));
-            const nodeUrl = escapeDotAttr('#' + state.id);
-            dot += '    ' + nodeId + ' [margin=0.1, label="' + nodeLabel + '", shape=box, URL="' + nodeUrl + '"]\\n';
+            dot += '    ' + nodeId + ' [margin=0.1, label="' + nodeLabel + '", shape=box, URL="#' + escapeDotLabel(state.id) + '"]\\n';
         }
     });
 
@@ -1196,8 +1194,7 @@ window.addEventListener('resize', autoSelectSizeMode);
             if (state.id) {
                 const nodeId = this.escapeDotId(state.id);
                 const nodeLabel = this.escapeDotLabel(getLabel(state));
-                const nodeUrl = this.escapeDotAttr(`#${state.id}`);
-                dot += `    ${nodeId} [margin=0.1, label="${nodeLabel}", shape=box, URL="${nodeUrl}"]\n`;
+                dot += `    ${nodeId} [margin=0.1, label="${nodeLabel}", shape=box, URL="#${this.escapeDotLabel(state.id)}"]\n`;
             }
         });
 
