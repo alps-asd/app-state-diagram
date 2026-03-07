@@ -24,8 +24,7 @@ function escapeDotId(id: string): string {
 }
 
 /**
- * Escape a string for use as a DOT label (inside double quotes).
- * Escapes backslashes and double quotes.
+ * Escape a string for use as a DOT quoted string (label="...", URL="...").
  */
 function escapeDotLabel(label: string): string {
   return label
@@ -34,13 +33,26 @@ function escapeDotLabel(label: string): string {
 }
 
 /**
- * Escape a string for use in a DOT attribute value (inside double quotes).
- * Same as escapeDotLabel - escapes backslashes and double quotes.
+ * Escape a string for use inside a DOT HTML label text (<<TABLE>...>).
+ * Must escape HTML entities: &, <, >
  */
-function escapeDotAttr(value: string): string {
+function escapeHtmlLabel(label: string): string {
+  return label
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}
+
+/**
+ * Escape a string for use in a DOT HTML attribute value (HREF, TOOLTIP).
+ * Must escape HTML entities: &, <, >, "
+ */
+function escapeHtmlAttr(value: string): string {
   return value
-    .replace(/\\/g, '\\\\')
-    .replace(/"/g, '\\"');
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
 }
 
 /**
@@ -83,28 +95,55 @@ export function generateDot(alpsData: AlpsDocument, labelMode: LabelMode = 'id')
     // state.id is guaranteed by the filter above
     const nodeId = escapeDotId(state.id!);
     const nodeLabel = escapeDotLabel(getLabel(state));
-    const nodeUrl = escapeDotAttr(`#${state.id}`);
-    dot += `    ${nodeId} [margin=0.1, label="${nodeLabel}", shape=box, URL="${nodeUrl}"]\n`;
+    dot += `    ${nodeId} [margin=0.1, label="${nodeLabel}", shape=box, URL="#${escapeDotLabel(state.id!)}"]\n`;
   }
 
   dot += '\n';
 
-  // Add transitions
+  // Group transitions by (source, target) pair
+  const edgeGroups = new Map<string, { ids: string[]; labels: string[]; colors: string[]; types: string[]; titles: string[] }>();
+
   for (const trans of transitions) {
-    // trans.rt is guaranteed by filter. trans.id is needed for valid DOT node ID.
     if (trans.id) {
       const targetState = trans.rt!.replace('#', '');
       const sourceStates = findSourceStatesForTransition(trans.id, descriptors);
       const color = getTransitionColor(trans.type);
-      const transLabel = escapeDotLabel(getLabel(trans));
-      const transUrl = escapeDotAttr(`#${trans.id}`);
-      const transClass = escapeDotAttr(trans.id);
-
+      const transLabel = getLabel(trans);
       for (const sourceState of sourceStates) {
-        const srcId = escapeDotId(sourceState);
-        const tgtId = escapeDotId(targetState);
-        dot += `    ${srcId} -> ${tgtId} [label="${transLabel}" URL="${transUrl}" fontsize=13 class="${transClass}" penwidth=1.5 color="${color}"];\n`;
+        const key = `${sourceState}\t${targetState}`;
+        if (!edgeGroups.has(key)) {
+          edgeGroups.set(key, { ids: [], labels: [], colors: [], types: [], titles: [] });
+        }
+        const group = edgeGroups.get(key)!;
+        group.ids.push(trans.id);
+        group.labels.push(transLabel);
+        group.colors.push(color);
+        group.types.push(trans.type || '');
+        group.titles.push(trans.title || trans.id);
       }
+    }
+  }
+
+  // Render grouped edges
+  for (const [key, group] of edgeGroups) {
+    const [sourceState, targetState] = key.split('\t');
+    const srcId = escapeDotId(sourceState);
+    const tgtId = escapeDotId(targetState);
+
+    const edgeColor = group.ids.length === 1 ? getEdgeColor(group.types[0]) : getGroupEdgeColor(group.types);
+
+    if (group.ids.length === 1) {
+      // Single transition: use HTML TABLE label with color symbol
+      const tableLabel = `<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0" CELLPADDING="0"><TR><TD VALIGN="MIDDLE" HREF="#${escapeHtmlAttr(group.ids[0])}" TOOLTIP="${escapeHtmlAttr(group.titles[0])} (${group.types[0]})"><FONT COLOR="${group.colors[0]}">■</FONT> ${escapeHtmlLabel(group.labels[0])}</TD></TR></TABLE>`;
+      dot += `    ${srcId} -> ${tgtId} [label=<${tableLabel}> URL="#${escapeHtmlAttr(group.ids[0])}" fontsize=13 class="${escapeHtmlAttr(group.ids[0])}" penwidth=1.3 color="${edgeColor}"];\n`;
+    } else {
+      // Multiple transitions: HTML TABLE with one row per transition
+      let rows = '';
+      for (let i = 0; i < group.ids.length; i++) {
+        rows += `<TR><TD VALIGN="MIDDLE" ALIGN="LEFT" HREF="#${escapeHtmlAttr(group.ids[i])}" TOOLTIP="${escapeHtmlAttr(group.titles[i])} (${group.types[i]})"><FONT COLOR="${group.colors[i]}">■</FONT> ${escapeHtmlLabel(group.labels[i])}</TD></TR>`;
+      }
+      const tableLabel = `<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0" CELLPADDING="0">${rows}</TABLE>`;
+      dot += `    ${srcId} -> ${tgtId} [label=<${tableLabel}> URL="#${escapeHtmlAttr(group.ids[0])}" fontsize=13 class="${escapeHtmlAttr(group.ids[0])}" penwidth=1.3 color="${edgeColor}"];\n`;
     }
   }
 
@@ -115,8 +154,7 @@ export function generateDot(alpsData: AlpsDocument, labelMode: LabelMode = 'id')
     // state.id is guaranteed by the filter above
     const nodeId = escapeDotId(state.id!);
     const nodeLabel = escapeDotLabel(getLabel(state));
-    const nodeUrl = escapeDotAttr(`#${state.id}`);
-    dot += `    ${nodeId} [label="${nodeLabel}" URL="${nodeUrl}"]\n`;
+    dot += `    ${nodeId} [label="${nodeLabel}" URL="#${escapeDotLabel(state.id!)}"]\n`;
   }
 
   dot += '\n}';
@@ -145,7 +183,7 @@ function findSourceStatesForTransition(transitionId: string, descriptors: AlpsDe
 }
 
 /**
- * Get color for transition type
+ * Get color for transition type (used for ■ label color)
  */
 function getTransitionColor(type?: string): string {
   switch (type) {
@@ -158,6 +196,29 @@ function getTransitionColor(type?: string): string {
     default:
       return '#000000';
   }
+}
+
+/**
+ * Get edge line color for transition type.
+ * safe = semi-transparent gray, unsafe/idempotent = black (to emphasize state changes)
+ */
+function getEdgeColor(type?: string): string {
+  switch (type) {
+    case 'unsafe':
+    case 'idempotent':
+      return '#000000';
+    default:
+      return '#99999977';
+  }
+}
+
+/**
+ * Get the dominant edge color for a group of transitions.
+ * If any transition is unsafe or idempotent, use black.
+ */
+function getGroupEdgeColor(types: string[]): string {
+  if (types.includes('unsafe') || types.includes('idempotent')) return '#000000';
+  return '#99999977';
 }
 
 /**

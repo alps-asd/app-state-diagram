@@ -65,9 +65,9 @@ describe('DotGenerator', () => {
       };
       const dot = generateDot(alps);
 
-      expect(dot).toContain('color="#00A86B"'); // safe - green
-      expect(dot).toContain('color="#FF4136"'); // unsafe - red
-      expect(dot).toContain('color="#D4A000"'); // idempotent - yellow
+      expect(dot).toContain('FONT COLOR="#00A86B"'); // safe - green
+      expect(dot).toContain('FONT COLOR="#FF4136"'); // unsafe - red
+      expect(dot).toContain('FONT COLOR="#D4A000"'); // idempotent - yellow
     });
 
     it('should use id as label by default', () => {
@@ -82,7 +82,8 @@ describe('DotGenerator', () => {
       const dot = generateDot(alps, 'id');
 
       expect(dot).toContain('label="HomePage"');
-      expect(dot).toContain('label="goHome"');
+      // Transition label is inside HTML TABLE
+      expect(dot).toContain('goHome</TD>');
     });
 
     it('should use title as label when labelMode is title', () => {
@@ -97,7 +98,8 @@ describe('DotGenerator', () => {
       const dot = generateDot(alps, 'title');
 
       expect(dot).toContain('label="Home Page Title"');
-      expect(dot).toContain('label="Go Home"');
+      // Transition label is inside HTML TABLE
+      expect(dot).toContain('Go Home</TD>');
     });
 
     it('should fall back to id when title is missing', () => {
@@ -112,7 +114,8 @@ describe('DotGenerator', () => {
       const dot = generateDot(alps, 'title');
 
       expect(dot).toContain('label="HomePage"');
-      expect(dot).toContain('label="goHome"');
+      // Transition label is inside HTML TABLE
+      expect(dot).toContain('goHome</TD>');
     });
 
     it('should find source states for transitions', () => {
@@ -243,7 +246,7 @@ describe('DotGenerator', () => {
       }
     };
     const dot = generateDot(alps);
-    expect(dot).toContain('color=\"#000000\"'); // default black
+    expect(dot).toContain('FONT COLOR="#000000"'); // default black
   });
 
   it('should ignore transitions without rt', () => {
@@ -406,6 +409,61 @@ describe('DotGenerator', () => {
     expect(map.childrenOf['Parent']).toEqual([]);
   });
 
+  it('should group multiple transitions between same states into single edge', () => {
+    const alps: AlpsDocument = {
+      alps: {
+        descriptor: [
+          {
+            id: 'Client',
+            descriptor: [
+              { href: '#goUpdateClient' },
+              { href: '#doActivateClient' }
+            ]
+          },
+          { id: 'goUpdateClient', type: 'safe', rt: '#Client', title: 'Update Client' },
+          { id: 'doActivateClient', type: 'unsafe', rt: '#Client', title: 'Activate Client' }
+        ]
+      }
+    };
+    const dot = generateDot(alps);
+
+    // Should have only one edge between Client and Client
+    const edgeCount = (dot.match(/Client -> Client/g) || []).length;
+    expect(edgeCount).toBe(1);
+
+    // Should contain both transition labels in the same TABLE
+    expect(dot).toContain('goUpdateClient');
+    expect(dot).toContain('doActivateClient');
+    expect(dot).toContain('<TABLE');
+    expect(dot).toContain('FONT COLOR="#00A86B"'); // safe
+    expect(dot).toContain('FONT COLOR="#FF4136"'); // unsafe
+  });
+
+  it('should keep separate edges for different source-target pairs', () => {
+    const alps: AlpsDocument = {
+      alps: {
+        descriptor: [
+          {
+            id: 'Home',
+            descriptor: [
+              { href: '#goAbout' },
+              { href: '#goContact' }
+            ]
+          },
+          { id: 'About' },
+          { id: 'Contact' },
+          { id: 'goAbout', type: 'safe', rt: '#About' },
+          { id: 'goContact', type: 'safe', rt: '#Contact' }
+        ]
+      }
+    };
+    const dot = generateDot(alps);
+
+    // Should have separate edges
+    expect(dot).toContain('Home -> About');
+    expect(dot).toContain('Home -> Contact');
+  });
+
   it('buildRelationshipMap should handle missing alps property', () => {
     const alps: AlpsDocument = {} as any;
     const map = buildRelationshipMap(alps);
@@ -424,6 +482,54 @@ describe('DotGenerator', () => {
     const dot = generateDot(alps);
     // ID should be quoted because it contains a hyphen
     expect(dot).toContain('"my-state"');
+  });
+
+  it('should use black edge color for idempotent transitions', () => {
+    const alps: AlpsDocument = {
+      alps: {
+        descriptor: [
+          {
+            id: 'Home',
+            descriptor: [{ href: '#doUpdate' }]
+          },
+          { id: 'doUpdate', type: 'idempotent', rt: '#Home' }
+        ]
+      }
+    };
+    const dot = generateDot(alps);
+    expect(dot).toContain('color="#000000"');
+  });
+
+  it('should use gray edge color for safe-only grouped transitions', () => {
+    const alps: AlpsDocument = {
+      alps: {
+        descriptor: [
+          {
+            id: 'Home',
+            descriptor: [{ href: '#goA' }, { href: '#goB' }]
+          },
+          { id: 'Target' },
+          { id: 'goA', type: 'safe', rt: '#Target' },
+          { id: 'goB', type: 'safe', rt: '#Target' }
+        ]
+      }
+    };
+    const dot = generateDot(alps);
+    expect(dot).toContain('color="#99999977"');
+  });
+
+  it('should escape & in HTML TABLE labels', () => {
+    const alps: AlpsDocument = {
+      alps: {
+        descriptor: [
+          { id: 'Home' },
+          { id: 'goSave', type: 'safe', rt: '#Home', title: 'Subscribe & Save' }
+        ]
+      }
+    };
+    const dot = generateDot(alps);
+    expect(dot).toContain('Subscribe &amp; Save');
+    expect(dot).not.toMatch(/TOOLTIP="[^"]*Subscribe & Save/);
   });
 
 });
