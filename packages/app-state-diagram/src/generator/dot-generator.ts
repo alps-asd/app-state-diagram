@@ -24,8 +24,7 @@ function escapeDotId(id: string): string {
 }
 
 /**
- * Escape a string for use as a DOT label (inside double quotes).
- * Escapes backslashes and double quotes.
+ * Escape a string for use as a DOT quoted string (label="...", URL="...").
  */
 function escapeDotLabel(label: string): string {
   return label
@@ -34,13 +33,26 @@ function escapeDotLabel(label: string): string {
 }
 
 /**
- * Escape a string for use in a DOT attribute value (inside double quotes).
- * Same as escapeDotLabel - escapes backslashes and double quotes.
+ * Escape a string for use inside a DOT HTML label text (<<TABLE>...>).
+ * Must escape HTML entities: &, <, >
  */
-function escapeDotAttr(value: string): string {
+function escapeHtmlLabel(label: string): string {
+  return label
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}
+
+/**
+ * Escape a string for use in a DOT HTML attribute value (HREF, TOOLTIP).
+ * Must escape HTML entities: &, <, >, "
+ */
+function escapeHtmlAttr(value: string): string {
   return value
-    .replace(/\\/g, '\\\\')
-    .replace(/"/g, '\\"');
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
 }
 
 /**
@@ -83,8 +95,7 @@ export function generateDot(alpsData: AlpsDocument, labelMode: LabelMode = 'id')
     // state.id is guaranteed by the filter above
     const nodeId = escapeDotId(state.id!);
     const nodeLabel = escapeDotLabel(getLabel(state));
-    const nodeUrl = escapeDotAttr(`#${state.id}`);
-    dot += `    ${nodeId} [margin=0.1, label="${nodeLabel}", shape=box, URL="${nodeUrl}"]\n`;
+    dot += `    ${nodeId} [margin=0.1, label="${nodeLabel}", shape=box, URL="#${escapeDotLabel(state.id!)}"]\n`;
   }
 
   dot += '\n';
@@ -123,16 +134,16 @@ export function generateDot(alpsData: AlpsDocument, labelMode: LabelMode = 'id')
 
     if (group.ids.length === 1) {
       // Single transition: use HTML TABLE label with color symbol
-      const tableLabel = `<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0" CELLPADDING="0"><TR><TD VALIGN="MIDDLE" HREF="#${escapeDotAttr(group.ids[0])}" TOOLTIP="${escapeDotAttr(group.titles[0])} (${group.types[0]})"><FONT COLOR="${group.colors[0]}">■</FONT> ${escapeDotLabel(group.labels[0])}</TD></TR></TABLE>`;
-      dot += `    ${srcId} -> ${tgtId} [label=<${tableLabel}> URL="#${escapeDotAttr(group.ids[0])}" fontsize=13 class="${escapeDotAttr(group.ids[0])}" penwidth=1.3 color="${edgeColor}"];\n`;
+      const tableLabel = `<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0" CELLPADDING="0"><TR><TD VALIGN="MIDDLE" HREF="#${escapeHtmlAttr(group.ids[0])}" TOOLTIP="${escapeHtmlAttr(group.titles[0])} (${group.types[0]})"><FONT COLOR="${group.colors[0]}">■</FONT> ${escapeHtmlLabel(group.labels[0])}</TD></TR></TABLE>`;
+      dot += `    ${srcId} -> ${tgtId} [label=<${tableLabel}> URL="#${escapeHtmlAttr(group.ids[0])}" fontsize=13 class="${escapeHtmlAttr(group.ids[0])}" penwidth=1.3 color="${edgeColor}"];\n`;
     } else {
       // Multiple transitions: HTML TABLE with one row per transition
       let rows = '';
       for (let i = 0; i < group.ids.length; i++) {
-        rows += `<TR><TD VALIGN="MIDDLE" ALIGN="LEFT" HREF="#${escapeDotAttr(group.ids[i])}" TOOLTIP="${escapeDotAttr(group.titles[i])} (${group.types[i]})"><FONT COLOR="${group.colors[i]}">■</FONT> ${escapeDotLabel(group.labels[i])}</TD></TR>`;
+        rows += `<TR><TD VALIGN="MIDDLE" ALIGN="LEFT" HREF="#${escapeHtmlAttr(group.ids[i])}" TOOLTIP="${escapeHtmlAttr(group.titles[i])} (${group.types[i]})"><FONT COLOR="${group.colors[i]}">■</FONT> ${escapeHtmlLabel(group.labels[i])}</TD></TR>`;
       }
       const tableLabel = `<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0" CELLPADDING="0">${rows}</TABLE>`;
-      dot += `    ${srcId} -> ${tgtId} [label=<${tableLabel}> URL="#${escapeDotAttr(group.ids[0])}" fontsize=13 class="${escapeDotAttr(group.ids[0])}" penwidth=1.3 color="${edgeColor}"];\n`;
+      dot += `    ${srcId} -> ${tgtId} [label=<${tableLabel}> URL="#${escapeHtmlAttr(group.ids[0])}" fontsize=13 class="${escapeHtmlAttr(group.ids[0])}" penwidth=1.3 color="${edgeColor}"];\n`;
     }
   }
 
@@ -143,8 +154,7 @@ export function generateDot(alpsData: AlpsDocument, labelMode: LabelMode = 'id')
     // state.id is guaranteed by the filter above
     const nodeId = escapeDotId(state.id!);
     const nodeLabel = escapeDotLabel(getLabel(state));
-    const nodeUrl = escapeDotAttr(`#${state.id}`);
-    dot += `    ${nodeId} [label="${nodeLabel}" URL="${nodeUrl}"]\n`;
+    dot += `    ${nodeId} [label="${nodeLabel}" URL="#${escapeDotLabel(state.id!)}"]\n`;
   }
 
   dot += '\n}';

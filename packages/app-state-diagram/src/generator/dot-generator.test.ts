@@ -484,4 +484,52 @@ describe('DotGenerator', () => {
     expect(dot).toContain('"my-state"');
   });
 
+  it('should use black edge color for idempotent transitions', () => {
+    const alps: AlpsDocument = {
+      alps: {
+        descriptor: [
+          {
+            id: 'Home',
+            descriptor: [{ href: '#doUpdate' }]
+          },
+          { id: 'doUpdate', type: 'idempotent', rt: '#Home' }
+        ]
+      }
+    };
+    const dot = generateDot(alps);
+    expect(dot).toContain('color="#000000"');
+  });
+
+  it('should use gray edge color for safe-only grouped transitions', () => {
+    const alps: AlpsDocument = {
+      alps: {
+        descriptor: [
+          {
+            id: 'Home',
+            descriptor: [{ href: '#goA' }, { href: '#goB' }]
+          },
+          { id: 'Target' },
+          { id: 'goA', type: 'safe', rt: '#Target' },
+          { id: 'goB', type: 'safe', rt: '#Target' }
+        ]
+      }
+    };
+    const dot = generateDot(alps);
+    expect(dot).toContain('color="#99999977"');
+  });
+
+  it('should escape & in HTML TABLE labels', () => {
+    const alps: AlpsDocument = {
+      alps: {
+        descriptor: [
+          { id: 'Home' },
+          { id: 'goSave', type: 'safe', rt: '#Home', title: 'Subscribe & Save' }
+        ]
+      }
+    };
+    const dot = generateDot(alps);
+    expect(dot).toContain('Subscribe &amp; Save');
+    expect(dot).not.toMatch(/TOOLTIP="[^"]*Subscribe & Save/);
+  });
+
 });
