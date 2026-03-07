@@ -267,8 +267,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 </script>
-<script src="https://unpkg.com/viz.js@2.1.2/viz.js"></script>
-<script src="https://unpkg.com/viz.js@2.1.2/lite.render.js"></script>
+<script src="https://unpkg.com/@viz-js/viz@3/dist/viz-global.js"></script>
 </head>
 <body>
 <div class="markdown-body">
@@ -389,6 +388,8 @@ function generateDotFromAlps(data, labelMode) {
 
     dot += '\\n';
 
+    // Group transitions by (source, target) pair
+    const edgeGroups = {};
     transitions.forEach(trans => {
         if (trans.id && trans.rt) {
             const targetState = trans.rt.replace('#', '');
@@ -396,8 +397,37 @@ function generateDotFromAlps(data, labelMode) {
             const color = getTransitionColor(trans.type);
             const transLabel = getLabel(trans);
             sourceStates.forEach(sourceState => {
-                dot += '    ' + sourceState + ' -> ' + targetState + ' [label="' + transLabel + '" URL="#' + trans.id + '" fontsize=13 class="' + trans.id + '" penwidth=1.5 color="' + color + '"];\\n';
+                const key = sourceState + '\\t' + targetState;
+                if (!edgeGroups[key]) {
+                    edgeGroups[key] = { ids: [], labels: [], colors: [], types: [], titles: [] };
+                }
+                const group = edgeGroups[key];
+                group.ids.push(trans.id);
+                group.labels.push(transLabel);
+                group.colors.push(color);
+                group.types.push(trans.type || '');
+                group.titles.push(trans.title || trans.id);
             });
+        }
+    });
+
+    // Render grouped edges with HTML TABLE labels
+    Object.keys(edgeGroups).forEach(key => {
+        const group = edgeGroups[key];
+        const parts = key.split('\\t');
+        const sourceState = parts[0];
+        const targetState = parts[1];
+
+        if (group.ids.length === 1) {
+            const tableLabel = '<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0" CELLPADDING="0"><TR><TD VALIGN="MIDDLE" HREF="#' + group.ids[0] + '" TOOLTIP="' + group.titles[0] + ' (' + group.types[0] + ')"><FONT COLOR="' + group.colors[0] + '">\\u25A0</FONT> ' + group.labels[0] + '</TD></TR></TABLE>';
+            dot += '    ' + sourceState + ' -> ' + targetState + ' [label=<' + tableLabel + '> URL="#' + group.ids[0] + '" fontsize=13 class="' + group.ids[0] + '" penwidth=1.3 color="#99999977"];\\n';
+        } else {
+            let rows = '';
+            for (let i = 0; i < group.ids.length; i++) {
+                rows += '<TR><TD VALIGN="MIDDLE" ALIGN="LEFT" HREF="#' + group.ids[i] + '" TOOLTIP="' + group.titles[i] + ' (' + group.types[i] + ')"><FONT COLOR="' + group.colors[i] + '">\\u25A0</FONT> ' + group.labels[i] + '</TD></TR>';
+            }
+            const tableLabel = '<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0" CELLPADDING="0">' + rows + '</TABLE>';
+            dot += '    ' + sourceState + ' -> ' + targetState + ' [label=<' + tableLabel + '> URL="#' + group.ids[0] + '" fontsize=13 class="' + group.ids[0] + '" penwidth=1.3 color="#99999977"];\\n';
         }
     });
 
@@ -442,8 +472,8 @@ async function regenerateSvg(labelMode) {
 
     try {
         const dotContent = generateDotFromAlps(window.alpsData, labelMode);
-        const vizInstance = new Viz();
-        const svgString = await vizInstance.renderString(dotContent, { format: 'svg' });
+        const vizInstance = await Viz.instance();
+        const svgString = vizInstance.renderString(dotContent, { format: 'svg' });
         svgGraph.innerHTML = svgString;
     } catch (error) {
         console.error('Error regenerating SVG:', error);

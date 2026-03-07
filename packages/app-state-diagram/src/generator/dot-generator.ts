@@ -89,22 +89,48 @@ export function generateDot(alpsData: AlpsDocument, labelMode: LabelMode = 'id')
 
   dot += '\n';
 
-  // Add transitions
+  // Group transitions by (source, target) pair
+  const edgeGroups = new Map<string, { ids: string[]; labels: string[]; colors: string[]; types: string[]; titles: string[] }>();
+
   for (const trans of transitions) {
-    // trans.rt is guaranteed by filter. trans.id is needed for valid DOT node ID.
     if (trans.id) {
       const targetState = trans.rt!.replace('#', '');
       const sourceStates = findSourceStatesForTransition(trans.id, descriptors);
       const color = getTransitionColor(trans.type);
-      const transLabel = escapeDotLabel(getLabel(trans));
-      const transUrl = escapeDotAttr(`#${trans.id}`);
-      const transClass = escapeDotAttr(trans.id);
-
+      const transLabel = getLabel(trans);
       for (const sourceState of sourceStates) {
-        const srcId = escapeDotId(sourceState);
-        const tgtId = escapeDotId(targetState);
-        dot += `    ${srcId} -> ${tgtId} [label="${transLabel}" URL="${transUrl}" fontsize=13 class="${transClass}" penwidth=1.5 color="${color}"];\n`;
+        const key = `${sourceState}\t${targetState}`;
+        if (!edgeGroups.has(key)) {
+          edgeGroups.set(key, { ids: [], labels: [], colors: [], types: [], titles: [] });
+        }
+        const group = edgeGroups.get(key)!;
+        group.ids.push(trans.id);
+        group.labels.push(transLabel);
+        group.colors.push(color);
+        group.types.push(trans.type || '');
+        group.titles.push(trans.title || trans.id);
       }
+    }
+  }
+
+  // Render grouped edges
+  for (const [key, group] of edgeGroups) {
+    const [sourceState, targetState] = key.split('\t');
+    const srcId = escapeDotId(sourceState);
+    const tgtId = escapeDotId(targetState);
+
+    if (group.ids.length === 1) {
+      // Single transition: use HTML TABLE label with color symbol
+      const tableLabel = `<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0" CELLPADDING="0"><TR><TD VALIGN="MIDDLE" HREF="#${escapeDotAttr(group.ids[0])}" TOOLTIP="${escapeDotAttr(group.titles[0])} (${group.types[0]})"><FONT COLOR="${group.colors[0]}">■</FONT> ${escapeDotLabel(group.labels[0])}</TD></TR></TABLE>`;
+      dot += `    ${srcId} -> ${tgtId} [label=<${tableLabel}> URL="#${escapeDotAttr(group.ids[0])}" fontsize=13 class="${escapeDotAttr(group.ids[0])}" penwidth=1.3 color="#99999977"];\n`;
+    } else {
+      // Multiple transitions: HTML TABLE with one row per transition
+      let rows = '';
+      for (let i = 0; i < group.ids.length; i++) {
+        rows += `<TR><TD VALIGN="MIDDLE" ALIGN="LEFT" HREF="#${escapeDotAttr(group.ids[i])}" TOOLTIP="${escapeDotAttr(group.titles[i])} (${group.types[i]})"><FONT COLOR="${group.colors[i]}">■</FONT> ${escapeDotLabel(group.labels[i])}</TD></TR>`;
+      }
+      const tableLabel = `<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0" CELLPADDING="0">${rows}</TABLE>`;
+      dot += `    ${srcId} -> ${tgtId} [label=<${tableLabel}> URL="#${escapeDotAttr(group.ids[0])}" fontsize=13 class="${escapeDotAttr(group.ids[0])}" penwidth=1.3 color="#99999977"];\n`;
     }
   }
 
