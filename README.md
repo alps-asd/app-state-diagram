@@ -7,7 +7,7 @@
 
 **app-state-diagram** is a tool that visualizes state transitions and information structures of RESTful applications. It generates interactive state diagrams and hyperlinked documentation from ALPS (Application-Level Profile Semantics) profiles written in XML or JSON.
 
-[![App State Diagram](https://editor.app-state-diagram.com/demo/bookstore/alps.svg)](https://editor.app-state-diagram.com/)
+[![App State Diagram](https://alps-asd.github.io/app-state-diagram/demo/bookstore/alps.svg)](https://editor.app-state-diagram.com/)
 
 ## Key Benefits
 
@@ -33,7 +33,7 @@ Auto-updates with `brew upgrade`.
 ### Install with npm
 
 ```bash
-npm install -g @alps-asd/cli
+npm install -g @alps-asd/app-state-diagram
 ```
 
 ### Try It
