@@ -418,16 +418,18 @@ function generateDotFromAlps(data, labelMode) {
         const sourceState = parts[0];
         const targetState = parts[1];
 
+        const edgeColor = group.ids.length === 1 ? getEdgeColor(group.types[0]) : getGroupEdgeColor(group.types);
+
         if (group.ids.length === 1) {
             const tableLabel = '<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0" CELLPADDING="0"><TR><TD VALIGN="MIDDLE" HREF="#' + group.ids[0] + '" TOOLTIP="' + group.titles[0] + ' (' + group.types[0] + ')"><FONT COLOR="' + group.colors[0] + '">\\u25A0</FONT> ' + group.labels[0] + '</TD></TR></TABLE>';
-            dot += '    ' + sourceState + ' -> ' + targetState + ' [label=<' + tableLabel + '> URL="#' + group.ids[0] + '" fontsize=13 class="' + group.ids[0] + '" penwidth=1.3 color="#99999977"];\\n';
+            dot += '    ' + sourceState + ' -> ' + targetState + ' [label=<' + tableLabel + '> URL="#' + group.ids[0] + '" fontsize=13 class="' + group.ids[0] + '" penwidth=1.3 color="' + edgeColor + '"];\\n';
         } else {
             let rows = '';
             for (let i = 0; i < group.ids.length; i++) {
                 rows += '<TR><TD VALIGN="MIDDLE" ALIGN="LEFT" HREF="#' + group.ids[i] + '" TOOLTIP="' + group.titles[i] + ' (' + group.types[i] + ')"><FONT COLOR="' + group.colors[i] + '">\\u25A0</FONT> ' + group.labels[i] + '</TD></TR>';
             }
             const tableLabel = '<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0" CELLPADDING="0">' + rows + '</TABLE>';
-            dot += '    ' + sourceState + ' -> ' + targetState + ' [label=<' + tableLabel + '> URL="#' + group.ids[0] + '" fontsize=13 class="' + group.ids[0] + '" penwidth=1.3 color="#99999977"];\\n';
+            dot += '    ' + sourceState + ' -> ' + targetState + ' [label=<' + tableLabel + '> URL="#' + group.ids[0] + '" fontsize=13 class="' + group.ids[0] + '" penwidth=1.3 color="' + edgeColor + '"];\\n';
         }
     });
 
@@ -464,6 +466,14 @@ function getTransitionColor(type) {
         case 'idempotent': return '#D4A000';
         default: return '#000000';
     }
+}
+
+function getEdgeColor(type) {
+    return (type === 'unsafe' || type === 'idempotent') ? '#000000' : '#99999977';
+}
+
+function getGroupEdgeColor(types) {
+    return (types.includes('unsafe') || types.includes('idempotent')) ? '#000000' : '#99999977';
 }
 
 async function regenerateSvg(labelMode) {

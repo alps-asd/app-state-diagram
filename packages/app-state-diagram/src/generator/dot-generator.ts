@@ -119,10 +119,12 @@ export function generateDot(alpsData: AlpsDocument, labelMode: LabelMode = 'id')
     const srcId = escapeDotId(sourceState);
     const tgtId = escapeDotId(targetState);
 
+    const edgeColor = group.ids.length === 1 ? getEdgeColor(group.types[0]) : getGroupEdgeColor(group.types);
+
     if (group.ids.length === 1) {
       // Single transition: use HTML TABLE label with color symbol
       const tableLabel = `<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0" CELLPADDING="0"><TR><TD VALIGN="MIDDLE" HREF="#${escapeDotAttr(group.ids[0])}" TOOLTIP="${escapeDotAttr(group.titles[0])} (${group.types[0]})"><FONT COLOR="${group.colors[0]}">■</FONT> ${escapeDotLabel(group.labels[0])}</TD></TR></TABLE>`;
-      dot += `    ${srcId} -> ${tgtId} [label=<${tableLabel}> URL="#${escapeDotAttr(group.ids[0])}" fontsize=13 class="${escapeDotAttr(group.ids[0])}" penwidth=1.3 color="#99999977"];\n`;
+      dot += `    ${srcId} -> ${tgtId} [label=<${tableLabel}> URL="#${escapeDotAttr(group.ids[0])}" fontsize=13 class="${escapeDotAttr(group.ids[0])}" penwidth=1.3 color="${edgeColor}"];\n`;
     } else {
       // Multiple transitions: HTML TABLE with one row per transition
       let rows = '';
@@ -130,7 +132,7 @@ export function generateDot(alpsData: AlpsDocument, labelMode: LabelMode = 'id')
         rows += `<TR><TD VALIGN="MIDDLE" ALIGN="LEFT" HREF="#${escapeDotAttr(group.ids[i])}" TOOLTIP="${escapeDotAttr(group.titles[i])} (${group.types[i]})"><FONT COLOR="${group.colors[i]}">■</FONT> ${escapeDotLabel(group.labels[i])}</TD></TR>`;
       }
       const tableLabel = `<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0" CELLPADDING="0">${rows}</TABLE>`;
-      dot += `    ${srcId} -> ${tgtId} [label=<${tableLabel}> URL="#${escapeDotAttr(group.ids[0])}" fontsize=13 class="${escapeDotAttr(group.ids[0])}" penwidth=1.3 color="#99999977"];\n`;
+      dot += `    ${srcId} -> ${tgtId} [label=<${tableLabel}> URL="#${escapeDotAttr(group.ids[0])}" fontsize=13 class="${escapeDotAttr(group.ids[0])}" penwidth=1.3 color="${edgeColor}"];\n`;
     }
   }
 
@@ -171,7 +173,7 @@ function findSourceStatesForTransition(transitionId: string, descriptors: AlpsDe
 }
 
 /**
- * Get color for transition type
+ * Get color for transition type (used for ■ label color)
  */
 function getTransitionColor(type?: string): string {
   switch (type) {
@@ -184,6 +186,29 @@ function getTransitionColor(type?: string): string {
     default:
       return '#000000';
   }
+}
+
+/**
+ * Get edge line color for transition type.
+ * safe = semi-transparent gray, unsafe/idempotent = black (to emphasize state changes)
+ */
+function getEdgeColor(type?: string): string {
+  switch (type) {
+    case 'unsafe':
+    case 'idempotent':
+      return '#000000';
+    default:
+      return '#99999977';
+  }
+}
+
+/**
+ * Get the dominant edge color for a group of transitions.
+ * If any transition is unsafe or idempotent, use black.
+ */
+function getGroupEdgeColor(types: string[]): string {
+  if (types.includes('unsafe') || types.includes('idempotent')) return '#000000';
+  return '#99999977';
 }
 
 /**
