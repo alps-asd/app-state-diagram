@@ -671,6 +671,12 @@ document.addEventListener('DOMContentLoaded', function() {
 <h1>${safeAlpsTitle}</h1>
 <p>${safeAlpsDoc}</p>
 <div id="svg-container"><div id="svg-graph">${svgString}</div></div>
+<div class="legend">
+    <div class="legend-item" title="Semantic"><span class="legend-icon semantic"></span> Semantic</div>
+    <div class="legend-item" title="Safe"><span class="legend-icon safe"></span> Safe</div>
+    <div class="legend-item" title="Unsafe"><span class="legend-icon unsafe"></span> Unsafe</div>
+    <div class="legend-item" title="Idempotent"><span class="legend-icon idempotent"></span> Idempotent</div>
+</div>
 <div class="selector-container">
     <div class="selector-row">
         <span class="selector-label">Label:</span>
@@ -686,12 +692,6 @@ document.addEventListener('DOMContentLoaded', function() {
 ${tagSelectorHtml ? `    <div class="selector-row">${tagSelectorHtml}</div>` : ''}
 </div>
 ${tableHtml}
-<div class="legend">
-    <div class="legend-item" title="Semantic"><span class="legend-icon semantic"></span> Semantic</div>
-    <div class="legend-item" title="Safe"><span class="legend-icon safe"></span> Safe</div>
-    <div class="legend-item" title="Unsafe"><span class="legend-icon unsafe"></span> Unsafe</div>
-    <div class="legend-item" title="Idempotent"><span class="legend-icon idempotent"></span> Idempotent</div>
-</div>
 ${linksHtml}
 <div style="display:none"><code id="alps-profile">${escapedContent}</code></div>
 </div>
