@@ -31,18 +31,25 @@ npm install -g @alps-asd/cli
 ```bash
 claude --version  # Requires 1.0.3+
 
+# ALPS profile creation & validation
 mkdir -p .claude/skills/alps
 curl -o .claude/skills/alps/SKILL.md \
-  https://raw.githubusercontent.com/alps-asd/app-state-diagram/2.x/.claude/skills/alps/SKILL.md
+  https://raw.githubusercontent.com/alps-asd/app-state-diagram/2.x/docs/skills/alps/SKILL.md
+
+# Mock generation (optional)
+mkdir -p .claude/skills/mock
+curl -o .claude/skills/mock/SKILL.md \
+  https://raw.githubusercontent.com/alps-asd/app-state-diagram/2.x/docs/skills/mock/SKILL.md
 ```
 
-Verify skill is available:
+Verify skills are available:
 - Ask: "What skills are available?"
-- Response should include "alps" skill
+- Response should include "alps" and "alps2mock" skills
 
 Then ask:
-- "Use the ALPS skill to create an ALPS JSON file for a blog system"
+- "Use the ALPS skill to create an ALPS XML file for a blog system"
 - "Validate alps.xml and fix any issues"
+- "Generate a mock from alps.xml" (requires alps2mock skill)
 
 ## MCP Server
 
@@ -103,6 +110,38 @@ Add to your system prompt or AGENTS.md:
 ```text
 For ALPS profile creation, refer to: https://alps-asd.github.io/app-state-diagram/alps-skill.md
 ```
+
+## Mock Generation (alps2mock)
+
+Generate a browsable HTML mock site from an ALPS profile — with zero presentation classes.
+
+```bash
+mkdir -p .claude/skills/mock
+curl -o .claude/skills/mock/SKILL.md \
+  https://raw.githubusercontent.com/alps-asd/app-state-diagram/2.x/docs/skills/mock/SKILL.md
+```
+
+Then ask:
+- "Use the mock skill to generate a mock from alps.xml"
+- "Generate a wireframe from my ALPS profile"
+
+### What It Generates
+
+```
+output/
+├── html/          # One page per ALPS state (semantic classes only)
+├── css/
+│   ├── level1.css # Bare HTML
+│   ├── level2.css # Wireframe — hover to see ALPS IDs
+│   └── level3.css # Production quality
+├── api/           # HAL+JSON mock responses
+├── i18n/          # ALPS ID → label mapping
+└── mock-switch    # Switch fidelity: ./mock-switch 3
+```
+
+The key idea: every `class` in HTML is an ALPS descriptor ID. No `bg-white`, no `rounded-lg`. CSS-only fidelity switching — change the `<link>` tag, HTML untouched.
+
+See [Semantic First Design](blog/semantic-first-design.md) for the design philosophy.
 
 ## Why ALPS First?
 
