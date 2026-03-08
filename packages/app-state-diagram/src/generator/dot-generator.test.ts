@@ -532,4 +532,22 @@ describe('DotGenerator', () => {
     expect(dot).not.toMatch(/TOOLTIP="[^"]*Subscribe & Save/);
   });
 
+  it('should use black edge color for single unsafe transition', () => {
+    const alps: AlpsDocument = {
+      alps: {
+        descriptor: [
+          {
+            id: 'Home',
+            descriptor: [{ href: '#doDelete' }]
+          },
+          { id: 'Deleted' },
+          { id: 'doDelete', type: 'unsafe', rt: '#Deleted' }
+        ]
+      }
+    };
+    const dot = generateDot(alps);
+    expect(dot).toContain('Home -> Deleted');
+    expect(dot).toContain('color="#000000"');
+  });
+
 });

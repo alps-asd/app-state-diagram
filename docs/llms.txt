@@ -44,9 +44,21 @@ Warnings (best practice): W001 (missing title), W002 (safe should start with go)
 
 ## Examples
 
-- [Minimal Blog API (JSON)](https://github.com/alps-asd/app-state-diagram/blob/2.x/docs/demo/minimal/alps.json): 29-line starter template
-- [Bookstore (XML)](https://github.com/alps-asd/app-state-diagram/blob/2.x/docs/demo/bookstore/alps.xml): XML format example
-- [Amazon (JSON)](https://github.com/alps-asd/app-state-diagram/blob/2.x/docs/demo/amazon/amazon.json): Large-scale profile
+### ALPS Profiles (by complexity)
+
+| Size | Example | Format | Description |
+|------|---------|--------|-------------|
+| S | [Minimal Blog API](https://github.com/alps-asd/app-state-diagram/blob/2.x/docs/demo/minimal/alps.json) | JSON | 29-line starter template with posts |
+| M | [Bookstore](https://github.com/alps-asd/app-state-diagram/blob/2.x/docs/demo/bookstore/alps.xml) | XML | E-commerce flow: catalog, cart, checkout, payment |
+| L | [LMS](https://github.com/alps-asd/app-state-diagram/blob/2.x/docs/demo/lms/alps.xml) | XML | Multi-role system (student, instructor, admin) |
+| XL | [Amazon](https://github.com/alps-asd/app-state-diagram/blob/2.x/docs/demo/amazon/alps.json) | JSON | Large-scale e-commerce with detailed pricing |
+
+### Live Demos (interactive state diagrams)
+
+- [Minimal](https://alps-asd.github.io/app-state-diagram/demo/minimal/alps.html)
+- [Bookstore](https://alps-asd.github.io/app-state-diagram/demo/bookstore/alps.html)
+- [LMS](https://alps-asd.github.io/app-state-diagram/demo/lms/alps.html)
+- [Amazon](https://alps-asd.github.io/app-state-diagram/demo/amazon/alps.html)
 
 ## Optional
 

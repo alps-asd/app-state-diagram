@@ -94,6 +94,16 @@ asd profile.json --validate
 
 See [live demos](docs/demo/) or visit [app-state-diagram.com](https://www.app-state-diagram.com/app-state-diagram/)
 
+## Mock Generation
+
+Generate a browsable HTML mock site from an ALPS profile. Every CSS class in the HTML is an ALPS descriptor ID — zero presentation classes. Switch between bare HTML, wireframe, and production quality by changing one CSS file.
+
+```
+alps.xml → html/ + css/level{1,2,3}.css + api/ + i18n/
+```
+
+See [AI Integration Guide](https://www.app-state-diagram.com/app-state-diagram/ai-integration.html) for setup (requires `alps2mock` skill).
+
 ## Design Application with AI
 
 See [AI Integration Guide](https://www.app-state-diagram.com/app-state-diagram/ai-integration.html) for setting up Claude Code, MCP Server, or other AI tools.
