@@ -123,7 +123,7 @@ Layout uses structural selectors rather than presentation classes:
 }
 ```
 
-The cost: CSS selectors are slightly longer. The gain: HTML becomes a stable semantic document that any machine — browser, screen reader, AI agent, or API client — can understand without parsing CSS class heuristics. A screen reader navigating `.Book > .title` encounters meaning directly; no `aria-label` hacks needed to compensate for `<div class="flex items-center gap-2">`.
+The cost: CSS selectors are slightly longer. The gain: HTML becomes a stable semantic document that any machine — browser, AI agent, or API client — can understand without parsing CSS class heuristics. A screen reader navigating `<article>` → `<h3>` → `<p>` encounters native semantic elements directly; no `aria-label` hacks needed to compensate for `<div class="flex items-center gap-2">`.
 
 ## CSS-Only Fidelity Switching
 
@@ -190,7 +190,8 @@ HTML untouched. Or use the `mock-switch` CLI:
 level=$1
 dir=${2:-.}
 for f in "$dir"/html/*.html; do
-  sed -i '' "s|level[0-9]\.css|level${level}.css|g" "$f"
+  tmp=$(mktemp)
+  sed "s|level[0-9]\.css|level${level}.css|g" "$f" > "$tmp" && mv "$tmp" "$f"
 done
 ```
 
@@ -282,9 +283,9 @@ The level 2 wireframe makes this skeleton visible and reviewable *before* any fl
 
 ## Accessibility as a Natural Consequence
 
-We noted earlier that screen readers benefit from semantic classes. This deserves deeper examination, because the implications go beyond convenience.
+We noted earlier that semantic HTML benefits screen readers. This deserves deeper examination, because the implications go beyond convenience.
 
-When HTML contains only semantic meaning, accessibility isn't an afterthought bolted on with ARIA — it's a structural property of the document itself. Screen readers encounter `.Book > .title`, `.price`, `.doAddToCart` — a complete, navigable information architecture, not a maze of layout primitives.
+When HTML contains only semantic elements — `<article>`, `<h3>`, `<p>`, `<form>`, `<a>` — accessibility isn't an afterthought bolted on with ARIA — it's a structural property of the document itself. Screen readers navigate native HTML semantics: headings, paragraphs, links, and form controls — a complete, navigable information architecture, not a maze of layout primitives.
 
 The ALPS profile doubles as an accessibility specification: it defines what every element means, what actions are available, and how states connect.
 

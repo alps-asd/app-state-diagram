@@ -118,7 +118,7 @@ export function generateDot(alpsData: AlpsDocument, labelMode: LabelMode = 'id')
         group.ids.push(trans.id);
         group.labels.push(transLabel);
         group.colors.push(color);
-        group.types.push(trans.type || '');
+        group.types.push(trans.type!);
         group.titles.push(trans.title || trans.id);
       }
     }

@@ -76,7 +76,7 @@ Given this ALPS taxonomy:
 </descriptor>
 ```
 
-Generate:
+Generate (partial example — only showing the Book state; other states like ShoppingCart and their descriptors like `goToCart`, `category`, `quantity` are defined elsewhere in the full profile):
 
 ```html
 <!DOCTYPE html>
@@ -93,8 +93,8 @@ Generate:
     <div>
       <a href="index.html">ALPS Book Store</a>
       <nav>
-        <a href="catalog.html" class="goToCatalog">Catalog</a>
-        <a href="shoppingcart.html" class="goToCart">Cart</a>
+        <a href="catalog.html" class="goToCatalog" title="Go to Catalog">Catalog</a>
+        <a href="shoppingcart.html" class="goToCart" title="Go to Cart">Cart</a>
       </nav>
     </div>
   </header>
@@ -112,7 +112,7 @@ Generate:
         <input type="hidden" name="id" value="BK-001" class="id">
         <label for="quantity">Qty</label>
         <input type="number" id="quantity" name="quantity" min="1" value="1" class="quantity">
-        <button type="submit">Add to Cart</button>
+        <button type="submit" title="Add to Cart">Add to Cart</button>
       </form>
     </article>
   </main>
@@ -151,6 +151,10 @@ a { color: #0366d6; }
 The wireframe level is the most important. It makes the ALPS vocabulary visible:
 
 ```css
+[class] {
+  position: relative;
+}
+
 /* ALPS ID tooltip on hover */
 [class]:hover::after {
   content: "." attr(class);
@@ -282,7 +286,8 @@ fi
 count=0
 for f in "$dir"/html/*.html; do
   [ -f "$f" ] || continue
-  sed -i '' "s|level[0-9]\.css|level${level}.css|g" "$f"
+  tmp=$(mktemp)
+  sed "s|level[0-9]\.css|level${level}.css|g" "$f" > "$tmp" && mv "$tmp" "$f"
   count=$((count + 1))
 done
 
