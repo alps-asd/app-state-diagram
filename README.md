@@ -106,7 +106,10 @@ See [AI Integration Guide](https://www.app-state-diagram.com/app-state-diagram/a
 ## Related Projects
 
 - [ALPS Specification](http://alps.io/)
-- [alps-editor](https://github.com/alps-asd/alps-editor) - Online ALPS editor
+- [asd-action](https://github.com/alps-asd/asd-action) - GitHub Action for CI/CD
+- [alps-skills](https://github.com/alps-asd/alps-skills) - ALPS skills for Claude Code
+- [alps-skeleton-xml](https://github.com/alps-asd/alps-skeleton-xml) - ALPS skeleton (XML)
+- [alps-skeleton-json](https://github.com/alps-asd/alps-skeleton-json) - ALPS skeleton (JSON)
 
 ## License
 
