@@ -1,0 +1,23 @@
+#!/bin/bash
+# mock-switch — Switch mock fidelity level
+# Usage: ./mock-switch <1|2|3> [mock-dir]
+
+level=$1
+dir=${2:-.}
+
+if [[ ! "$level" =~ ^[123]$ ]]; then
+  echo "Usage: ./mock-switch <1|2|3> [mock-dir]"
+  echo "  1 — 素のHTML"
+  echo "  2 — ワイヤーフレーム"
+  echo "  3 — プロダクション品質"
+  exit 1
+fi
+
+count=0
+for f in "$dir"/html/*.html; do
+  [ -f "$f" ] || continue
+  sed -i '' "s|level[0-9]\.css|level${level}.css|g" "$f"
+  count=$((count + 1))
+done
+
+echo "Switched ${count} files to level${level}.css"

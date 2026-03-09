@@ -1,0 +1,21 @@
+{
+  "id": "BK-001",
+  "title": "The Art of Programming",
+  "author": "Jane Smith",
+  "isbn": "978-4-1234-5678-9",
+  "price": 2480,
+  "category": "Programming",
+  "_links": {
+    "self": { "href": "/api/book/BK-001" },
+    "doAddToCart": {
+      "href": "/api/shoppingcart",
+      "title": "Add to Cart",
+      "method": "POST"
+    },
+    "goToCatalog": {
+      "href": "/api/catalog",
+      "title": "Go to Catalog Screen",
+      "method": "GET"
+    }
+  }
+}

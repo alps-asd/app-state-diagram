@@ -1,0 +1,15 @@
+{
+  "_links": {
+    "self": { "href": "/api/home" },
+    "goToCatalog": {
+      "href": "/api/catalog",
+      "title": "Go to Catalog Screen",
+      "method": "GET"
+    },
+    "goToCart": {
+      "href": "/api/shoppingcart",
+      "title": "Go to Cart Screen",
+      "method": "GET"
+    }
+  }
+}

@@ -1,0 +1,66 @@
+{
+  "_embedded": {
+    "book": [
+      {
+        "id": "BK-001",
+        "title": "The Art of Programming",
+        "author": "Jane Smith",
+        "isbn": "978-4-1234-5678-9",
+        "price": 2480,
+        "category": "Programming"
+      },
+      {
+        "id": "BK-002",
+        "title": "Design Patterns Explained",
+        "author": "John Doe",
+        "isbn": "978-4-2345-6789-0",
+        "price": 3200,
+        "category": "Software Design"
+      },
+      {
+        "id": "BK-003",
+        "title": "Clean Architecture",
+        "author": "Robert Martin",
+        "isbn": "978-4-3456-7890-1",
+        "price": 3960,
+        "category": "Software Design"
+      }
+    ]
+  },
+  "_links": {
+    "self": { "href": "/api/catalog" },
+    "goListBooks": {
+      "href": "/api/catalog",
+      "title": "Get Book List",
+      "method": "GET"
+    },
+    "goSearchBooks": {
+      "href": "/api/catalog?query={query}",
+      "title": "Search Books",
+      "method": "GET",
+      "templated": true
+    },
+    "goGetCategories": {
+      "href": "/api/catalog/categories",
+      "title": "Get Category List",
+      "method": "GET"
+    },
+    "goToBookDetails": {
+      "href": "/api/book/{id}",
+      "title": "Go to Book Details Screen",
+      "method": "GET",
+      "templated": true
+    },
+    "goToCategory": {
+      "href": "/api/category/{id}",
+      "title": "Go to Category Screen",
+      "method": "GET",
+      "templated": true
+    },
+    "goToCart": {
+      "href": "/api/shoppingcart",
+      "title": "Go to Cart Screen",
+      "method": "GET"
+    }
+  }
+}

@@ -1,0 +1,49 @@
+{
+  "totalAmount": 8880,
+  "_embedded": {
+    "cartItem": [
+      {
+        "id": "BK-001",
+        "title": "The Art of Programming",
+        "price": 2480,
+        "quantity": 1
+      },
+      {
+        "id": "BK-002",
+        "title": "Design Patterns Explained",
+        "price": 3200,
+        "quantity": 2
+      }
+    ]
+  },
+  "_links": {
+    "self": { "href": "/api/shoppingcart" },
+    "goListCartItems": {
+      "href": "/api/shoppingcart",
+      "title": "Get Cart Items List",
+      "method": "GET"
+    },
+    "doUpdateQuantity": {
+      "href": "/api/shoppingcart/{id}",
+      "title": "Update Cart Item Quantity",
+      "method": "PUT",
+      "templated": true
+    },
+    "doRemoveFromCart": {
+      "href": "/api/shoppingcart/{id}",
+      "title": "Remove Item from Cart",
+      "method": "DELETE",
+      "templated": true
+    },
+    "goToCheckout": {
+      "href": "/api/checkout",
+      "title": "Go to Checkout Screen",
+      "method": "GET"
+    },
+    "goToCatalog": {
+      "href": "/api/catalog",
+      "title": "Go to Catalog Screen",
+      "method": "GET"
+    }
+  }
+}

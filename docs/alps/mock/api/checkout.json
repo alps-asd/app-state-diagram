@@ -1,0 +1,25 @@
+{
+  "_links": {
+    "self": { "href": "/api/checkout" },
+    "doUserInfo": {
+      "href": "/api/checkout/user-info",
+      "title": "Input User Information",
+      "method": "POST"
+    },
+    "doShippingInfo": {
+      "href": "/api/checkout/shipping-info",
+      "title": "Input Shipping Information",
+      "method": "POST"
+    },
+    "goToPayment": {
+      "href": "/api/payment",
+      "title": "Go to Payment Screen",
+      "method": "GET"
+    },
+    "goToCart": {
+      "href": "/api/shoppingcart",
+      "title": "Go to Cart Screen",
+      "method": "GET"
+    }
+  }
+}
