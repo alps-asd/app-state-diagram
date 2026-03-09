@@ -234,8 +234,8 @@ Generate one JSON file per ALPS state, following HAL format:
   "category": "Programming",
   "_links": {
     "self": {"href": "/api/book/BK-001"},
-    "goToCatalog": {"href": "/api/catalog", "method": "GET"},
-    "doAddToCart": {"href": "/api/cart/items", "method": "POST"}
+    "goToCatalog": {"href": "/api/catalog"},
+    "doAddToCart": {"href": "/api/cart/items"}
   }
 }
 ```
@@ -243,9 +243,7 @@ Generate one JSON file per ALPS state, following HAL format:
 Rules:
 - Field names match ALPS semantic descriptor IDs
 - `_links` keys match ALPS transition descriptor IDs
-- Safe transitions use `"method": "GET"`
-- Unsafe transitions use `"method": "POST"`
-- Idempotent transitions use `"method": "PUT"` or `"method": "DELETE"`
+- Do NOT include `"method"` in links — HTTP method assignment belongs to the OpenAPI level, not HAL links (RFC 8288)
 
 ## i18n Labels
 
