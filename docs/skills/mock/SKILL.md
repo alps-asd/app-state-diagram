@@ -190,10 +190,10 @@ img {
 
 Key features:
 - **Hover tooltips** show ALPS descriptor IDs (`.Book`, `.title`, `.goToBookDetails`)
-- **Dashed borders** visualize block boundaries
-- **X-box placeholders** for images
-- **No color branding** — structure only
-- **Grid layouts** use semantic selectors (`.Catalog > div`, not `.book-grid`)
+- **Dashed borders** around `section`, `article`, `aside` — these are the semantic blocks of the page. The dashes make the information structure visible: which elements are grouped together, how they nest, where one block ends and the next begins. This is the skeleton that disappears in production but must be right before design begins.
+- **X-box placeholders** for images — crossed diagonal lines in a gray box, the universal wireframe convention for "an image goes here" without committing to content
+- **No color branding** — structure only, monochrome
+- **Grid layouts** use semantic selectors (`.Catalog > div`, `section > div`) not presentation classes (`.book-grid`)
 
 ### level3.css — Production Quality
 
