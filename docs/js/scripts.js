@@ -1,5 +1,5 @@
 import { SEMANTIC_TERMS } from './semanticTerms.js';
-import { DiagramAdapterManager } from './diagramAdapters.js';
+import { DiagramAdapterManager } from './diagramAdapters.js?v=tag-filter-20260606b';
 
 class AlpsEditor {
     constructor() {
@@ -430,7 +430,7 @@ Happy modeling! Remember, solid semantics supports the long-term evolution of yo
             this.debugLog(`Using ${this.adapterManager.getCurrentAdapter().getName()} for diagram generation`);
 
             // Use the adapter manager to generate diagram
-            const url = await this.adapterManager.generateDiagram(content, fileType);
+            const diagram = await this.adapterManager.generateDiagram(content, fileType);
 
             const iframe = document.getElementById('preview-frame');
             // Apply view mode after iframe loads
@@ -439,7 +439,13 @@ Happy modeling! Remember, solid semantics supports the long-term evolution of yo
                 this.applyViewMode(mode);
                 this.applyDiagramUrlStateToFrame();
             };
-            iframe.src = url;
+            if (diagram && typeof diagram === 'object' && typeof diagram.html === 'string') {
+                iframe.removeAttribute('src');
+                iframe.srcdoc = diagram.html;
+            } else {
+                iframe.removeAttribute('srcdoc');
+                iframe.src = diagram;
+            }
             this.debugLog('Preview updated');
             this.updateValidationMark(true);
             this.displayErrors([]);
@@ -480,6 +486,7 @@ Happy modeling! Remember, solid semantics supports the long-term evolution of yo
         return {
             view: ['document', 'diagram', 'preview'].includes(rawView) ? rawView : this.getDefaultViewMode(),
             tag: this.getTagsFromValues(params.getAll('tag')),
+            tagOnly: params.get('tagOnly') === '1',
             label: rawLabel === 'title' ? 'title' : 'id',
             size: this.normalizeSizeMode(params.get('size')),
             hash: window.location.hash ? decodeURIComponent(window.location.hash.substring(1)) : ''
@@ -500,6 +507,12 @@ Happy modeling! Remember, solid semantics supports the long-term evolution of yo
         url.searchParams.delete('tag');
         if (Array.isArray(state.tag) && state.tag.length > 0) {
             url.searchParams.set('tag', state.tag.join(','));
+        }
+
+        if (state.tagOnly) {
+            url.searchParams.set('tagOnly', '1');
+        } else {
+            url.searchParams.delete('tagOnly');
         }
 
         if (state.label === 'title') {
@@ -523,6 +536,7 @@ Happy modeling! Remember, solid semantics supports the long-term evolution of yo
         const state = this.readSharedUrlState();
         return {
             tag: state.tag,
+            tagOnly: state.tagOnly,
             label: state.label,
             size: state.size,
             hash: state.hash

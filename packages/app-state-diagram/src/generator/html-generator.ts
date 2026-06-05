@@ -85,11 +85,12 @@ a{cursor:pointer;}
 #svg-container{display:flex;overflow-x:scroll;margin:20px 0;}
 #svg-graph{flex-shrink:0;text-align:center;}
 #svg-graph svg{display:block;max-width:none;}
-#svg-container.fit-width #svg-graph svg{max-width:100% !important;width:100% !important;height:auto !important;}
+#svg-container.fit-width #svg-graph svg{max-width:100% !important;height:auto !important;}
 #svg-container.fit-width #svg-graph{flex-shrink:1;width:100%;}
 #svg-container.half-size #svg-graph svg{max-width:60% !important;width:60% !important;height:auto !important;}
 #svg-container.half-size #svg-graph{flex-shrink:0;}
 h1,h2{margin-top:0;}
+.empty-diagram-message{color:#666;text-align:center;margin:30px 0;}
 /* Legend */
 .legend{display:flex;gap:20px;margin:20px 0;flex-wrap:wrap;}
 table .legend{background-color:transparent;padding:0;margin:0;display:inline-flex;align-items:center;}
@@ -146,6 +147,8 @@ td a:hover{text-decoration:underline;}
 .selector-option{margin-right:15px;display:inline-block;cursor:pointer;}
 .selector-option label{cursor:pointer;}
 .tag-trigger-checkbox{margin-right:3px;}
+.tag-only-option{border-left:1px solid #d0d7de;padding-left:12px;margin-left:4px;}
+.tag-only-checkbox{margin-right:3px;}
 /* Meta container for def, rt, tag */
 .meta-container{display:flex;flex-direction:column;gap:4px;}
 .meta-container br{display:none;}
@@ -309,7 +312,9 @@ document.addEventListener('DOMContentLoaded', function() {
         <span class="selector-option"><input type="radio" name="sizeMode" value="half"><label> Compact</label></span>
         <span class="selector-option"><input type="radio" name="sizeMode" value="fit"><label> Fit to width</label></span>
     </div>
-${tagSelectorHtml ? `    <div class="selector-row">${tagSelectorHtml}</div>` : ''}
+${tagSelectorHtml ? `    <div class="selector-row">${tagSelectorHtml}
+        <span class="selector-option tag-only-option"><input type="checkbox" id="tag-only-mode" class="tag-only-checkbox" disabled><label for="tag-only-mode"> Show selected tags only</label></span>
+    </div>` : ''}
 </div>
 ${tableHtml}
 ${linksHtml}
@@ -357,6 +362,7 @@ const readUrlState = () => {
     const params = new URLSearchParams(window.location.search);
     return {
         tag: getTagsFromValues(params.getAll('tag')),
+        tagOnly: params.get('tagOnly') === '1',
         label: params.get('label') === 'title' ? 'title' : 'id',
         size: normalizeSizeMode(params.get('size')),
         hash: getCurrentHash()
@@ -366,6 +372,7 @@ const readUrlState = () => {
 const collectUrlState = () => {
     return {
         tag: getSelectedTags(),
+        tagOnly: isTagOnlyMode(),
         label: getCurrentLabelMode(),
         size: getCurrentSizeMode(),
         hash: currentDescriptorHash || getCurrentHash()
@@ -377,6 +384,11 @@ const replaceUrlState = (state) => {
     url.searchParams.delete('tag');
     if (state.tag.length > 0) {
         url.searchParams.set('tag', state.tag.join(','));
+    }
+    if (state.tagOnly) {
+        url.searchParams.set('tagOnly', '1');
+    } else {
+        url.searchParams.delete('tagOnly');
     }
     if (state.label === 'title') {
         url.searchParams.set('label', 'title');
@@ -395,7 +407,6 @@ const replaceUrlState = (state) => {
 
 const publishUrlState = () => {
     if (isApplyingUrlState) return;
-    hasExplicitSizeMode = true;
     const state = collectUrlState();
     if (window.parent !== window) {
         window.parent.postMessage({ type: 'diagramStateChanged', state }, '*');
@@ -444,11 +455,27 @@ const setupTagEventListener = (eventName, ids, color, defaultColor = 'lightgrey'
     document.addEventListener('tagoff-' + eventName, () => changeColor(true));
 };
 
+const isTagOnlyMode = () => {
+    const tagOnlyCheckbox = document.getElementById('tag-only-mode');
+    return Boolean(tagOnlyCheckbox && tagOnlyCheckbox.checked && getSelectedTags().length > 0);
+};
+
+const updateTagOnlyControl = () => {
+    const tagOnlyCheckbox = document.getElementById('tag-only-mode');
+    if (!tagOnlyCheckbox) return;
+    const hasSelectedTags = getSelectedTags().length > 0;
+    tagOnlyCheckbox.disabled = !hasSelectedTags;
+    if (!hasSelectedTags) {
+        tagOnlyCheckbox.checked = false;
+    }
+};
+
 const setupTagTrigger = () => {
     const checkboxes = document.querySelectorAll('.tag-trigger-checkbox');
     checkboxes.forEach(checkbox => {
-        checkbox.addEventListener('change', function() {
-            applySelectedTagsToDiagram();
+        checkbox.addEventListener('change', async function() {
+            updateTagOnlyControl();
+            await regenerateSvg(getCurrentLabelMode());
             publishUrlState();
         });
     });
@@ -474,15 +501,38 @@ Object.keys(tagDescriptorMap).forEach(tag => {
 });
 
 setupTagTrigger();
+updateTagOnlyControl();
 
 // Label mode switching
 window.alpsData = ${escapeJsonForScript(alpsData)};
 
-function generateDotFromAlps(data, labelMode) {
+function getSelectedDescriptorIds() {
+    const ids = new Set();
+    getSelectedTags().forEach(tag => {
+        (tagDescriptorMap[tag] || []).forEach(id => {
+            if (id) ids.add(id);
+        });
+    });
+    return ids;
+}
+
+function generateDotFromAlps(data, labelMode, filterIds = null) {
     const descriptors = data.alps?.descriptor || [];
     const transitions = descriptors.filter(d => d.type && d.rt);
     const rtTargets = new Set(transitions.map(t => t.rt.replace('#', '')));
     const states = descriptors.filter(d => d.id && rtTargets.has(d.id));
+    const transitionEntries = transitions
+        .filter(trans => trans.id && trans.rt)
+        .map(trans => ({
+            trans,
+            targetState: trans.rt.replace('#', ''),
+            sourceStates: findSourceStatesForTransition(trans.id, descriptors)
+        }));
+    const diagramNodeIds = new Set(rtTargets);
+    transitionEntries.forEach(entry => {
+        entry.sourceStates.forEach(sourceState => diagramNodeIds.add(sourceState));
+    });
+    const diagramNodes = descriptors.filter(d => d.id && diagramNodeIds.has(d.id));
 
     const getLabel = (descriptor) => {
         if (labelMode === 'title') {
@@ -491,11 +541,43 @@ function generateDotFromAlps(data, labelMode) {
         return descriptor.id;
     };
 
+    let visibleStates = states;
+    let visibleTransitionEntries = transitionEntries;
+
+    if (filterIds && filterIds.size > 0) {
+        const visibleNodeIds = new Set();
+        diagramNodes.forEach(node => {
+            if (node.id && filterIds.has(node.id)) {
+                visibleNodeIds.add(node.id);
+            }
+        });
+        transitionEntries.forEach(entry => {
+            if (filterIds.has(entry.trans.id)) {
+                visibleNodeIds.add(entry.targetState);
+                entry.sourceStates.forEach(sourceState => visibleNodeIds.add(sourceState));
+            }
+        });
+
+        visibleStates = diagramNodes.filter(node => node.id && visibleNodeIds.has(node.id));
+        visibleTransitionEntries = transitionEntries
+            .map(entry => ({
+                ...entry,
+                sourceStates: entry.sourceStates.filter(sourceState =>
+                    visibleNodeIds.has(sourceState) && visibleNodeIds.has(entry.targetState)
+                )
+            }))
+            .filter(entry => entry.sourceStates.length > 0);
+
+        if (visibleStates.length === 0 && visibleTransitionEntries.length === 0) {
+            return '';
+        }
+    }
+
     let dot = 'digraph application_state_diagram {\\n' +
         '    graph [labelloc="t"; fontname="Helvetica"];\\n' +
         '    node [shape = box, style = "bold,filled" fillcolor="lightgray", margin="0.3,0.1"];\\n\\n';
 
-    states.forEach(state => {
+    visibleStates.forEach(state => {
         if (state.id) {
             dot += '    ' + state.id + ' [margin=0.1, label="' + getLabel(state) + '", shape=box, URL="#' + state.id + '"]\\n';
         }
@@ -505,25 +587,22 @@ function generateDotFromAlps(data, labelMode) {
 
     // Group transitions by (source, target) pair
     const edgeGroups = {};
-    transitions.forEach(trans => {
-        if (trans.id && trans.rt) {
-            const targetState = trans.rt.replace('#', '');
-            const sourceStates = findSourceStatesForTransition(trans.id, descriptors);
-            const color = getTransitionColor(trans.type);
-            const transLabel = getLabel(trans);
-            sourceStates.forEach(sourceState => {
-                const key = sourceState + '\\t' + targetState;
-                if (!edgeGroups[key]) {
-                    edgeGroups[key] = { ids: [], labels: [], colors: [], types: [], titles: [] };
-                }
-                const group = edgeGroups[key];
-                group.ids.push(trans.id);
-                group.labels.push(transLabel);
-                group.colors.push(color);
-                group.types.push(trans.type || '');
-                group.titles.push(trans.title || trans.id);
-            });
-        }
+    visibleTransitionEntries.forEach(entry => {
+        const trans = entry.trans;
+        const color = getTransitionColor(trans.type);
+        const transLabel = getLabel(trans);
+        entry.sourceStates.forEach(sourceState => {
+            const key = sourceState + '\\t' + entry.targetState;
+            if (!edgeGroups[key]) {
+                edgeGroups[key] = { ids: [], labels: [], colors: [], types: [], titles: [] };
+            }
+            const group = edgeGroups[key];
+            group.ids.push(trans.id);
+            group.labels.push(transLabel);
+            group.colors.push(color);
+            group.types.push(trans.type || '');
+            group.titles.push(trans.title || trans.id);
+        });
     });
 
     // Render grouped edges with HTML TABLE labels
@@ -549,7 +628,7 @@ function generateDotFromAlps(data, labelMode) {
     });
 
     dot += '\\n';
-    states.forEach(state => {
+    visibleStates.forEach(state => {
         if (state.id) {
             dot += '    ' + state.id + ' [label="' + getLabel(state) + '" URL="#' + state.id + '"]\\n';
         }
@@ -604,7 +683,11 @@ async function regenerateSvg(labelMode) {
     svgGraph.innerHTML = '<p>Regenerating diagram...</p>';
 
     try {
-        const dotContent = generateDotFromAlps(window.alpsData, labelMode);
+        const dotContent = generateDotFromAlps(window.alpsData, labelMode, isTagOnlyMode() ? getSelectedDescriptorIds() : null);
+        if (!dotContent) {
+            svgGraph.innerHTML = '<p class="empty-diagram-message">No diagram nodes match the selected tags.</p>';
+            return;
+        }
         const vizInstance = await Viz.instance();
         const svgString = vizInstance.renderString(dotContent, { format: 'svg' });
         svgGraph.innerHTML = svgString;
@@ -629,6 +712,13 @@ document.querySelectorAll('input[name="labelMode"]').forEach(radio => {
         regenerateSvg(this.value).then(() => publishUrlState());
     });
 });
+
+const tagOnlyCheckbox = document.getElementById('tag-only-mode');
+if (tagOnlyCheckbox) {
+    tagOnlyCheckbox.addEventListener('change', function() {
+        regenerateSvg(getCurrentLabelMode()).then(() => publishUrlState());
+    });
+}
 
 // Size mode toggle - keep selector position stable
 document.querySelectorAll('input[name="sizeMode"]').forEach(radio => {
@@ -707,11 +797,17 @@ async function applyUrlState(state) {
         const nextState = state || readUrlState();
         const selectedTags = Array.isArray(nextState.tag) ? nextState.tag : [];
         currentDescriptorHash = nextState.hash || '';
+        const wasTagOnlyMode = isTagOnlyMode();
 
         document.querySelectorAll('.tag-trigger-checkbox').forEach(checkbox => {
             const tag = checkbox.getAttribute('data-tag');
             checkbox.checked = Boolean(tag && selectedTags.includes(tag));
         });
+        updateTagOnlyControl();
+        const tagOnlyCheckbox = document.getElementById('tag-only-mode');
+        if (tagOnlyCheckbox) {
+            tagOnlyCheckbox.checked = Boolean(nextState.tagOnly && selectedTags.length > 0);
+        }
 
         if (nextState.size) {
             applySizeMode(nextState.size, true);
@@ -720,7 +816,7 @@ async function applyUrlState(state) {
         const currentLabelMode = getCurrentLabelMode();
         const labelRadio = document.querySelector('input[name="labelMode"][value="' + nextState.label + '"]');
         if (labelRadio) labelRadio.checked = true;
-        if (currentLabelMode !== nextState.label) {
+        if (currentLabelMode !== nextState.label || wasTagOnlyMode || isTagOnlyMode()) {
             await regenerateSvg(nextState.label);
         }
 
