@@ -408,6 +408,17 @@ function scrollToDescriptor(id) {
     }
 }
 
+function setDescriptorHash(id) {
+    if (!id) return;
+    if (window.updateDiagramHash) {
+        window.updateDiagramHash(id);
+        return;
+    }
+    const url = new URL(window.location.href);
+    url.hash = '#' + encodeURIComponent(id);
+    window.history.replaceState(null, '', url.toString());
+}
+
 // Listen for messages from parent (for Preview mode scroll)
 window.addEventListener('message', function(event) {
     if (event.data && event.data.type === 'scrollToDescriptor') {
@@ -439,6 +450,7 @@ function setupSvgEventHandlers() {
             if (href && href.startsWith('#')) {
                 const id = href.substring(1);
                 console.log('Extracted ID:', id);
+                setDescriptorHash(id);
 
                 if (window.parent !== window) {
                     // In iframe (editor mode): Send message to parent window
@@ -470,8 +482,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 href = href.substring(1);
             }
             const id = href.substring(1);
+            const currentRow = this.closest('tr');
+            const targetRow = document.getElementById('descriptor-' + id);
+            const hasDescriptorTarget = Boolean(targetRow);
+            if (hasDescriptorTarget) setDescriptorHash(id);
 
-            if (window.parent !== window) {
+            if (window.parent !== window && hasDescriptorTarget) {
                 // In iframe (editor mode): Send message to parent to jump to editor line
                 window.parent.postMessage({
                     type: 'jumpToId',
@@ -491,8 +507,6 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             // Check if this is a link to a different row (rt/Contained) or self (ID column)
-            const currentRow = this.closest('tr');
-            const targetRow = document.getElementById('descriptor-' + id);
 
             // Only scroll and highlight if linking to a different row
             if (targetRow && targetRow !== currentRow) {
@@ -654,12 +668,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 e.stopPropagation();
                 const id = href.substring(1);
                 console.log('Document click - extracted ID:', id);
+                if (!document.getElementById('descriptor-' + id)) return;
+                setDescriptorHash(id);
                 
                 if (window.parent !== window) {
                     window.parent.postMessage({
                         type: 'jumpToId',
                         id: id
                     }, '*');
+                } else {
+                    scrollToDescriptor(id);
                 }
             }
         }
@@ -699,6 +717,96 @@ ${linksHtml}
 
 // Tag filtering - using same logic as production ASD
 const tagDescriptorMap = ${escapeJsonForScript(tagDescriptorMap)};
+let isApplyingUrlState = false;
+let hasExplicitSizeMode = false;
+let currentDescriptorHash = '';
+
+const normalizeSizeMode = (size) => {
+    if (size === 'compact') return 'half';
+    return ['original', 'fit', 'half'].includes(size) ? size : '';
+};
+
+const getTagsFromValues = (values) => {
+    return values
+        .flatMap(value => String(value).split(','))
+        .map(tag => tag.trim())
+        .filter(tag => tag && Object.prototype.hasOwnProperty.call(tagDescriptorMap, tag));
+};
+
+const getCurrentHash = () => {
+    return window.location.hash ? decodeURIComponent(window.location.hash.substring(1)) : '';
+};
+
+const getCurrentLabelMode = () => {
+    return document.querySelector('input[name="labelMode"]:checked')?.value || 'id';
+};
+
+const getCurrentSizeMode = () => {
+    return document.querySelector('input[name="sizeMode"]:checked')?.value || 'original';
+};
+
+const getSelectedTags = () => {
+    return Array.from(document.querySelectorAll('.tag-trigger-checkbox'))
+        .filter(checkbox => checkbox.checked)
+        .map(checkbox => checkbox.getAttribute('data-tag'))
+        .filter(Boolean);
+};
+
+const readUrlState = () => {
+    const params = new URLSearchParams(window.location.search);
+    return {
+        tag: getTagsFromValues(params.getAll('tag')),
+        label: params.get('label') === 'title' ? 'title' : 'id',
+        size: normalizeSizeMode(params.get('size')),
+        hash: getCurrentHash()
+    };
+};
+
+const collectUrlState = () => {
+    return {
+        tag: getSelectedTags(),
+        label: getCurrentLabelMode(),
+        size: getCurrentSizeMode(),
+        hash: currentDescriptorHash || getCurrentHash()
+    };
+};
+
+const replaceUrlState = (state) => {
+    const url = new URL(window.location.href);
+    url.searchParams.delete('tag');
+    if (state.tag.length > 0) {
+        url.searchParams.set('tag', state.tag.join(','));
+    }
+    if (state.label === 'title') {
+        url.searchParams.set('label', 'title');
+    } else {
+        url.searchParams.delete('label');
+    }
+    const size = normalizeSizeMode(state.size);
+    if (size) {
+        url.searchParams.set('size', size);
+    } else {
+        url.searchParams.delete('size');
+    }
+    url.hash = state.hash ? '#' + encodeURIComponent(state.hash) : '';
+    window.history.replaceState(null, '', url.toString());
+};
+
+const publishUrlState = () => {
+    if (isApplyingUrlState) return;
+    hasExplicitSizeMode = true;
+    const state = collectUrlState();
+    if (window.parent !== window) {
+        window.parent.postMessage({ type: 'diagramStateChanged', state }, '*');
+    } else {
+        replaceUrlState(state);
+    }
+};
+
+window.updateDiagramHash = (id) => {
+    currentDescriptorHash = id || '';
+    publishUrlState();
+};
 
 // Changes color of SVG elements by title (matching production ASD)
 const changeColorByTitle = (titleOrClass, newNodeColor, newEdgeColor, highlight = false) => {
@@ -744,13 +852,21 @@ const setupTagTrigger = () => {
     const checkboxes = document.querySelectorAll('.tag-trigger-checkbox');
     checkboxes.forEach(checkbox => {
         checkbox.addEventListener('change', function() {
-            const tag = this.getAttribute('data-tag');
-            this.checked ?
-                document.dispatchEvent(new CustomEvent('tagon-' + tag)) :
-                document.dispatchEvent(new CustomEvent('tagoff-' + tag));
+            applySelectedTagsToDiagram();
+            publishUrlState();
         });
     });
 };
+
+function applySelectedTagsToDiagram() {
+    const selectedTags = new Set(getSelectedTags());
+    Object.keys(tagDescriptorMap).forEach(tag => {
+        document.dispatchEvent(new CustomEvent('tagoff-' + tag));
+    });
+    selectedTags.forEach(tag => {
+        document.dispatchEvent(new CustomEvent('tagon-' + tag));
+    });
+}
 
 // Tag colors (cycle through for multiple tags)
 const tagColors = ['LightGreen', 'SkyBlue', 'LightCoral', 'LightSalmon', 'Khaki', 'Plum', 'Wheat'];
@@ -929,6 +1045,15 @@ async function regenerateSvg(labelMode) {
         console.log('SVG regenerated with labelMode:', labelMode);
         // Re-attach SVG event handlers after regeneration
         setupSvgEventHandlers();
+        applySelectedTagsToDiagram();
+        if (hasExplicitSizeMode) {
+            applySizeMode(getCurrentSizeMode());
+        } else {
+            autoSelectSizeMode();
+        }
+        if (currentDescriptorHash) {
+            setTimeout(() => scrollToDescriptor(currentDescriptorHash), 0);
+        }
     } catch (error) {
         console.error('Error regenerating SVG:', error);
         svgGraph.innerHTML = '<p style="color:red;">Error regenerating diagram: ' + error.message + '</p>';
@@ -937,39 +1062,52 @@ async function regenerateSvg(labelMode) {
 
 document.querySelectorAll('input[name="labelMode"]').forEach(radio => {
     radio.addEventListener('change', function() {
-        regenerateSvg(this.value);
+        regenerateSvg(this.value).then(() => publishUrlState());
     });
 });
 
 // Size mode toggle - keep selector position stable
 document.querySelectorAll('input[name="sizeMode"]').forEach(radio => {
     radio.addEventListener('change', function() {
-        const selector = this.closest('.selector-container');
-        const selectorRect = selector.getBoundingClientRect();
-        const selectorTopBefore = selectorRect.top;
-
-        const svgContainer = document.getElementById('svg-container');
-        svgContainer.classList.remove('fit-width', 'half-size');
-        if (this.value === 'fit') {
-            svgContainer.classList.add('fit-width');
-        } else if (this.value === 'half') {
-            svgContainer.classList.add('half-size');
-        }
-
-        // Adjust scroll to keep selector at same screen position (instant, no animation)
-        requestAnimationFrame(() => {
-            const selectorTopAfter = selector.getBoundingClientRect().top;
-            const scrollDiff = selectorTopAfter - selectorTopBefore;
-            window.scrollTo({ top: window.scrollY + scrollDiff, behavior: 'instant' });
-            if (this.value === 'original' || this.value === 'half') {
-                centerSvgScroll();
-            }
-        });
+        applySizeMode(this.value, true);
+        publishUrlState();
     });
 });
 
+function applySizeMode(sizeMode, explicit = false) {
+    const normalizedSize = normalizeSizeMode(sizeMode);
+    const svgContainer = document.getElementById('svg-container');
+    if (!svgContainer || !normalizedSize) return;
+    hasExplicitSizeMode = hasExplicitSizeMode || explicit;
+
+    const radio = document.querySelector('input[name="sizeMode"][value="' + normalizedSize + '"]');
+    if (radio) radio.checked = true;
+
+    const selector = document.querySelector('.selector-container');
+    const selectorTopBefore = selector ? selector.getBoundingClientRect().top : 0;
+
+    svgContainer.classList.remove('fit-width', 'half-size');
+    if (normalizedSize === 'fit') {
+        svgContainer.classList.add('fit-width');
+    } else if (normalizedSize === 'half') {
+        svgContainer.classList.add('half-size');
+    }
+
+    requestAnimationFrame(() => {
+        if (selector) {
+            const selectorTopAfter = selector.getBoundingClientRect().top;
+            const scrollDiff = selectorTopAfter - selectorTopBefore;
+            window.scrollTo({ top: window.scrollY + scrollDiff, behavior: 'instant' });
+        }
+        if (normalizedSize === 'original' || normalizedSize === 'half') {
+            centerSvgScroll();
+        }
+    });
+}
+
 // Auto-select size mode based on SVG width vs container width
 function autoSelectSizeMode() {
+    if (hasExplicitSizeMode) return;
     const svgContainer = document.getElementById('svg-container');
     const svgElement = document.querySelector('#svg-graph svg');
     const fitRadio = document.querySelector('input[name="sizeMode"][value="fit"]');
@@ -983,6 +1121,7 @@ function autoSelectSizeMode() {
 
     // Use setTimeout to allow reflow before measuring
     setTimeout(() => {
+        if (hasExplicitSizeMode) return;
         const svgWidth = svgElement.getBoundingClientRect().width;
         const containerWidth = svgContainer.clientWidth;
 
@@ -1002,6 +1141,49 @@ function autoSelectSizeMode() {
     }, 0);
 }
 
+async function applyUrlState(state) {
+    isApplyingUrlState = true;
+    try {
+        const nextState = state || readUrlState();
+        const selectedTags = Array.isArray(nextState.tag) ? nextState.tag : [];
+        currentDescriptorHash = nextState.hash || '';
+
+        document.querySelectorAll('.tag-trigger-checkbox').forEach(checkbox => {
+            const tag = checkbox.getAttribute('data-tag');
+            checkbox.checked = Boolean(tag && selectedTags.includes(tag));
+        });
+
+        if (nextState.size) {
+            applySizeMode(nextState.size, true);
+        }
+
+        const currentLabelMode = getCurrentLabelMode();
+        const labelRadio = document.querySelector('input[name="labelMode"][value="' + nextState.label + '"]');
+        if (labelRadio) labelRadio.checked = true;
+        if (currentLabelMode !== nextState.label) {
+            await regenerateSvg(nextState.label);
+        }
+
+        if (nextState.size) {
+            applySizeMode(nextState.size, true);
+        } else {
+            autoSelectSizeMode();
+        }
+        applySelectedTagsToDiagram();
+        if (currentDescriptorHash) {
+            setTimeout(() => scrollToDescriptor(currentDescriptorHash), 0);
+        }
+    } finally {
+        isApplyingUrlState = false;
+    }
+}
+
+window.addEventListener('message', function(event) {
+    if (event.data && event.data.type === 'applyUrlState') {
+        applyUrlState(event.data.state);
+    }
+});
+
 // Center horizontal scroll position (for Original mode)
 function centerSvgScroll() {
     const svgContainer = document.getElementById('svg-container');
@@ -1014,6 +1196,7 @@ function centerSvgScroll() {
 }
 
 // Run once when DOM is ready and on window resize
+applyUrlState();
 document.addEventListener('DOMContentLoaded', autoSelectSizeMode);
 window.addEventListener('resize', autoSelectSizeMode);
 </script>
