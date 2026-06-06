@@ -474,8 +474,13 @@ const setupTagTrigger = () => {
     const checkboxes = document.querySelectorAll('.tag-trigger-checkbox');
     checkboxes.forEach(checkbox => {
         checkbox.addEventListener('change', async function() {
+            const wasTagOnlyMode = isTagOnlyMode();
             updateTagOnlyControl();
-            await regenerateSvg(getCurrentLabelMode());
+            if (wasTagOnlyMode || isTagOnlyMode()) {
+                await regenerateSvg(getCurrentLabelMode());
+            } else {
+                applySelectedTagsToDiagram();
+            }
             publishUrlState();
         });
     });
@@ -514,6 +519,19 @@ function getSelectedDescriptorIds() {
         });
     });
     return ids;
+}
+
+function escapeDotId(id) {
+    if (/^[a-zA-Z_][a-zA-Z0-9_]*$/.test(id)) {
+        return id;
+    }
+    return '"' + id.replace(/\\\\/g, '\\\\\\\\').replace(/"/g, '\\\\"') + '"';
+}
+
+function escapeDotLabel(label) {
+    return label
+        .replace(/\\\\/g, '\\\\\\\\')
+        .replace(/"/g, '\\\\"');
 }
 
 function generateDotFromAlps(data, labelMode, filterIds = null) {
@@ -579,7 +597,9 @@ function generateDotFromAlps(data, labelMode, filterIds = null) {
 
     visibleStates.forEach(state => {
         if (state.id) {
-            dot += '    ' + state.id + ' [margin=0.1, label="' + getLabel(state) + '", shape=box, URL="#' + state.id + '"]\\n';
+            const nodeId = escapeDotId(state.id);
+            const nodeLabel = escapeDotLabel(getLabel(state));
+            dot += '    ' + nodeId + ' [margin=0.1, label="' + nodeLabel + '", shape=box, URL="#' + escapeDotLabel(state.id) + '"]\\n';
         }
     });
 
@@ -616,21 +636,23 @@ function generateDotFromAlps(data, labelMode, filterIds = null) {
 
         if (group.ids.length === 1) {
             const tableLabel = '<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0" CELLPADDING="0"><TR><TD VALIGN="MIDDLE" HREF="#' + escapeHtmlAttr(group.ids[0]) + '" TOOLTIP="' + escapeHtmlAttr(group.titles[0]) + ' (' + group.types[0] + ')"><FONT COLOR="' + group.colors[0] + '">\\u25A0</FONT> ' + escapeHtmlLabel(group.labels[0]) + '</TD></TR></TABLE>';
-            dot += '    ' + sourceState + ' -> ' + targetState + ' [label=<' + tableLabel + '> URL="#' + escapeHtmlAttr(group.ids[0]) + '" fontsize=13 class="' + escapeHtmlAttr(group.ids[0]) + '" penwidth=1.3 color="' + edgeColor + '"];\\n';
+            dot += '    ' + escapeDotId(sourceState) + ' -> ' + escapeDotId(targetState) + ' [label=<' + tableLabel + '> URL="#' + escapeHtmlAttr(group.ids[0]) + '" fontsize=13 class="' + escapeHtmlAttr(group.ids[0]) + '" penwidth=1.3 color="' + edgeColor + '"];\\n';
         } else {
             let rows = '';
             for (let i = 0; i < group.ids.length; i++) {
                 rows += '<TR><TD VALIGN="MIDDLE" ALIGN="LEFT" HREF="#' + escapeHtmlAttr(group.ids[i]) + '" TOOLTIP="' + escapeHtmlAttr(group.titles[i]) + ' (' + group.types[i] + ')"><FONT COLOR="' + group.colors[i] + '">\\u25A0</FONT> ' + escapeHtmlLabel(group.labels[i]) + '</TD></TR>';
             }
             const tableLabel = '<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0" CELLPADDING="0">' + rows + '</TABLE>';
-            dot += '    ' + sourceState + ' -> ' + targetState + ' [label=<' + tableLabel + '> URL="#' + escapeHtmlAttr(group.ids[0]) + '" fontsize=13 class="' + escapeHtmlAttr(group.ids[0]) + '" penwidth=1.3 color="' + edgeColor + '"];\\n';
+            dot += '    ' + escapeDotId(sourceState) + ' -> ' + escapeDotId(targetState) + ' [label=<' + tableLabel + '> URL="#' + escapeHtmlAttr(group.ids[0]) + '" fontsize=13 class="' + escapeHtmlAttr(group.ids[0]) + '" penwidth=1.3 color="' + edgeColor + '"];\\n';
         }
     });
 
     dot += '\\n';
     visibleStates.forEach(state => {
         if (state.id) {
-            dot += '    ' + state.id + ' [label="' + getLabel(state) + '" URL="#' + state.id + '"]\\n';
+            const nodeId = escapeDotId(state.id);
+            const nodeLabel = escapeDotLabel(getLabel(state));
+            dot += '    ' + nodeId + ' [label="' + nodeLabel + '" URL="#' + escapeDotLabel(state.id) + '"]\\n';
         }
     });
     dot += '\\n}';

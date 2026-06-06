@@ -878,8 +878,13 @@ const setupTagTrigger = () => {
     const checkboxes = document.querySelectorAll('.tag-trigger-checkbox');
     checkboxes.forEach(checkbox => {
         checkbox.addEventListener('change', async function() {
+            const wasTagOnlyMode = isTagOnlyMode();
             updateTagOnlyControl();
-            await regenerateSvg(getCurrentLabelMode());
+            if (wasTagOnlyMode || isTagOnlyMode()) {
+                await regenerateSvg(getCurrentLabelMode());
+            } else {
+                applySelectedTagsToDiagram();
+            }
             publishUrlState();
         });
     });
