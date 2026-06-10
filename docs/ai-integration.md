@@ -84,9 +84,28 @@ Verify: `/mcp` should show "alps" in the list.
 
 ### Available Tools
 
-- `validate_alps` - Validate ALPS profile
-- `alps2svg` - Generate SVG diagram
-- `alps_guide` - Get ALPS best practices
+**Convert and validate:**
+
+| Tool | Description |
+|------|-------------|
+| `validate_alps` | Validate an ALPS profile |
+| `alps2svg` | Generate an SVG diagram (`tag` filters to a tagged slice; `output` writes to a file and returns the path) |
+| `alps2mermaid` | Generate a Mermaid diagram — renders natively in GitHub, claude.ai, and VS Code (`tag` filters to a tagged slice) |
+| `validate_openapi` | Validate an OpenAPI document |
+| `crawl_and_extract_alps` | Extract an ALPS draft from a website |
+| `alps_guide` | Get ALPS best practices |
+
+**Query and edit profiles:**
+
+| Tool | Description |
+|------|-------------|
+| `alps_overview` | States, transitions (from/to), and tags at a glance |
+| `alps_search` | Filter descriptors by type, tag(s), or text; `format: markdown` returns a table (ID, Type, Title, Tags, Doc) for direct chat display |
+| `alps_descriptor` | One descriptor in full — external docs resolved, containers, incoming/outgoing transitions |
+| `alps_paths` | Enumerate transition paths between two states |
+| `alps_set_doc` | Write descriptor documentation; large docs are auto-externalized to `alps/docs/<id>.md` and linked via `doc.href` |
+
+**Tip — view a tagged slice entirely in chat:** ask for `alps2mermaid` with `tag` (the diagram renders natively) plus `alps_search` with the same tags and `format: markdown` (the descriptor table).
 
 ## llms.txt (Any LLM)
 
