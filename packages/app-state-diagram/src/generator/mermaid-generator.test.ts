@@ -284,3 +284,38 @@ describe('MermaidGenerator', () => {
     });
   });
 });
+
+describe('generateMermaid with tag filter', () => {
+  const doc = {
+    alps: {
+      descriptor: [
+        { id: 'Home', type: 'semantic' as const, descriptor: [{ href: '#goCart' }, { href: '#goAdmin' }] },
+        { id: 'Cart', type: 'semantic' as const },
+        { id: 'AdminTop', type: 'semantic' as const },
+        { id: 'goCart', type: 'safe' as const, rt: '#Cart', tag: 'cart' },
+        { id: 'goAdmin', type: 'safe' as const, rt: '#AdminTop', tag: 'admin' },
+      ],
+    },
+  };
+
+  it('renders the induced subgraph for the filter ids', () => {
+    const mermaid = generateMermaid(doc, new Set(['goCart', 'Home', 'Cart']));
+    expect(mermaid).toContain('Home --> Cart');
+    expect(mermaid).not.toContain('AdminTop');
+    expect(mermaid).not.toContain('goAdmin');
+  });
+
+  it('pulls in endpoints of a tagged transition even when states are unfiltered', () => {
+    const mermaid = generateMermaid(doc, new Set(['goAdmin']));
+    expect(mermaid).toContain('Home --> AdminTop');
+    expect(mermaid).not.toContain('Cart');
+  });
+
+  it('returns an empty string when nothing matches', () => {
+    expect(generateMermaid(doc, new Set(['nothing']))).toBe('');
+  });
+
+  it('is unchanged when no filter is given', () => {
+    expect(generateMermaid(doc)).toContain('goAdmin');
+  });
+});

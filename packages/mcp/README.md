@@ -73,6 +73,12 @@ Validate an ALPS profile and get detailed error feedback.
 
 ### alps2svg
 
+**Parameters:**
+- `alps_content` or `alps_path` (required)
+- `tag` (optional): Filter to the tagged slice — space/comma separated tags; shows the induced subgraph (tagged nodes plus endpoints of tagged transitions)
+- `output` (optional): Write the SVG to this file path and return the path (recommended for large diagrams)
+
+
 Generate an SVG state diagram from an ALPS profile.
 
 **Parameters:**
@@ -81,6 +87,17 @@ Generate an SVG state diagram from an ALPS profile.
 
 **Example prompt:**
 > "Generate a state diagram from my ALPS profile at ./api.json"
+
+### alps2mermaid
+
+Convert ALPS profile to Mermaid classDiagram (renders natively in GitHub, claude.ai artifacts, VS Code).
+
+**Parameters:**
+- `alps_content` or `alps_path` (required)
+- `tag` (optional): Filter to the tagged slice (same semantics as alps2svg)
+
+**Example prompt:**
+> "Show me the checkout flow of profile.json as a diagram"
 
 ### alps_guide
 
@@ -108,11 +125,12 @@ Filter descriptors by type, tag, and/or free text (matched against id, title, an
 **Parameters:**
 - `file` (required): Path to the ALPS profile file
 - `type` (optional): `semantic` | `safe` | `unsafe` | `idempotent`
-- `tag` (optional): Filter by tag
+- `tag` (optional): Filter by tag(s), space or comma separated (OR match)
 - `text` (optional): Case-insensitive text search
+- `format` (optional): `json` (default) or `markdown` — a table (ID, Type, Title, Tags, Doc) for direct display in chat
 
 **Example prompt:**
-> "List all unsafe transitions tagged checkout in profile.json"
+> "List all unsafe transitions tagged checkout in profile.json as a table"
 
 ### alps_descriptor
 

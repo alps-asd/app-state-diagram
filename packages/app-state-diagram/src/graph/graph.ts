@@ -6,7 +6,7 @@
  * state/transition model as generator/dot-generator.ts.
  */
 
-import { localFragment } from '../parser/alps-parser';
+import { localFragment, walkDescriptors } from '../parser/alps-parser';
 import type { AlpsDocument, AlpsDescriptor } from '../parser/alps-parser';
 
 export type TransitionType = 'safe' | 'unsafe' | 'idempotent';
@@ -152,4 +152,43 @@ export function formatPath(from: string, path: PathStep[]): string {
     result += ` --${step.transition}(${step.type})--> ${step.to}`;
   }
   return result;
+}
+
+/**
+ * Collect ids of descriptors carrying any of the given tags
+ * (space-separated tag attribute; nested descriptors included)
+ */
+export function getDescriptorIdsByTags(alpsData: AlpsDocument, tags: string[]): Set<string> {
+  const wanted = new Set(tags.filter(Boolean));
+  const ids = new Set<string>();
+  walkDescriptors(alpsData.alps?.descriptor || [], desc => {
+    if (!desc.id || !desc.tag) {
+      return;
+    }
+    if (desc.tag.split(/\s+/).some(tag => wanted.has(tag))) {
+      ids.add(desc.id);
+    }
+  });
+  return ids;
+}
+
+/**
+ * Visible node ids for a tag-filtered diagram: tagged states plus the
+ * endpoints of tagged transitions. Same semantics as the HTML viewer's
+ * "Show selected tags only" filter (induced subgraph).
+ */
+export function computeVisibleNodeIds(graph: StateGraph, filterIds: Set<string>): Set<string> {
+  const visible = new Set<string>();
+  for (const state of graph.states) {
+    if (state.id && filterIds.has(state.id)) {
+      visible.add(state.id);
+    }
+  }
+  for (const trans of graph.transitions) {
+    if (filterIds.has(trans.id)) {
+      visible.add(trans.to);
+      trans.from.forEach(source => visible.add(source));
+    }
+  }
+  return visible;
 }

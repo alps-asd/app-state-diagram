@@ -5,6 +5,7 @@
  */
 
 import type { AlpsDocument, AlpsDescriptor } from '../parser/alps-parser';
+import { extractGraph, computeVisibleNodeIds } from '../graph/graph';
 
 const EMOJI = {
   semantic: '⬜',
@@ -16,7 +17,7 @@ const EMOJI = {
 /**
  * Generate Mermaid classDiagram content from ALPS data
  */
-export function generateMermaid(alpsData: AlpsDocument): string {
+export function generateMermaid(alpsData: AlpsDocument, filterIds?: Set<string> | null): string {
   const descriptors = alpsData.alps?.descriptor || [];
 
   // Get all transition targets (rt values) - these are the actual states
@@ -29,6 +30,17 @@ export function generateMermaid(alpsData: AlpsDocument): string {
   // If there are no transitions, include all semantic descriptors as states
   if (states.length === 0) {
     states = descriptors.filter(d => d.id && (!d.type || d.type === 'semantic'));
+  }
+
+  // Tag filter: induced subgraph over tagged nodes and tagged transitions' endpoints
+  let visible: Set<string> | null = null;
+  if (filterIds && filterIds.size > 0) {
+    visible = computeVisibleNodeIds(extractGraph(alpsData), filterIds);
+    const visibleIds = visible;
+    states = descriptors.filter(d => d.id && visibleIds.has(d.id));
+    if (states.length === 0) {
+      return '';
+    }
   }
 
   // Build a map of descriptor id to descriptor for quick lookup
@@ -49,7 +61,18 @@ export function generateMermaid(alpsData: AlpsDocument): string {
     mermaid += `    class ${state.id} {\n`;
 
     // Get child descriptors and sort by type: semantic, safe, unsafe, idempotent
-    const children = getChildDescriptors(state, descriptorMap);
+    let children = getChildDescriptors(state, descriptorMap);
+    if (visible) {
+      // Keep semantic members (the state's shape); drop transitions leading outside the slice
+      const visibleIds = visible;
+      children = children.filter(child => {
+        if (!child.type || child.type === 'semantic') {
+          return true;
+        }
+        const target = descriptorMap.get(child.id)?.rt?.replace('#', '');
+        return target !== undefined && visibleIds.has(target);
+      });
+    }
     const sorted = sortByType(children);
 
     for (const child of sorted) {
@@ -67,7 +90,14 @@ export function generateMermaid(alpsData: AlpsDocument): string {
     if (!trans.id || !trans.rt) continue;
 
     const targetState = trans.rt.replace('#', '');
-    const sourceStates = findSourceStatesForTransition(trans.id, descriptors);
+    if (visible && !visible.has(targetState)) {
+      continue;
+    }
+    let sourceStates = findSourceStatesForTransition(trans.id, descriptors);
+    if (visible) {
+      const visibleIds = visible;
+      sourceStates = sourceStates.filter(source => visibleIds.has(source));
+    }
     const emoji = getEmoji(trans.type);
 
     for (const sourceState of sourceStates) {

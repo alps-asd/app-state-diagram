@@ -27,7 +27,7 @@ import { generateDot } from "@alps-asd/app-state-diagram/generator/dot-generator
 import { dotToSvg } from "@alps-asd/app-state-diagram/generator/svg-generator.js";
 import { generateMermaid } from "@alps-asd/app-state-diagram/generator/mermaid-generator.js";
 import { FileResolver } from "@alps-asd/app-state-diagram/resolver/index.js";
-import { extractGraph, findPaths, formatPath, findContainers } from "@alps-asd/app-state-diagram/graph/index.js";
+import { extractGraph, findPaths, formatPath, findContainers, getDescriptorIdsByTags } from "@alps-asd/app-state-diagram/graph/index.js";
 import { setDescriptorDoc, resolveDoc, INLINE_DOC_MAX_LENGTH } from "./doc-store.js";
 
 // Crawler package is optional (not yet published)
@@ -91,6 +91,14 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
               type: "string",
               description: "Path to ALPS profile file (alternative to alps_content)",
             },
+            tag: {
+              type: "string",
+              description: "Filter the diagram to descriptors with these tags (space or comma separated). Shows the induced subgraph: tagged nodes plus endpoints of tagged transitions.",
+            },
+            output: {
+              type: "string",
+              description: "Write the SVG to this file path and return the path instead of inline SVG (recommended for large diagrams)",
+            },
           },
         },
       },
@@ -107,6 +115,10 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
             alps_path: {
               type: "string",
               description: "Path to ALPS profile file (alternative to alps_content)",
+            },
+            tag: {
+              type: "string",
+              description: "Filter the diagram to descriptors with these tags (space or comma separated). Shows the induced subgraph: tagged nodes plus endpoints of tagged transitions.",
             },
           },
         },
@@ -194,11 +206,16 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
             },
             tag: {
               type: "string",
-              description: "Filter by tag",
+              description: "Filter by tag(s), space or comma separated (OR match against the descriptor's space-separated tags)",
             },
             text: {
               type: "string",
               description: "Case-insensitive text search in id, title, and doc",
+            },
+            format: {
+              type: "string",
+              enum: ["json", "markdown"],
+              description: "Output format: json (default) or a Markdown table (ID, Type, Title, Tags, Doc) for direct display in chat",
             },
           },
           required: ["file"],
@@ -382,6 +399,50 @@ export async function handleValidateAlps(args: Record<string, unknown> | undefin
   }
 }
 
+/**
+ * Render descriptor summaries as a Markdown table for chat display
+ */
+function descriptorsToMarkdownTable(
+  rows: Array<{ id?: string; type: string; title?: string; tags?: string[]; doc?: string }>
+): string {
+  if (rows.length === 0) {
+    return "No descriptors match.";
+  }
+  const escapeCell = (value: string): string => value.replace(/\|/g, "\\|").replace(/\n/g, " ");
+  const lines = [
+    "| ID | Type | Title | Tags | Doc |",
+    "| :-- | :-- | :-- | :-- | :-- |",
+  ];
+  for (const row of rows) {
+    lines.push(
+      `| ${escapeCell(row.id || "")} | ${row.type} | ${escapeCell(row.title || "")} | ${escapeCell((row.tags || []).join(" "))} | ${escapeCell(row.doc || "")} |`
+    );
+  }
+  return lines.join("\n");
+}
+
+/**
+ * Resolve the optional tag filter for diagram tools.
+ * Returns null when no tags are requested.
+ */
+function resolveTagFilter(
+  document: AlpsDocument,
+  tagParam: string | undefined
+): { filterIds: Set<string> | null; error?: string } {
+  if (!tagParam) {
+    return { filterIds: null };
+  }
+  const tags = tagParam.split(/[\s,]+/).filter(Boolean);
+  if (tags.length === 0) {
+    return { filterIds: null };
+  }
+  const filterIds = getDescriptorIdsByTags(document, tags);
+  if (filterIds.size === 0) {
+    return { filterIds, error: `No descriptors match tag(s): ${tags.join(", ")}` };
+  }
+  return { filterIds };
+}
+
 export async function handleAlps2Svg(args: Record<string, unknown> | undefined) {
   let alpsContent = args?.alps_content as string | undefined;
   const alpsPath = args?.alps_path as string | undefined;
@@ -406,8 +467,25 @@ export async function handleAlps2Svg(args: Record<string, unknown> | undefined) 
 
   try {
     const document = parseAlpsAuto(alpsContent);
-    const dot = generateDot(document);
+    const { filterIds, error } = resolveTagFilter(document, args?.tag as string | undefined);
+    if (error) {
+      return { content: [{ type: "text", text: error }], isError: true };
+    }
+    const dot = generateDot(document, "id", filterIds);
+    if (!dot) {
+      return { content: [{ type: "text", text: "No diagram nodes match the selected tags." }] };
+    }
     const svg = await dotToSvg(dot);
+
+    const output = args?.output as string | undefined;
+    if (output) {
+      const outPath = path.resolve(output);
+      fs.mkdirSync(path.dirname(outPath), { recursive: true });
+      fs.writeFileSync(outPath, svg, "utf-8");
+      return {
+        content: [{ type: "text", text: `✅ SVG written to ${outPath} (${svg.length} bytes)` }],
+      };
+    }
 
     return {
       content: [{ type: "text", text: `✅ SVG generated (${svg.length} bytes)\n\n\`\`\`svg\n${svg}\n\`\`\`` }],
@@ -447,7 +525,14 @@ export async function handleAlps2Mermaid(args: Record<string, unknown> | undefin
 
   try {
     const document = parseAlpsAuto(alpsContent);
-    const mermaid = generateMermaid(document);
+    const { filterIds, error } = resolveTagFilter(document, args?.tag as string | undefined);
+    if (error) {
+      return { content: [{ type: "text", text: error }], isError: true };
+    }
+    const mermaid = generateMermaid(document, filterIds);
+    if (!mermaid) {
+      return { content: [{ type: "text", text: "No diagram nodes match the selected tags." }] };
+    }
 
     return {
       content: [{ type: "text", text: `✅ Mermaid classDiagram generated\n\n\`\`\`mermaid\n${mermaid}\`\`\`` }],
@@ -796,6 +881,8 @@ export async function handleAlpsSearch(args: Record<string, unknown> | undefined
     const { document } = await loadProfile(file);
     const descriptors = allDescriptors(document);
     const needle = text?.toLowerCase();
+    const tagList = tag ? tag.split(/[\s,]+/).filter(Boolean) : [];
+    const tagSet = tagList.length > 0 ? new Set(tagList) : null;
     const matches = descriptors.filter((desc) => {
       if (!desc.id) {
         return false;
@@ -803,7 +890,7 @@ export async function handleAlpsSearch(args: Record<string, unknown> | undefined
       if (type && (desc.type || "semantic") !== type) {
         return false;
       }
-      if (tag && !descriptorTags(desc).includes(tag)) {
+      if (tagSet && !descriptorTags(desc).some((t) => tagSet.has(t))) {
         return false;
       }
       if (needle) {
@@ -814,6 +901,9 @@ export async function handleAlpsSearch(args: Record<string, unknown> | undefined
       }
       return true;
     });
+    if ((args?.format as string | undefined) === "markdown") {
+      return { content: [{ type: "text", text: descriptorsToMarkdownTable(matches.map(summarize)) }] };
+    }
     return jsonResult({ count: matches.length, descriptors: matches.map(summarize) });
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);

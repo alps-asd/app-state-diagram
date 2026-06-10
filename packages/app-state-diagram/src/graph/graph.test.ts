@@ -1,4 +1,4 @@
-import { extractGraph, findPaths, formatPath, findContainers } from './graph';
+import { extractGraph, findPaths, formatPath, findContainers, getDescriptorIdsByTags, computeVisibleNodeIds } from './graph';
 import type { AlpsDocument } from '../parser/alps-parser';
 
 const DOC: AlpsDocument = {
@@ -98,5 +98,51 @@ describe('findPaths', () => {
 
   it('respects maxPaths', () => {
     expect(findPaths(graph, 'Home', 'Checkout', 1).length).toBe(1);
+  });
+});
+
+describe('getDescriptorIdsByTags', () => {
+  const doc = {
+    alps: {
+      descriptor: [
+        { id: 'Home', type: 'semantic' as const, tag: 'front nav' },
+        { id: 'Cart', type: 'semantic' as const, tag: 'cart' },
+        { id: 'goCart', type: 'safe' as const, rt: '#Cart', tag: 'cart flow-purchase' },
+        { id: 'untagged', type: 'semantic' as const },
+      ],
+    },
+  };
+
+  it('collects ids whose space-separated tags intersect the requested tags', () => {
+    expect([...getDescriptorIdsByTags(doc, ['cart'])].sort()).toEqual(['Cart', 'goCart']);
+    expect([...getDescriptorIdsByTags(doc, ['flow-purchase', 'nav'])].sort()).toEqual(['Home', 'goCart']);
+  });
+
+  it('returns an empty set for unknown tags', () => {
+    expect(getDescriptorIdsByTags(doc, ['nope']).size).toBe(0);
+  });
+});
+
+describe('computeVisibleNodeIds', () => {
+  const doc = {
+    alps: {
+      descriptor: [
+        { id: 'Home', type: 'semantic' as const, descriptor: [{ href: '#goCart' }] },
+        { id: 'Cart', type: 'semantic' as const },
+        { id: 'goCart', type: 'safe' as const, rt: '#Cart' },
+      ],
+    },
+  };
+
+  it('includes endpoints of tagged transitions even when the states are untagged', () => {
+    const graph = extractGraph(doc);
+    const visible = computeVisibleNodeIds(graph, new Set(['goCart']));
+    expect([...visible].sort()).toEqual(['Cart', 'Home']);
+  });
+
+  it('includes tagged states on their own', () => {
+    const graph = extractGraph(doc);
+    const visible = computeVisibleNodeIds(graph, new Set(['Cart']));
+    expect([...visible]).toEqual(['Cart']);
   });
 });
