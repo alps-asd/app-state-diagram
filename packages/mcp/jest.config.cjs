@@ -8,7 +8,8 @@ module.exports = {
   coverageReporters: ['text', 'lcov'],
   forceExit: true,
   moduleNameMapper: {
-    '^@alps-asd/app-state-diagram/(.*)$': '<rootDir>/../app-state-diagram/dist/$1'
+    '^@alps-asd/app-state-diagram/(.*)$': '<rootDir>/../app-state-diagram/dist/$1',
+    '^(\\.{1,2}/.*)\\.js$': '$1'
   },
   globals: {
     'ts-jest': {

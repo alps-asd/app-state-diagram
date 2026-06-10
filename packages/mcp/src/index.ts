@@ -20,11 +20,15 @@ import { promisify } from "util";
 const execAsync = promisify(exec);
 
 // Import from CLI package
-import { parseAlpsAuto } from "@alps-asd/app-state-diagram/parser/alps-parser.js";
+import { parseAlpsAuto, docText, findDescriptorById, walkDescriptors } from "@alps-asd/app-state-diagram/parser/alps-parser.js";
+import type { AlpsDocument, AlpsDescriptor } from "@alps-asd/app-state-diagram/parser/alps-parser.js";
 import { AlpsValidator } from "@alps-asd/app-state-diagram/validator/index.js";
 import { generateDot } from "@alps-asd/app-state-diagram/generator/dot-generator.js";
 import { dotToSvg } from "@alps-asd/app-state-diagram/generator/svg-generator.js";
 import { generateMermaid } from "@alps-asd/app-state-diagram/generator/mermaid-generator.js";
+import { FileResolver } from "@alps-asd/app-state-diagram/resolver/index.js";
+import { extractGraph, findPaths, formatPath, findContainers } from "@alps-asd/app-state-diagram/graph/index.js";
+import { setDescriptorDoc, resolveDoc, INLINE_DOC_MAX_LENGTH } from "./doc-store.js";
 
 // Crawler package is optional (not yet published)
 // import { AlpsCrawler } from "@alps-asd/crawler";
@@ -157,6 +161,130 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
           },
         },
       },
+      {
+        name: "alps_overview",
+        description:
+          "Summarize an ALPS profile: title, application states, transitions (with from/to states), and tags. Use this first to understand the application state model.",
+        inputSchema: {
+          type: "object" as const,
+          properties: {
+            file: {
+              type: "string",
+              description: "Path to the ALPS profile file (JSON or XML)",
+            },
+          },
+          required: ["file"],
+        },
+      },
+      {
+        name: "alps_search",
+        description:
+          "Filter descriptors in an ALPS profile by type, tag, and/or free text (matched against id, title, and doc). Returns compact summaries.",
+        inputSchema: {
+          type: "object" as const,
+          properties: {
+            file: {
+              type: "string",
+              description: "Path to the ALPS profile file (JSON or XML)",
+            },
+            type: {
+              type: "string",
+              enum: ["semantic", "safe", "unsafe", "idempotent"],
+              description: "Filter by descriptor type",
+            },
+            tag: {
+              type: "string",
+              description: "Filter by tag",
+            },
+            text: {
+              type: "string",
+              description: "Case-insensitive text search in id, title, and doc",
+            },
+          },
+          required: ["file"],
+        },
+      },
+      {
+        name: "alps_descriptor",
+        description:
+          "Get full details of one descriptor: definition, resolved documentation (external alps/ doc files are read and inlined), containing states, and incoming/outgoing transitions.",
+        inputSchema: {
+          type: "object" as const,
+          properties: {
+            file: {
+              type: "string",
+              description: "Path to the ALPS profile file (JSON or XML)",
+            },
+            id: {
+              type: "string",
+              description: "Descriptor id",
+            },
+          },
+          required: ["file", "id"],
+        },
+      },
+      {
+        name: "alps_paths",
+        description:
+          "Enumerate transition paths from one application state to another, e.g. all ways a user can get from Home to OrderConfirmation.",
+        inputSchema: {
+          type: "object" as const,
+          properties: {
+            file: {
+              type: "string",
+              description: "Path to the ALPS profile file (JSON or XML)",
+            },
+            from: {
+              type: "string",
+              description: "Starting state id",
+            },
+            to: {
+              type: "string",
+              description: "Target state id",
+            },
+            maxPaths: {
+              type: "number",
+              minimum: 1,
+              maximum: 50,
+              description: "Maximum paths (default 10)",
+            },
+          },
+          required: ["file", "from", "to"],
+        },
+      },
+      {
+        name: "alps_set_doc",
+        description:
+          "Set or update the documentation of a descriptor in a JSON ALPS profile. " +
+          `Short single-line docs (<= ${INLINE_DOC_MAX_LENGTH} chars) are stored inline; ` +
+          "longer or multi-line docs are automatically written to an external Markdown " +
+          "file (alps/docs/<id>.md) and linked from the profile via doc.href. This keeps " +
+          "the profile compact, so feel free to write rich, detailed Markdown " +
+          "documentation describing the meaning of the state and related information.",
+        inputSchema: {
+          type: "object" as const,
+          properties: {
+            file: {
+              type: "string",
+              description: "Path to the ALPS profile file (JSON or XML)",
+            },
+            id: {
+              type: "string",
+              description: "Descriptor id",
+            },
+            doc: {
+              type: "string",
+              description: "Documentation text (Markdown welcome for external docs)",
+            },
+            placement: {
+              type: "string",
+              enum: ["auto", "inline", "external"],
+              description: "Storage placement (default: auto - the server decides by size)",
+            },
+          },
+          required: ["file", "id", "doc"],
+        },
+      },
     ],
   };
 });
@@ -179,6 +307,16 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       return handleCrawlAndExtract(args);
     case "validate_openapi":
       return handleValidateOpenapi(args);
+    case "alps_overview":
+      return handleAlpsOverview(args);
+    case "alps_search":
+      return handleAlpsSearch(args);
+    case "alps_descriptor":
+      return handleAlpsDescriptor(args);
+    case "alps_paths":
+      return handleAlpsPaths(args);
+    case "alps_set_doc":
+      return handleAlpsSetDoc(args);
     default:
       return {
         content: [{ type: "text", text: `Unknown tool: ${name}` }],
@@ -514,6 +652,275 @@ export async function handleValidateOpenapi(args: Record<string, unknown> | unde
 
     return {
       content: [{ type: "text", text: `Error running Spectral: ${errorMessage}` }],
+      isError: true,
+    };
+  }
+}
+
+const DOC_PREVIEW_LENGTH = 80;
+
+interface LoadedProfile {
+  document: AlpsDocument;
+  baseDir: string;
+}
+
+/**
+ * Read, parse, and resolve an ALPS profile from disk.
+ * Always reads fresh so edits between tool calls are visible.
+ */
+async function loadProfile(file: string): Promise<LoadedProfile> {
+  const absPath = path.resolve(file);
+  if (!fs.existsSync(absPath)) {
+    throw new Error(`Profile file not found: ${file}`);
+  }
+  const content = fs.readFileSync(absPath, "utf-8");
+  const baseDir = path.dirname(absPath);
+  const parsed = parseAlpsAuto(content);
+  const resolver = new FileResolver(baseDir);
+  const document = await resolver.resolve(parsed);
+  return { document, baseDir };
+}
+
+/**
+ * Split the space-separated tag attribute into a list
+ */
+function descriptorTags(desc: AlpsDescriptor): string[] {
+  return (desc.tag || "").split(/\s+/).filter(Boolean);
+}
+
+/**
+ * Short doc excerpt for search results; external docs show their href
+ */
+function docPreview(desc: AlpsDescriptor): string | undefined {
+  const text = docText(desc.doc);
+  if (!text) {
+    const href = typeof desc.doc === "object" ? desc.doc?.href : undefined;
+    return href ? `(external: ${href})` : undefined;
+  }
+  return text.length > DOC_PREVIEW_LENGTH ? `${text.slice(0, DOC_PREVIEW_LENGTH)}…` : text;
+}
+
+/**
+ * Compact descriptor summary returned by alps_search
+ */
+function summarize(desc: AlpsDescriptor) {
+  const tags = descriptorTags(desc);
+  const doc = docPreview(desc);
+  return {
+    id: desc.id,
+    type: desc.type || "semantic",
+    title: desc.title,
+    ...(desc.rt ? { rt: desc.rt } : {}),
+    ...(tags.length ? { tags } : {}),
+    ...(doc ? { doc } : {}),
+  };
+}
+
+/**
+ * Collect all descriptors (top-level and nested) in document order
+ */
+function allDescriptors(document: AlpsDocument): AlpsDescriptor[] {
+  const result: AlpsDescriptor[] = [];
+  walkDescriptors(document.alps.descriptor || [], (desc) => result.push(desc));
+  return result;
+}
+
+/**
+ * Tool result with pretty-printed JSON content
+ */
+function jsonResult(data: unknown) {
+  return {
+    content: [{ type: "text", text: JSON.stringify(data, null, 2) }],
+    isError: false,
+  };
+}
+
+export async function handleAlpsOverview(args: Record<string, unknown> | undefined) {
+  const file = args?.file as string | undefined;
+
+  if (!file) {
+    return {
+      content: [{ type: "text", text: "Error: file is required" }],
+      isError: true,
+    };
+  }
+
+  try {
+    const { document } = await loadProfile(file);
+    const descriptors = allDescriptors(document);
+    const graph = extractGraph(document);
+    const tags = new Set<string>();
+    for (const desc of descriptors) {
+      descriptorTags(desc).forEach((tag) => tags.add(tag));
+    }
+    return jsonResult({
+      title: document.alps.title,
+      doc: docText(document.alps.doc) || undefined,
+      counts: {
+        descriptors: descriptors.length,
+        states: graph.states.length,
+        transitions: graph.transitions.length,
+      },
+      states: graph.states.map((s) => ({ id: s.id, title: s.title })),
+      transitions: graph.transitions.map((t) => ({
+        id: t.id,
+        type: t.type,
+        from: t.from,
+        to: t.to,
+      })),
+      tags: [...tags].sort(),
+    });
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    return {
+      content: [{ type: "text", text: `Error: ${errorMessage}` }],
+      isError: true,
+    };
+  }
+}
+
+export async function handleAlpsSearch(args: Record<string, unknown> | undefined) {
+  const file = args?.file as string | undefined;
+  const type = args?.type as string | undefined;
+  const tag = args?.tag as string | undefined;
+  const text = args?.text as string | undefined;
+
+  if (!file) {
+    return {
+      content: [{ type: "text", text: "Error: file is required" }],
+      isError: true,
+    };
+  }
+
+  try {
+    const { document } = await loadProfile(file);
+    const descriptors = allDescriptors(document);
+    const needle = text?.toLowerCase();
+    const matches = descriptors.filter((desc) => {
+      if (!desc.id) {
+        return false;
+      }
+      if (type && (desc.type || "semantic") !== type) {
+        return false;
+      }
+      if (tag && !descriptorTags(desc).includes(tag)) {
+        return false;
+      }
+      if (needle) {
+        const haystack = `${desc.id} ${desc.title || ""} ${docText(desc.doc)}`.toLowerCase();
+        if (!haystack.includes(needle)) {
+          return false;
+        }
+      }
+      return true;
+    });
+    return jsonResult({ count: matches.length, descriptors: matches.map(summarize) });
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    return {
+      content: [{ type: "text", text: `Error: ${errorMessage}` }],
+      isError: true,
+    };
+  }
+}
+
+export async function handleAlpsDescriptor(args: Record<string, unknown> | undefined) {
+  const file = args?.file as string | undefined;
+  const id = args?.id as string | undefined;
+
+  if (!file || !id) {
+    return {
+      content: [{ type: "text", text: "Error: file and id are required" }],
+      isError: true,
+    };
+  }
+
+  try {
+    const { document, baseDir } = await loadProfile(file);
+    const descriptors = document.alps.descriptor || [];
+    const descriptor = findDescriptorById(descriptors, id);
+    if (!descriptor) {
+      throw new Error(`Descriptor not found: ${id}`);
+    }
+    const graph = extractGraph(document);
+    return jsonResult({
+      descriptor,
+      doc: resolveDoc(baseDir, descriptor.doc),
+      containedBy: findContainers(id, descriptors),
+      outgoingTransitions: graph.transitions
+        .filter((t) => t.from.includes(id))
+        .map((t) => ({ id: t.id, type: t.type, to: t.to })),
+      incomingTransitions: graph.transitions
+        .filter((t) => t.to === id)
+        .map((t) => ({ id: t.id, type: t.type, from: t.from })),
+    });
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    return {
+      content: [{ type: "text", text: `Error: ${errorMessage}` }],
+      isError: true,
+    };
+  }
+}
+
+export async function handleAlpsPaths(args: Record<string, unknown> | undefined) {
+  const file = args?.file as string | undefined;
+  const from = args?.from as string | undefined;
+  const to = args?.to as string | undefined;
+  const maxPaths = args?.maxPaths as number | undefined;
+
+  if (!file || !from || !to) {
+    return {
+      content: [{ type: "text", text: "Error: file, from, and to are required" }],
+      isError: true,
+    };
+  }
+
+  try {
+    const { document } = await loadProfile(file);
+    const graph = extractGraph(document);
+    const stateIds = new Set(graph.states.map((s) => s.id));
+    for (const state of [from, to]) {
+      if (!stateIds.has(state)) {
+        throw new Error(`Unknown state: ${state} (known states: ${[...stateIds].join(", ")})`);
+      }
+    }
+    const paths = findPaths(graph, from, to, maxPaths ?? 10);
+    return jsonResult({
+      from,
+      to,
+      count: paths.length,
+      paths: paths.map((p) => formatPath(from, p)),
+    });
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    return {
+      content: [{ type: "text", text: `Error: ${errorMessage}` }],
+      isError: true,
+    };
+  }
+}
+
+export async function handleAlpsSetDoc(args: Record<string, unknown> | undefined) {
+  const file = args?.file as string | undefined;
+  const id = args?.id as string | undefined;
+  const doc = args?.doc as string | undefined;
+  const placement = args?.placement as "auto" | "inline" | "external" | undefined;
+
+  if (!file || !id || doc === undefined) {
+    return {
+      content: [{ type: "text", text: "Error: file, id, and doc are required" }],
+      isError: true,
+    };
+  }
+
+  try {
+    const result = setDescriptorDoc(file, id, doc, placement ?? "auto");
+    return jsonResult(result);
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    return {
+      content: [{ type: "text", text: `Error: ${errorMessage}` }],
       isError: true,
     };
   }

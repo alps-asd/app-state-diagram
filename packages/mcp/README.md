@@ -91,6 +91,86 @@ Get ALPS best practices and reference guide.
 **Example prompt:**
 > "Show me ALPS best practices for naming transitions"
 
+### alps_overview
+
+Summarize an ALPS profile: title, application states, transitions (with from/to states), and tags. Use this first to understand the application state model.
+
+**Parameters:**
+- `file` (required): Path to the ALPS profile file (JSON or XML)
+
+**Example prompt:**
+> "Give me an overview of profile.json"
+
+### alps_search
+
+Filter descriptors by type, tag, and/or free text (matched against id, title, and doc). Searches nested descriptors too. Returns compact summaries.
+
+**Parameters:**
+- `file` (required): Path to the ALPS profile file
+- `type` (optional): `semantic` | `safe` | `unsafe` | `idempotent`
+- `tag` (optional): Filter by tag
+- `text` (optional): Case-insensitive text search
+
+**Example prompt:**
+> "List all unsafe transitions tagged checkout in profile.json"
+
+### alps_descriptor
+
+Get full details of one descriptor: definition, resolved documentation (external doc files are read and inlined), containing states, and incoming/outgoing transitions.
+
+**Parameters:**
+- `file` (required): Path to the ALPS profile file
+- `id` (required): Descriptor id
+
+**Example prompt:**
+> "Show me everything about the Cart descriptor"
+
+### alps_paths
+
+Enumerate transition paths from one application state to another.
+
+**Parameters:**
+- `file` (required): Path to the ALPS profile file
+- `from` (required): Starting state id
+- `to` (required): Target state id
+- `maxPaths` (optional): Maximum paths (default 10)
+
+**Example prompt:**
+> "How does a user get from Home to OrderConfirmation?"
+
+### alps_set_doc
+
+Set or update the documentation of a descriptor in a JSON ALPS profile. Short single-line docs are stored inline; longer or multi-line docs (Markdown welcome) are automatically written to an external file and linked via `doc.href`.
+
+**Parameters:**
+- `file` (required): Path to the ALPS profile file (JSON only for writes)
+- `id` (required): Descriptor id
+- `doc` (required): Documentation text
+- `placement` (optional): `auto` (default) | `inline` | `external`
+
+**Example prompt:**
+> "Document the ShoppingCart state with the business rules we discussed"
+
+## Auxiliary Design Information (alps/)
+
+`alps_set_doc` keeps profiles compact: docs over 200 characters or with multiple lines are written to `alps/docs/<descriptor-id>.md` next to the profile and linked via the ALPS `doc` element's `href`:
+
+```json
+"doc": { "href": "alps/docs/ShoppingCart.md", "format": "markdown" }
+```
+
+The `alps/` directory is the home for all auxiliary design information:
+
+```text
+profile.json
+alps/
+├── docs/    # per-descriptor rich documentation (doc.href targets)
+├── rels/    # link relation definitions (reserved)
+└── links/   # compacted summaries of external link targets (reserved)
+```
+
+Existing local `doc.href` layouts keep working: any safe local href is honored and updated in place. Reading tools resolve these links and inline the file content automatically. Paths escaping the profile directory (absolute, `../`, escaping symlinks) are rejected.
+
 ## Example Workflow
 
 1. Ask the AI to validate your ALPS profile:
