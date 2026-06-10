@@ -10,7 +10,7 @@
 
 import * as fs from "fs";
 import * as path from "path";
-import { findDescriptorById } from "@alps-asd/app-state-diagram/parser/alps-parser.js";
+import { findDescriptorById, walkDescriptors } from "@alps-asd/app-state-diagram/parser/alps-parser.js";
 import type { AlpsDescriptor } from "@alps-asd/app-state-diagram/parser/alps-parser.js";
 import { serializeLike } from "./doc-store.js";
 
@@ -50,6 +50,16 @@ export interface SetTagsResult {
   added: string[];
   /** Tags actually removed (present before the edit) */
   removed: string[];
+}
+
+export interface RenameResult {
+  /** The new descriptor id */
+  id: string;
+  previousId: string;
+  /** Local #fragment references (href and rt) updated to the new id */
+  referencesUpdated: number;
+  /** External doc file (doc.href) kept at its old path; it stays linked and keeps working */
+  docFile?: string;
 }
 
 /**
@@ -188,4 +198,61 @@ export function setDescriptorTags(profilePath: string, input: SetTagsInput): Set
   }
   fs.writeFileSync(absPath, serializeLike(root, content), "utf-8");
   return { id: input.id, tags, added, removed };
+}
+
+/**
+ * Rename a descriptor and update all local references across the profile:
+ * href and rt "#oldId" fragments (at any nesting depth) become "#newId".
+ * Only exact-id matches are rewritten; external references
+ * ("file.json#oldId") are left untouched. An external doc file (doc.href)
+ * keeps its old file name; the result reports it as a hint since the href
+ * still points at it and keeps working.
+ */
+export function renameDescriptor(profilePath: string, oldId: string, newId: string): RenameResult {
+  const absPath = path.resolve(profilePath);
+  if (!fs.existsSync(absPath)) {
+    throw new Error(`Profile file not found: ${profilePath}`);
+  }
+  const content = fs.readFileSync(absPath, "utf-8");
+  if (!content.trim().startsWith("{")) {
+    throw new Error(
+      "Renaming descriptors is currently supported for JSON profiles only. " +
+        "Convert the XML profile to JSON, or edit the XML directly."
+    );
+  }
+
+  let root: { alps?: { descriptor?: unknown } };
+  try {
+    root = JSON.parse(content);
+  } catch (e) {
+    throw new Error(`Invalid JSON format: ${(e as Error).message}`);
+  }
+  const descriptors = (root.alps?.descriptor ?? []) as AlpsDescriptor[];
+  const target = findDescriptorById(descriptors, oldId);
+  if (!target) {
+    throw new Error(`Descriptor not found: ${oldId}`);
+  }
+  if (findDescriptorById(descriptors, newId)) {
+    throw new Error(`Descriptor already exists: ${newId}`);
+  }
+
+  target.id = newId;
+  let referencesUpdated = 0;
+  walkDescriptors(descriptors, (desc) => {
+    if (desc.href === `#${oldId}`) {
+      desc.href = `#${newId}`;
+      referencesUpdated++;
+    }
+    if (desc.rt === `#${oldId}`) {
+      desc.rt = `#${newId}`;
+      referencesUpdated++;
+    }
+  });
+
+  const result: RenameResult = { id: newId, previousId: oldId, referencesUpdated };
+  if (typeof target.doc === "object" && target.doc?.href) {
+    result.docFile = target.doc.href;
+  }
+  fs.writeFileSync(absPath, serializeLike(root, content), "utf-8");
+  return result;
 }

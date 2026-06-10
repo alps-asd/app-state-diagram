@@ -106,6 +106,7 @@ Verify: `/mcp` should show "alps" in the list.
 | `alps_set_doc` | Write descriptor documentation; large docs are auto-externalized to `alps/docs/<id>.md` and linked via `doc.href` |
 | `alps_add_descriptor` | Create a new descriptor — nested or with `href` children; missing children are created automatically ("register name and age as person") |
 | `alps_set_tags` | Add/remove tags in a descriptor's space-separated `tag` attribute — kept tags preserve their order |
+| `alps_rename` | Rename a descriptor and update all local `href`/`rt` `#fragment` references across the profile |
 
 **Tip — view a tagged slice entirely in chat:** ask for `alps2mermaid` with `tag` (the diagram renders natively) plus `alps_search` with the same tags and `format: markdown` (the descriptor table).
 

@@ -28,7 +28,7 @@ import { dotToSvg } from "@alps-asd/app-state-diagram/generator/svg-generator.js
 import { generateMermaid } from "@alps-asd/app-state-diagram/generator/mermaid-generator.js";
 import { FileResolver } from "@alps-asd/app-state-diagram/resolver/index.js";
 import { extractGraph, findPaths, formatPath, findContainers, getDescriptorIdsByTags } from "@alps-asd/app-state-diagram/graph/index.js";
-import { addDescriptor, setDescriptorTags } from "./descriptor-store.js";
+import { addDescriptor, setDescriptorTags, renameDescriptor } from "./descriptor-store.js";
 import { setDescriptorDoc, resolveDoc, INLINE_DOC_MAX_LENGTH } from "./doc-store.js";
 
 // Crawler package is optional (not yet published)
@@ -380,6 +380,29 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
           required: ["file", "id"],
         },
       },
+      {
+        name: "alps_rename",
+        description:
+          "Rename a descriptor in a JSON ALPS profile and update all local references: href and rt #fragments at any nesting depth. External references (file.json#id) are left untouched. An external doc file (doc.href) keeps its old file name but stays linked.",
+        inputSchema: {
+          type: "object" as const,
+          properties: {
+            file: {
+              type: "string",
+              description: "Path to the ALPS profile file (JSON only for writes)",
+            },
+            id: {
+              type: "string",
+              description: "Current descriptor id",
+            },
+            newId: {
+              type: "string",
+              description: "New descriptor id",
+            },
+          },
+          required: ["file", "id", "newId"],
+        },
+      },
     ],
   };
 });
@@ -416,6 +439,8 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       return handleAlpsAddDescriptor(args);
     case "alps_set_tags":
       return handleAlpsSetTags(args);
+    case "alps_rename":
+      return handleAlpsRename(args);
     default:
       return {
         content: [{ type: "text", text: `Unknown tool: ${name}` }],
@@ -537,6 +562,30 @@ export async function handleAlpsSetTags(args: Record<string, unknown> | undefine
       remove: args?.remove as string[] | undefined,
     });
     return jsonResult(result);
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    return {
+      content: [{ type: "text", text: `Error: ${errorMessage}` }],
+      isError: true,
+    };
+  }
+}
+
+/**
+ * Rename a descriptor and update local #fragment references across a JSON profile
+ */
+export async function handleAlpsRename(args: Record<string, unknown> | undefined) {
+  const file = args?.file as string | undefined;
+  const id = args?.id as string | undefined;
+  const newId = args?.newId as string | undefined;
+  if (!file || !id || !newId) {
+    return {
+      content: [{ type: "text", text: "Error: file, id, and newId are required" }],
+      isError: true,
+    };
+  }
+  try {
+    return jsonResult(renameDescriptor(file, id, newId));
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
     return {

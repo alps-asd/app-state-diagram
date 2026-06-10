@@ -1,7 +1,7 @@
 import * as fs from "fs";
 import * as os from "os";
 import * as path from "path";
-import { addDescriptor, setDescriptorTags } from "./descriptor-store.js";
+import { addDescriptor, setDescriptorTags, renameDescriptor } from "./descriptor-store.js";
 
 let dir: string;
 let profilePath: string;
@@ -136,6 +136,79 @@ describe("setDescriptorTags", () => {
 
   it("preserves indentation", () => {
     setDescriptorTags(profilePath, { id: "Home", add: ["nav"] });
+    const content = fs.readFileSync(profilePath, "utf-8");
+    expect(content).toContain('\n  "alps"');
+    expect(content.endsWith("\n")).toBe(true);
+  });
+});
+
+describe("renameDescriptor", () => {
+  beforeEach(() => {
+    fs.writeFileSync(
+      profilePath,
+      JSON.stringify(
+        {
+          alps: {
+            descriptor: [
+              {
+                id: "Home",
+                descriptor: [
+                  { href: "#goCart" },
+                  { id: "section", descriptor: [{ href: "#Cart" }] },
+                ],
+              },
+              { id: "Cart", doc: { href: "alps/docs/Cart.md", format: "markdown" } },
+              { id: "goCart", type: "safe", rt: "#Cart" },
+              { id: "shared", href: "shared.json#Cart" },
+            ],
+          },
+        },
+        null,
+        2
+      ) + "\n"
+    );
+  });
+
+  it("renames the id and updates nested href and rt references", () => {
+    const result = renameDescriptor(profilePath, "Cart", "Basket");
+    expect(result).toEqual({
+      id: "Basket",
+      previousId: "Cart",
+      referencesUpdated: 2,
+      docFile: "alps/docs/Cart.md",
+    });
+    const profile = read();
+    expect(profile.alps.descriptor[1].id).toBe("Basket");
+    expect(profile.alps.descriptor[0].descriptor[1].descriptor[0].href).toBe("#Basket");
+    expect(profile.alps.descriptor[2].rt).toBe("#Basket");
+    // Only exact-id matches are rewritten; #goCart is not a #Cart reference
+    expect(profile.alps.descriptor[0].descriptor[0].href).toBe("#goCart");
+    // The doc file keeps its old name and stays linked via doc.href
+    expect(profile.alps.descriptor[1].doc).toEqual({ href: "alps/docs/Cart.md", format: "markdown" });
+  });
+
+  it("leaves external references untouched", () => {
+    renameDescriptor(profilePath, "Cart", "Basket");
+    expect(read().alps.descriptor[3].href).toBe("shared.json#Cart");
+  });
+
+  it("rejects collisions and unknown ids", () => {
+    expect(() => renameDescriptor(profilePath, "Cart", "Home")).toThrow(
+      "Descriptor already exists: Home"
+    );
+    expect(() => renameDescriptor(profilePath, "Nope", "Whatever")).toThrow(
+      "Descriptor not found: Nope"
+    );
+  });
+
+  it("rejects XML profiles", () => {
+    const xml = path.join(dir, "p.xml");
+    fs.writeFileSync(xml, "<alps/>");
+    expect(() => renameDescriptor(xml, "Cart", "Basket")).toThrow("JSON profiles only");
+  });
+
+  it("preserves indentation", () => {
+    renameDescriptor(profilePath, "Cart", "Basket");
     const content = fs.readFileSync(profilePath, "utf-8");
     expect(content).toContain('\n  "alps"');
     expect(content.endsWith("\n")).toBe(true);

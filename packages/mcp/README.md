@@ -197,6 +197,18 @@ Add and/or remove tags in a descriptor's space-separated `tag` attribute. Kept t
 **Example prompt:**
 > "Tag the Cart and Checkout states with checkout"
 
+### alps_rename
+
+Rename a descriptor and update all local references across the profile: `href` and `rt` `#fragments` at any nesting depth. Only exact-id matches are rewritten; external references (`file.json#id`) are left untouched. An external doc file (`doc.href`) keeps its old file name — the result reports it as `docFile`; it stays linked and keeps working since the href still points at it.
+
+**Parameters:**
+- `file` (required): Path to the ALPS profile file (JSON only for writes)
+- `id` (required): Current descriptor id
+- `newId` (required): New descriptor id
+
+**Example prompt:**
+> "Rename Cart to ShoppingCart everywhere"
+
 ## Auxiliary Design Information (alps/)
 
 `alps_set_doc` keeps profiles compact: docs over 200 characters or with multiple lines are written to `alps/docs/<descriptor-id>.md` next to the profile and linked via the ALPS `doc` element's `href`:
