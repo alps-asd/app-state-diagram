@@ -28,7 +28,7 @@ import { dotToSvg } from "@alps-asd/app-state-diagram/generator/svg-generator.js
 import { generateMermaid } from "@alps-asd/app-state-diagram/generator/mermaid-generator.js";
 import { FileResolver } from "@alps-asd/app-state-diagram/resolver/index.js";
 import { extractGraph, findPaths, formatPath, findContainers, getDescriptorIdsByTags } from "@alps-asd/app-state-diagram/graph/index.js";
-import { addDescriptor } from "./descriptor-store.js";
+import { addDescriptor, setDescriptorTags } from "./descriptor-store.js";
 import { setDescriptorDoc, resolveDoc, INLINE_DOC_MAX_LENGTH } from "./doc-store.js";
 
 // Crawler package is optional (not yet published)
@@ -351,6 +351,35 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
           required: ["file", "id"],
         },
       },
+      {
+        name: "alps_set_tags",
+        description:
+          "Add and/or remove tags in a descriptor's space-separated tag attribute in a JSON ALPS profile. Kept tags preserve their order, new tags are appended, and the tag property is removed when it becomes empty.",
+        inputSchema: {
+          type: "object" as const,
+          properties: {
+            file: {
+              type: "string",
+              description: "Path to the ALPS profile file (JSON only for writes)",
+            },
+            id: {
+              type: "string",
+              description: "Descriptor id",
+            },
+            add: {
+              type: "array",
+              items: { type: "string" },
+              description: "Tags to add (ones already present are ignored)",
+            },
+            remove: {
+              type: "array",
+              items: { type: "string" },
+              description: "Tags to remove (at least one of add/remove is required)",
+            },
+          },
+          required: ["file", "id"],
+        },
+      },
     ],
   };
 });
@@ -385,6 +414,8 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       return handleAlpsSetDoc(args);
     case "alps_add_descriptor":
       return handleAlpsAddDescriptor(args);
+    case "alps_set_tags":
+      return handleAlpsSetTags(args);
     default:
       return {
         content: [{ type: "text", text: `Unknown tool: ${name}` }],
@@ -478,6 +509,34 @@ export async function handleAlpsAddDescriptor(args: Record<string, unknown> | un
       docResult = setDescriptorDoc(file, id, doc, "auto");
     }
     return jsonResult({ ...result, ...(docResult ? { doc: docResult } : {}) });
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    return {
+      content: [{ type: "text", text: `Error: ${errorMessage}` }],
+      isError: true,
+    };
+  }
+}
+
+/**
+ * Add and/or remove tags on a descriptor in a JSON profile
+ */
+export async function handleAlpsSetTags(args: Record<string, unknown> | undefined) {
+  const file = args?.file as string | undefined;
+  const id = args?.id as string | undefined;
+  if (!file || !id) {
+    return {
+      content: [{ type: "text", text: "Error: file and id are required" }],
+      isError: true,
+    };
+  }
+  try {
+    const result = setDescriptorTags(file, {
+      id,
+      add: args?.add as string[] | undefined,
+      remove: args?.remove as string[] | undefined,
+    });
+    return jsonResult(result);
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
     return {

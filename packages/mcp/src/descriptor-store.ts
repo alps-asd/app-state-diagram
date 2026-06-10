@@ -34,6 +34,24 @@ export interface AddDescriptorResult {
   warnings: string[];
 }
 
+export interface SetTagsInput {
+  id: string;
+  /** Tags to append (ones already present are ignored) */
+  add?: string[];
+  /** Tags to remove */
+  remove?: string[];
+}
+
+export interface SetTagsResult {
+  id: string;
+  /** Final tag list after the edit */
+  tags: string[];
+  /** Tags actually added (not already present) */
+  added: string[];
+  /** Tags actually removed (present before the edit) */
+  removed: string[];
+}
+
 /**
  * Add a new descriptor to a JSON ALPS profile file
  */
@@ -116,4 +134,58 @@ export function addDescriptor(profilePath: string, input: AddDescriptorInput): A
 
   fs.writeFileSync(absPath, serializeLike(root, content), "utf-8");
   return { id: input.id, createdChildren, warnings };
+}
+
+/**
+ * Add and/or remove tags in a descriptor's space-separated tag attribute.
+ * Removals are applied first, then additions are appended after the kept
+ * tags, which preserve their original order. The list is deduped and the
+ * tag property is deleted when it becomes empty.
+ */
+export function setDescriptorTags(profilePath: string, input: SetTagsInput): SetTagsResult {
+  if (!input.add?.length && !input.remove?.length) {
+    throw new Error("At least one of add or remove is required");
+  }
+  const absPath = path.resolve(profilePath);
+  if (!fs.existsSync(absPath)) {
+    throw new Error(`Profile file not found: ${profilePath}`);
+  }
+  const content = fs.readFileSync(absPath, "utf-8");
+  if (!content.trim().startsWith("{")) {
+    throw new Error(
+      "Writing tags is currently supported for JSON profiles only. " +
+        "Convert the XML profile to JSON, or edit the XML directly."
+    );
+  }
+
+  let root: { alps?: { descriptor?: unknown } };
+  try {
+    root = JSON.parse(content);
+  } catch (e) {
+    throw new Error(`Invalid JSON format: ${(e as Error).message}`);
+  }
+  const descriptor = findDescriptorById(root.alps?.descriptor, input.id);
+  if (!descriptor) {
+    throw new Error(`Descriptor not found: ${input.id}`);
+  }
+
+  const existing = [...new Set((descriptor.tag || "").split(/\s+/).filter(Boolean))];
+  const removeSet = new Set(input.remove || []);
+  const removed = existing.filter((tag) => removeSet.has(tag));
+  const tags = existing.filter((tag) => !removeSet.has(tag));
+  const added: string[] = [];
+  for (const tag of input.add || []) {
+    if (!tags.includes(tag) && !added.includes(tag)) {
+      added.push(tag);
+    }
+  }
+  tags.push(...added);
+
+  if (tags.length === 0) {
+    delete descriptor.tag;
+  } else {
+    descriptor.tag = tags.join(" ");
+  }
+  fs.writeFileSync(absPath, serializeLike(root, content), "utf-8");
+  return { id: input.id, tags, added, removed };
 }

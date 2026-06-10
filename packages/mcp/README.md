@@ -184,6 +184,19 @@ Add a new descriptor to a JSON ALPS profile. Containers reference children via `
 **Example prompt:**
 > "Register name and age as person"
 
+### alps_set_tags
+
+Add and/or remove tags in a descriptor's space-separated `tag` attribute. Kept tags preserve their order, new tags are appended, and the `tag` property is removed when it becomes empty.
+
+**Parameters:**
+- `file` (required): Path to the ALPS profile file (JSON only for writes)
+- `id` (required): Descriptor id
+- `add` (optional): Tags to add (ones already present are ignored)
+- `remove` (optional): Tags to remove (at least one of `add`/`remove` is required)
+
+**Example prompt:**
+> "Tag the Cart and Checkout states with checkout"
+
 ## Auxiliary Design Information (alps/)
 
 `alps_set_doc` keeps profiles compact: docs over 200 characters or with multiple lines are written to `alps/docs/<descriptor-id>.md` next to the profile and linked via the ALPS `doc` element's `href`:

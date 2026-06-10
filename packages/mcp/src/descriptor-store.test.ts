@@ -1,7 +1,7 @@
 import * as fs from "fs";
 import * as os from "os";
 import * as path from "path";
-import { addDescriptor } from "./descriptor-store.js";
+import { addDescriptor, setDescriptorTags } from "./descriptor-store.js";
 
 let dir: string;
 let profilePath: string;
@@ -72,6 +72,70 @@ describe("addDescriptor", () => {
 
   it("preserves indentation", () => {
     addDescriptor(profilePath, { id: "person", children: ["name"] });
+    const content = fs.readFileSync(profilePath, "utf-8");
+    expect(content).toContain('\n  "alps"');
+    expect(content.endsWith("\n")).toBe(true);
+  });
+});
+
+describe("setDescriptorTags", () => {
+  const writeTagged = (tag: string) =>
+    fs.writeFileSync(
+      profilePath,
+      JSON.stringify({ alps: { descriptor: [{ id: "Home", tag }] } }, null, 2) + "\n"
+    );
+
+  it("adds tags to a descriptor without tags", () => {
+    const result = setDescriptorTags(profilePath, { id: "Home", add: ["nav", "core"] });
+    expect(result).toEqual({ id: "Home", tags: ["nav", "core"], added: ["nav", "core"], removed: [] });
+    expect(read().alps.descriptor[0].tag).toBe("nav core");
+  });
+
+  it("removes tags, preserving the order of kept tags", () => {
+    writeTagged("nav core checkout");
+    const result = setDescriptorTags(profilePath, { id: "Home", remove: ["core", "nope"] });
+    expect(result).toEqual({ id: "Home", tags: ["nav", "checkout"], added: [], removed: ["core"] });
+    expect(read().alps.descriptor[0].tag).toBe("nav checkout");
+  });
+
+  it("adds and removes in one call", () => {
+    writeTagged("nav old");
+    const result = setDescriptorTags(profilePath, { id: "Home", add: ["new"], remove: ["old"] });
+    expect(result).toEqual({ id: "Home", tags: ["nav", "new"], added: ["new"], removed: ["old"] });
+    expect(read().alps.descriptor[0].tag).toBe("nav new");
+  });
+
+  it("dedupes existing and added tags", () => {
+    writeTagged("nav nav");
+    const result = setDescriptorTags(profilePath, { id: "Home", add: ["nav", "core", "core"] });
+    expect(result).toEqual({ id: "Home", tags: ["nav", "core"], added: ["core"], removed: [] });
+    expect(read().alps.descriptor[0].tag).toBe("nav core");
+  });
+
+  it("deletes the tag property when it becomes empty", () => {
+    writeTagged("nav");
+    const result = setDescriptorTags(profilePath, { id: "Home", remove: ["nav"] });
+    expect(result).toEqual({ id: "Home", tags: [], added: [], removed: ["nav"] });
+    expect("tag" in read().alps.descriptor[0]).toBe(false);
+  });
+
+  it("requires add or remove", () => {
+    expect(() => setDescriptorTags(profilePath, { id: "Home" })).toThrow(
+      "At least one of add or remove is required"
+    );
+  });
+
+  it("rejects unknown ids and XML profiles", () => {
+    expect(() => setDescriptorTags(profilePath, { id: "nope", add: ["x"] })).toThrow(
+      "Descriptor not found"
+    );
+    const xml = path.join(dir, "p.xml");
+    fs.writeFileSync(xml, "<alps/>");
+    expect(() => setDescriptorTags(xml, { id: "Home", add: ["x"] })).toThrow("JSON profiles only");
+  });
+
+  it("preserves indentation", () => {
+    setDescriptorTags(profilePath, { id: "Home", add: ["nav"] });
     const content = fs.readFileSync(profilePath, "utf-8");
     expect(content).toContain('\n  "alps"');
     expect(content.endsWith("\n")).toBe(true);
