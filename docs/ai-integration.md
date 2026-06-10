@@ -101,7 +101,7 @@ Verify: `/mcp` should show "alps" in the list.
 |------|-------------|
 | `alps_overview` | States, transitions (from/to), and tags at a glance |
 | `alps_search` | Filter descriptors by type, tag(s), or text; `format: markdown` returns a table (ID, Type, Title, Tags, Doc) for direct chat display |
-| `alps_descriptor` | One descriptor in full — external docs resolved, containers, incoming/outgoing transitions |
+| `alps_descriptor` | One descriptor in full — external docs and local `describedby` links resolved, containers, incoming/outgoing transitions |
 | `alps_paths` | Enumerate transition paths between two states |
 | `alps_set_doc` | Write descriptor documentation; large docs are auto-externalized to `alps/docs/<id>.md` and linked via `doc.href` |
 | `alps_add_descriptor` | Create a new descriptor — nested or with `href` children; missing children are created automatically ("register name and age as person") |

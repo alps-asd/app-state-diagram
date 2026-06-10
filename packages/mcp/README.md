@@ -134,7 +134,7 @@ Filter descriptors by type, tag, and/or free text (matched against id, title, an
 
 ### alps_descriptor
 
-Get full details of one descriptor: definition, resolved documentation (external doc files are read and inlined), containing states, and incoming/outgoing transitions.
+Get full details of one descriptor: definition, resolved documentation (external doc files are read and inlined), containing states, and incoming/outgoing transitions. `rel="describedby"` links are returned as `describedBy`; local files inside the profile directory are read and inlined as `text`, while http(s) links are returned unresolved.
 
 **Parameters:**
 - `file` (required): Path to the ALPS profile file

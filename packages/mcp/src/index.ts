@@ -29,7 +29,7 @@ import { generateMermaid } from "@alps-asd/app-state-diagram/generator/mermaid-g
 import { FileResolver } from "@alps-asd/app-state-diagram/resolver/index.js";
 import { extractGraph, findPaths, formatPath, findContainers, getDescriptorIdsByTags } from "@alps-asd/app-state-diagram/graph/index.js";
 import { addDescriptor, setDescriptorTags, renameDescriptor } from "./descriptor-store.js";
-import { setDescriptorDoc, resolveDoc, INLINE_DOC_MAX_LENGTH } from "./doc-store.js";
+import { setDescriptorDoc, resolveDoc, resolveSafeLocalPath, INLINE_DOC_MAX_LENGTH } from "./doc-store.js";
 
 // Crawler package is optional (not yet published)
 // import { AlpsCrawler } from "@alps-asd/crawler";
@@ -225,7 +225,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
       {
         name: "alps_descriptor",
         description:
-          "Get full details of one descriptor: definition, resolved documentation (external alps/ doc files are read and inlined), containing states, and incoming/outgoing transitions.",
+          "Get full details of one descriptor: definition, resolved documentation and rel=\"describedby\" links (local files are read and inlined; http(s) links are returned unresolved), containing states, and incoming/outgoing transitions.",
         inputSchema: {
           type: "object" as const,
           properties: {
@@ -1110,6 +1110,33 @@ export async function handleAlpsSearch(args: Record<string, unknown> | undefined
   }
 }
 
+/**
+ * Resolve rel="describedby" links on a descriptor. Local files inside the
+ * profile directory are read and inlined as text; http(s) and unsafe hrefs
+ * are returned unresolved.
+ */
+function resolveDescribedBy(
+  baseDir: string,
+  descriptor: AlpsDescriptor
+): Array<{ rel: string; href: string; text?: string }> | undefined {
+  const link = descriptor.link;
+  if (!link) {
+    return undefined;
+  }
+  const links = Array.isArray(link) ? link : [link];
+  const describedBy = links.filter((l) => l?.rel === "describedby" && l.href);
+  if (describedBy.length === 0) {
+    return undefined;
+  }
+  return describedBy.map((l) => {
+    const localPath = resolveSafeLocalPath(baseDir, l.href);
+    if (localPath && fs.existsSync(localPath)) {
+      return { rel: l.rel, href: l.href, text: fs.readFileSync(localPath, "utf-8") };
+    }
+    return { rel: l.rel, href: l.href };
+  });
+}
+
 export async function handleAlpsDescriptor(args: Record<string, unknown> | undefined) {
   const file = args?.file as string | undefined;
   const id = args?.id as string | undefined;
@@ -1132,6 +1159,7 @@ export async function handleAlpsDescriptor(args: Record<string, unknown> | undef
     return jsonResult({
       descriptor,
       doc: resolveDoc(baseDir, descriptor.doc),
+      describedBy: resolveDescribedBy(baseDir, descriptor),
       containedBy: findContainers(id, descriptors),
       outgoingTransitions: graph.transitions
         .filter((t) => t.from.includes(id))

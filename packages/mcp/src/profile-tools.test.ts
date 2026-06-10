@@ -229,6 +229,54 @@ describe('handleAlpsDescriptor', () => {
     });
   });
 
+  const writeWithLink = (link: unknown) => {
+    const profile = JSON.parse(JSON.stringify(PROFILE));
+    profile.alps.descriptor[2].link = link;
+    fs.writeFileSync(profilePath, JSON.stringify(profile, null, 2) + '\n');
+  };
+
+  it('should resolve local describedby links', async () => {
+    fs.mkdirSync(path.join(dir, 'alps-doc'));
+    fs.writeFileSync(path.join(dir, 'alps-doc', 'cart.md'), '# Cart\n\nEntity details.\n');
+    writeWithLink({ rel: 'describedby', href: 'alps-doc/cart.md' });
+
+    const result = await handleAlpsDescriptor({ file: profilePath, id: 'Cart' });
+
+    expect(result.isError).toBe(false);
+    expect(parseResult(result).describedBy).toEqual([
+      { rel: 'describedby', href: 'alps-doc/cart.md', text: '# Cart\n\nEntity details.\n' },
+    ]);
+  });
+
+  it('should return http describedby links unresolved and skip other rels', async () => {
+    writeWithLink([
+      { rel: 'describedby', href: 'https://example.com/cart.md' },
+      { rel: 'help', href: 'https://example.com/help' },
+    ]);
+
+    const result = await handleAlpsDescriptor({ file: profilePath, id: 'Cart' });
+
+    expect(parseResult(result).describedBy).toEqual([
+      { rel: 'describedby', href: 'https://example.com/cart.md' },
+    ]);
+  });
+
+  it('should not read describedby links escaping the profile directory', async () => {
+    const outside = path.join(path.dirname(dir), `${path.basename(dir)}-secret.md`);
+    fs.writeFileSync(outside, 'secret');
+    try {
+      writeWithLink({ rel: 'describedby', href: `../${path.basename(outside)}` });
+
+      const result = await handleAlpsDescriptor({ file: profilePath, id: 'Cart' });
+
+      expect(parseResult(result).describedBy).toEqual([
+        { rel: 'describedby', href: `../${path.basename(outside)}` },
+      ]);
+    } finally {
+      fs.rmSync(outside, { force: true });
+    }
+  });
+
   it('should return error for unknown descriptor ids', async () => {
     const result = await handleAlpsDescriptor({ file: profilePath, id: 'Nope' });
 

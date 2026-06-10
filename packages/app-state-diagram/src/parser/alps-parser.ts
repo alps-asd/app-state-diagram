@@ -24,6 +24,7 @@ export interface AlpsDescriptor {
   rt?: string;
   tag?: string;
   href?: string;
+  link?: AlpsLink | AlpsLink[];
   descriptor?: AlpsDescriptor[];
 }
 

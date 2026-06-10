@@ -153,14 +153,15 @@ export function resolveDoc(
 }
 
 /**
- * Resolve a doc href against the profile directory, rejecting anything
- * that escapes it: URL schemes ("http:", "file:", Windows drives),
- * protocol-relative or absolute paths, backslashes, and ../ traversal.
- * Symlinks inside the profile directory are legitimate (e.g. compat
- * links keeping old layouts working), but their real targets must stay
- * inside it. Returns the absolute path, or undefined when unsafe.
+ * Resolve a local href (doc.href, describedby link) against the profile
+ * directory, rejecting anything that escapes it: URL schemes ("http:",
+ * "file:", Windows drives), protocol-relative or absolute paths,
+ * backslashes, and ../ traversal. Symlinks inside the profile directory
+ * are legitimate (e.g. compat links keeping old layouts working), but
+ * their real targets must stay inside it. Returns the absolute path, or
+ * undefined when unsafe.
  */
-function resolveSafeLocalPath(baseDir: string, href: string): string | undefined {
+export function resolveSafeLocalPath(baseDir: string, href: string): string | undefined {
   if (/^[a-zA-Z][a-zA-Z0-9+.-]*:/.test(href)) {
     return undefined;
   }
