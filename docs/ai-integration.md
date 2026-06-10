@@ -104,6 +104,7 @@ Verify: `/mcp` should show "alps" in the list.
 | `alps_descriptor` | One descriptor in full — external docs resolved, containers, incoming/outgoing transitions |
 | `alps_paths` | Enumerate transition paths between two states |
 | `alps_set_doc` | Write descriptor documentation; large docs are auto-externalized to `alps/docs/<id>.md` and linked via `doc.href` |
+| `alps_add_descriptor` | Create a new descriptor — nested or with `href` children; missing children are created automatically ("register name and age as person") |
 
 **Tip — view a tagged slice entirely in chat:** ask for `alps2mermaid` with `tag` (the diagram renders natively) plus `alps_search` with the same tags and `format: markdown` (the descriptor table).
 

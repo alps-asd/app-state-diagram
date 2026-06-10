@@ -201,7 +201,7 @@ function safeFileName(id: string): string {
 /**
  * Serialize JSON keeping the original file's indentation and trailing newline
  */
-function serializeLike(root: unknown, original: string): string {
+export function serializeLike(root: unknown, original: string): string {
   const indentMatch = original.match(/^([ \t]+)"/m);
   const indent = indentMatch ? indentMatch[1] : "  ";
   const json = JSON.stringify(root, null, indent);

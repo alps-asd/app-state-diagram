@@ -28,6 +28,7 @@ import { dotToSvg } from "@alps-asd/app-state-diagram/generator/svg-generator.js
 import { generateMermaid } from "@alps-asd/app-state-diagram/generator/mermaid-generator.js";
 import { FileResolver } from "@alps-asd/app-state-diagram/resolver/index.js";
 import { extractGraph, findPaths, formatPath, findContainers, getDescriptorIdsByTags } from "@alps-asd/app-state-diagram/graph/index.js";
+import { addDescriptor } from "./descriptor-store.js";
 import { setDescriptorDoc, resolveDoc, INLINE_DOC_MAX_LENGTH } from "./doc-store.js";
 
 // Crawler package is optional (not yet published)
@@ -302,6 +303,54 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
           required: ["file", "id", "doc"],
         },
       },
+      {
+        name: "alps_add_descriptor",
+        description: "Add a new descriptor to a JSON ALPS profile. Containers reference children via href fragments; missing children are created as top-level semantic descriptors. Example: register name and age as person -> id: person, children: [name, age].",
+        inputSchema: {
+          type: "object" as const,
+          properties: {
+            file: {
+              type: "string",
+              description: "Path to the ALPS profile file (JSON only for writes)",
+            },
+            id: {
+              type: "string",
+              description: "New descriptor id",
+            },
+            type: {
+              type: "string",
+              enum: ["semantic", "safe", "unsafe", "idempotent"],
+              description: "Descriptor type (default: semantic)",
+            },
+            title: {
+              type: "string",
+              description: "Human-readable title",
+            },
+            doc: {
+              type: "string",
+              description: "Documentation; long or multi-line docs are auto-externalized to alps/docs/<id>.md",
+            },
+            rt: {
+              type: "string",
+              description: "Transition target state id (for safe/unsafe/idempotent); bare ids are normalized to #fragments",
+            },
+            tag: {
+              type: "string",
+              description: "Space-separated tags",
+            },
+            children: {
+              type: "array",
+              items: { type: "string" },
+              description: "Child descriptor ids, referenced as href fragments; missing ones are created as semantic leaf descriptors",
+            },
+            parent: {
+              type: "string",
+              description: "Nest the new descriptor inside this existing descriptor (default: top level)",
+            },
+          },
+          required: ["file", "id"],
+        },
+      },
     ],
   };
 });
@@ -334,6 +383,8 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       return handleAlpsPaths(args);
     case "alps_set_doc":
       return handleAlpsSetDoc(args);
+    case "alps_add_descriptor":
+      return handleAlpsAddDescriptor(args);
     default:
       return {
         content: [{ type: "text", text: `Unknown tool: ${name}` }],
@@ -391,6 +442,43 @@ export async function handleValidateAlps(args: Record<string, unknown> | undefin
     };
   } catch (error) {
     /* istanbul ignore next */
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    return {
+      content: [{ type: "text", text: `Error: ${errorMessage}` }],
+      isError: true,
+    };
+  }
+}
+
+/**
+ * Add a new descriptor (optionally nested or with href children) to a JSON profile
+ */
+export async function handleAlpsAddDescriptor(args: Record<string, unknown> | undefined) {
+  const file = args?.file as string | undefined;
+  const id = args?.id as string | undefined;
+  if (!file || !id) {
+    return {
+      content: [{ type: "text", text: "Error: file and id are required" }],
+      isError: true,
+    };
+  }
+  try {
+    const result = addDescriptor(file, {
+      id,
+      type: args?.type as "semantic" | "safe" | "unsafe" | "idempotent" | undefined,
+      title: args?.title as string | undefined,
+      rt: args?.rt as string | undefined,
+      tag: args?.tag as string | undefined,
+      children: args?.children as string[] | undefined,
+      parent: args?.parent as string | undefined,
+    });
+    const doc = args?.doc as string | undefined;
+    let docResult: unknown;
+    if (doc) {
+      docResult = setDescriptorDoc(file, id, doc, "auto");
+    }
+    return jsonResult({ ...result, ...(docResult ? { doc: docResult } : {}) });
+  } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
     return {
       content: [{ type: "text", text: `Error: ${errorMessage}` }],

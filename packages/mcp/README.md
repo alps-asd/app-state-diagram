@@ -169,6 +169,21 @@ Set or update the documentation of a descriptor in a JSON ALPS profile. Short si
 **Example prompt:**
 > "Document the ShoppingCart state with the business rules we discussed"
 
+### alps_add_descriptor
+
+Add a new descriptor to a JSON ALPS profile. Containers reference children via `href` fragments (ALPS best practice); missing children are created as top-level semantic descriptors.
+
+**Parameters:**
+- `file` (required), `id` (required)
+- `type` (optional): `semantic` (default) | `safe` | `unsafe` | `idempotent`
+- `title`, `doc`, `tag` (optional) — long docs auto-externalize to `alps/docs/<id>.md`
+- `rt` (optional): transition target; bare ids are normalized to `#fragments`
+- `children` (optional): child ids referenced as `href` fragments
+- `parent` (optional): nest inside an existing descriptor
+
+**Example prompt:**
+> "Register name and age as person"
+
 ## Auxiliary Design Information (alps/)
 
 `alps_set_doc` keeps profiles compact: docs over 200 characters or with multiple lines are written to `alps/docs/<descriptor-id>.md` next to the profile and linked via the ALPS `doc` element's `href`:
