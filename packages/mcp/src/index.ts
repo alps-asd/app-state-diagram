@@ -618,7 +618,7 @@ export async function handleAlpsEditorUrl(args: Record<string, unknown> | undefi
   if (url.length > URL_LENGTH_WARNING_THRESHOLD) {
     lines.push(
       "",
-      `注記: ブラウザでは開けるがSlack等では崩れる可能性があります（URL長: ${url.length}文字）。`
+      `Note: Browsers can open this URL, but Slack and similar tools may break it (URL length: ${url.length} characters).`
     );
   }
 

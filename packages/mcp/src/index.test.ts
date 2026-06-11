@@ -223,7 +223,8 @@ describe('MCP Handler Functions', () => {
       expect(editorUrl.length).toBeGreaterThanOrEqual(46000);
       expect(editorUrl.length).toBeLessThanOrEqual(49000);
       expect(decodeEditorUrl(editorUrl)).toBe(alpsContent);
-      expect(result.content[0].text).toContain('ブラウザでは開けるがSlack等では崩れる');
+      expect(result.content[0].text).toContain('Browsers can open this URL');
+      expect(result.content[0].text).toContain('Slack and similar tools may break it');
     });
   });
 
