@@ -30,6 +30,7 @@ import { FileResolver } from "@alps-asd/app-state-diagram/resolver/index.js";
 import { extractGraph, findPaths, formatPath, findContainers, getDescriptorIdsByTags } from "@alps-asd/app-state-diagram/graph/index.js";
 import { addDescriptor, setDescriptorTags, renameDescriptor } from "./descriptor-store.js";
 import { setDescriptorDoc, resolveDoc, resolveSafeLocalPath, INLINE_DOC_MAX_LENGTH } from "./doc-store.js";
+import { loadTagVocabulary } from "./tag-vocabulary.js";
 
 // Crawler package is optional (not yet published)
 // import { AlpsCrawler } from "@alps-asd/crawler";
@@ -73,6 +74,11 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
             alps_content: {
               type: "string",
               description: "ALPS profile XML or JSON content to validate",
+            },
+            vocabulary: {
+              type: "string",
+              description:
+                "Path to a tag vocabulary file (tags.html with tags as <dt> ids, see docs/tag-vocabulary.md). Tags used in the profile but not defined there are reported as W005 warnings.",
             },
           },
           required: ["alps_content"],
@@ -451,6 +457,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 
 export async function handleValidateAlps(args: Record<string, unknown> | undefined) {
   const alpsContent = args?.alps_content as string | undefined;
+  const vocabularyPath = args?.vocabulary as string | undefined;
 
   if (!alpsContent) {
     return {
@@ -463,6 +470,26 @@ export async function handleValidateAlps(args: Record<string, unknown> | undefin
     const document = parseAlpsAuto(alpsContent);
     const validator = new AlpsValidator();
     const result = validator.validate(document);
+
+    // Check used tags against the vocabulary file (docs/tag-vocabulary.md)
+    let unusedDefinedTags: string[] = [];
+    if (vocabularyPath) {
+      const vocabulary = loadTagVocabulary(vocabularyPath);
+      const usedTags = new Set<string>();
+      for (const desc of allDescriptors(document)) {
+        descriptorTags(desc).forEach((tag) => usedTags.add(tag));
+      }
+      for (const tag of [...usedTags].sort()) {
+        if (!vocabulary.has(tag)) {
+          result.warnings.push({
+            code: "W005",
+            severity: "warning",
+            message: `Unknown tag "${tag}" (not defined in ${vocabularyPath})`,
+          });
+        }
+      }
+      unusedDefinedTags = [...vocabulary.keys()].filter((tag) => !usedTags.has(tag)).sort();
+    }
 
     const lines: string[] = [];
 
@@ -485,6 +512,11 @@ export async function handleValidateAlps(args: Record<string, unknown> | undefin
       for (const w of result.warnings) {
         lines.push(`- [${w.code}] ${w.message}`);
       }
+      lines.push("");
+    }
+
+    if (unusedDefinedTags.length > 0) {
+      lines.push(`**Defined but unused tags** (${vocabularyPath}): ${unusedDefinedTags.join(", ")}`);
       lines.push("");
     }
 

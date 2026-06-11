@@ -62,6 +62,7 @@ Validate an ALPS profile and get detailed error feedback.
 
 **Parameters:**
 - `alps_content` (required): ALPS profile content (XML or JSON format)
+- `vocabulary` (optional): Path to a tag vocabulary file (`tags.html` defining each tag as a `<dt>` id — see [ALPS Tag Vocabulary](../../docs/tag-vocabulary.md)). Tags used in the profile but not defined there are reported as `W005` warnings, and tags defined but never used are listed informationally — so typos surface instead of silently creating new categories.
 
 **Example prompt:**
 > "Validate this ALPS profile and tell me if there are any errors"
@@ -257,6 +258,7 @@ Existing local `doc.href` layouts keep working: any safe local href is honored a
 | W001 | Warning | Missing title |
 | W002 | Warning | Safe transition should start with "go" |
 | W003 | Warning | Unsafe/idempotent should start with "do" |
+| W005 | Warning | Tag not defined in the vocabulary file |
 | S001 | Suggestion | Consider adding doc to transition |
 
 See [Validation Reference](../../dev-docs/validation-reference.md) for detailed explanations.

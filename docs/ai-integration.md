@@ -88,7 +88,7 @@ Verify: `/mcp` should show "alps" in the list.
 
 | Tool | Description |
 |------|-------------|
-| `validate_alps` | Validate an ALPS profile |
+| `validate_alps` | Validate an ALPS profile (`vocabulary` additionally checks tags against a [tag vocabulary](tag-vocabulary.md) file — unknown tags are `W005` warnings) |
 | `alps2svg` | Generate an SVG diagram (`tag` filters to a tagged slice; `output` writes to a file and returns the path) |
 | `alps2mermaid` | Generate a Mermaid diagram — renders natively in GitHub, claude.ai, and VS Code (`tag` filters to a tagged slice) |
 | `validate_openapi` | Validate an OpenAPI document |
