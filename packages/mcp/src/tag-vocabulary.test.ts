@@ -1,13 +1,14 @@
 /**
  * Tag vocabulary tests
  *
- * Covers tags.html parsing (docs/tag-vocabulary.md convention) and the
- * vocabulary option of validate_alps, against real temp files.
+ * Covers tags.html parsing (docs/tag-vocabulary.md convention), the
+ * vocabulary option of validate_alps, and the alps_tags tool, against
+ * real temp files.
  */
 import * as fs from "fs";
 import * as os from "os";
 import * as path from "path";
-import { handleValidateAlps } from "./index.js";
+import { handleAlpsTags, handleValidateAlps } from "./index.js";
 import { parseTagVocabulary } from "./tag-vocabulary.js";
 
 const VOCABULARY_HTML = `<!DOCTYPE html>
@@ -125,5 +126,111 @@ describe("validate_alps vocabulary option", () => {
     expect(result.isError).toBe(false);
     expect(result.content[0].text).not.toContain("W005");
     expect(result.content[0].text).not.toContain("unused");
+  });
+});
+
+describe("handleAlpsTags", () => {
+  const TAGS_PROFILE = JSON.stringify({
+    alps: {
+      title: "Store",
+      descriptor: [
+        {
+          id: "Cart",
+          type: "semantic",
+          title: "Cart",
+          tag: "checkout flow-customer-purchase actor-customer",
+        },
+        { id: "Checkout", type: "semantic", title: "Checkout", tag: "checkout page-edit" },
+        {
+          id: "goCheckout",
+          type: "safe",
+          rt: "#Checkout",
+          title: "Go",
+          tag: "checkout flow-customer-purchase",
+        },
+        { id: "price", type: "semantic", title: "Price", tag: "src-entity" },
+        { id: "feature", type: "semantic", title: "Bare", tag: "feature" },
+      ],
+    },
+  });
+
+  let dir: string;
+  let profilePath: string;
+  let vocabularyPath: string;
+
+  beforeEach(() => {
+    dir = fs.mkdtempSync(path.join(os.tmpdir(), "alps-tags-"));
+    profilePath = path.join(dir, "profile.json");
+    vocabularyPath = path.join(dir, "tags.html");
+    fs.writeFileSync(profilePath, TAGS_PROFILE);
+    fs.writeFileSync(vocabularyPath, VOCABULARY_HTML);
+  });
+
+  afterEach(() => {
+    fs.rmSync(dir, { recursive: true, force: true });
+  });
+
+  const parseResult = (result: { content: { text: string }[] }) =>
+    JSON.parse(result.content[0].text);
+
+  it("groups tags by facet with usage counts", async () => {
+    const result = await handleAlpsTags({ file: profilePath });
+
+    expect(result.isError).toBe(false);
+    const tags = parseResult(result);
+    expect(tags.count).toBe(6);
+    expect(Object.keys(tags.facets)).toEqual(["actor", "flow", "src", "page", "domain"]);
+    expect(tags.facets.flow).toEqual([{ tag: "flow-customer-purchase", count: 2 }]);
+    expect(tags.facets.src).toEqual([{ tag: "src-entity", count: 1 }]);
+    // Unprefixed tags are domain vocabulary, even when they spell a facet name
+    expect(tags.facets.domain).toEqual([
+      { tag: "checkout", count: 3 },
+      { tag: "feature", count: 1 },
+    ]);
+  });
+
+  it("joins tags with their vocabulary definitions", async () => {
+    const result = await handleAlpsTags({ file: profilePath, vocabulary: vocabularyPath });
+
+    const tags = parseResult(result);
+    expect(tags.facets.flow).toEqual([
+      { tag: "flow-customer-purchase", count: 2, defined: true, title: "Customer purchase" },
+    ]);
+    expect(tags.facets.actor).toEqual([{ tag: "actor-customer", count: 1, defined: false }]);
+    expect(tags.facets.domain).toContainEqual({
+      tag: "checkout",
+      count: 3,
+      defined: true,
+      title: "Checkout",
+    });
+  });
+
+  it("renders a Markdown table", async () => {
+    const result = await handleAlpsTags({
+      file: profilePath,
+      vocabulary: vocabularyPath,
+      format: "markdown",
+    });
+
+    const text = result.content[0].text;
+    expect(text).toContain("| Tag | Facet | Count | Defined | Title |");
+    expect(text).toContain("| checkout | domain | 3 | yes | Checkout |");
+    expect(text).toContain("| actor-customer | actor | 1 | no |  |");
+  });
+
+  it("returns error when the vocabulary file does not exist", async () => {
+    const missing = path.join(dir, "none.html");
+
+    const result = await handleAlpsTags({ file: profilePath, vocabulary: missing });
+
+    expect(result.isError).toBe(true);
+    expect(result.content[0].text).toContain(`Error: Vocabulary file not found: ${missing}`);
+  });
+
+  it("returns error when file is missing", async () => {
+    const result = await handleAlpsTags({});
+
+    expect(result.isError).toBe(true);
+    expect(result.content[0].text).toContain("Error: file is required");
   });
 });

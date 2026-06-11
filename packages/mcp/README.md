@@ -133,6 +133,18 @@ Filter descriptors by type, tag, and/or free text (matched against id, title, an
 **Example prompt:**
 > "List all unsafe transitions tagged checkout in profile.json as a table"
 
+### alps_tags
+
+List the tags in use across a profile, grouped by facet (`actor-`, `flow-`, `feature-`, `src-`, `page-` prefixes; everything else is domain vocabulary) with usage counts. Given a `vocabulary` file ([ALPS Tag Vocabulary](../../docs/tag-vocabulary.md)), each tag is joined with its definition: `defined` and the `<dt>` title.
+
+**Parameters:**
+- `file` (required): Path to the ALPS profile file
+- `vocabulary` (optional): Path to a tag vocabulary file (`tags.html` defining each tag as a `<dt>` id)
+- `format` (optional): `json` (default) or `markdown` — a table (Tag, Facet, Count, Defined, Title) for direct display in chat
+
+**Example prompt:**
+> "Which tags does profile.json use, and are they all in the vocabulary?"
+
 ### alps_descriptor
 
 Get full details of one descriptor: definition, resolved documentation (external doc files are read and inlined), containing states, and incoming/outgoing transitions. `rel="describedby"` links are returned as `describedBy`; local files inside the profile directory are read and inlined as `text`, while http(s) links are returned unresolved.

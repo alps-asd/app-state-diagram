@@ -229,6 +229,30 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
         },
       },
       {
+        name: "alps_tags",
+        description:
+          "List the tags in use across an ALPS profile, grouped by facet (actor/flow/feature/src/page prefix, else domain) with usage counts. Given a vocabulary file (tags.html, see docs/tag-vocabulary.md), each tag is joined with its definition (defined, title).",
+        inputSchema: {
+          type: "object" as const,
+          properties: {
+            file: {
+              type: "string",
+              description: "Path to the ALPS profile file (JSON or XML)",
+            },
+            vocabulary: {
+              type: "string",
+              description: "Path to a tag vocabulary file (tags.html with tags as <dt> ids, see docs/tag-vocabulary.md)",
+            },
+            format: {
+              type: "string",
+              enum: ["json", "markdown"],
+              description: "Output format: json (default) or a Markdown table (Tag, Facet, Count, Defined, Title) for direct display in chat",
+            },
+          },
+          required: ["file"],
+        },
+      },
+      {
         name: "alps_descriptor",
         description:
           "Get full details of one descriptor: definition, resolved documentation and rel=\"describedby\" links (local files are read and inlined; http(s) links are returned unresolved), containing states, and incoming/outgoing transitions.",
@@ -435,6 +459,8 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       return handleAlpsOverview(args);
     case "alps_search":
       return handleAlpsSearch(args);
+    case "alps_tags":
+      return handleAlpsTags(args);
     case "alps_descriptor":
       return handleAlpsDescriptor(args);
     case "alps_paths":
@@ -1133,6 +1159,95 @@ export async function handleAlpsSearch(args: Record<string, unknown> | undefined
       return { content: [{ type: "text", text: descriptorsToMarkdownTable(matches.map(summarize)) }] };
     }
     return jsonResult({ count: matches.length, descriptors: matches.map(summarize) });
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    return {
+      content: [{ type: "text", text: `Error: ${errorMessage}` }],
+      isError: true,
+    };
+  }
+}
+
+/** Facet prefix registry (docs/tag-vocabulary.md); other tags are domain vocabulary */
+const FACET_PREFIXES = ["actor", "flow", "feature", "src", "page"];
+const FACET_ORDER = [...FACET_PREFIXES, "domain"];
+
+/**
+ * Classify a tag by its facet prefix (the part before the first "-")
+ */
+function tagFacet(tag: string): string {
+  const prefix = tag.split("-", 1)[0];
+  return tag.includes("-") && FACET_PREFIXES.includes(prefix) ? prefix : "domain";
+}
+
+interface TagUsage {
+  tag: string;
+  count: number;
+  defined?: boolean;
+  title?: string;
+}
+
+/**
+ * Render tag usage as a Markdown table for chat display
+ */
+function tagsToMarkdownTable(facets: Record<string, TagUsage[]>, hasVocabulary: boolean): string {
+  const escapeCell = (value: string): string => value.replace(/\|/g, "\\|").replace(/\n/g, " ");
+  const lines = [
+    "| Tag | Facet | Count | Defined | Title |",
+    "| :-- | :-- | --: | :-- | :-- |",
+  ];
+  for (const [facet, usages] of Object.entries(facets)) {
+    for (const usage of usages) {
+      const defined = hasVocabulary ? (usage.defined ? "yes" : "no") : "";
+      lines.push(
+        `| ${escapeCell(usage.tag)} | ${facet} | ${usage.count} | ${defined} | ${escapeCell(usage.title || "")} |`
+      );
+    }
+  }
+  return lines.length === 2 ? "No tags in use." : lines.join("\n");
+}
+
+export async function handleAlpsTags(args: Record<string, unknown> | undefined) {
+  const file = args?.file as string | undefined;
+  const vocabularyPath = args?.vocabulary as string | undefined;
+
+  if (!file) {
+    return {
+      content: [{ type: "text", text: "Error: file is required" }],
+      isError: true,
+    };
+  }
+
+  try {
+    const { document } = await loadProfile(file);
+    const vocabulary = vocabularyPath ? loadTagVocabulary(vocabularyPath) : undefined;
+    const counts = new Map<string, number>();
+    for (const desc of allDescriptors(document)) {
+      for (const tag of descriptorTags(desc)) {
+        counts.set(tag, (counts.get(tag) ?? 0) + 1);
+      }
+    }
+    const grouped: Record<string, TagUsage[]> = {};
+    for (const tag of [...counts.keys()].sort()) {
+      const usage: TagUsage = { tag, count: counts.get(tag)! };
+      if (vocabulary) {
+        usage.defined = vocabulary.has(tag);
+        if (usage.defined) {
+          usage.title = vocabulary.get(tag);
+        }
+      }
+      (grouped[tagFacet(tag)] ??= []).push(usage);
+    }
+    const facets: Record<string, TagUsage[]> = {};
+    for (const facet of FACET_ORDER) {
+      if (grouped[facet]) {
+        facets[facet] = grouped[facet];
+      }
+    }
+    if ((args?.format as string | undefined) === "markdown") {
+      return { content: [{ type: "text", text: tagsToMarkdownTable(facets, vocabulary !== undefined) }] };
+    }
+    return jsonResult({ count: counts.size, facets });
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
     return {
