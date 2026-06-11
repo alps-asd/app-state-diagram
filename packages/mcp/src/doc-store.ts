@@ -16,11 +16,16 @@ import * as fs from "fs";
 import * as path from "path";
 import { findDescriptorById } from "@alps-asd/app-state-diagram/parser/alps-parser.js";
 import type { AlpsDoc } from "@alps-asd/app-state-diagram/parser/alps-parser.js";
+import {
+  DOC_DIR,
+  INLINE_DOC_MAX_LENGTH,
+  resolveSafeLocalPath,
+  safeFileName,
+  shouldExternalize,
+} from "./doc-utils.js";
+import { setXmlDescriptorDoc } from "./xml-store.js";
 
-export const DOC_DIR = "alps/docs";
-
-/** Docs longer than this (or multi-line) are stored in an external file */
-export const INLINE_DOC_MAX_LENGTH = 200;
+export { DOC_DIR, INLINE_DOC_MAX_LENGTH, resolveSafeLocalPath, shouldExternalize };
 
 export type DocPlacement = "auto" | "inline" | "external";
 
@@ -34,14 +39,7 @@ export interface SetDocResult {
 }
 
 /**
- * Decide whether a doc should be stored in an external file
- */
-export function shouldExternalize(doc: string): boolean {
-  return doc.length > INLINE_DOC_MAX_LENGTH || doc.includes("\n");
-}
-
-/**
- * Set or update the doc of a descriptor in a JSON ALPS profile file.
+ * Set or update the doc of a descriptor in a JSON or XML ALPS profile file.
  *
  * With placement 'auto', the doc is stored externally when it is large
  * (see shouldExternalize) or when the descriptor already links a local
@@ -60,10 +58,7 @@ export function setDescriptorDoc(
 
   const content = fs.readFileSync(absPath, "utf-8");
   if (!content.trim().startsWith("{")) {
-    throw new Error(
-      "Writing docs is currently supported for JSON profiles only. " +
-        "Convert the XML profile to JSON, or edit the XML directly."
-    );
+    return setXmlDescriptorDoc(absPath, id, doc, placement);
   }
 
   let root: any;
@@ -150,53 +145,6 @@ export function resolveDoc(
     }
   }
   return { text: doc.value || "", href: doc.href, format: doc.format };
-}
-
-/**
- * Resolve a local href (doc.href, describedby link) against the profile
- * directory, rejecting anything that escapes it: URL schemes ("http:",
- * "file:", Windows drives), protocol-relative or absolute paths,
- * backslashes, and ../ traversal. Symlinks inside the profile directory
- * are legitimate (e.g. compat links keeping old layouts working), but
- * their real targets must stay inside it. Returns the absolute path, or
- * undefined when unsafe.
- */
-export function resolveSafeLocalPath(baseDir: string, href: string): string | undefined {
-  if (/^[a-zA-Z][a-zA-Z0-9+.-]*:/.test(href)) {
-    return undefined;
-  }
-  if (href.startsWith("//") || href.includes("\\") || path.isAbsolute(href)) {
-    return undefined;
-  }
-  const abs = path.resolve(baseDir, href);
-  const rel = path.relative(baseDir, abs);
-  if (rel.startsWith("..") || path.isAbsolute(rel)) {
-    return undefined;
-  }
-  // Compare real paths so a symlinked component cannot escape baseDir.
-  // The target file may not exist yet (first write), so check the
-  // deepest existing ancestor instead.
-  try {
-    const baseReal = fs.realpathSync(baseDir);
-    let existing = abs;
-    while (!fs.existsSync(existing)) {
-      existing = path.dirname(existing);
-    }
-    const existingReal = fs.realpathSync(existing);
-    if (existingReal !== baseReal && !existingReal.startsWith(baseReal + path.sep)) {
-      return undefined;
-    }
-  } catch {
-    return undefined;
-  }
-  return abs;
-}
-
-/**
- * Turn a descriptor id into a safe file name for alps/docs/
- */
-function safeFileName(id: string): string {
-  return id.replace(/[^A-Za-z0-9._-]/g, "-");
 }
 
 /**

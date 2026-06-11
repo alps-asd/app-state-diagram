@@ -89,11 +89,8 @@ describe("addDescriptor", () => {
     expect(() => addDescriptor(profilePath, { id: "Home" })).toThrow("already exists");
   });
 
-  it("rejects unknown parents and XML profiles", () => {
+  it("rejects unknown parents", () => {
     expect(() => addDescriptor(profilePath, { id: "x", parent: "nope" })).toThrow("Parent descriptor not found");
-    const xml = path.join(dir, "p.xml");
-    fs.writeFileSync(xml, "<alps/>");
-    expect(() => addDescriptor(xml, { id: "x" })).toThrow("JSON profiles only");
   });
 
   it("preserves indentation", () => {
@@ -183,13 +180,10 @@ describe("setDescriptorTags", () => {
     );
   });
 
-  it("rejects unknown ids and XML profiles", () => {
+  it("rejects unknown ids", () => {
     expect(() => setDescriptorTags(profilePath, { id: "nope", add: ["x"] })).toThrow(
       "Descriptor not found"
     );
-    const xml = path.join(dir, "p.xml");
-    fs.writeFileSync(xml, "<alps/>");
-    expect(() => setDescriptorTags(xml, { id: "Home", add: ["x"] })).toThrow("JSON profiles only");
   });
 
   it("preserves indentation", () => {
@@ -292,12 +286,6 @@ describe("renameDescriptor", () => {
     expect(() => renameDescriptor(profilePath, "Nope", "Whatever")).toThrow(
       "Descriptor not found: Nope"
     );
-  });
-
-  it("rejects XML profiles", () => {
-    const xml = path.join(dir, "p.xml");
-    fs.writeFileSync(xml, "<alps/>");
-    expect(() => renameDescriptor(xml, "Cart", "Basket")).toThrow("JSON profiles only");
   });
 
   it("preserves indentation", () => {

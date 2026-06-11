@@ -195,10 +195,11 @@ describe('setDescriptorDoc', () => {
     expect(() => setDescriptorDoc(profilePath, 'Nope', 'doc')).toThrow('Descriptor not found');
   });
 
-  it('rejects XML profiles', () => {
+  it('writes XML profiles', () => {
     const xmlPath = path.join(dir, 'profile.xml');
     fs.writeFileSync(xmlPath, '<alps><descriptor id="Home"/></alps>');
-    expect(() => setDescriptorDoc(xmlPath, 'Home', 'doc')).toThrow('JSON profiles only');
+    expect(setDescriptorDoc(xmlPath, 'Home', 'doc')).toEqual({ id: 'Home', placement: 'inline' });
+    expect(fs.readFileSync(xmlPath, 'utf-8')).toContain('<doc>doc</doc>');
   });
 
   it('rejects missing files', () => {

@@ -183,10 +183,10 @@ Enumerate transition paths from one application state to another.
 
 ### alps_set_doc
 
-Set or update the documentation of a descriptor in a JSON ALPS profile. Short single-line docs are stored inline; longer or multi-line docs (Markdown welcome) are automatically written to an external file and linked via `doc.href`.
+Set or update the documentation of a descriptor in a JSON or XML ALPS profile. Short single-line docs are stored inline; longer or multi-line docs (Markdown welcome) are automatically written to an external file and linked via `doc.href`.
 
 **Parameters:**
-- `file` (required): Path to the ALPS profile file (JSON only for writes)
+- `file` (required): Path to the ALPS profile file (JSON or XML)
 - `id` (required): Descriptor id
 - `doc` (required): Documentation text
 - `placement` (optional): `auto` (default) | `inline` | `external`
@@ -196,7 +196,7 @@ Set or update the documentation of a descriptor in a JSON ALPS profile. Short si
 
 ### alps_add_descriptor
 
-Add a new descriptor to a JSON ALPS profile. Containers reference children via `href` fragments (ALPS best practice); missing children are created as top-level semantic descriptors.
+Add a new descriptor to a JSON or XML ALPS profile. Containers reference children via `href` fragments (ALPS best practice); missing children are created as top-level semantic descriptors.
 
 **Parameters:**
 - `file` (required), `id` (required)
@@ -214,7 +214,7 @@ Add a new descriptor to a JSON ALPS profile. Containers reference children via `
 Add and/or remove tags in a descriptor's space-separated `tag` attribute. Kept tags preserve their order, new tags are appended, and the `tag` property is removed when it becomes empty.
 
 **Parameters:**
-- `file` (required): Path to the ALPS profile file (JSON only for writes)
+- `file` (required): Path to the ALPS profile file (JSON or XML)
 - `id` (required): Descriptor id
 - `add` (optional): Tags to add (ones already present are ignored)
 - `remove` (optional): Tags to remove (at least one of `add`/`remove` is required)
@@ -227,12 +227,18 @@ Add and/or remove tags in a descriptor's space-separated `tag` attribute. Kept t
 Rename a descriptor and update all local references across the profile: `href` and `rt` `#fragments` at any nesting depth. Only exact-id matches are rewritten; external references (`file.json#id`) are left untouched. An external doc file (`doc.href`) keeps its old file name — the result reports it as `docFile`; it stays linked and keeps working since the href still points at it.
 
 **Parameters:**
-- `file` (required): Path to the ALPS profile file (JSON only for writes)
+- `file` (required): Path to the ALPS profile file (JSON or XML)
 - `id` (required): Current descriptor id
 - `newId` (required): New descriptor id
 
 **Example prompt:**
 > "Rename Cart to ShoppingCart everywhere"
+
+### XML write behavior and limits
+
+XML write tools load profiles with `fast-xml-parser` in preserve-order mode and write them back with formatted `XMLBuilder` output. Existing element order, existing attribute order, comments, and CDATA nodes are preserved, but XML formatting is normalized (for example, indentation and empty-element spelling may change).
+
+Unsupported XML structures are rejected instead of guessed. In particular, descriptor mixed text content and `doc` elements containing nested markup are not rewritten; convert those profiles to a simpler ALPS XML shape or edit them manually.
 
 ## Auxiliary Design Information (alps/)
 

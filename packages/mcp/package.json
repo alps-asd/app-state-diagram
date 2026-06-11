@@ -40,7 +40,8 @@
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.0.0",
-    "@alps-asd/app-state-diagram": "workspace:*"
+    "@alps-asd/app-state-diagram": "workspace:*",
+    "fast-xml-parser": "^4.5.0"
   },
   "devDependencies": {
     "@types/jest": "^30.0.0",
