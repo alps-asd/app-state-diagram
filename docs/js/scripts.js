@@ -1,5 +1,5 @@
 import { SEMANTIC_TERMS } from './semanticTerms.js';
-import { DiagramAdapterManager } from './diagramAdapters.js';
+import { DiagramAdapterManager } from './diagramAdapters.js?v=tag-filter-20260606b';
 
 class AlpsEditor {
     constructor() {
@@ -14,6 +14,7 @@ class AlpsEditor {
         // Portable static detection: prefer explicit flag; default to static when flag is absent
         const hasApi = (typeof window.ALPSEDITOR_HAS_API === 'boolean') ? window.ALPSEDITOR_HAS_API : false;
         this.isStaticMode = !hasApi || this.isLocalMode;
+        this.initialUrlState = this.readSharedUrlState();
         // Ensure static/local environments use client-side diagramming before first preview
         if (this.isLocalMode || this.isStaticMode) {
             this.adapterManager.setAdapter('alps2dot');
@@ -67,6 +68,7 @@ class AlpsEditor {
             this.setupDragAndDrop();
             this.setupCompleteHref();
             this.setupDownloadButton();
+            this.setupShareUrlButton();
             this.setupAdapterSelector();
             this.setupViewModeSelector();
             this.setupDiagramClickHandler();
@@ -243,8 +245,9 @@ Happy modeling! Remember, solid semantics supports the long-term evolution of yo
 
 </alps>`;
 
-            // Use pre-loaded content if available (from CLI output)
-            const initialContent = window.ALPS_INITIAL_CONTENT || defaultXml;
+            // Use shared URL content first, then pre-loaded content if available (from CLI output)
+            const sharedProfile = await this.loadProfileFromFragment();
+            const initialContent = sharedProfile !== null ? sharedProfile : window.ALPS_INITIAL_CONTENT || defaultXml;
             this.editor.setValue(initialContent);
             // Auto-detect mode
             const trimmed = initialContent.trim();
@@ -325,11 +328,13 @@ Happy modeling! Remember, solid semantics supports the long-term evolution of yo
             const previousMode = this.previousViewMode || 'document';
             selector.value = previousMode;
             this.applyViewMode(previousMode);
+            this.replaceSharedUrlState({ view: previousMode });
         } else {
             // Save current mode and switch to preview
             this.previousViewMode = selector.value;
             selector.value = 'preview';
             this.applyViewMode('preview');
+            this.replaceSharedUrlState({ view: 'preview' });
         }
     }
 
@@ -427,15 +432,22 @@ Happy modeling! Remember, solid semantics supports the long-term evolution of yo
             this.debugLog(`Using ${this.adapterManager.getCurrentAdapter().getName()} for diagram generation`);
 
             // Use the adapter manager to generate diagram
-            const url = await this.adapterManager.generateDiagram(content, fileType);
+            const diagram = await this.adapterManager.generateDiagram(content, fileType);
 
             const iframe = document.getElementById('preview-frame');
-            iframe.src = url;
             // Apply view mode after iframe loads
             iframe.onload = () => {
                 const mode = document.getElementById('viewMode')?.value || 'document';
                 this.applyViewMode(mode);
+                this.applyDiagramUrlStateToFrame();
             };
+            if (diagram && typeof diagram === 'object' && typeof diagram.html === 'string') {
+                iframe.removeAttribute('src');
+                iframe.srcdoc = diagram.html;
+            } else {
+                iframe.removeAttribute('srcdoc');
+                iframe.src = diagram;
+            }
             this.debugLog('Preview updated');
             this.updateValidationMark(true);
             this.displayErrors([]);
@@ -453,6 +465,108 @@ Happy modeling! Remember, solid semantics supports the long-term evolution of yo
         }
     }
 
+    getDefaultViewMode() {
+        return window.ALPS_INITIAL_CONTENT ? 'preview' : 'document';
+    }
+
+    getTagsFromValues(values) {
+        return values
+            .flatMap(value => String(value).split(','))
+            .map(tag => tag.trim())
+            .filter(Boolean);
+    }
+
+    normalizeSizeMode(size) {
+        if (size === 'compact') return 'half';
+        return ['original', 'fit', 'half'].includes(size) ? size : '';
+    }
+
+    readSharedUrlState() {
+        const profile = this.getProfileFragment();
+        const fragmentParams = profile ? new URLSearchParams(window.location.hash.substring(1)) : null;
+        const params = new URLSearchParams(window.location.search);
+        const rawView = params.get('view');
+        const rawLabel = params.get('label');
+        const rawHash = profile ? fragmentParams.get('hash') || '' : window.location.hash;
+        return {
+            view: ['document', 'diagram', 'preview'].includes(rawView) ? rawView : this.getDefaultViewMode(),
+            tag: this.getTagsFromValues(params.getAll('tag')),
+            tagOnly: params.get('tagOnly') === '1',
+            label: rawLabel === 'title' ? 'title' : 'id',
+            size: this.normalizeSizeMode(params.get('size')),
+            profile,
+            hash: profile ? rawHash : rawHash ? decodeURIComponent(rawHash.substring(1)) : ''
+        };
+    }
+
+    replaceSharedUrlState(nextState) {
+        const currentState = this.readSharedUrlState();
+        const state = { ...currentState, ...nextState };
+        const url = new URL(window.location.href);
+
+        if (state.view && state.view !== this.getDefaultViewMode()) {
+            url.searchParams.set('view', state.view);
+        } else {
+            url.searchParams.delete('view');
+        }
+
+        url.searchParams.delete('tag');
+        if (Array.isArray(state.tag) && state.tag.length > 0) {
+            url.searchParams.set('tag', state.tag.join(','));
+        }
+
+        if (state.tagOnly) {
+            url.searchParams.set('tagOnly', '1');
+        } else {
+            url.searchParams.delete('tagOnly');
+        }
+
+        if (state.label === 'title') {
+            url.searchParams.set('label', 'title');
+        } else {
+            url.searchParams.delete('label');
+        }
+
+        const size = this.normalizeSizeMode(state.size);
+        if (size) {
+            url.searchParams.set('size', size);
+        } else {
+            url.searchParams.delete('size');
+        }
+
+        if (state.profile) {
+            const hashParams = new URLSearchParams();
+            hashParams.set('profile', state.profile);
+            if (state.hash) {
+                hashParams.set('hash', state.hash);
+            }
+            url.hash = hashParams.toString();
+        } else {
+            url.hash = state.hash ? '#' + encodeURIComponent(state.hash) : '';
+        }
+        window.history.replaceState(null, '', url.toString());
+    }
+
+    getDiagramUrlState() {
+        const state = this.readSharedUrlState();
+        return {
+            tag: state.tag,
+            tagOnly: state.tagOnly,
+            label: state.label,
+            size: state.size,
+            hash: state.hash
+        };
+    }
+
+    applyDiagramUrlStateToFrame() {
+        const iframe = document.getElementById('preview-frame');
+        if (!iframe?.contentWindow) return;
+        iframe.contentWindow.postMessage({
+            type: 'applyUrlState',
+            state: this.getDiagramUrlState()
+        }, '*');
+    }
+
     setupAdapterSelector() {
         // Always use alps2dot adapter
         this.adapterManager.setAdapter('alps2dot');
@@ -462,14 +576,13 @@ Happy modeling! Remember, solid semantics supports the long-term evolution of yo
         const selector = document.getElementById('viewMode');
         if (!selector) return;
 
-        // Use preview mode for asd-generated HTML, document mode for online editor
-        const defaultMode = window.ALPS_INITIAL_CONTENT ? 'preview' : 'document';
-        selector.value = defaultMode;
-        this.applyViewMode(defaultMode);
+        selector.value = this.initialUrlState.view;
+        this.applyViewMode(selector.value);
 
         selector.addEventListener('change', (event) => {
             const mode = event.target.value;
             this.applyViewMode(mode);
+            this.replaceSharedUrlState({ view: mode });
         });
     }
 
@@ -692,6 +805,107 @@ Happy modeling! Remember, solid semantics supports the long-term evolution of yo
             this.downloadFile(content, filename, mimeType);
             this.closeDownloadMenu();
         });
+    }
+
+    setupShareUrlButton() {
+        const button = document.getElementById('shareUrlButton');
+        if (!button) return;
+        button.dataset.originalText = button.dataset.originalText || button.textContent || 'Share URL';
+
+        button.addEventListener('click', async () => {
+            if (button._copyTimeoutId) {
+                clearTimeout(button._copyTimeoutId);
+                button._copyTimeoutId = null;
+            }
+            const originalText = button.dataset.originalText;
+            button.disabled = true;
+            try {
+                const shareUrl = await this.createProfileShareUrl();
+                if (!navigator.clipboard?.writeText) {
+                    throw new Error('Clipboard API is not available');
+                }
+                await navigator.clipboard.writeText(shareUrl);
+                button.textContent = 'Copied!';
+                button._copyTimeoutId = setTimeout(() => {
+                    button.textContent = originalText;
+                    button._copyTimeoutId = null;
+                }, 1500);
+            } catch (error) {
+                if (button._copyTimeoutId) {
+                    clearTimeout(button._copyTimeoutId);
+                    button._copyTimeoutId = null;
+                }
+                button.textContent = originalText;
+                this.handleError(error, 'Failed to create Share URL');
+                alert('Failed to copy Share URL');
+            } finally {
+                button.disabled = false;
+            }
+        });
+    }
+
+    async createProfileShareUrl() {
+        if (typeof CompressionStream !== 'function') {
+            throw new Error('CompressionStream is not supported');
+        }
+
+        const compressed = await new Response(
+            new Blob([this.editor.getValue()]).stream().pipeThrough(new CompressionStream('deflate-raw'))
+        ).arrayBuffer();
+        const url = new URL(window.location.href);
+        url.hash = `profile=${this.uint8ArrayToBase64Url(new Uint8Array(compressed))}`;
+        return url.toString();
+    }
+
+    async loadProfileFromFragment() {
+        const encoded = this.getProfileFragment();
+        if (!encoded || typeof DecompressionStream !== 'function') {
+            return null;
+        }
+
+        try {
+            const compressed = this.base64UrlToUint8Array(encoded);
+            return await new Response(
+                new Blob([compressed]).stream().pipeThrough(new DecompressionStream('deflate-raw'))
+            ).text();
+        } catch {
+            return null;
+        }
+    }
+
+    getProfileFragment() {
+        if (!window.location.hash) return '';
+        const params = new URLSearchParams(window.location.hash.substring(1));
+        return params.get('profile') || '';
+    }
+
+    base64UrlToUint8Array(value) {
+        const remainder = value.length % 4;
+        if (remainder === 1) {
+            throw new Error('Invalid base64url');
+        }
+        const padded = value.replace(/-/g, '+').replace(/_/g, '/') + '='.repeat((4 - remainder) % 4);
+        const binary = atob(padded);
+        const bytes = new Uint8Array(binary.length);
+
+        for (let i = 0; i < binary.length; i++) {
+            bytes[i] = binary.charCodeAt(i);
+        }
+
+        return bytes;
+    }
+
+    uint8ArrayToBase64Url(bytes) {
+        let binary = '';
+        const chunkSize = 0x8000;
+        for (let i = 0; i < bytes.length; i += chunkSize) {
+            binary += String.fromCharCode(...bytes.subarray(i, i + chunkSize));
+        }
+
+        return btoa(binary)
+            .replace(/\+/g, '-')
+            .replace(/\//g, '_')
+            .replace(/=+$/g, '');
     }
 
     generateMermaid(content) {
@@ -1052,9 +1266,14 @@ Happy modeling! Remember, solid semantics supports the long-term evolution of yo
             const isLocalOrBlob = this.isLocalMode || event.origin === 'null';
             if (!isLocalOrBlob && event.origin !== window.location.origin) return;
 
+            if (event.data && event.data.type === 'diagramStateChanged') {
+                this.replaceSharedUrlState(event.data.state || {});
+            }
+
             if (event.data && event.data.type === 'jumpToId') {
                 const id = event.data.id;
                 console.log('Jumping to ID:', id);
+                this.replaceSharedUrlState({ hash: id });
 
                 // In Preview mode, scroll to table row instead of editor
                 const viewMode = document.getElementById('viewMode')?.value;

@@ -55,7 +55,7 @@ Three layers of ALPS become CSS classes:
 1. **One HTML file per ALPS state** (Taxonomy descriptor with nested descriptors)
 2. **`<link rel="profile" href="../profile/alps.xml">`** in every `<head>`
 3. **`<link rel="stylesheet" href="../css/level2.css">`** as default stylesheet
-4. **Semantic HTML elements**: `<article>` for entities, `<form>` for unsafe/idempotent transitions, `<a>` for safe transitions, `<nav>` for navigation groups
+4. **Semantic HTML elements**: `<article>` for entities, `<form>` for unsafe/idempotent transitions, `<a>` for safe transitions, `<nav>` for navigation groups. Forms use `method="get"` for static hosting browsability — the transition semantics (safe/unsafe/idempotent) are carried by the ALPS class name, not the HTTP method.
 5. **ALPS `title` attribute** maps to HTML `title` attribute on links and buttons
 6. **ALPS `doc` value** is NOT rendered in HTML — it's for developers, not end users
 7. **Placeholder content**: Use realistic sample data (not "Lorem ipsum")
@@ -108,7 +108,7 @@ Generate (partial example — only showing the Book state; other states like Sho
         <div><dt>Category</dt><dd class="category">Programming</dd></div>
       </dl>
       <p class="price">¥2,480</p>
-      <form method="post" action="shoppingcart.html" class="doAddToCart">
+      <form method="get" action="shoppingcart.html" class="doAddToCart">
         <input type="hidden" name="id" value="BK-001" class="id">
         <label for="quantity">Qty</label>
         <input type="number" id="quantity" name="quantity" min="1" value="1" class="quantity">

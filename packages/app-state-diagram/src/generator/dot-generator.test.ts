@@ -550,4 +550,38 @@ describe('DotGenerator', () => {
     expect(dot).toContain('color="#000000"');
   });
 
+  it('should render the induced subgraph for filter ids', () => {
+    const alps: AlpsDocument = {
+      alps: {
+        descriptor: [
+          { id: 'Home', descriptor: [{ href: '#goCart' }, { href: '#goAdmin' }] },
+          { id: 'Cart' },
+          { id: 'AdminTop' },
+          { id: 'goCart', type: 'safe', rt: '#Cart', tag: 'cart' },
+          { id: 'goAdmin', type: 'safe', rt: '#AdminTop', tag: 'admin' }
+        ]
+      }
+    };
+
+    const dot = generateDot(alps, 'id', new Set(['goCart']));
+
+    expect(dot).toContain('Home -> Cart');
+    expect(dot).not.toContain('AdminTop');
+    expect(dot).not.toContain('goAdmin');
+  });
+
+  it('should return an empty DOT fragment when filter ids match no states', () => {
+    const alps: AlpsDocument = {
+      alps: {
+        descriptor: [
+          { id: 'Home', descriptor: [{ href: '#goCart' }] },
+          { id: 'Cart' },
+          { id: 'goCart', type: 'safe', rt: '#Cart' }
+        ]
+      }
+    };
+
+    expect(generateDot(alps, 'id', new Set(['missing']))).toBe('');
+  });
+
 });
