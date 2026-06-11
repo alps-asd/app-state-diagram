@@ -111,4 +111,62 @@ describe("XML write support", () => {
     fs.writeFileSync(profilePath, '<alps><descriptor id="Home">text<descriptor id="child"/></descriptor></alps>');
     expect(() => setDescriptorTags(profilePath, { id: "Home", add: ["nav"] })).toThrow('Unsupported XML structure: descriptor "Home" contains mixed text content');
   });
+  it("updates an existing inline XML doc in place", () => {
+    expect(setDescriptorDoc(profilePath, "Home", "Plain doc.")).toEqual({ id: "Home", placement: "inline" });
+    const xml = readXml();
+    expect(xml).toContain("<doc>Plain doc.</doc>");
+    expect(xml).not.toContain("Keep <xml> docs");
+  });
+
+  it("forces inline placement on an external XML doc and reports the orphan", () => {
+    expect(setDescriptorDoc(profilePath, "Cart", "Inline now.", "inline")).toEqual({
+      id: "Cart",
+      placement: "inline",
+      orphanedDocFile: "alps/docs/Cart.md",
+    });
+    expectXmlEquivalentTo(XML_FIXTURE.replace(
+      '<doc href="alps/docs/Cart.md" format="markdown"/>',
+      '<doc>Inline now.</doc>'
+    ));
+  });
+
+  it("rejects duplicate descriptor ids in XML", () => {
+    expect(() => addDescriptor(profilePath, { id: "Home" })).toThrow("Descriptor already exists: Home");
+  });
+
+  it("normalizes rt fragments and warns about missing XML targets", () => {
+    expect(addDescriptor(profilePath, { id: "goNowhere", type: "safe", title: "Go", rt: "Nowhere", tag: "nav" })).toEqual({
+      id: "goNowhere",
+      createdChildren: [],
+      warnings: ['rt target "#Nowhere" does not exist yet'],
+    });
+    expect(addDescriptor(profilePath, { id: "goCartAgain", type: "safe", rt: "#Cart" })).toEqual({ id: "goCartAgain", createdChildren: [], warnings: [] });
+    expectXmlEquivalentTo(XML_FIXTURE.replace(
+      '</alps>',
+      '  <descriptor id="goNowhere" type="safe" title="Go" rt="#Nowhere" tag="nav"/>\n  <descriptor id="goCartAgain" type="safe" rt="#Cart"/>\n</alps>'
+    ));
+  });
+
+  it("nests new XML descriptors under a parent", () => {
+    addDescriptor(profilePath, { id: "headline", parent: "section" });
+    expectXmlEquivalentTo(XML_FIXTURE.replace(
+      '<descriptor id="section">\n      <descriptor href="#Cart"/>\n    </descriptor>',
+      '<descriptor id="section"><descriptor href="#Cart"/><descriptor id="headline"/></descriptor>'
+    ));
+    expect(() => addDescriptor(profilePath, { id: "stray", parent: "ghost" })).toThrow("Parent descriptor not found: ghost");
+  });
+
+  it("rejects alps elements with mixed text content", () => {
+    fs.writeFileSync(profilePath, '<alps>stray text<descriptor id="Home"/></alps>');
+    expect(() => setDescriptorTags(profilePath, { id: "Home", add: ["nav"] })).toThrow(
+      "Unsupported XML structure: alps contains mixed text content"
+    );
+  });
+  it("does not reuse unsafe XML doc.href values as write targets", () => {
+    fs.writeFileSync(profilePath, '<alps><descriptor id="Home"><doc href="../escape.md"/></descriptor></alps>');
+    expect(setDescriptorDoc(profilePath, "Home", "Safe doc.")).toEqual({ id: "Home", placement: "inline" });
+    expect(readXml()).toContain("<doc>Safe doc.</doc>");
+    expect(readXml()).not.toContain("escape.md");
+    expect(fs.existsSync(path.join(dir, "..", "escape.md"))).toBe(false);
+  });
 });
