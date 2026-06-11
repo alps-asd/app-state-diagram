@@ -1,25 +1,54 @@
 {
   "_links": {
-    "self": { "href": "/api/checkout" },
-    "doUserInfo": {
-      "href": "/api/checkout/user-info",
-      "title": "Input User Information",
-      "method": "POST"
-    },
-    "doShippingInfo": {
-      "href": "/api/checkout/shipping-info",
-      "title": "Input Shipping Information",
-      "method": "POST"
+    "self": {
+      "href": "/api/checkout"
     },
     "goToPayment": {
       "href": "/api/payment",
-      "title": "Go to Payment Screen",
-      "method": "GET"
+      "title": "Go to Payment Screen"
     },
     "goToCart": {
       "href": "/api/shoppingcart",
-      "title": "Go to Cart Screen",
-      "method": "GET"
+      "title": "Go to Cart Screen"
+    }
+  },
+  "_templates": {
+    "doUserInfo": {
+      "method": "POST",
+      "target": "/api/checkout/user-info",
+      "title": "Input User Information",
+      "contentType": "application/json",
+      "properties": [
+        {
+          "name": "userName",
+          "value": "Taro Yamada",
+          "type": "text",
+          "prompt": "User Name",
+          "required": true
+        },
+        {
+          "name": "userEmail",
+          "value": "taro@example.com",
+          "type": "email",
+          "prompt": "Email Address",
+          "required": true
+        }
+      ]
+    },
+    "doShippingInfo": {
+      "method": "POST",
+      "target": "/api/checkout/shipping-info",
+      "title": "Input Shipping Information",
+      "contentType": "application/json",
+      "properties": [
+        {
+          "name": "shippingAddress",
+          "value": "〒150-0001 Tokyo, Shibuya-ku, Jingumae 1-2-3",
+          "type": "textarea",
+          "prompt": "Shipping Address",
+          "required": true
+        }
+      ]
     }
   }
 }

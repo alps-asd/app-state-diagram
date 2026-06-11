@@ -17,33 +17,60 @@
     ]
   },
   "_links": {
-    "self": { "href": "/api/shoppingcart" },
+    "self": {
+      "href": "/api/shoppingcart"
+    },
     "goListCartItems": {
       "href": "/api/shoppingcart",
-      "title": "Get Cart Items List",
-      "method": "GET"
-    },
-    "doUpdateQuantity": {
-      "href": "/api/shoppingcart/{id}",
-      "title": "Update Cart Item Quantity",
-      "method": "PUT",
-      "templated": true
-    },
-    "doRemoveFromCart": {
-      "href": "/api/shoppingcart/{id}",
-      "title": "Remove Item from Cart",
-      "method": "DELETE",
-      "templated": true
+      "title": "Get Cart Items List"
     },
     "goToCheckout": {
       "href": "/api/checkout",
-      "title": "Go to Checkout Screen",
-      "method": "GET"
+      "title": "Go to Checkout Screen"
     },
     "goToCatalog": {
       "href": "/api/catalog",
-      "title": "Go to Catalog Screen",
-      "method": "GET"
+      "title": "Go to Catalog Screen"
+    }
+  },
+  "_templates": {
+    "doUpdateQuantity": {
+      "method": "PUT",
+      "target": "/api/shoppingcart/{id}",
+      "title": "Update Cart Item Quantity",
+      "contentType": "application/json",
+      "properties": [
+        {
+          "name": "id",
+          "value": "BK-001",
+          "type": "hidden",
+          "prompt": "ID",
+          "required": true
+        },
+        {
+          "name": "quantity",
+          "value": 1,
+          "type": "number",
+          "prompt": "Quantity",
+          "required": true,
+          "min": 1
+        }
+      ]
+    },
+    "doRemoveFromCart": {
+      "method": "DELETE",
+      "target": "/api/shoppingcart/{id}",
+      "title": "Remove Item from Cart",
+      "contentType": "application/json",
+      "properties": [
+        {
+          "name": "id",
+          "value": "BK-001",
+          "type": "hidden",
+          "prompt": "ID",
+          "required": true
+        }
+      ]
     }
   }
 }

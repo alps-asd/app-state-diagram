@@ -2,16 +2,16 @@
   "id": "CAT-001",
   "title": "Programming",
   "_links": {
-    "self": { "href": "/api/category/CAT-001" },
+    "self": {
+      "href": "/api/category/CAT-001"
+    },
     "goToCatalog": {
       "href": "/api/catalog",
-      "title": "Go to Catalog Screen",
-      "method": "GET"
+      "title": "Go to Catalog Screen"
     },
     "goToBookDetails": {
       "href": "/api/book/{id}",
       "title": "Go to Book Details Screen",
-      "method": "GET",
       "templated": true
     }
   }

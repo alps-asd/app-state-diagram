@@ -6,16 +6,37 @@
   "price": 2480,
   "category": "Programming",
   "_links": {
-    "self": { "href": "/api/book/BK-001" },
-    "doAddToCart": {
-      "href": "/api/shoppingcart",
-      "title": "Add to Cart",
-      "method": "POST"
+    "self": {
+      "href": "/api/book/BK-001"
     },
     "goToCatalog": {
       "href": "/api/catalog",
-      "title": "Go to Catalog Screen",
-      "method": "GET"
+      "title": "Go to Catalog Screen"
+    }
+  },
+  "_templates": {
+    "doAddToCart": {
+      "method": "POST",
+      "target": "/api/shoppingcart",
+      "title": "Add to Cart",
+      "contentType": "application/json",
+      "properties": [
+        {
+          "name": "id",
+          "value": "BK-001",
+          "type": "hidden",
+          "prompt": "ID",
+          "required": true
+        },
+        {
+          "name": "quantity",
+          "value": 1,
+          "type": "number",
+          "prompt": "Quantity",
+          "required": true,
+          "min": 1
+        }
+      ]
     }
   }
 }

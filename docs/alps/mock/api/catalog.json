@@ -28,39 +28,35 @@
     ]
   },
   "_links": {
-    "self": { "href": "/api/catalog" },
+    "self": {
+      "href": "/api/catalog"
+    },
     "goListBooks": {
       "href": "/api/catalog",
-      "title": "Get Book List",
-      "method": "GET"
+      "title": "Get Book List"
     },
     "goSearchBooks": {
       "href": "/api/catalog?query={query}",
       "title": "Search Books",
-      "method": "GET",
       "templated": true
     },
     "goGetCategories": {
       "href": "/api/catalog/categories",
-      "title": "Get Category List",
-      "method": "GET"
+      "title": "Get Category List"
     },
     "goToBookDetails": {
       "href": "/api/book/{id}",
       "title": "Go to Book Details Screen",
-      "method": "GET",
       "templated": true
     },
     "goToCategory": {
       "href": "/api/category/{id}",
       "title": "Go to Category Screen",
-      "method": "GET",
       "templated": true
     },
     "goToCart": {
       "href": "/api/shoppingcart",
-      "title": "Go to Cart Screen",
-      "method": "GET"
+      "title": "Go to Cart Screen"
     }
   }
 }
