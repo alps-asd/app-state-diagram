@@ -94,6 +94,7 @@ describe('docText', () => {
     expect(docText({ value: 'v' })).toBe('v');
     expect(docText({ href: 'x.md' })).toBe('');
     expect(docText(undefined)).toBe('');
+    expect(docText(null)).toBe('');
   });
 });
 

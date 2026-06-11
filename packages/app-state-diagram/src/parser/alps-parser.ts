@@ -172,8 +172,8 @@ function convertDoc(doc: any): string | AlpsDoc | undefined {
 /**
  * Get the inline text of a doc (string or AlpsDoc form)
  */
-export function docText(doc: string | AlpsDoc | undefined): string {
-  if (doc === undefined) {
+export function docText(doc: string | AlpsDoc | null | undefined): string {
+  if (doc == null) {
     return '';
   }
   if (typeof doc === 'string') {
