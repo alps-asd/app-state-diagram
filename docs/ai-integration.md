@@ -84,9 +84,32 @@ Verify: `/mcp` should show "alps" in the list.
 
 ### Available Tools
 
-- `validate_alps` - Validate ALPS profile
-- `alps2svg` - Generate SVG diagram
-- `alps_guide` - Get ALPS best practices
+**Convert and validate:**
+
+| Tool | Description |
+|------|-------------|
+| `validate_alps` | Validate an ALPS profile (`vocabulary` additionally checks tags against a [tag vocabulary](tag-vocabulary.md) file — unknown tags are `W005` warnings) |
+| `alps2svg` | Generate an SVG diagram (`tag` filters to a tagged slice; `output` writes to a file and returns the path) |
+| `alps2mermaid` | Generate a Mermaid diagram — renders natively in GitHub, claude.ai, and VS Code (`tag` filters to a tagged slice) |
+| `validate_openapi` | Validate an OpenAPI document |
+| `crawl_and_extract_alps` | Extract an ALPS draft from a website |
+| `alps_guide` | Get ALPS best practices |
+
+**Query and edit profiles:**
+
+| Tool | Description |
+|------|-------------|
+| `alps_overview` | States, transitions (from/to), and tags at a glance |
+| `alps_search` | Filter descriptors by type, tag(s), or text; `format: markdown` returns a table (ID, Type, Title, Tags, Doc) for direct chat display |
+| `alps_tags` | Tags in use grouped by facet (actor/flow/feature/src/page, else domain) with usage counts; `vocabulary` joins each tag with its [tag vocabulary](tag-vocabulary.md) definition |
+| `alps_descriptor` | One descriptor in full — external docs and local `describedby` links resolved, containers, incoming/outgoing transitions |
+| `alps_paths` | Enumerate transition paths between two states |
+| `alps_set_doc` | Write descriptor documentation; large docs are auto-externalized to `alps/docs/<id>.md` and linked via `doc.href` |
+| `alps_add_descriptor` | Create a new descriptor — nested or with `href` children; missing children are created automatically ("register name and age as person") |
+| `alps_set_tags` | Add/remove tags in a descriptor's space-separated `tag` attribute — kept tags preserve their order |
+| `alps_rename` | Rename a descriptor and update all local `href`/`rt` `#fragment` references across the profile |
+
+**Tip — view a tagged slice entirely in chat:** ask for `alps2mermaid` with `tag` (the diagram renders natively) plus `alps_search` with the same tags and `format: markdown` (the descriptor table).
 
 ## llms.txt (Any LLM)
 

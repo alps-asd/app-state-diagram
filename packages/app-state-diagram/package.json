@@ -17,7 +17,9 @@
     ".": "./dist/asd.js",
     "./parser/*": "./dist/parser/*",
     "./validator/*": "./dist/validator/*",
-    "./generator/*": "./dist/generator/*"
+    "./generator/*": "./dist/generator/*",
+    "./graph/*": "./dist/graph/*",
+    "./resolver/*": "./dist/resolver/*"
   },
   "bin": {
     "asd": "dist/asd.js"
