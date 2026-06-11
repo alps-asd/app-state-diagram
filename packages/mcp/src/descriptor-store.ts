@@ -1,5 +1,5 @@
 /**
- * Descriptor store - create descriptors in a JSON ALPS profile
+ * Descriptor store - create descriptors in a JSON or XML ALPS profile
  *
  * Like doc-store, edits the raw JSON surgically (preserving indentation
  * and everything else in the profile) rather than re-serializing a
@@ -13,6 +13,7 @@ import * as path from "path";
 import { findDescriptorById, walkDescriptors } from "@alps-asd/app-state-diagram/parser/alps-parser.js";
 import type { AlpsDescriptor } from "@alps-asd/app-state-diagram/parser/alps-parser.js";
 import { serializeLike } from "./doc-store.js";
+import { addXmlDescriptor, renameXmlDescriptor, setXmlDescriptorTags } from "./xml-store.js";
 
 export interface AddDescriptorInput {
   id: string;
@@ -72,7 +73,7 @@ function assertValidId(id: string, label: string): void {
 }
 
 /**
- * Add a new descriptor to a JSON ALPS profile file
+ * Add a new descriptor to a JSON or XML ALPS profile file
  */
 export function addDescriptor(profilePath: string, input: AddDescriptorInput): AddDescriptorResult {
   assertValidId(input.id, "Descriptor id");
@@ -85,10 +86,7 @@ export function addDescriptor(profilePath: string, input: AddDescriptorInput): A
   }
   const content = fs.readFileSync(absPath, "utf-8");
   if (!content.trim().startsWith("{")) {
-    throw new Error(
-      "Writing descriptors is currently supported for JSON profiles only. " +
-        "Convert the XML profile to JSON, or edit the XML directly."
-    );
+    return addXmlDescriptor(absPath, input);
   }
 
   let root: { alps?: { descriptor?: unknown } };
@@ -175,10 +173,7 @@ export function setDescriptorTags(profilePath: string, input: SetTagsInput): Set
   }
   const content = fs.readFileSync(absPath, "utf-8");
   if (!content.trim().startsWith("{")) {
-    throw new Error(
-      "Writing tags is currently supported for JSON profiles only. " +
-        "Convert the XML profile to JSON, or edit the XML directly."
-    );
+    return setXmlDescriptorTags(absPath, input);
   }
 
   let root: { alps?: { descriptor?: unknown } };
@@ -229,10 +224,7 @@ export function renameDescriptor(profilePath: string, oldId: string, newId: stri
   }
   const content = fs.readFileSync(absPath, "utf-8");
   if (!content.trim().startsWith("{")) {
-    throw new Error(
-      "Renaming descriptors is currently supported for JSON profiles only. " +
-        "Convert the XML profile to JSON, or edit the XML directly."
-    );
+    return renameXmlDescriptor(absPath, oldId, newId);
   }
 
   let root: { alps?: { descriptor?: unknown } };
