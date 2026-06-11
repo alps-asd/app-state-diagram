@@ -9,11 +9,15 @@ const {
   handleAlps2Svg,
   handleAlps2Mermaid,
   handleAlpsGuide,
+  handleAlpsEditorUrl,
+  createAlpsEditorUrl,
   handleCrawlAndExtract,
   handleValidateOpenapi,
   getEmbeddedGuide,
 } = require('./index');
 const fs = require('fs');
+const zlib = require('zlib');
+const nodeCrypto = require('crypto');
 const childProcess = require('child_process');
 const util = require('util');
 
@@ -24,6 +28,44 @@ const mockFs = fs as jest.Mocked<typeof fs>;
 // Mock child_process.exec for Spectral tests
 jest.mock('child_process');
 const mockChildProcess = childProcess as jest.Mocked<typeof childProcess>;
+const EDITOR_URL_PREFIX = 'https://editor.app-state-diagram.com/#profile=';
+
+function decodeEditorUrl(url: string): string {
+  expect(url.startsWith(EDITOR_URL_PREFIX)).toBe(true);
+  return zlib.inflateRawSync(Buffer.from(url.slice(EDITOR_URL_PREFIX.length), 'base64url')).toString('utf-8');
+}
+
+function deterministicText(length: number, seed: string): string {
+  const alphabet = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-';
+  let text = '';
+  let counter = 0;
+
+  while (text.length < length) {
+    const hash = nodeCrypto.createHash('sha256').update(`${seed}:${counter}`).digest();
+    counter++;
+    for (const byte of hash) {
+      text += alphabet[byte % alphabet.length];
+      if (text.length >= length) break;
+    }
+  }
+
+  return text;
+}
+
+function makeLargeAlpsProfile(): string {
+  const descriptor = Array.from({ length: 1030 }, (_, i) => {
+    const hex = ((i * 2654435761) >>> 0).toString(16).padStart(8, '0');
+    return {
+      id: `field${i}_${hex}`,
+      title: `Field ${i} ${hex}`,
+      doc: { value: deterministicText(20, `profile-share-url-${i}`) },
+      type: i % 7 === 0 ? 'safe' : i % 11 === 0 ? 'unsafe' : 'semantic',
+      rt: i % 7 === 0 ? `#State${i % 50}` : undefined,
+    };
+  });
+
+  return JSON.stringify({ alps: { version: '1.0', title: 'Perf Fixture', descriptor } }, null, 2);
+}
 
 describe('MCP Handler Functions', () => {
   beforeEach(() => {
@@ -104,6 +146,85 @@ describe('MCP Handler Functions', () => {
       const result = await handleValidateAlps({ alps_content: alpsContent });
 
       expect(result.content[0].text).toContain('Warnings:');
+    });
+  });
+
+  describe('handleAlpsEditorUrl', () => {
+    it('should generate a base64url raw-deflate editor URL from a file', async () => {
+      const alpsContent = `<?xml version="1.0"?>
+<alps>
+  <descriptor id="Home"/>
+</alps>`;
+
+      mockFs.readFileSync.mockReturnValue(alpsContent);
+
+      const result = await handleAlpsEditorUrl({ file: '/path/to/alps.xml' });
+      const url = result.content[0].text.split('\n').find((line: string) => line.startsWith(EDITOR_URL_PREFIX));
+      const editorUrl = url as string;
+
+      expect(result.isError).toBe(false);
+      expect(mockFs.readFileSync).toHaveBeenCalledWith('/path/to/alps.xml', 'utf-8');
+      expect(url).toBeTruthy();
+      expect(decodeEditorUrl(editorUrl)).toBe(alpsContent);
+      expect(result.content[0].text).not.toContain('Slack');
+    });
+
+    it('should expose the same URL codec through createAlpsEditorUrl', () => {
+      const alpsContent = JSON.stringify({
+        alps: {
+          descriptor: [{ id: 'Home', title: 'Home' }],
+        },
+      });
+
+      const url = createAlpsEditorUrl(alpsContent);
+      const encoded = url.slice(EDITOR_URL_PREFIX.length);
+
+      expect(decodeEditorUrl(url)).toBe(alpsContent);
+      expect(encoded).not.toContain('+');
+      expect(encoded).not.toContain('/');
+      expect(encoded).not.toContain('=');
+    });
+
+    it('should return error when file is missing', async () => {
+      const result = await handleAlpsEditorUrl({});
+
+      expect(result.isError).toBe(true);
+      expect(result.content[0].text).toContain('Error: file is required');
+    });
+
+    it('should return error when args is undefined', async () => {
+      const result = await handleAlpsEditorUrl(undefined);
+
+      expect(result.isError).toBe(true);
+      expect(result.content[0].text).toContain('Error: file is required');
+    });
+
+    it('should return error when file cannot be read', async () => {
+      mockFs.readFileSync.mockImplementation(() => {
+        throw new Error('File not found');
+      });
+
+      const result = await handleAlpsEditorUrl({ file: '/invalid/alps.json' });
+
+      expect(result.isError).toBe(true);
+      expect(result.content[0].text).toContain('Error: Cannot read file: /invalid/alps.json');
+    });
+
+    it('should warn when a 196KB profile produces an approximately 47K-character URL', async () => {
+      const alpsContent = makeLargeAlpsProfile();
+      mockFs.readFileSync.mockReturnValue(alpsContent);
+
+      const result = await handleAlpsEditorUrl({ file: '/path/to/large-alps.json' });
+      const url = result.content[0].text.split('\n').find((line: string) => line.startsWith(EDITOR_URL_PREFIX));
+      const editorUrl = url as string;
+
+      expect(Buffer.byteLength(alpsContent, 'utf-8')).toBeGreaterThanOrEqual(196000);
+      expect(url).toBeTruthy();
+      expect(editorUrl.length).toBeGreaterThanOrEqual(46000);
+      expect(editorUrl.length).toBeLessThanOrEqual(49000);
+      expect(decodeEditorUrl(editorUrl)).toBe(alpsContent);
+      expect(result.content[0].text).toContain('Browsers can open this URL');
+      expect(result.content[0].text).toContain('Slack and similar tools may break it');
     });
   });
 

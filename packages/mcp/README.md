@@ -109,6 +109,18 @@ Get ALPS best practices and reference guide.
 **Example prompt:**
 > "Show me ALPS best practices for naming transitions"
 
+### alps_editor_url
+
+Create a shareable ALPS Editor URL from a local profile file.
+
+**Parameters:**
+- `file` (required): Path to ALPS profile file (XML or JSON format)
+
+**Example prompt:**
+> "Create an ALPS Editor URL for ./api-profile.xml"
+
+URLs longer than 32,000 characters include a note that browsers can open them, but Slack and similar tools may break them.
+
 ### alps_overview
 
 Summarize an ALPS profile: title, application states, transitions (with from/to states), and tags. Use this first to understand the application state model.
@@ -252,7 +264,10 @@ Existing local `doc.href` layouts keep working: any safe local href is honored a
 3. Generate a diagram:
    > "Create an SVG diagram from ./my-api.json"
 
-4. Get guidance on improvements:
+4. Share the profile in the online editor:
+   > "Create an ALPS Editor URL for ./my-api.json"
+
+5. Get guidance on improvements:
    > "How should I name my transitions in ALPS?"
 
 ## Validation Codes

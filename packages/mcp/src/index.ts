@@ -13,11 +13,14 @@ import {
 } from "@modelcontextprotocol/sdk/types.js";
 import * as fs from "fs";
 import * as path from "path";
+import * as zlib from "zlib";
 import { fileURLToPath } from "url";
 import { exec } from "child_process";
 import { promisify } from "util";
 
 const execAsync = promisify(exec);
+const ALPS_EDITOR_URL_PREFIX = "https://editor.app-state-diagram.com/#profile=";
+const URL_LENGTH_WARNING_THRESHOLD = 32000;
 
 // Import from CLI package
 import { parseAlpsAuto, docText, findDescriptorById, walkDescriptors } from "@alps-asd/app-state-diagram/parser/alps-parser.js";
@@ -136,6 +139,20 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
         inputSchema: {
           type: "object" as const,
           properties: {},
+        },
+      },
+      {
+        name: "alps_editor_url",
+        description: "Create a shareable ALPS Editor URL from an ALPS profile file",
+        inputSchema: {
+          type: "object" as const,
+          properties: {
+            file: {
+              type: "string",
+              description: "Path to ALPS profile file (XML or JSON)",
+            },
+          },
+          required: ["file"],
         },
       },
       {
@@ -451,6 +468,8 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       return handleAlps2Mermaid(args);
     case "alps_guide":
       return handleAlpsGuide();
+    case "alps_editor_url":
+      return handleAlpsEditorUrl(args);
     case "crawl_and_extract_alps":
       return handleCrawlAndExtract(args);
     case "validate_openapi":
@@ -562,6 +581,51 @@ export async function handleValidateAlps(args: Record<string, unknown> | undefin
       isError: true,
     };
   }
+}
+
+export function createAlpsEditorUrl(alpsContent: string): string {
+  const encoded = zlib.deflateRawSync(Buffer.from(alpsContent, "utf-8")).toString("base64url");
+  return `${ALPS_EDITOR_URL_PREFIX}${encoded}`;
+}
+
+export async function handleAlpsEditorUrl(args: Record<string, unknown> | undefined) {
+  const file = args?.file as string | undefined;
+
+  if (!file) {
+    return {
+      content: [{ type: "text", text: "Error: file is required" }],
+      isError: true,
+    };
+  }
+
+  let alpsContent: string;
+  try {
+    alpsContent = fs.readFileSync(file, "utf-8");
+  } catch {
+    return {
+      content: [{ type: "text", text: `Error: Cannot read file: ${file}` }],
+      isError: true,
+    };
+  }
+
+  const url = createAlpsEditorUrl(alpsContent);
+  const lines = [
+    "✅ ALPS Editor URL generated",
+    "",
+    url,
+  ];
+
+  if (url.length > URL_LENGTH_WARNING_THRESHOLD) {
+    lines.push(
+      "",
+      `Note: Browsers can open this URL, but Slack and similar tools may break it (URL length: ${url.length} characters).`
+    );
+  }
+
+  return {
+    content: [{ type: "text", text: lines.join("\n") }],
+    isError: false,
+  };
 }
 
 /**
