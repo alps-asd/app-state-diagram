@@ -6,6 +6,7 @@
  */
 
 import type { AlpsDocument, AlpsDescriptor } from '../parser/alps-parser';
+import { extractGraph, computeVisibleNodeIds } from '../graph/graph';
 
 export type LabelMode = 'id' | 'title';
 
@@ -58,7 +59,7 @@ function escapeHtmlAttr(value: string): string {
 /**
  * Generate DOT content from ALPS data
  */
-export function generateDot(alpsData: AlpsDocument, labelMode: LabelMode = 'id'): string {
+export function generateDot(alpsData: AlpsDocument, labelMode: LabelMode = 'id', filterIds?: Set<string> | null): string {
   const descriptors = alpsData.alps?.descriptor || [];
 
   // Get all transition targets (rt values) - these are the actual states
@@ -72,6 +73,17 @@ export function generateDot(alpsData: AlpsDocument, labelMode: LabelMode = 'id')
   if (states.length === 0) {
     // Exclude descriptors that look like transitions (have safe/unsafe/idempotent type)
     states = descriptors.filter(d => d.id && (!d.type || d.type === 'semantic'));
+  }
+
+  // Tag filter: induced subgraph over tagged nodes and tagged transitions' endpoints
+  let visible: Set<string> | null = null;
+  if (filterIds && filterIds.size > 0) {
+    visible = computeVisibleNodeIds(extractGraph(alpsData), filterIds);
+    const visibleIds = visible;
+    states = descriptors.filter(d => d.id && visibleIds.has(d.id));
+    if (states.length === 0) {
+      return '';
+    }
   }
 
   const getLabel = (descriptor: AlpsDescriptor): string => {
@@ -106,7 +118,14 @@ export function generateDot(alpsData: AlpsDocument, labelMode: LabelMode = 'id')
   for (const trans of transitions) {
     if (trans.id) {
       const targetState = trans.rt!.replace('#', '');
-      const sourceStates = findSourceStatesForTransition(trans.id, descriptors);
+      if (visible && !visible.has(targetState)) {
+        continue;
+      }
+      let sourceStates = findSourceStatesForTransition(trans.id, descriptors);
+      if (visible) {
+        const visibleIds = visible;
+        sourceStates = sourceStates.filter(source => visibleIds.has(source));
+      }
       const color = getTransitionColor(trans.type);
       const transLabel = getLabel(trans);
       for (const sourceState of sourceStates) {
