@@ -59,6 +59,12 @@ describe("addDescriptor", () => {
     expect(home.descriptor).toEqual([{ id: "greeting" }]);
   });
 
+  it("rejects empty or whitespace ids", () => {
+    expect(() => addDescriptor(profilePath, { id: "" })).toThrow("non-empty");
+    expect(() => addDescriptor(profilePath, { id: "   " })).toThrow("non-empty");
+    expect(() => addDescriptor(profilePath, { id: "ok", children: ["", "x"] })).toThrow("non-empty");
+  });
+
   it("rejects duplicate ids", () => {
     expect(() => addDescriptor(profilePath, { id: "Home" })).toThrow("already exists");
   });

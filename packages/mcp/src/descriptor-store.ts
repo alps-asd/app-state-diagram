@@ -63,9 +63,22 @@ export interface RenameResult {
 }
 
 /**
+ * Reject empty or whitespace-only descriptor ids before any mutation
+ */
+function assertValidId(id: string, label: string): void {
+  if (!id || id.trim() === "") {
+    throw new Error(`${label} must be a non-empty string`);
+  }
+}
+
+/**
  * Add a new descriptor to a JSON ALPS profile file
  */
 export function addDescriptor(profilePath: string, input: AddDescriptorInput): AddDescriptorResult {
+  assertValidId(input.id, "Descriptor id");
+  for (const childId of input.children || []) {
+    assertValidId(childId, "Child descriptor id");
+  }
   const absPath = path.resolve(profilePath);
   if (!fs.existsSync(absPath)) {
     throw new Error(`Profile file not found: ${profilePath}`);
@@ -209,6 +222,7 @@ export function setDescriptorTags(profilePath: string, input: SetTagsInput): Set
  * still points at it and keeps working.
  */
 export function renameDescriptor(profilePath: string, oldId: string, newId: string): RenameResult {
+  assertValidId(newId, "New descriptor id");
   const absPath = path.resolve(profilePath);
   if (!fs.existsSync(absPath)) {
     throw new Error(`Profile file not found: ${profilePath}`);

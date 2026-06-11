@@ -80,3 +80,43 @@ describe("alps_search markdown format", () => {
     }
   });
 });
+
+describe("alps_add_descriptor rollback and alps_paths clamping", () => {
+  it("restores the profile when the doc write fails after the add", async () => {
+    const { handleAlpsAddDescriptor } = await import("./index.js");
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), "alps-rollback-"));
+    const outside = fs.mkdtempSync(path.join(os.tmpdir(), "alps-rollback-out-"));
+    const file = path.join(dir, "profile.json");
+    const original = JSON.stringify({ alps: { descriptor: [] } }, null, 2) + "\n";
+    try {
+      fs.writeFileSync(file, original);
+      fs.symlinkSync(outside, path.join(dir, "alps")); // makes alps/docs writes unsafe
+      const result = await handleAlpsAddDescriptor({
+        file,
+        id: "person",
+        doc: "line1\nline2 forces external placement",
+      });
+      expect(result.isError).toBe(true);
+      expect(fs.readFileSync(file, "utf-8")).toBe(original); // unchanged
+    } finally {
+      fs.rmSync(dir, { recursive: true, force: true });
+      fs.rmSync(outside, { recursive: true, force: true });
+    }
+  });
+
+  it("clamps out-of-range maxPaths instead of failing", async () => {
+    const { handleAlpsPaths } = await import("./index.js");
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), "alps-paths-"));
+    const file = path.join(dir, "profile.json");
+    try {
+      fs.writeFileSync(file, PROFILE);
+      for (const maxPaths of [-5, 0, 100000, 2.7]) {
+        const result = await handleAlpsPaths({ file, from: "Home", to: "Cart", maxPaths });
+        expect(result.isError).not.toBe(true);
+        expect(JSON.parse((result.content[0] as { text: string }).text).count).toBeGreaterThanOrEqual(1);
+      }
+    } finally {
+      fs.rmSync(dir, { recursive: true, force: true });
+    }
+  });
+});

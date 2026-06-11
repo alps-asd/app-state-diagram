@@ -126,7 +126,7 @@ Filter descriptors by type, tag, and/or free text (matched against id, title, an
 **Parameters:**
 - `file` (required): Path to the ALPS profile file
 - `type` (optional): `semantic` | `safe` | `unsafe` | `idempotent`
-- `tag` (optional): Filter by tag(s), space or comma separated (OR match)
+- `tag` (optional): Filter by tag(s), space- or comma-separated (OR match)
 - `text` (optional): Case-insensitive text search
 - `format` (optional): `json` (default) or `markdown` — a table (ID, Type, Title, Tags, Doc) for direct display in chat
 

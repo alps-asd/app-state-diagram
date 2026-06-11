@@ -100,7 +100,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
             },
             tag: {
               type: "string",
-              description: "Filter the diagram to descriptors with these tags (space or comma separated). Shows the induced subgraph: tagged nodes plus endpoints of tagged transitions.",
+              description: "Filter the diagram to descriptors with these tags (space- or comma-separated). Shows the induced subgraph: tagged nodes plus endpoints of tagged transitions.",
             },
             output: {
               type: "string",
@@ -125,7 +125,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
             },
             tag: {
               type: "string",
-              description: "Filter the diagram to descriptors with these tags (space or comma separated). Shows the induced subgraph: tagged nodes plus endpoints of tagged transitions.",
+              description: "Filter the diagram to descriptors with these tags (space- or comma-separated). Shows the induced subgraph: tagged nodes plus endpoints of tagged transitions.",
             },
           },
         },
@@ -213,7 +213,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
             },
             tag: {
               type: "string",
-              description: "Filter by tag(s), space or comma separated (OR match against the descriptor's space-separated tags)",
+              description: "Filter by tag(s), space- or comma-separated (OR match against the descriptor's space-separated tags)",
             },
             text: {
               type: "string",
@@ -577,6 +577,9 @@ export async function handleAlpsAddDescriptor(args: Record<string, unknown> | un
     };
   }
   try {
+    // Snapshot for rollback so a doc failure cannot leave a partial update
+    const absPath = path.resolve(file);
+    const original = fs.existsSync(absPath) ? fs.readFileSync(absPath, "utf-8") : null;
     const result = addDescriptor(file, {
       id,
       type: args?.type as "semantic" | "safe" | "unsafe" | "idempotent" | undefined,
@@ -589,7 +592,14 @@ export async function handleAlpsAddDescriptor(args: Record<string, unknown> | un
     const doc = args?.doc as string | undefined;
     let docResult: unknown;
     if (doc) {
-      docResult = setDescriptorDoc(file, id, doc, "auto");
+      try {
+        docResult = setDescriptorDoc(file, id, doc, "auto");
+      } catch (docError) {
+        if (original !== null) {
+          fs.writeFileSync(absPath, original, "utf-8");
+        }
+        throw docError;
+      }
     }
     return jsonResult({ ...result, ...(docResult ? { doc: docResult } : {}) });
   } catch (error) {
@@ -1346,7 +1356,9 @@ export async function handleAlpsPaths(args: Record<string, unknown> | undefined)
         throw new Error(`Unknown state: ${state} (known states: ${[...stateIds].join(", ")})`);
       }
     }
-    const paths = findPaths(graph, from, to, maxPaths ?? 10);
+    // Clamp to keep enumeration bounded regardless of caller input
+    const boundedMaxPaths = Math.min(50, Math.max(1, Math.trunc(maxPaths ?? 10) || 10));
+    const paths = findPaths(graph, from, to, boundedMaxPaths);
     return jsonResult({
       from,
       to,
