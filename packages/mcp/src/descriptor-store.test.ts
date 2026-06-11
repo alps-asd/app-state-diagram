@@ -272,4 +272,12 @@ describe("renameDescriptor", () => {
     fs.writeFileSync(profilePath, "{");
     expect(() => renameDescriptor(profilePath, "Cart", "Basket")).toThrow("Invalid JSON format");
   });
+
+  it("reports not found when the descriptor array is missing", () => {
+    fs.writeFileSync(profilePath, JSON.stringify({ alps: {} }));
+
+    expect(() => renameDescriptor(profilePath, "Cart", "Basket")).toThrow(
+      "Descriptor not found: Cart"
+    );
+  });
 });

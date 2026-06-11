@@ -128,6 +128,13 @@ describe('setDescriptorDoc', () => {
     expect(result.docFile).toBe(`${DOC_DIR}/Home.md`);
   });
 
+  it('does not add a second newline when writing external docs', () => {
+    const result = setDescriptorDoc(profilePath, 'Home', 'Already newline\n', 'external');
+
+    expect(result.docFile).toBe(`${DOC_DIR}/Home.md`);
+    expect(fs.readFileSync(path.join(dir, DOC_DIR, 'Home.md'), 'utf-8')).toBe('Already newline\n');
+  });
+
   it('updates nested descriptors', () => {
     setDescriptorDoc(profilePath, 'greeting', 'A greeting.');
     expect(readProfile().alps.descriptor[0].descriptor[1].doc).toBe('A greeting.');
@@ -224,6 +231,14 @@ describe('resolveDoc', () => {
   it('falls back to the inline value when the external file is missing', () => {
     const resolved = resolveDoc(dir, { href: `${DOC_DIR}/missing.md`, value: 'fallback' });
     expect(resolved?.text).toBe('fallback');
+  });
+
+  it('returns an empty string for object docs without value text', () => {
+    expect(resolveDoc(dir, { format: 'text' })).toEqual({
+      text: '',
+      href: undefined,
+      format: 'text',
+    });
   });
 
   it('does not fetch http urls', () => {

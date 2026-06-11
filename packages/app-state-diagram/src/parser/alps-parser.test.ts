@@ -65,6 +65,27 @@ describe('parseAlpsAuto', () => {
     expect(() => parseAlps('{', 'JSON')).toThrow('Invalid JSON format');
     expect(() => parseAlps('<not-alps/>', 'XML')).toThrow('No alps element found');
   });
+
+  it('uses XML defaults for omitted descriptors and link attributes', () => {
+    const doc = parseAlps('<alps><link/></alps>', 'XML');
+
+    expect(doc.alps.title).toBe('ALPS Profile');
+    expect(doc.alps.descriptor).toEqual([]);
+    expect(doc.alps.link).toEqual([{ rel: '', href: '', title: '' }]);
+  });
+
+  it('handles sparse XML doc objects', () => {
+    const withContentType = parseAlpsAuto(
+      '<alps><descriptor id="x"><doc contentType="text/plain">hello</doc></descriptor></alps>'
+    );
+    expect(withContentType.alps.descriptor?.[0].doc).toEqual({
+      value: 'hello',
+      contentType: 'text/plain',
+    });
+
+    const emptyDoc = parseAlpsAuto('<alps><descriptor id="x"><doc unknown="ignored"/></descriptor></alps>');
+    expect(emptyDoc.alps.descriptor?.[0].doc).toBeUndefined();
+  });
 });
 
 describe('docText', () => {
@@ -113,5 +134,9 @@ describe('findDescriptorById', () => {
   it('returns null for unknown ids and non-array input', () => {
     expect(findDescriptorById(descriptors, 'nope')).toBeNull();
     expect(findDescriptorById(undefined, 'a')).toBeNull();
+  });
+
+  it('skips non-object entries while searching', () => {
+    expect(findDescriptorById([null, 'x', { id: 'a' }], 'a')).toEqual({ id: 'a' });
   });
 });

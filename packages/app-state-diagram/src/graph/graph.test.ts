@@ -45,6 +45,10 @@ describe('extractGraph', () => {
     expect(graph.states.find(s => s.id === 'price')).toBeUndefined();
   });
 
+  it('handles missing ALPS descriptors', () => {
+    expect(extractGraph({} as AlpsDocument)).toEqual({ states: [], transitions: [] });
+  });
+
   it('excludes transitions with external rt references', () => {
     const doc: AlpsDocument = {
       alps: {
@@ -124,6 +128,10 @@ describe('getDescriptorIdsByTags', () => {
 
   it('returns an empty set for unknown tags', () => {
     expect(getDescriptorIdsByTags(doc, ['nope']).size).toBe(0);
+  });
+
+  it('handles missing ALPS descriptors when collecting tags', () => {
+    expect(getDescriptorIdsByTags({} as AlpsDocument, ['cart']).size).toBe(0);
   });
 });
 
