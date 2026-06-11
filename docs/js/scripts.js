@@ -68,6 +68,7 @@ class AlpsEditor {
             this.setupDragAndDrop();
             this.setupCompleteHref();
             this.setupDownloadButton();
+            this.setupShareUrlButton();
             this.setupAdapterSelector();
             this.setupViewModeSelector();
             this.setupDiagramClickHandler();
@@ -244,8 +245,9 @@ Happy modeling! Remember, solid semantics supports the long-term evolution of yo
 
 </alps>`;
 
-            // Use pre-loaded content if available (from CLI output)
-            const initialContent = window.ALPS_INITIAL_CONTENT || defaultXml;
+            // Use shared URL content first, then pre-loaded content if available (from CLI output)
+            const sharedProfile = await this.loadProfileFromFragment();
+            const initialContent = sharedProfile !== null ? sharedProfile : window.ALPS_INITIAL_CONTENT || defaultXml;
             this.editor.setValue(initialContent);
             // Auto-detect mode
             const trimmed = initialContent.trim();
@@ -483,13 +485,14 @@ Happy modeling! Remember, solid semantics supports the long-term evolution of yo
         const params = new URLSearchParams(window.location.search);
         const rawView = params.get('view');
         const rawLabel = params.get('label');
+        const rawHash = this.getProfileFragment() ? '' : window.location.hash;
         return {
             view: ['document', 'diagram', 'preview'].includes(rawView) ? rawView : this.getDefaultViewMode(),
             tag: this.getTagsFromValues(params.getAll('tag')),
             tagOnly: params.get('tagOnly') === '1',
             label: rawLabel === 'title' ? 'title' : 'id',
             size: this.normalizeSizeMode(params.get('size')),
-            hash: window.location.hash ? decodeURIComponent(window.location.hash.substring(1)) : ''
+            hash: rawHash ? decodeURIComponent(rawHash.substring(1)) : ''
         };
     }
 
@@ -790,6 +793,96 @@ Happy modeling! Remember, solid semantics supports the long-term evolution of yo
             this.downloadFile(content, filename, mimeType);
             this.closeDownloadMenu();
         });
+    }
+
+    setupShareUrlButton() {
+        const button = document.getElementById('shareUrlButton');
+        if (!button) return;
+
+        button.addEventListener('click', async () => {
+            const originalText = button.textContent;
+            button.disabled = true;
+            try {
+                const shareUrl = await this.createProfileShareUrl();
+                if (!navigator.clipboard?.writeText) {
+                    throw new Error('Clipboard API is not available');
+                }
+                await navigator.clipboard.writeText(shareUrl);
+                button.textContent = 'Copied!';
+                setTimeout(() => {
+                    button.textContent = originalText;
+                }, 1500);
+            } catch (error) {
+                this.handleError(error, 'Failed to create Share URL');
+                alert('Failed to copy Share URL');
+            } finally {
+                button.disabled = false;
+            }
+        });
+    }
+
+    async createProfileShareUrl() {
+        if (typeof CompressionStream !== 'function') {
+            throw new Error('CompressionStream is not supported');
+        }
+
+        const compressed = await new Response(
+            new Blob([this.editor.getValue()]).stream().pipeThrough(new CompressionStream('deflate-raw'))
+        ).arrayBuffer();
+        const url = new URL(window.location.href);
+        url.hash = `profile=${this.uint8ArrayToBase64Url(new Uint8Array(compressed))}`;
+        return url.toString();
+    }
+
+    async loadProfileFromFragment() {
+        const encoded = this.getProfileFragment();
+        if (!encoded || typeof DecompressionStream !== 'function') {
+            return null;
+        }
+
+        try {
+            const compressed = this.base64UrlToUint8Array(encoded);
+            return await new Response(
+                new Blob([compressed]).stream().pipeThrough(new DecompressionStream('deflate-raw'))
+            ).text();
+        } catch {
+            return null;
+        }
+    }
+
+    getProfileFragment() {
+        if (!window.location.hash) return '';
+        const params = new URLSearchParams(window.location.hash.substring(1));
+        return params.get('profile') || '';
+    }
+
+    base64UrlToUint8Array(value) {
+        const remainder = value.length % 4;
+        if (remainder === 1) {
+            throw new Error('Invalid base64url');
+        }
+        const padded = value.replace(/-/g, '+').replace(/_/g, '/') + '='.repeat((4 - remainder) % 4);
+        const binary = atob(padded);
+        const bytes = new Uint8Array(binary.length);
+
+        for (let i = 0; i < binary.length; i++) {
+            bytes[i] = binary.charCodeAt(i);
+        }
+
+        return bytes;
+    }
+
+    uint8ArrayToBase64Url(bytes) {
+        let binary = '';
+        const chunkSize = 0x8000;
+        for (let i = 0; i < bytes.length; i += chunkSize) {
+            binary += String.fromCharCode(...bytes.subarray(i, i + chunkSize));
+        }
+
+        return btoa(binary)
+            .replace(/\+/g, '-')
+            .replace(/\//g, '_')
+            .replace(/=+$/g, '');
     }
 
     generateMermaid(content) {

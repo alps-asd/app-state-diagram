@@ -13,11 +13,14 @@ import {
 } from "@modelcontextprotocol/sdk/types.js";
 import * as fs from "fs";
 import * as path from "path";
+import * as zlib from "zlib";
 import { fileURLToPath } from "url";
 import { exec } from "child_process";
 import { promisify } from "util";
 
 const execAsync = promisify(exec);
+const ALPS_EDITOR_URL_PREFIX = "https://editor.app-state-diagram.com/#profile=";
+const URL_LENGTH_WARNING_THRESHOLD = 32000;
 
 // Import from CLI package
 import { parseAlpsAuto } from "@alps-asd/app-state-diagram/parser/alps-parser.js";
@@ -116,6 +119,20 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
         },
       },
       {
+        name: "alps_editor_url",
+        description: "Create a shareable ALPS Editor URL from an ALPS profile file",
+        inputSchema: {
+          type: "object" as const,
+          properties: {
+            file: {
+              type: "string",
+              description: "Path to ALPS profile file (XML or JSON)",
+            },
+          },
+          required: ["file"],
+        },
+      },
+      {
         name: "crawl_and_extract_alps",
         description: "Crawl website and extract ALPS profile using efficient pattern-based analysis",
         inputSchema: {
@@ -175,6 +192,8 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       return handleAlps2Mermaid(args);
     case "alps_guide":
       return handleAlpsGuide();
+    case "alps_editor_url":
+      return handleAlpsEditorUrl(args);
     case "crawl_and_extract_alps":
       return handleCrawlAndExtract(args);
     case "validate_openapi":
@@ -242,6 +261,51 @@ export async function handleValidateAlps(args: Record<string, unknown> | undefin
       isError: true,
     };
   }
+}
+
+export function createAlpsEditorUrl(alpsContent: string): string {
+  const encoded = zlib.deflateRawSync(Buffer.from(alpsContent, "utf-8")).toString("base64url");
+  return `${ALPS_EDITOR_URL_PREFIX}${encoded}`;
+}
+
+export async function handleAlpsEditorUrl(args: Record<string, unknown> | undefined) {
+  const file = args?.file as string | undefined;
+
+  if (!file) {
+    return {
+      content: [{ type: "text", text: "Error: file is required" }],
+      isError: true,
+    };
+  }
+
+  let alpsContent: string;
+  try {
+    alpsContent = fs.readFileSync(file, "utf-8");
+  } catch {
+    return {
+      content: [{ type: "text", text: `Error: Cannot read file: ${file}` }],
+      isError: true,
+    };
+  }
+
+  const url = createAlpsEditorUrl(alpsContent);
+  const lines = [
+    "✅ ALPS Editor URL generated",
+    "",
+    url,
+  ];
+
+  if (url.length > URL_LENGTH_WARNING_THRESHOLD) {
+    lines.push(
+      "",
+      `注記: ブラウザでは開けるがSlack等では崩れる可能性があります（URL長: ${url.length}文字）。`
+    );
+  }
+
+  return {
+    content: [{ type: "text", text: lines.join("\n") }],
+    isError: false,
+  };
 }
 
 export async function handleAlps2Svg(args: Record<string, unknown> | undefined) {
