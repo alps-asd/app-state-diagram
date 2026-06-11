@@ -482,17 +482,20 @@ Happy modeling! Remember, solid semantics supports the long-term evolution of yo
     }
 
     readSharedUrlState() {
+        const profile = this.getProfileFragment();
+        const fragmentParams = profile ? new URLSearchParams(window.location.hash.substring(1)) : null;
         const params = new URLSearchParams(window.location.search);
         const rawView = params.get('view');
         const rawLabel = params.get('label');
-        const rawHash = this.getProfileFragment() ? '' : window.location.hash;
+        const rawHash = profile ? fragmentParams.get('hash') || '' : window.location.hash;
         return {
             view: ['document', 'diagram', 'preview'].includes(rawView) ? rawView : this.getDefaultViewMode(),
             tag: this.getTagsFromValues(params.getAll('tag')),
             tagOnly: params.get('tagOnly') === '1',
             label: rawLabel === 'title' ? 'title' : 'id',
             size: this.normalizeSizeMode(params.get('size')),
-            hash: rawHash ? decodeURIComponent(rawHash.substring(1)) : ''
+            profile,
+            hash: profile ? rawHash : rawHash ? decodeURIComponent(rawHash.substring(1)) : ''
         };
     }
 
@@ -531,7 +534,16 @@ Happy modeling! Remember, solid semantics supports the long-term evolution of yo
             url.searchParams.delete('size');
         }
 
-        url.hash = state.hash ? '#' + encodeURIComponent(state.hash) : '';
+        if (state.profile) {
+            const hashParams = new URLSearchParams();
+            hashParams.set('profile', state.profile);
+            if (state.hash) {
+                hashParams.set('hash', state.hash);
+            }
+            url.hash = hashParams.toString();
+        } else {
+            url.hash = state.hash ? '#' + encodeURIComponent(state.hash) : '';
+        }
         window.history.replaceState(null, '', url.toString());
     }
 
@@ -798,9 +810,14 @@ Happy modeling! Remember, solid semantics supports the long-term evolution of yo
     setupShareUrlButton() {
         const button = document.getElementById('shareUrlButton');
         if (!button) return;
+        button.dataset.originalText = button.dataset.originalText || button.textContent || 'Share URL';
 
         button.addEventListener('click', async () => {
-            const originalText = button.textContent;
+            if (button._copyTimeoutId) {
+                clearTimeout(button._copyTimeoutId);
+                button._copyTimeoutId = null;
+            }
+            const originalText = button.dataset.originalText;
             button.disabled = true;
             try {
                 const shareUrl = await this.createProfileShareUrl();
@@ -809,10 +826,16 @@ Happy modeling! Remember, solid semantics supports the long-term evolution of yo
                 }
                 await navigator.clipboard.writeText(shareUrl);
                 button.textContent = 'Copied!';
-                setTimeout(() => {
+                button._copyTimeoutId = setTimeout(() => {
                     button.textContent = originalText;
+                    button._copyTimeoutId = null;
                 }, 1500);
             } catch (error) {
+                if (button._copyTimeoutId) {
+                    clearTimeout(button._copyTimeoutId);
+                    button._copyTimeoutId = null;
+                }
+                button.textContent = originalText;
                 this.handleError(error, 'Failed to create Share URL');
                 alert('Failed to copy Share URL');
             } finally {
