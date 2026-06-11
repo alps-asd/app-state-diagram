@@ -76,7 +76,7 @@ Validate an ALPS profile and get detailed error feedback.
 
 **Parameters:**
 - `alps_content` or `alps_path` (required)
-- `tag` (optional): Filter to the tagged slice — space/comma separated tags; shows the induced subgraph (tagged nodes plus endpoints of tagged transitions)
+- `tag` (optional): Filter to the tagged slice — space/comma-separated tags; shows the induced subgraph (tagged nodes plus endpoints of tagged transitions)
 - `output` (optional): Write the SVG to this file path and return the path (recommended for large diagrams)
 
 
