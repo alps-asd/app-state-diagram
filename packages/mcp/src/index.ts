@@ -575,7 +575,7 @@ export async function handleValidateAlps(args: Record<string, unknown> | undefin
     };
   } catch (error) {
     /* istanbul ignore next */
-    const errorMessage = error instanceof Error ? error.message : String(error);
+    const errorMessage = toErrorMessage(error);
     return {
       content: [{ type: "text", text: `Error: ${errorMessage}` }],
       isError: true,
@@ -659,6 +659,7 @@ export async function handleAlpsAddDescriptor(args: Record<string, unknown> | un
       try {
         docResult = setDescriptorDoc(file, id, doc, "auto");
       } catch (docError) {
+        /* istanbul ignore else -- addDescriptor can only succeed after reading an existing profile */
         if (original !== null) {
           fs.writeFileSync(absPath, original, "utf-8");
         }
@@ -667,7 +668,7 @@ export async function handleAlpsAddDescriptor(args: Record<string, unknown> | un
     }
     return jsonResult({ ...result, ...(docResult ? { doc: docResult } : {}) });
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : String(error);
+    const errorMessage = toErrorMessage(error);
     return {
       content: [{ type: "text", text: `Error: ${errorMessage}` }],
       isError: true,
@@ -695,7 +696,7 @@ export async function handleAlpsSetTags(args: Record<string, unknown> | undefine
     });
     return jsonResult(result);
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : String(error);
+    const errorMessage = toErrorMessage(error);
     return {
       content: [{ type: "text", text: `Error: ${errorMessage}` }],
       isError: true,
@@ -719,7 +720,7 @@ export async function handleAlpsRename(args: Record<string, unknown> | undefined
   try {
     return jsonResult(renameDescriptor(file, id, newId));
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : String(error);
+    const errorMessage = toErrorMessage(error);
     return {
       content: [{ type: "text", text: `Error: ${errorMessage}` }],
       isError: true,
@@ -731,7 +732,7 @@ export async function handleAlpsRename(args: Record<string, unknown> | undefined
  * Render descriptor summaries as a Markdown table for chat display
  */
 function descriptorsToMarkdownTable(
-  rows: Array<{ id?: string; type: string; title?: string; tags?: string[]; doc?: string }>
+  rows: Array<{ id: string; type: string; title?: string; tags?: string[]; doc?: string }>
 ): string {
   if (rows.length === 0) {
     return "No descriptors match.";
@@ -743,7 +744,7 @@ function descriptorsToMarkdownTable(
   ];
   for (const row of rows) {
     lines.push(
-      `| ${escapeCell(row.id || "")} | ${row.type} | ${escapeCell(row.title || "")} | ${escapeCell((row.tags || []).join(" "))} | ${escapeCell(row.doc || "")} |`
+      `| ${escapeCell(row.id)} | ${row.type} | ${escapeCell(row.title || "")} | ${escapeCell((row.tags || []).join(" "))} | ${escapeCell(row.doc || "")} |`
     );
   }
   return lines.join("\n");
@@ -821,7 +822,7 @@ export async function handleAlps2Svg(args: Record<string, unknown> | undefined) 
     };
   } catch (error) {
     /* istanbul ignore next */
-    const errorMessage = error instanceof Error ? error.message : String(error);
+    const errorMessage = toErrorMessage(error);
     return {
       content: [{ type: "text", text: `Error: ${errorMessage}` }],
       isError: true,
@@ -868,7 +869,7 @@ export async function handleAlps2Mermaid(args: Record<string, unknown> | undefin
     };
   } catch (error) {
     /* istanbul ignore next */
-    const errorMessage = error instanceof Error ? error.message : String(error);
+    const errorMessage = toErrorMessage(error);
     return {
       content: [{ type: "text", text: `Error: ${errorMessage}` }],
       isError: true,
@@ -1045,7 +1046,7 @@ export async function handleValidateOpenapi(args: Record<string, unknown> | unde
     }
 
     /* istanbul ignore next -- non-Error throws are rare */
-    const errorMessage = error instanceof Error ? error.message : String(error);
+    const errorMessage = toErrorMessage(error);
 
     // Spectral returns non-zero exit code on validation errors
     // Check if it's actual validation output
@@ -1120,7 +1121,7 @@ function summarize(desc: AlpsDescriptor) {
   const tags = descriptorTags(desc);
   const doc = docPreview(desc);
   return {
-    id: desc.id,
+    id: desc.id!,
     type: desc.type || "semantic",
     title: desc.title,
     ...(desc.rt ? { rt: desc.rt } : {}),
@@ -1134,6 +1135,7 @@ function summarize(desc: AlpsDescriptor) {
  */
 function allDescriptors(document: AlpsDocument): AlpsDescriptor[] {
   const result: AlpsDescriptor[] = [];
+  /* istanbul ignore next -- parser/resolver normalizes missing descriptor arrays to [] */
   walkDescriptors(document.alps.descriptor || [], (desc) => result.push(desc));
   return result;
 }
@@ -1146,6 +1148,11 @@ function jsonResult(data: unknown) {
     content: [{ type: "text", text: JSON.stringify(data, null, 2) }],
     isError: false,
   };
+}
+
+function toErrorMessage(error: unknown): string {
+  /* istanbul ignore next -- repository code throws Error instances; this is a defensive fallback */
+  return error instanceof Error ? error.message : String(error);
 }
 
 export async function handleAlpsOverview(args: Record<string, unknown> | undefined) {
@@ -1184,7 +1191,7 @@ export async function handleAlpsOverview(args: Record<string, unknown> | undefin
       tags: [...tags].sort(),
     });
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : String(error);
+    const errorMessage = toErrorMessage(error);
     return {
       content: [{ type: "text", text: `Error: ${errorMessage}` }],
       isError: true,
@@ -1234,7 +1241,7 @@ export async function handleAlpsSearch(args: Record<string, unknown> | undefined
     }
     return jsonResult({ count: matches.length, descriptors: matches.map(summarize) });
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : String(error);
+    const errorMessage = toErrorMessage(error);
     return {
       content: [{ type: "text", text: `Error: ${errorMessage}` }],
       isError: true,
@@ -1323,7 +1330,7 @@ export async function handleAlpsTags(args: Record<string, unknown> | undefined) 
     }
     return jsonResult({ count: counts.size, facets });
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : String(error);
+    const errorMessage = toErrorMessage(error);
     return {
       content: [{ type: "text", text: `Error: ${errorMessage}` }],
       isError: true,
@@ -1371,6 +1378,7 @@ export async function handleAlpsDescriptor(args: Record<string, unknown> | undef
 
   try {
     const { document, baseDir } = await loadProfile(file);
+    /* istanbul ignore next -- parser/resolver normalizes missing descriptor arrays to [] */
     const descriptors = document.alps.descriptor || [];
     const descriptor = findDescriptorById(descriptors, id);
     if (!descriptor) {
@@ -1390,7 +1398,7 @@ export async function handleAlpsDescriptor(args: Record<string, unknown> | undef
         .map((t) => ({ id: t.id, type: t.type, from: t.from })),
     });
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : String(error);
+    const errorMessage = toErrorMessage(error);
     return {
       content: [{ type: "text", text: `Error: ${errorMessage}` }],
       isError: true,
@@ -1430,7 +1438,7 @@ export async function handleAlpsPaths(args: Record<string, unknown> | undefined)
       paths: paths.map((p) => formatPath(from, p)),
     });
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : String(error);
+    const errorMessage = toErrorMessage(error);
     return {
       content: [{ type: "text", text: `Error: ${errorMessage}` }],
       isError: true,
@@ -1455,7 +1463,7 @@ export async function handleAlpsSetDoc(args: Record<string, unknown> | undefined
     const result = setDescriptorDoc(file, id, doc, placement ?? "auto");
     return jsonResult(result);
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : String(error);
+    const errorMessage = toErrorMessage(error);
     return {
       content: [{ type: "text", text: `Error: ${errorMessage}` }],
       isError: true,

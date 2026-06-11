@@ -224,6 +224,22 @@ describe("handleAlpsTags", () => {
     expect(text).toContain("| actor-customer | actor | 1 | no |  |");
   });
 
+  it("renders a Markdown table without vocabulary definitions", async () => {
+    const result = await handleAlpsTags({ file: profilePath, format: "markdown" });
+
+    const text = result.content[0].text;
+    expect(text).toContain("| checkout | domain | 3 |  |  |");
+    expect(text).toContain("| actor-customer | actor | 1 |  |  |");
+  });
+
+  it("renders a no-tags message for markdown output", async () => {
+    fs.writeFileSync(profilePath, JSON.stringify({ alps: { descriptor: [{ id: "Home" }] } }));
+
+    const result = await handleAlpsTags({ file: profilePath, format: "markdown" });
+
+    expect(result.content[0].text).toBe("No tags in use.");
+  });
+
   it("returns error when the vocabulary file does not exist", async () => {
     const missing = path.join(dir, "none.html");
 

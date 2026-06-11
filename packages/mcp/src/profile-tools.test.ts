@@ -12,6 +12,9 @@ const {
   handleAlpsDescriptor,
   handleAlpsPaths,
   handleAlpsSetDoc,
+  handleAlpsAddDescriptor,
+  handleAlpsSetTags,
+  handleAlpsRename,
 } = require('./index');
 const { DOC_DIR } = require('./doc-store');
 const fs = require('fs');
@@ -107,6 +110,21 @@ describe('handleAlpsOverview', () => {
     expect(parseResult(result).states.map((s: { id: string }) => s.id)).toEqual(['Home']);
   });
 
+  it('should summarize profiles without descriptor arrays', async () => {
+    fs.writeFileSync(profilePath, JSON.stringify({ alps: { title: 'Empty' } }));
+
+    const result = await handleAlpsOverview({ file: profilePath });
+
+    expect(result.isError).toBe(false);
+    expect(parseResult(result)).toMatchObject({
+      title: 'Empty',
+      counts: { descriptors: 0, states: 0, transitions: 0 },
+      states: [],
+      transitions: [],
+      tags: [],
+    });
+  });
+
   it('should return error when file is missing', async () => {
     const result = await handleAlpsOverview({});
 
@@ -167,6 +185,29 @@ describe('handleAlpsSearch', () => {
     ]);
   });
 
+  it('should summarize default semantic types, external docs, and long doc previews', async () => {
+    fs.writeFileSync(
+      profilePath,
+      JSON.stringify({
+        alps: {
+          descriptor: [
+            { id: 'implicitSemantic', title: 'Implicit' },
+            { id: 'externalDoc', type: 'semantic', doc: { href: 'docs/external.md' } },
+            { id: 'longDoc', type: 'semantic', doc: { value: 'a'.repeat(90) } },
+          ],
+        },
+      })
+    );
+
+    const result = await handleAlpsSearch({ file: profilePath, type: 'semantic' });
+
+    expect(parseResult(result).descriptors).toEqual([
+      { id: 'implicitSemantic', type: 'semantic', title: 'Implicit' },
+      { id: 'externalDoc', type: 'semantic', doc: '(external: docs/external.md)' },
+      { id: 'longDoc', type: 'semantic', doc: `${'a'.repeat(80)}…` },
+    ]);
+  });
+
   it('should resolve external href references', async () => {
     fs.writeFileSync(
       path.join(dir, 'shared.json'),
@@ -191,6 +232,31 @@ describe('handleAlpsSearch', () => {
 
     expect(result.isError).toBe(true);
     expect(result.content[0].text).toContain('Error: file is required');
+  });
+
+  it('should render no matches in markdown format', async () => {
+    const result = await handleAlpsSearch({ file: profilePath, text: 'not-present', format: 'markdown' });
+
+    expect(result.isError).not.toBe(true);
+    expect(result.content[0].text).toBe('No descriptors match.');
+  });
+
+  it('should render markdown rows without optional descriptor fields', async () => {
+    fs.writeFileSync(profilePath, JSON.stringify({ alps: { descriptor: [{ id: 'implicitSemantic' }] } }));
+
+    const result = await handleAlpsSearch({ file: profilePath, format: 'markdown' });
+
+    expect(result.isError).not.toBe(true);
+    expect(result.content[0].text).toContain('| implicitSemantic | semantic |  |  |  |');
+  });
+
+  it('should return parse errors for invalid profiles', async () => {
+    fs.writeFileSync(profilePath, '{');
+
+    const result = await handleAlpsSearch({ file: profilePath, text: 'catalog' });
+
+    expect(result.isError).toBe(true);
+    expect(result.content[0].text).toContain('Error:');
   });
 });
 
@@ -261,6 +327,14 @@ describe('handleAlpsDescriptor', () => {
     ]);
   });
 
+  it('should omit describedBy when links do not include describedby', async () => {
+    writeWithLink({ rel: 'help', href: 'https://example.com/help' });
+
+    const result = await handleAlpsDescriptor({ file: profilePath, id: 'Cart' });
+
+    expect(parseResult(result).describedBy).toBeUndefined();
+  });
+
   it('should not read describedby links escaping the profile directory', async () => {
     const outside = path.join(path.dirname(dir), `${path.basename(dir)}-secret.md`);
     fs.writeFileSync(outside, 'secret');
@@ -289,6 +363,15 @@ describe('handleAlpsDescriptor', () => {
 
     expect(result.isError).toBe(true);
     expect(result.content[0].text).toContain('Error: file and id are required');
+  });
+
+  it('should return not found when the descriptor array is missing', async () => {
+    fs.writeFileSync(profilePath, JSON.stringify({ alps: { title: 'Empty' } }));
+
+    const result = await handleAlpsDescriptor({ file: profilePath, id: 'Home' });
+
+    expect(result.isError).toBe(true);
+    expect(result.content[0].text).toContain('Error: Descriptor not found: Home');
   });
 });
 
@@ -376,5 +459,113 @@ describe('handleAlpsSetDoc', () => {
 
     expect(result.isError).toBe(true);
     expect(result.content[0].text).toContain('Error: file, id, and doc are required');
+  });
+});
+
+describe('profile write handler wrappers', () => {
+  it('should add descriptors and include doc placement when provided', async () => {
+    const result = await handleAlpsAddDescriptor({
+      file: profilePath,
+      id: 'Wishlist',
+      title: 'Wishlist',
+      doc: 'Saved products.',
+    });
+
+    expect(result.isError).toBe(false);
+    expect(parseResult(result)).toEqual({
+      id: 'Wishlist',
+      createdChildren: [],
+      warnings: [],
+      doc: { id: 'Wishlist', placement: 'inline' },
+    });
+  });
+
+  it('should add descriptors without doc placement when doc is omitted', async () => {
+    const result = await handleAlpsAddDescriptor({ file: profilePath, id: 'Wishlist' });
+
+    expect(result.isError).toBe(false);
+    expect(parseResult(result)).toEqual({
+      id: 'Wishlist',
+      createdChildren: [],
+      warnings: [],
+    });
+  });
+
+  it('should report add descriptor failures when the profile file is missing', async () => {
+    const missing = path.join(dir, 'missing.json');
+
+    const result = await handleAlpsAddDescriptor({ file: missing, id: 'Wishlist' });
+
+    expect(result.isError).toBe(true);
+    expect(result.content[0].text).toContain('Error: Profile file not found');
+  });
+
+  it('should validate required arguments when adding descriptors', async () => {
+    const result = await handleAlpsAddDescriptor({ file: profilePath });
+
+    expect(result.isError).toBe(true);
+    expect(result.content[0].text).toContain('Error: file and id are required');
+  });
+
+  it('should report add descriptor failures', async () => {
+    const result = await handleAlpsAddDescriptor({ file: profilePath, id: 'Home' });
+
+    expect(result.isError).toBe(true);
+    expect(result.content[0].text).toContain('Error: Descriptor already exists: Home');
+  });
+
+  it('should add and remove tags through the handler', async () => {
+    const result = await handleAlpsSetTags({
+      file: profilePath,
+      id: 'Home',
+      add: ['entry'],
+      remove: ['nav'],
+    });
+
+    expect(result.isError).toBe(false);
+    expect(parseResult(result)).toEqual({
+      id: 'Home',
+      tags: ['entry'],
+      added: ['entry'],
+      removed: ['nav'],
+    });
+  });
+
+  it('should validate required arguments when setting tags', async () => {
+    const result = await handleAlpsSetTags({ file: profilePath });
+
+    expect(result.isError).toBe(true);
+    expect(result.content[0].text).toContain('Error: file and id are required');
+  });
+
+  it('should report set tag failures', async () => {
+    const result = await handleAlpsSetTags({ file: profilePath, id: 'Home' });
+
+    expect(result.isError).toBe(true);
+    expect(result.content[0].text).toContain('Error: At least one of add or remove is required');
+  });
+
+  it('should rename descriptors through the handler', async () => {
+    const result = await handleAlpsRename({ file: profilePath, id: 'Cart', newId: 'Basket' });
+
+    expect(result.isError).toBe(false);
+    expect(parseResult(result)).toMatchObject({
+      id: 'Basket',
+      previousId: 'Cart',
+    });
+  });
+
+  it('should validate required arguments when renaming descriptors', async () => {
+    const result = await handleAlpsRename({ file: profilePath, id: 'Cart' });
+
+    expect(result.isError).toBe(true);
+    expect(result.content[0].text).toContain('Error: file, id, and newId are required');
+  });
+
+  it('should report rename failures', async () => {
+    const result = await handleAlpsRename({ file: profilePath, id: 'Cart', newId: 'Home' });
+
+    expect(result.isError).toBe(true);
+    expect(result.content[0].text).toContain('Error: Descriptor already exists: Home');
   });
 });

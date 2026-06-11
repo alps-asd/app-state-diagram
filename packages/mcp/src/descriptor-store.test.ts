@@ -59,6 +59,26 @@ describe("addDescriptor", () => {
     expect(home.descriptor).toEqual([{ id: "greeting" }]);
   });
 
+  it("appends to an existing parent descriptor array", () => {
+    fs.writeFileSync(
+      profilePath,
+      JSON.stringify(
+        {
+          alps: {
+            descriptor: [{ id: "Home", descriptor: [{ href: "#existing" }] }, { id: "existing" }],
+          },
+        },
+        null,
+        2
+      ) + "\n"
+    );
+
+    addDescriptor(profilePath, { id: "greeting", parent: "Home" });
+
+    const home = read().alps.descriptor.find((d: { id?: string }) => d.id === "Home");
+    expect(home.descriptor).toEqual([{ href: "#existing" }, { id: "greeting" }]);
+  });
+
   it("rejects empty or whitespace ids", () => {
     expect(() => addDescriptor(profilePath, { id: "" })).toThrow("non-empty");
     expect(() => addDescriptor(profilePath, { id: "   " })).toThrow("non-empty");
@@ -239,6 +259,30 @@ describe("renameDescriptor", () => {
   it("leaves external references untouched", () => {
     renameDescriptor(profilePath, "Cart", "Basket");
     expect(read().alps.descriptor[3].href).toBe("shared.json#Cart");
+  });
+
+  it("renames descriptors without doc files", () => {
+    const result = renameDescriptor(profilePath, "Home", "Start");
+
+    expect(result).toEqual({
+      id: "Start",
+      previousId: "Home",
+      referencesUpdated: 0,
+    });
+  });
+
+  it("renames descriptors with non-external doc objects", () => {
+    const profile = read();
+    profile.alps.descriptor[0].doc = { value: "Home doc" };
+    fs.writeFileSync(profilePath, JSON.stringify(profile, null, 2) + "\n");
+
+    const result = renameDescriptor(profilePath, "Home", "Start");
+
+    expect(result).toEqual({
+      id: "Start",
+      previousId: "Home",
+      referencesUpdated: 0,
+    });
   });
 
   it("rejects collisions and unknown ids", () => {

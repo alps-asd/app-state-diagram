@@ -18,6 +18,17 @@ const PROFILE = JSON.stringify({
   },
 });
 
+const NON_GRAPH_TAG_PROFILE = JSON.stringify({
+  alps: {
+    descriptor: [
+      { id: "Home", type: "semantic", descriptor: [{ href: "#goCart" }] },
+      { id: "Cart", type: "semantic" },
+      { id: "goCart", type: "safe", rt: "#Cart" },
+      { id: "price", type: "semantic", tag: "field" },
+    ],
+  },
+});
+
 describe("alps2mermaid tag filter", () => {
   it("renders only the tagged slice", async () => {
     const result = await handleAlps2Mermaid({ alps_content: PROFILE, tag: "cart" });
@@ -38,6 +49,22 @@ describe("alps2mermaid tag filter", () => {
     expect(result.isError).toBe(true);
     expect((result.content[0] as { text: string }).text).toContain("No descriptors match");
   });
+
+  it("treats a whitespace-only tag filter as absent", async () => {
+    const result = await handleAlps2Mermaid({ alps_content: PROFILE, tag: " ,  " });
+    const text = (result.content[0] as { text: string }).text;
+
+    expect(result.isError).toBe(false);
+    expect(text).toContain("Cart");
+    expect(text).toContain("AdminTop");
+  });
+
+  it("reports when matching tags do not produce visible diagram nodes", async () => {
+    const result = await handleAlps2Mermaid({ alps_content: NON_GRAPH_TAG_PROFILE, tag: "field" });
+
+    expect(result.isError).not.toBe(true);
+    expect((result.content[0] as { text: string }).text).toBe("No diagram nodes match the selected tags.");
+  });
 });
 
 describe("alps2svg tag filter and output", () => {
@@ -55,6 +82,20 @@ describe("alps2svg tag filter and output", () => {
     } finally {
       fs.rmSync(dir, { recursive: true, force: true });
     }
+  });
+
+  it("errors on tags matching nothing", async () => {
+    const result = await handleAlps2Svg({ alps_content: PROFILE, tag: "nope" });
+
+    expect(result.isError).toBe(true);
+    expect((result.content[0] as { text: string }).text).toContain("No descriptors match");
+  });
+
+  it("reports when matching tags do not produce visible diagram nodes", async () => {
+    const result = await handleAlps2Svg({ alps_content: NON_GRAPH_TAG_PROFILE, tag: "field" });
+
+    expect(result.isError).not.toBe(true);
+    expect((result.content[0] as { text: string }).text).toBe("No diagram nodes match the selected tags.");
   });
 });
 
