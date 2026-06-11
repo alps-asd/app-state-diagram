@@ -124,41 +124,6 @@ main.narrow { max-width: var(--max-w-narrow); }
   margin-bottom: 1rem;
 }
 
-/* === Shared: Buttons === */
-.btn-primary {
-  display: inline-block;
-  border: 1px solid var(--brand-900);
-  color: var(--brand-900);
-  padding: 1rem 2.5rem;
-  font-size: 0.75rem;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  text-decoration: none;
-  background: transparent;
-  cursor: pointer;
-  transition: all var(--transition);
-}
-.btn-primary:hover {
-  background: var(--brand-900);
-  color: var(--brand-50);
-}
-.btn-text {
-  font-size: 0.75rem;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  color: var(--brand-500);
-  text-decoration: none;
-  border-bottom: 1px solid var(--brand-300);
-  padding-bottom: 2px;
-  transition: all var(--transition);
-  background: none;
-  cursor: pointer;
-}
-.btn-text:hover {
-  color: var(--brand-900);
-  border-bottom-color: var(--brand-900);
-}
-
 /* ===========================
    Home
    =========================== */
@@ -287,7 +252,8 @@ main.narrow { max-width: var(--max-w-narrow); }
 }
 
 /* === Book Card (list) === */
-.book-grid {
+main > div:has(> article.Book),
+section > div:has(> article.Book) {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 3rem;
@@ -811,7 +777,8 @@ main.narrow { max-width: var(--max-w-narrow); }
 @media (max-width: 768px) {
   .hero h2 { font-size: 2.5rem; }
   .features { grid-template-columns: 1fr; gap: 2rem; }
-  .book-grid { grid-template-columns: 1fr; }
+  main > div:has(> article.Book),
+  section > div:has(> article.Book) { grid-template-columns: 1fr; }
   .book-detail { flex-direction: column; }
   .book-detail .cover { width: 100%; }
   .cart-layout { flex-direction: column; }

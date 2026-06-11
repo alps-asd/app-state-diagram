@@ -100,21 +100,27 @@
     </descriptor>
 
     <descriptor id="Checkout" title="Checkout Screen" tag="checkout">
-        <doc>Order review and payment screen. Displays cart items and shipping address for the logged-in user. Payment method is entered here to complete the purchase.</doc>
+        <doc>Order review screen. Captures customer and shipping information before moving to payment.</doc>
         <descriptor href="#totalAmount"/>
         <descriptor href="#userName"/>
+        <descriptor href="#userEmail"/>
         <descriptor href="#shippingAddress"/>
-        <descriptor href="#paymentMethod"/>
-        <descriptor href="#doPlaceOrder"/>
+        <descriptor href="#doUserInfo"/>
+        <descriptor href="#doShippingInfo"/>
+        <descriptor href="#goToPayment"/>
         <descriptor href="#goToCart"/>
     </descriptor>
 
-    <descriptor id="Payment" title="Order Confirmation" tag="order">
-        <doc>Order confirmation screen displayed after a successful purchase. Shows order number, total amount, and provides navigation back to home or catalog.</doc>
+    <descriptor id="Payment" title="Payment Screen" tag="payment">
+        <doc>Payment and order confirmation screen. Captures payment information, places the order, and provides order detail navigation.</doc>
         <descriptor href="#id"/>
         <descriptor href="#totalAmount"/>
+        <descriptor href="#paymentMethod"/>
+        <descriptor href="#doPaymentInfo"/>
+        <descriptor href="#doPlaceOrder"/>
+        <descriptor href="#goOrderDetails"/>
         <descriptor href="#goToHome"/>
-        <descriptor href="#goToCatalog"/>
+        <descriptor href="#goToCart"/>
     </descriptor>
 
     <!-- Choreography -->
@@ -132,7 +138,10 @@
         <doc>Navigate to the screen displaying the contents of the current shopping cart.</doc>
     </descriptor>
     <descriptor id="goToCheckout" type="safe" rt="#Checkout" title="Go to Checkout Screen">
-        <doc>Navigate to the checkout screen to review order and enter payment information.</doc>
+        <doc>Navigate to the checkout screen to review order and enter shipping information.</doc>
+    </descriptor>
+    <descriptor id="goToPayment" type="safe" rt="#Payment" title="Go to Payment Screen" tag="payment">
+        <doc>Navigate from checkout to the payment screen after customer and shipping information has been entered.</doc>
     </descriptor>
 
     <descriptor id="goListBooks" type="safe" rt="#Catalog" rel="collection" title="Get Book List" tag="catalog">
@@ -168,7 +177,24 @@
         <descriptor href="#id"/>
     </descriptor>
 
+    <descriptor id="doUserInfo" type="unsafe" rt="#Checkout" title="Input User Information" tag="checkout">
+        <doc>Submit customer name and contact email for the checkout flow.</doc>
+        <descriptor href="#userName"/>
+        <descriptor href="#userEmail"/>
+    </descriptor>
+    <descriptor id="doShippingInfo" type="unsafe" rt="#Checkout" title="Input Shipping Information" tag="shipping">
+        <doc>Submit the shipping address used for delivery.</doc>
+        <descriptor href="#shippingAddress"/>
+    </descriptor>
+    <descriptor id="doPaymentInfo" type="unsafe" rt="#Payment" title="Input Payment Information" tag="payment">
+        <doc>Submit the selected payment method before placing the order.</doc>
+        <descriptor href="#paymentMethod"/>
+    </descriptor>
+    <descriptor id="goOrderDetails" type="safe" rt="#Payment" title="Display Order Details" tag="order">
+        <doc>Display the current order details from the payment confirmation screen.</doc>
+    </descriptor>
     <descriptor id="doPlaceOrder" type="unsafe" rt="#Payment" title="Place Order" tag="order">
         <doc>Place order for all items in the cart. Payment is processed and a confirmation email is sent. This operation cannot be reversed.</doc>
+        <descriptor href="#paymentMethod"/>
     </descriptor>
 </alps>

@@ -16,7 +16,13 @@ fi
 count=0
 for f in "$dir"/html/*.html; do
   [ -f "$f" ] || continue
-  sed -i '' "s|level[0-9]\.css|level${level}.css|g" "$f"
+  tmp=$(mktemp "${TMPDIR:-/tmp}/mock-switch.XXXXXX") || exit 1
+  if sed "s|level[0-9]\.css|level${level}.css|g" "$f" > "$tmp"; then
+    mv "$tmp" "$f"
+  else
+    rm -f "$tmp"
+    exit 1
+  fi
   count=$((count + 1))
 done
 
