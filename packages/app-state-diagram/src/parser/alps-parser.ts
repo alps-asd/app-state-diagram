@@ -89,6 +89,8 @@ function parseAlpsXml(content: string): AlpsDocument {
 
     const parsed = parser.parse(content);
     return xmlToAlpsObject(parsed);
+  /* c8 ignore next 3 -- fast-xml-parser is intentionally tolerant, but keep a readable wrapper for parser failures. */
+  /* istanbul ignore next -- see c8 ignore above */
   } catch (e) {
     throw new Error(`Invalid XML format: ${(e as Error).message}`);
   }

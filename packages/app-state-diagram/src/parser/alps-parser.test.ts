@@ -1,4 +1,5 @@
 import {
+  parseAlps,
   parseAlpsAuto,
   docText,
   localFragment,
@@ -26,6 +27,43 @@ describe('parseAlpsAuto', () => {
       '<alps><descriptor id="x"><doc href="alps-doc/x.md" format="markdown"/></descriptor></alps>'
     );
     expect(doc.alps.descriptor?.[0].doc).toEqual({ href: 'alps-doc/x.md', format: 'markdown' });
+  });
+
+  it('parses XML root docs, links, and nested descriptor references', () => {
+    const doc = parseAlpsAuto(`
+      <alps>
+        <title>Store</title>
+        <doc href="README.md" format="markdown" contentType="text/markdown">Overview</doc>
+        <link rel="help" href="help.html" title="Help"/>
+        <descriptor id="Home" type="semantic" tag="page-home" def="def" rel="self" href="#Home">
+          <descriptor href="#goCart"/>
+        </descriptor>
+        <descriptor id="goCart" type="safe" rt="#Cart"/>
+      </alps>
+    `);
+
+    expect(doc.alps.title).toBe('Store');
+    expect(doc.alps.doc).toEqual({
+      value: 'Overview',
+      href: 'README.md',
+      format: 'markdown',
+      contentType: 'text/markdown',
+    });
+    expect(doc.alps.link).toEqual([{ rel: 'help', href: 'help.html', title: 'Help' }]);
+    expect(doc.alps.descriptor?.[0]).toMatchObject({
+      id: 'Home',
+      type: 'semantic',
+      tag: 'page-home',
+      def: 'def',
+      rel: 'self',
+      href: '#Home',
+      descriptor: [{ href: '#goCart' }],
+    });
+  });
+
+  it('throws readable parse errors', () => {
+    expect(() => parseAlps('{', 'JSON')).toThrow('Invalid JSON format');
+    expect(() => parseAlps('<not-alps/>', 'XML')).toThrow('No alps element found');
   });
 });
 

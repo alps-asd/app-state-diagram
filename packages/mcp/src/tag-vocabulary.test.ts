@@ -59,6 +59,12 @@ describe("parseTagVocabulary", () => {
     expect(vocabulary.get("checkout")).toBe("Checkout");
     expect(vocabulary.has("top")).toBe(false);
   });
+
+  it("ignores dt elements without id attributes", () => {
+    const vocabulary = parseTagVocabulary("<dl><dt>No id</dt><dt id=\"known\">Known</dt></dl>");
+
+    expect([...vocabulary.entries()]).toEqual([["known", "Known"]]);
+  });
 });
 
 describe("validate_alps vocabulary option", () => {

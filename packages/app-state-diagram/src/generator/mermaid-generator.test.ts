@@ -289,7 +289,8 @@ describe('generateMermaid with tag filter', () => {
   const doc = {
     alps: {
       descriptor: [
-        { id: 'Home', type: 'semantic' as const, descriptor: [{ href: '#goCart' }, { href: '#goAdmin' }] },
+        { id: 'Home', type: 'semantic' as const, descriptor: [{ href: '#summary' }, { href: '#goCart' }, { href: '#goAdmin' }] },
+        { id: 'summary', type: 'semantic' as const },
         { id: 'Cart', type: 'semantic' as const },
         { id: 'AdminTop', type: 'semantic' as const },
         { id: 'goCart', type: 'safe' as const, rt: '#Cart', tag: 'cart' },
@@ -301,6 +302,7 @@ describe('generateMermaid with tag filter', () => {
   it('renders the induced subgraph for the filter ids', () => {
     const mermaid = generateMermaid(doc, new Set(['goCart', 'Home', 'Cart']));
     expect(mermaid).toContain('Home --> Cart');
+    expect(mermaid).toContain('⬜ summary');
     expect(mermaid).not.toContain('AdminTop');
     expect(mermaid).not.toContain('goAdmin');
   });

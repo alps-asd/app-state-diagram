@@ -8,6 +8,7 @@
 const {
   setDescriptorDoc,
   resolveDoc,
+  resolveSafeLocalPath,
   shouldExternalize,
   INLINE_DOC_MAX_LENGTH,
   DOC_DIR,
@@ -198,6 +199,11 @@ describe('setDescriptorDoc', () => {
       'Profile file not found'
     );
   });
+
+  it('rejects invalid JSON profiles', () => {
+    fs.writeFileSync(profilePath, '{');
+    expect(() => setDescriptorDoc(profilePath, 'Home', 'doc')).toThrow('Invalid JSON format');
+  });
 });
 
 describe('resolveDoc', () => {
@@ -252,5 +258,9 @@ describe('resolveDoc', () => {
 
   it('returns undefined for missing docs', () => {
     expect(resolveDoc(dir, undefined)).toBeUndefined();
+  });
+
+  it('returns undefined when the base directory cannot be resolved', () => {
+    expect(resolveSafeLocalPath(path.join(dir, 'missing-base'), 'doc.md')).toBeUndefined();
   });
 });

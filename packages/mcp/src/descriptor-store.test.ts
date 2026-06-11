@@ -82,6 +82,38 @@ describe("addDescriptor", () => {
     expect(content).toContain('\n  "alps"');
     expect(content.endsWith("\n")).toBe(true);
   });
+
+  it("rejects missing files, invalid JSON, and missing alps roots", () => {
+    expect(() => addDescriptor(path.join(dir, "missing.json"), { id: "x" })).toThrow(
+      "Profile file not found"
+    );
+
+    fs.writeFileSync(profilePath, "{");
+    expect(() => addDescriptor(profilePath, { id: "x" })).toThrow("Invalid JSON format");
+
+    fs.writeFileSync(profilePath, JSON.stringify({ notAlps: {} }));
+    expect(() => addDescriptor(profilePath, { id: "x" })).toThrow("Missing alps property");
+  });
+
+  it("initializes a missing descriptor array and preserves optional fields", () => {
+    fs.writeFileSync(profilePath, JSON.stringify({ alps: {} }, null, 2) + "\n");
+
+    const result = addDescriptor(profilePath, {
+      id: "profile",
+      type: "semantic",
+      title: "Profile",
+      tag: "core",
+      rt: "https://example.com/alps#Profile",
+    });
+
+    expect(result).toEqual({ id: "profile", createdChildren: [], warnings: [] });
+    expect(read().alps.descriptor[0]).toEqual({
+      id: "profile",
+      title: "Profile",
+      tag: "core",
+      rt: "https://example.com/alps#Profile",
+    });
+  });
 });
 
 describe("setDescriptorTags", () => {
@@ -145,6 +177,17 @@ describe("setDescriptorTags", () => {
     const content = fs.readFileSync(profilePath, "utf-8");
     expect(content).toContain('\n  "alps"');
     expect(content.endsWith("\n")).toBe(true);
+  });
+
+  it("rejects missing files and invalid JSON", () => {
+    expect(() => setDescriptorTags(path.join(dir, "missing.json"), { id: "Home", add: ["x"] })).toThrow(
+      "Profile file not found"
+    );
+
+    fs.writeFileSync(profilePath, "{");
+    expect(() => setDescriptorTags(profilePath, { id: "Home", add: ["x"] })).toThrow(
+      "Invalid JSON format"
+    );
   });
 });
 
@@ -218,5 +261,15 @@ describe("renameDescriptor", () => {
     const content = fs.readFileSync(profilePath, "utf-8");
     expect(content).toContain('\n  "alps"');
     expect(content.endsWith("\n")).toBe(true);
+  });
+
+  it("rejects empty new ids, missing files, and invalid JSON", () => {
+    expect(() => renameDescriptor(profilePath, "Cart", "")).toThrow("non-empty");
+    expect(() => renameDescriptor(path.join(dir, "missing.json"), "Cart", "Basket")).toThrow(
+      "Profile file not found"
+    );
+
+    fs.writeFileSync(profilePath, "{");
+    expect(() => renameDescriptor(profilePath, "Cart", "Basket")).toThrow("Invalid JSON format");
   });
 });

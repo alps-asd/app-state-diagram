@@ -99,6 +99,10 @@ describe('findPaths', () => {
   it('respects maxPaths', () => {
     expect(findPaths(graph, 'Home', 'Checkout', 1).length).toBe(1);
   });
+
+  it('respects maxDepth', () => {
+    expect(findPaths(graph, 'Home', 'Checkout', 10, 0)).toEqual([]);
+  });
 });
 
 describe('getDescriptorIdsByTags', () => {
