@@ -5,6 +5,7 @@ module.exports = {
   testMatch: ['**/*.test.ts'],
   moduleFileExtensions: ['ts', 'js'],
   coverageReporters: ['text', 'lcov'],
+  coverageProvider: 'v8',
   forceExit: true,
   moduleNameMapper: {
     '^@alps-asd/app-state-diagram/(.*)$': '<rootDir>/../app-state-diagram/dist/$1',
