@@ -17,8 +17,8 @@ count=0
 for f in "$dir"/html/*.html; do
   [ -f "$f" ] || continue
   tmp=$(mktemp "${TMPDIR:-/tmp}/mock-switch.XXXXXX") || exit 1
-  if sed "s|level[0-9]\.css|level${level}.css|g" "$f" > "$tmp"; then
-    mv "$tmp" "$f"
+  if sed "s|level[0-9]\.css|level${level}.css|g" "$f" > "$tmp" && mv "$tmp" "$f"; then
+    : # both succeeded
   else
     rm -f "$tmp"
     exit 1

@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@400;500;600;700&display=swap');
+@import 'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@400;500;600;700&display=swap';
 
 /* === Design Tokens === */
 :root {
@@ -13,7 +13,7 @@
   --brand-800: #433929;
   --brand-900: #2c2518;
   --font-sans: 'Inter', system-ui, sans-serif;
-  --font-display: 'Playfair Display', Georgia, serif;
+  --font-display: 'Playfair Display', georgia, serif;
   --max-w: 72rem;
   --max-w-narrow: 42rem;
   --px: 2rem;
