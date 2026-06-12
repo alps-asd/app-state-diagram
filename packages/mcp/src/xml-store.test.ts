@@ -301,3 +301,5 @@ describe("XML write support", () => {
     expect(fs.existsSync(path.join(dir, "..", "escape.md"))).toBe(false);
   });
 });
+
+export {};

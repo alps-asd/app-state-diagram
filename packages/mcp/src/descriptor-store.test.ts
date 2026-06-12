@@ -313,3 +313,5 @@ describe("renameDescriptor", () => {
     );
   });
 });
+
+export {};

@@ -280,3 +280,5 @@ describe('resolveDoc', () => {
     expect(resolveSafeLocalPath(path.join(dir, 'missing-base'), 'doc.md')).toBeUndefined();
   });
 });
+
+export {};

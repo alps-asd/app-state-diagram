@@ -569,3 +569,5 @@ describe('profile write handler wrappers', () => {
     expect(result.content[0].text).toContain('Error: Descriptor already exists: Home');
   });
 });
+
+export {};

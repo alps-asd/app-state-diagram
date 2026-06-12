@@ -256,3 +256,5 @@ describe("handleAlpsTags", () => {
     expect(result.content[0].text).toContain("Error: file is required");
   });
 });
+
+export {};
