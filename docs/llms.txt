@@ -4,11 +4,11 @@
 
 ## Quick Start
 
-Install via npm (`npm install -g @alps-asd/cli`) or Homebrew (`brew install alps-asd/asd/asd`).
+Install via npm (`npm install -g @alps-asd/app-state-diagram`) or Homebrew (`brew install alps-asd/asd/asd`).
 
 ```bash
 asd profile.json           # Generate HTML documentation
-asd profile.json -m svg    # Generate SVG diagram
+asd profile.json -f svg    # Generate SVG diagram
 asd profile.json --validate # Validate only
 asd -w profile.json        # Watch mode with live reload
 ```
@@ -31,7 +31,7 @@ Warnings (best practice): W001 (missing title), W002 (safe should start with go)
 ## ALPS Specification
 
 - [ALPS Manual & Resources](https://www.app-state-diagram.com/llms.txt): Comprehensive ALPS specification, schemas, and guides
-- [ALPS Creation Guide](https://alps-asd.github.io/app-state-diagram/alps-skill.md): How to write good ALPS profiles (design principles, naming conventions, examples)
+- [ALPS Skill](https://alps-asd.github.io/app-state-diagram/skills/alps/SKILL.md): How to write good ALPS profiles (design principles, naming conventions, examples)
 
 ## Documentation
 

@@ -18,15 +18,15 @@
 brew install alps-asd/asd/asd
 
 # npm
-npm install -g @alps-asd/cli
+npm install -g @alps-asd/app-state-diagram
 ```
 
 ### Basic Usage
 
 ```bash
 asd profile.json           # Generate HTML documentation
-asd profile.json -m svg    # Generate SVG diagram
-asd profile.json -m dot    # Generate DOT format (Graphviz)
+asd profile.json -f svg    # Generate SVG diagram
+asd profile.json -f dot    # Generate DOT format (Graphviz)
 asd profile.json --validate # Validate only
 asd -w profile.json        # Watch mode with live reload
 ```
@@ -36,12 +36,12 @@ asd -w profile.json        # Watch mode with live reload
 | Option | Description |
 |--------|-------------|
 | `-o, --output <file>` | Output file path |
-| `-m, --mode <mode>` | Output mode: `html` (default), `svg`, `dot` |
+| `-f, --format <format>` | Output format: `html` (default), `svg`, `dot`, `mermaid` |
 | `-w, --watch` | Watch mode with live reload |
-| `-p, --port <port>` | Development server port (default: 3000) |
+| `--port <port>` | CDP port for watch mode (default: 9222) |
 | `--label <mode>` | Label mode: `id` (default) or `title` |
 | `--validate` | Validate ALPS profile only |
-| `--echo` | Output to stdout |
+| `-e, --echo` | Output to stdout |
 
 ## ALPS Descriptor Types
 
@@ -54,12 +54,12 @@ asd -w profile.json        # Watch mode with live reload
 
 ---
 
-# Programmatic API (@alps-asd/cli)
+# Programmatic API (@alps-asd/app-state-diagram)
 
 ## Installation
 
 ```bash
-npm install @alps-asd/cli
+npm install @alps-asd/app-state-diagram
 ```
 
 ## Parser
@@ -67,7 +67,7 @@ npm install @alps-asd/cli
 Parse ALPS profiles from JSON or XML:
 
 ```typescript
-import { parseAlps, parseAlpsAuto } from '@alps-asd/cli/parser/alps-parser.js';
+import { parseAlps, parseAlpsAuto } from '@alps-asd/app-state-diagram/parser/alps-parser.js';
 
 // Parse with explicit format
 const docFromJson = parseAlps(jsonContent, 'JSON');
@@ -106,7 +106,7 @@ interface AlpsDescriptor {
 ## Validator
 
 ```typescript
-import { AlpsValidator } from '@alps-asd/cli/validator/index.js';
+import { AlpsValidator } from '@alps-asd/app-state-diagram/validator/index.js';
 
 const validator = new AlpsValidator();
 const result = validator.validate(document);
@@ -140,8 +140,8 @@ interface ValidationIssue {
 ## Generator
 
 ```typescript
-import { generateDot } from '@alps-asd/cli/generator/dot-generator.js';
-import { dotToSvg } from '@alps-asd/cli/generator/svg-generator.js';
+import { generateDot } from '@alps-asd/app-state-diagram/generator/dot-generator.js';
+import { dotToSvg } from '@alps-asd/app-state-diagram/generator/svg-generator.js';
 
 // Generate DOT format
 const dot = generateDot(document);
@@ -153,10 +153,10 @@ const svg = await dotToSvg(dot);
 ## Complete Example
 
 ```typescript
-import { parseAlpsAuto } from '@alps-asd/cli/parser/alps-parser.js';
-import { AlpsValidator } from '@alps-asd/cli/validator/index.js';
-import { generateDot } from '@alps-asd/cli/generator/dot-generator.js';
-import { dotToSvg } from '@alps-asd/cli/generator/svg-generator.js';
+import { parseAlpsAuto } from '@alps-asd/app-state-diagram/parser/alps-parser.js';
+import { AlpsValidator } from '@alps-asd/app-state-diagram/validator/index.js';
+import { generateDot } from '@alps-asd/app-state-diagram/generator/dot-generator.js';
+import { dotToSvg } from '@alps-asd/app-state-diagram/generator/svg-generator.js';
 import fs from 'fs';
 
 // Load and parse
@@ -201,7 +201,7 @@ Add to `~/Library/Application Support/Claude/claude_desktop_config.json`:
   "mcpServers": {
     "alps": {
       "command": "npx",
-      "args": ["@alps-asd/mcp"]
+      "args": ["-y", "@alps-asd/mcp"]
     }
   }
 }
@@ -474,7 +474,7 @@ Warnings indicate potential issues or deviations from best practices.
 
 ```
 app-state-diagram/
-├── public/                     # Browser-based editor (GitHub Pages)
+├── docs/                       # GitHub Pages root and browser editor
 │   ├── index.html              # Main editor page
 │   └── js/
 │       ├── scripts.js          # Editor UI (Ace, validation)
@@ -482,7 +482,7 @@ app-state-diagram/
 │       └── descriptor2table.js # Table generation utilities
 │
 ├── packages/
-│   ├── cli/                    # @alps-asd/cli (Node.js)
+│   ├── app-state-diagram/      # @alps-asd/app-state-diagram (Node.js)
 │   │   └── src/
 │   │       ├── asd.ts          # CLI entry point
 │   │       ├── parser/         # ALPS parsing (fast-xml-parser)
@@ -584,7 +584,7 @@ This example demonstrates:
 
 For comprehensive ALPS specification, schemas, and guides:
 - [ALPS Manual & Resources](https://www.app-state-diagram.com/llms.txt)
-- [ALPS Creation Guide](https://alps-asd.github.io/app-state-diagram/alps-skill.md): How to write good ALPS profiles
+- [ALPS Creation Guide](https://alps-asd.github.io/app-state-diagram/skills/alps/SKILL.md): How to write good ALPS profiles
 
 ---
 

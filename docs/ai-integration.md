@@ -13,7 +13,7 @@ Install:
 brew install alps-asd/asd/asd
 
 # npm
-npm install -g @alps-asd/cli
+npm install -g @alps-asd/app-state-diagram
 ```
 
 ## AI Integration Methods
@@ -33,7 +33,7 @@ claude --version  # Requires 1.0.3+
 
 mkdir -p .claude/skills/alps
 curl -o .claude/skills/alps/SKILL.md \
-  https://raw.githubusercontent.com/alps-asd/app-state-diagram/2.x/.claude/skills/alps/SKILL.md
+  https://raw.githubusercontent.com/alps-asd/app-state-diagram/2.x/docs/skills/alps/SKILL.md
 ```
 
 Verify skill is available:
@@ -59,7 +59,7 @@ Add to Claude Desktop config (`~/Library/Application Support/Claude/claude_deskt
   "mcpServers": {
     "alps": {
       "command": "npx",
-      "args": ["@alps-asd/mcp"]
+      "args": ["-y", "@alps-asd/mcp"]
     }
   }
 }
@@ -74,7 +74,7 @@ Create `.mcp.json` in your project:
   "mcpServers": {
     "alps": {
       "command": "npx",
-      "args": ["@alps-asd/mcp"]
+      "args": ["-y", "@alps-asd/mcp"]
     }
   }
 }
@@ -119,12 +119,12 @@ For LLMs without skill/MCP support, reference these URLs:
 |----------|-----|
 | Tool Index | https://alps-asd.github.io/app-state-diagram/llms.txt |
 | Full Documentation | https://alps-asd.github.io/app-state-diagram/llms-full.txt |
-| ALPS Creation Guide | https://alps-asd.github.io/app-state-diagram/alps-skill.md |
+| ALPS Skill | https://alps-asd.github.io/app-state-diagram/skills/alps/SKILL.md |
 
 Add to your system prompt or AGENTS.md:
 
 ```text
-For ALPS profile creation, refer to: https://alps-asd.github.io/app-state-diagram/alps-skill.md
+For ALPS profile creation, refer to: https://alps-asd.github.io/app-state-diagram/skills/alps/SKILL.md
 ```
 
 ## Why ALPS First?

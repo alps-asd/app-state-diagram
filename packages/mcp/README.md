@@ -21,7 +21,7 @@ Add to your Claude Desktop configuration (`~/Library/Application Support/Claude/
   "mcpServers": {
     "alps": {
       "command": "npx",
-      "args": ["@alps-asd/mcp"]
+      "args": ["-y", "@alps-asd/mcp"]
     }
   }
 }

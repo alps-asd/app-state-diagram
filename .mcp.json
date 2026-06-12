@@ -2,7 +2,7 @@
   "mcpServers": {
     "alps": {
       "command": "npx",
-      "args": ["@alps-asd/mcp"]
+      "args": ["-y", "@alps-asd/mcp"]
     }
   }
 }

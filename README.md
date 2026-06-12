@@ -39,7 +39,7 @@ npm install -g @alps-asd/app-state-diagram
 ### Try It
 
 ```bash
-curl -O https://raw.githubusercontent.com/alps-asd/app-state-diagram/master/docs/bookstore/alps.xml
+curl -O https://raw.githubusercontent.com/alps-asd/app-state-diagram/2.x/docs/demo/bookstore/alps.xml
 asd alps.xml
 open index.html  # on macOS
 ```
@@ -102,14 +102,25 @@ Generate a browsable HTML mock site from an ALPS profile. Every CSS class in the
 alps.xml → html/ + css/level{1,2,3}.css + api/ + i18n/
 ```
 
-See [AI Integration Guide](https://www.app-state-diagram.com/app-state-diagram/ai-integration.html) for setup (requires `alps2mock` skill).
+See [AI Integration Guide](https://alps-asd.github.io/app-state-diagram/ai-integration.html) for setup (requires `alps2mock` skill).
 
 ## Design Application with AI
 
-See [AI Integration Guide](https://www.app-state-diagram.com/app-state-diagram/ai-integration.html) for setting up Claude Code, MCP Server, or other AI tools.
+This repository includes `.mcp.json` for MCP clients. It starts the ALPS MCP server with:
+
+```json
+{
+  "command": "npx",
+  "args": ["-y", "@alps-asd/mcp"]
+}
+```
+
+See [AI Integration Guide](https://alps-asd.github.io/app-state-diagram/ai-integration.html) and [MCP Server README](packages/mcp/README.md) for Claude Code, Claude Desktop, and other AI tools.
 
 ## Documentation
 
+- [AI Integration Guide](https://alps-asd.github.io/app-state-diagram/ai-integration.html)
+- [MCP Server](packages/mcp/README.md)
 - [Quick Start Guide](https://www.app-state-diagram.com/manuals/1.0/en/quick-start.html)
 - [Official Documentation](https://www.app-state-diagram.com/manuals/1.0/en/index.html)
 
