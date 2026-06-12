@@ -31,7 +31,7 @@ From a single ALPS profile, generate the following directory structure:
 │   ├── level2.css            # Wireframe (information skeleton)
 │   └── level3.css            # Production quality
 ├── api/
-│   ├── home.json             # HAL+JSON mock response per state
+│   ├── home.json             # HAL/HAL-FORMS mock response per state
 │   └── ...
 ├── i18n/
 │   └── labels.json           # ALPS descriptor ID → human label mapping
@@ -190,10 +190,10 @@ img {
 
 Key features:
 - **Hover tooltips** show ALPS descriptor IDs (`.Book`, `.title`, `.goToBookDetails`)
-- **Dashed borders** visualize block boundaries
-- **X-box placeholders** for images
-- **No color branding** — structure only
-- **Grid layouts** use semantic selectors (`.Catalog > div`, not `.book-grid`)
+- **Dashed borders** around `section`, `article`, `aside` — these are the semantic blocks of the page. The dashes make the information structure visible: which elements are grouped together, how they nest, where one block ends and the next begins. This is the skeleton that disappears in production but must be right before design begins.
+- **X-box placeholders** for images — crossed diagonal lines in a gray box, the universal wireframe convention for "an image goes here" without committing to content
+- **No color branding** — structure only, monochrome
+- **Grid layouts** use semantic selectors (`.Catalog > div`, `section > div`) not presentation classes (`.book-grid`)
 
 ### level3.css — Production Quality
 
@@ -220,9 +220,9 @@ Key requirements:
 - **Hover/focus states** with transitions
 - **All selectors reference ALPS classes** — no `.btn-primary`, `.card`, `.grid` etc.
 
-## Mock API (HAL+JSON)
+## Mock API (HAL+JSON + HAL-FORMS)
 
-Generate one JSON file per ALPS state, following HAL format:
+Generate one JSON file per ALPS state. Use HAL `_links` for navigation affordances and HAL-FORMS `_templates` for action affordances:
 
 ```json
 {
@@ -234,16 +234,30 @@ Generate one JSON file per ALPS state, following HAL format:
   "category": "Programming",
   "_links": {
     "self": {"href": "/api/book/BK-001"},
-    "goToCatalog": {"href": "/api/catalog"},
-    "doAddToCart": {"href": "/api/cart/items"}
+    "goToCatalog": {"href": "/api/catalog", "title": "Go to Catalog"}
+  },
+  "_templates": {
+    "doAddToCart": {
+      "method": "POST",
+      "target": "/api/shoppingcart",
+      "title": "Add to Cart",
+      "contentType": "application/json",
+      "properties": [
+        {"name": "id", "value": "BK-001", "type": "hidden", "required": true},
+        {"name": "quantity", "value": 1, "type": "number", "prompt": "Qty", "required": true, "min": 1}
+      ]
+    }
   }
 }
 ```
 
 Rules:
-- Field names match ALPS semantic descriptor IDs
-- `_links` keys match ALPS transition descriptor IDs
-- Do NOT include `"method"` in links — HTTP method assignment belongs to the OpenAPI level, not HAL links (RFC 8288)
+- Field names match ALPS semantic descriptor IDs.
+- `_links` keys match ALPS `safe` transition descriptor IDs (`go*`) and describe where the client can navigate.
+- `_templates` keys match ALPS `unsafe` and `idempotent` transition descriptor IDs (`do*`) and describe how the client can act.
+- Do NOT include `"method"` in `_links` — HTTP method assignment belongs to HAL-FORMS templates and the OpenAPI level, not HAL links (RFC 8288).
+- For each `_templates` entry, set `method` from ALPS transition type: `unsafe` → `POST`, `idempotent` → `PUT` or `DELETE` as appropriate.
+- Map nested descriptors of unsafe/idempotent transitions to HAL-FORMS `properties` entries. Include realistic sample `value`, `prompt`, `type`, and validation hints such as `required` or `min` when known.
 
 ## i18n Labels
 
@@ -298,7 +312,7 @@ echo "Switched ${count} files to level${level}.css"
 2. **Identify states** — Taxonomy descriptors with nested children
 3. **Generate HTML** — One page per state, semantic classes only
 4. **Generate CSS** — Three fidelity levels
-5. **Generate API** — HAL+JSON per state
+5. **Generate API** — HAL/HAL-FORMS JSON per state
 6. **Generate i18n** — Labels from ALPS titles
 7. **Generate mock-switch** — Shell script
 8. **Report** — List generated files and suggest opening in browser

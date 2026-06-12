@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Book - ALPS Book Store</title>
+  <link rel="profile" href="../profile/alps.xml">
+  <link rel="stylesheet" href="../css/level2.css">
+</head>
+<body>
+
+  <header>
+    <div>
+      <a href="index.html">ALPS Book Store</a>
+      <nav>
+        <a href="catalog.html" class="goToCatalog" title="Navigate to the book catalog list screen. All books are displayed.">Catalog</a>
+        <a href="shoppingcart.html" class="goToCart" title="Navigate to the screen displaying the contents of the current shopping cart.">Cart</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <nav>
+      <a href="catalog.html" class="goToCatalog" title="Navigate to the book catalog list screen. All books are displayed.">Catalog</a>
+      <span>/</span>
+      <span>Book</span>
+    </nav>
+
+    <article class="Book">
+      <div>📖</div>
+      <div>
+        <span class="id" hidden>BK-001</span>
+        <h1 class="title">The Art of Programming</h1>
+        <p class="author">Jane Smith</p>
+        <dl>
+          <div>
+            <dt>ISBN</dt>
+            <dd class="isbn">978-4-1234-5678-9</dd>
+          </div>
+          <div>
+            <dt>Category</dt>
+            <dd class="category">Programming</dd>
+          </div>
+        </dl>
+        <p class="price">¥2,480</p>
+        <form method="post" action="shoppingcart.html" class="doAddToCart">
+          <input type="hidden" name="id" value="BK-001" class="id">
+          <label for="quantity">Qty</label>
+          <input type="number" id="quantity" name="quantity" min="1" value="1" class="quantity">
+          <button type="submit">Add to Cart</button>
+        </form>
+      </div>
+    </article>
+  </main>
+
+  <footer>
+    <div>Mock generated from ALPS profile: ALPS Book Store</div>
+  </footer>
+
+</body>
+</html>

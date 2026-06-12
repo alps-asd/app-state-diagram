@@ -1,0 +1,30 @@
+{
+  "_links": {
+    "self": {
+      "href": "/api/home"
+    },
+    "goSearchBooks": {
+      "href": "/api/catalog{?query}",
+      "templated": true,
+      "title": "Search Books"
+    },
+    "goToCategory": {
+      "href": "/api/category/{id}",
+      "templated": true,
+      "title": "Go to Category Screen"
+    },
+    "goToBookDetails": {
+      "href": "/api/book/{id}",
+      "templated": true,
+      "title": "Go to Book Details Screen"
+    },
+    "goToCatalog": {
+      "href": "/api/catalog",
+      "title": "Go to Catalog Screen"
+    },
+    "goToCart": {
+      "href": "/api/shoppingcart",
+      "title": "Go to Cart Screen"
+    }
+  }
+}

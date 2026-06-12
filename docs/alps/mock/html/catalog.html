@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Catalog - ALPS Book Store</title>
+  <link rel="profile" href="../profile/alps.xml">
+  <link rel="stylesheet" href="../css/level2.css">
+</head>
+<body>
+
+  <header>
+    <div>
+      <a href="index.html">ALPS Book Store</a>
+      <nav>
+        <a href="catalog.html" class="goListBooks" title="Retrieve list of all books in the catalog.">Catalog</a>
+        <a href="shoppingcart.html" class="goToCart" title="Navigate to the screen displaying the contents of the current shopping cart.">Cart</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <h1 class="Catalog">The Collection</h1>
+    <p>Browse our carefully curated selection of books on programming, design, and software architecture.</p>
+
+    <form method="get" action="catalog.html" class="goSearchBooks">
+      <input type="text" id="query" name="query" class="query" placeholder="Search by title, author, ISBN…">
+      <button type="submit">Search</button>
+    </form>
+
+    <nav>
+      <span>Browse by Category</span>
+      <a href="category.html?id=CAT-001" class="goToCategory" title="Navigate to the category detail screen to view books filtered by the selected category.">Programming</a>
+      <a href="category.html?id=CAT-002" class="goToCategory" title="Navigate to the category detail screen to view books filtered by the selected category.">Software Design</a>
+      <a href="category.html?id=CAT-003" class="goToCategory" title="Navigate to the category detail screen to view books filtered by the selected category.">Web Development</a>
+    </nav>
+
+    <div>
+      <article class="Book">
+        <div>📖</div>
+        <span class="id" hidden>BK-001</span>
+        <h3 class="title">The Art of Programming</h3>
+        <p class="author">Jane Smith</p>
+        <p class="price">¥2,480</p>
+        <a href="book.html?id=BK-001" class="goToBookDetails" title="Navigate to the detailed information screen for the selected book.">View Details</a>
+      </article>
+
+      <article class="Book">
+        <div>📖</div>
+        <span class="id" hidden>BK-002</span>
+        <h3 class="title">Design Patterns Explained</h3>
+        <p class="author">John Doe</p>
+        <p class="price">¥3,200</p>
+        <a href="book.html?id=BK-002" class="goToBookDetails" title="Navigate to the detailed information screen for the selected book.">View Details</a>
+      </article>
+
+      <article class="Book">
+        <div>📖</div>
+        <span class="id" hidden>BK-003</span>
+        <h3 class="title">Clean Architecture</h3>
+        <p class="author">Robert Martin</p>
+        <p class="price">¥3,960</p>
+        <a href="book.html?id=BK-003" class="goToBookDetails" title="Navigate to the detailed information screen for the selected book.">View Details</a>
+      </article>
+    </div>
+  </main>
+
+  <footer>
+    <div>Mock generated from ALPS profile: ALPS Book Store</div>
+  </footer>
+
+</body>
+</html>

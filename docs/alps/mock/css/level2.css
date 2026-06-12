@@ -1,0 +1,190 @@
+/* level2.css — ワイヤーフレーム: 情報構造の骨格 */
+
+/* ===== Base ===== */
+* {
+  font-family: system-ui, -apple-system, sans-serif !important;
+  box-sizing: border-box;
+}
+
+body {
+  max-width: 72rem;
+  margin: 0 auto;
+  padding: 2rem;
+  color: #333;
+  line-height: 1.5;
+  background: #fff;
+}
+
+/* ===== ALPS ID labels (hover only) ===== */
+[class] {
+  position: relative;
+}
+[class]:hover::after {
+  content: "." attr(class);
+  position: absolute;
+  top: -1.25rem;
+  left: 0;
+  font-size: 0.5625rem;
+  font-family: 'SF Mono', Menlo, Consolas, monospace !important;
+  color: #fff;
+  background: #555;
+  padding: 0.125rem 0.375rem;
+  border-radius: 2px;
+  white-space: nowrap;
+  z-index: 1000;
+  pointer-events: none;
+  line-height: 1.4;
+}
+
+/* ===== Typography: hierarchy by size only ===== */
+h1 { font-size: 1.75rem; font-weight: 600; margin: 1rem 0; }
+h2 { font-size: 1.25rem; font-weight: 600; margin: 0.75rem 0; }
+h3 { font-size: 1rem; font-weight: 600; margin: 0.5rem 0; }
+p { margin: 0.375rem 0; }
+
+/* ===== Links: underline only, no color ===== */
+a {
+  color: #555;
+  text-decoration: underline;
+}
+a:hover {
+  color: #222;
+}
+
+/* ===== Images: X-box placeholder ===== */
+img {
+  background: #eee;
+  background-image:
+    linear-gradient(to top right, transparent calc(50% - 1px), #ccc, transparent calc(50% + 1px)),
+    linear-gradient(to top left, transparent calc(50% - 1px), #ccc, transparent calc(50% + 1px));
+  min-height: 120px;
+  min-width: 100px;
+  object-position: -9999px;
+}
+
+/* ===== Buttons: base ===== */
+button, [type="submit"] {
+  border: 1px solid #999;
+  background: white;
+  padding: 0.5rem 1.5rem;
+  color: #333;
+  cursor: pointer;
+  font-size: 0.875rem;
+}
+button:hover, [type="submit"]:hover {
+  background: #f5f5f5;
+}
+
+/* ===== Transition type: left border color ===== */
+/* safe = green (read-only, no side effects) */
+[class^="go"] button,
+[class^="go"] [type="submit"] {
+  border-left: 3px solid #00A86B;
+}
+/* unsafe = red (state-changing, non-idempotent) */
+[class^="do"] button,
+[class^="do"] [type="submit"] {
+  border-left: 3px solid #FF4136;
+}
+/* idempotent = gold (state-changing, idempotent) */
+[data-type="idempotent"] button,
+[data-type="idempotent"] [type="submit"] {
+  border-left: 3px solid #D4A000;
+}
+
+/* ===== Form elements ===== */
+input, textarea, select {
+  border: 1px solid #ccc;
+  padding: 0.375rem 0.5rem;
+  background: white;
+  font-size: 0.875rem;
+}
+label {
+  display: block;
+  font-size: 0.8125rem;
+  color: #666;
+  margin-top: 0.5rem;
+  margin-bottom: 0.125rem;
+}
+
+/* ===== Block structure: dashed borders ===== */
+section, article, aside {
+  border: 1px dashed #ddd;
+  padding: 1rem;
+  margin: 0.75rem 0;
+  position: relative;
+}
+
+form {
+  border: 1px dashed #c8d8e8;
+  padding: 0.75rem;
+  margin: 0.5rem 0;
+}
+
+/* ===== Header / Footer ===== */
+header {
+  border-bottom: 2px solid #ccc;
+  padding-bottom: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+header > div { display: flex; justify-content: space-between; align-items: center; }
+
+footer {
+  border-top: 2px solid #ccc;
+  padding-top: 0.75rem;
+  margin-top: 2rem;
+  font-size: 0.75rem;
+  color: #999;
+}
+nav a {
+  margin-right: 1rem;
+}
+
+/* ===== Table ===== */
+table { border-collapse: collapse; width: 100%; }
+th, td { padding: 0.5rem; border: 1px solid #ccc; text-align: left; font-size: 0.875rem; }
+
+/* ===== Definition list ===== */
+dl { margin: 0.5rem 0; }
+dt { font-weight: 600; margin-top: 0.5rem; font-size: 0.875rem; }
+dd { margin-left: 0; color: #555; }
+
+/* ===== Breadcrumb: main > nav:first-child ===== */
+main > nav:first-child {
+  font-size: 0.8125rem;
+  color: #888;
+  margin-bottom: 1rem;
+}
+main > nav:first-child a { color: #666; }
+main > nav:first-child > span { margin: 0 0.375rem; }
+
+/* ===== Book grid: article containers ===== */
+.Catalog > div,
+.Category > div,
+section > div {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 1rem;
+}
+
+/* ===== Cart layout: main > div with section + aside ===== */
+.ShoppingCart ~ div {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 1.5rem;
+}
+
+/* ===== Emoji covers → X-box in wireframe ===== */
+.Book > div:first-child,
+article > div:first-child {
+  width: 80px;
+  height: 100px;
+  background: #eee;
+  background-image:
+    linear-gradient(to top right, transparent calc(50% - 1px), #ccc, transparent calc(50% + 1px)),
+    linear-gradient(to top left, transparent calc(50% - 1px), #ccc, transparent calc(50% + 1px));
+  font-size: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
