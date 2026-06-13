@@ -163,8 +163,8 @@ td a:hover{text-decoration:underline;}
 .doc-tag.clickable{cursor:pointer;}
 .doc-tag.clickable:hover{background-color:#FFF3CC;}
 /* 3D browse mode */
-.asd3d-open-btn{display:inline-flex;align-items:center;gap:6px;padding:5px 16px;border:1px solid #2a3a66;border-radius:6px;background:linear-gradient(180deg,#1d2b50,#0e1730);color:#e7ecf5;font-size:13px;font-weight:600;cursor:pointer;}
-.asd3d-open-btn:hover{background:linear-gradient(180deg,#27396a,#142046);}
+.asd3d-open-btn{background:none;border:0;border-radius:0;padding:0;margin:0;color:inherit;font:inherit;cursor:pointer;}
+.asd3d-open-btn:hover{text-decoration:underline;}
 #asd3d-overlay{position:fixed;inset:0;z-index:9999;background:#0b1226;display:none;}
 #asd3d-overlay.active{display:block;}
 #asd3d-canvas{position:absolute;inset:0;}
@@ -203,6 +203,22 @@ td a:hover{text-decoration:underline;}
 .asd3d-tip{position:fixed;z-index:5;display:none;max-width:320px;padding:6px 10px;border-radius:8px;background:rgba(13,20,42,0.96);border:1px solid rgba(122,162,255,0.5);color:#eef3ff;font-size:13px;line-height:1.35;pointer-events:none;box-shadow:0 4px 14px rgba(0,0,0,0.4);}
 .asd3d-tip b{font-weight:700;}
 .asd3d-tip .asd3d-tip-sub{display:block;margin-top:2px;color:#9fb0d0;font-size:11.5px;}
+/* tactile feedback: the clicked transition button springs once, so a bottom-bar
+   click reads even when no card is open to bounce */
+.asd3d-action.asd3d-pop{animation:asd3dpop 300ms ease;}
+@keyframes asd3dpop{0%{transform:scale(1);}30%{transform:scale(0.9);}65%{transform:scale(1.09);}100%{transform:scale(1);}}
+@media (prefers-reduced-motion: reduce){.asd3d-action.asd3d-pop{animation:none;}}
+/* settings flyout (toggled with the S key) */
+.asd3d-settings{position:absolute;right:16px;top:58px;z-index:4;display:none;flex-direction:column;gap:11px;padding:12px 14px;border-radius:10px;background:rgba(13,20,42,0.92);border:1px solid rgba(122,162,255,0.45);color:#cdd9f2;font-size:12px;min-width:184px;box-shadow:0 6px 20px rgba(0,0,0,0.4);}
+.asd3d-settings.show{display:flex;}
+.asd3d-settings h4{margin:0 0 2px;font-size:12px;font-weight:700;color:#e7ecf5;}
+.asd3d-settings-row{display:flex;flex-direction:column;gap:3px;}
+.asd3d-settings-row span{display:flex;justify-content:space-between;color:#9fb0d0;}
+.asd3d-settings-row b{font-weight:600;color:#cdd9f2;font-variant-numeric:tabular-nums;}
+.asd3d-settings input[type=range]{width:100%;accent-color:#7aa2ff;cursor:pointer;}
+.asd3d-settings input[type=range]:disabled{opacity:0.4;cursor:not-allowed;}
+.asd3d-settings-note{margin:2px 0 0;font-size:11px;line-height:1.4;color:#9fb0d0;}
+.asd3d-settings-note[hidden]{display:none;}
 </style>
 <script>
 // ALPS relationship data for parent-child highlighting
@@ -368,7 +384,7 @@ ${linksHtml}
 <div id="asd3d-overlay" role="dialog" aria-modal="true" aria-label="3D state diagram browser">
     <div id="asd3d-canvas"></div>
     <div class="asd3d-vignette"></div>
-    <div class="asd3d-topbar">
+    <div class="asd3d-topbar" id="asd3d-topbar">
         <button type="button" id="asd3d-exit" class="asd3d-btn" title="Back to 2D (Esc)">&#8592; 2D</button>
         <span class="asd3d-title">${safeAlpsTitle}</span>
         <span class="asd3d-mode" role="group" aria-label="Node label mode">
@@ -381,6 +397,12 @@ ${linksHtml}
     </div>
     <div class="asd3d-hud" id="asd3d-hud"></div>
     <div class="asd3d-stats" id="asd3d-stats"></div>
+    <div class="asd3d-settings" id="asd3d-settings" role="group" aria-label="Motion settings" hidden>
+        <h4>Motion</h4>
+        <label class="asd3d-settings-row"><span>Particle speed<b id="asd3d-speed-particle-val">1.0&#215;</b></span><input type="range" id="asd3d-speed-particle" min="0" max="20" value="5"></label>
+        <label class="asd3d-settings-row"><span>Idle rotation<b id="asd3d-speed-orbit-val">1.0&#215;</b></span><input type="range" id="asd3d-speed-orbit" min="0" max="30" value="8"></label>
+        <p class="asd3d-settings-note" id="asd3d-settings-note" hidden></p>
+    </div>
     <div class="asd3d-info" id="asd3d-info">
         <div class="asd3d-info-head">
             <span class="asd3d-info-title" id="asd3d-info-title"></span>
@@ -1067,6 +1089,13 @@ window.loadText = async function(text) {
     var btnLabelId = document.getElementById('asd3d-label-id');
     var btnLabelTitle = document.getElementById('asd3d-label-title');
     var cardTip = document.getElementById('asd3d-tip');
+    var settingsEl = document.getElementById('asd3d-settings');
+    var topbarEl = document.querySelector('.asd3d-topbar');
+    var speedParticleEl = document.getElementById('asd3d-speed-particle');
+    var speedOrbitEl = document.getElementById('asd3d-speed-orbit');
+    var speedParticleValEl = document.getElementById('asd3d-speed-particle-val');
+    var speedOrbitValEl = document.getElementById('asd3d-speed-orbit-val');
+    var settingsNoteEl = document.getElementById('asd3d-settings-note');
     var mainContent = document.querySelector('.markdown-body');
     if (!overlay || !canvasEl || !openBtn || !exitBtn) return;
 
@@ -1086,9 +1115,13 @@ window.loadText = async function(text) {
     var lastInteractAt = 0;    // for the always-on idle orbit: pause while the user acts
     function noteInteract() { lastInteractAt = performance.now(); }
     var cardPulseAt = 0;       // self-loop feedback: a quick card bounce when an action returns to the same state
+    var particleSpeed = 0.005; // photon flight speed, adjustable from the settings flyout
+    var idleOrbitSpeed = 0.08; // idle-drift angular speed (rad/s), adjustable too
+    var bloomSeq = 0;          // per-node counter to desync the bloom breathing phase
+    var arrowSeq = 0;          // per-arrow counter to desync the cone shimmer phase
 
     hudEl.innerHTML = 'Drag: rotate \\u00b7 Right-drag: pan \\u00b7 Scroll: zoom<br>' +
-        'Click node: focus \\u00b7 Right-click node: show in table \\u00b7 Esc: back to 2D';
+        'Click node: focus \\u00b7 Right-click: table \\u00b7 S: settings \\u00b7 Esc: back to 2D';
 
     function loadScript(src) {
         return new Promise(function (resolve, reject) {
@@ -1277,7 +1310,18 @@ window.loadText = async function(text) {
         });
         var maxDeg = 1;
         nodes.forEach(function (n) { n.degree = degreeOf[n.id] || 0; if (n.degree > maxDeg) maxDeg = n.degree; });
-        nodes.forEach(function (n) { n.bloom = n.degree / maxDeg; }); // 0..1 prominence
+        // richness = how much a state holds (properties + outgoing transitions);
+        // it drives the bloom SIZE so content-heavy states (Cart, ProductDetail)
+        // glow large, while degree drives the bloom BRIGHTNESS (graph prominence)
+        var maxRich = 1;
+        nodes.forEach(function (n) {
+            n.rich = (n.props ? n.props.length : 0) + (n.actions ? n.actions.length : 0);
+            if (n.rich > maxRich) maxRich = n.rich;
+        });
+        nodes.forEach(function (n) {
+            n.bloom = n.degree / maxDeg;       // 0..1 connectivity prominence (brightness)
+            n.bloomSize = n.rich / maxRich;    // 0..1 content richness (size)
+        });
         return { nodes: nodes, links: links };
     }
 
@@ -1310,10 +1354,10 @@ window.loadText = async function(text) {
         var c = makeCanvas(w, h);
         var ctx = c.getContext('2d');
         roundRectPath(ctx, 1, 1, w - 2, h - 2, 10);
-        ctx.fillStyle = 'rgba(244,248,255,0.94)';
+        ctx.fillStyle = 'rgba(245,249,255,1)'; // fully opaque so the label reads as a solid plate over the cones
         ctx.fill();
         ctx.lineWidth = 2;
-        ctx.strokeStyle = 'rgba(122,162,255,0.55)';
+        ctx.strokeStyle = 'rgba(122,162,255,0.7)';
         ctx.stroke();
         ctx.font = font;
         ctx.fillStyle = '#101c38';
@@ -1550,24 +1594,36 @@ window.loadText = async function(text) {
         // high-degree hubs (the biggest bloom in the garden); distance + fog make
         // far blooms recede (aerial perspective)
         var bloom = null;
-        var bt = node.bloom || 0;
-        if (bt > 0.04) {
+        var btDeg = node.bloom || 0;        // connectivity -> brightness
+        var btRich = node.bloomSize || 0;   // content richness -> size
+        // size leans on content but keeps a floor from degree so lone-but-busy
+        // hubs still read; show a bloom if either signal is meaningful
+        var sizeF = Math.max(btRich, btDeg * 0.6);
+        var bloomBase = 0, bloomOpacity = 0;
+        if (sizeF > 0.04 || btDeg > 0.04) {
             var bmat = new THREE.SpriteMaterial({
                 map: getHaloTexture(), transparent: true, depthWrite: false,
                 depthTest: false, blending: THREE.AdditiveBlending
             });
             bmat.color.set('#3fa66a');
-            bmat.opacity = 0.1 + bt * 0.38;
+            bloomOpacity = 0.1 + Math.max(btDeg, btRich * 0.7) * 0.38;
+            bmat.opacity = bloomOpacity;
             bloom = new THREE.Sprite(bmat);
-            var bs = 7 + bt * 28;
-            bloom.scale.set(bs, bs, 1);
+            bloomBase = 7 + sizeF * 32;
+            bloom.scale.set(bloomBase, bloomBase, 1);
             bloom.renderOrder = 7; // behind chip(10) and card(11)
             group.add(bloom);
         }
         var chip = canvasSprite(drawChipCanvas(getNodeLabel(node)), true);
         chip.renderOrder = 10;
         group.add(chip);
-        node.__asd3d = { group: group, chip: chip, card: null, bloom: bloom };
+        node.__asd3d = {
+            group: group, chip: chip, card: null, bloom: bloom,
+            // breathing: base scale/opacity + a desynced phase so blooms pulse
+            // organically rather than strobing in unison
+            bloomBase: bloomBase, bloomOpacity: bloomOpacity,
+            bloomPhase: (bloomSeq++ * 2.39996) % 6.28318
+        };
         return group;
     }
 
@@ -1696,6 +1752,52 @@ window.loadText = async function(text) {
         noteInteract();
     }
 
+    // ---- shoot-tip cones: give the directional arrows a botanical, living look ----
+    // root->tip brightness ramp baked into the cone's vertex colours (multiplied by
+    // each arrow's own tip colour, so it works whether geometries are shared or not)
+    function applyConeGradient(geo) {
+        if (!geo || geo.__asd3dGrad || !geo.attributes || !geo.attributes.position) return;
+        var pos = geo.attributes.position, n = pos.count, i, y;
+        var ymin = Infinity, ymax = -Infinity;
+        for (i = 0; i < n; i++) { y = pos.getY(i); if (y < ymin) ymin = y; if (y > ymax) ymax = y; }
+        var span = (ymax - ymin) || 1;
+        var col = new Float32Array(n * 3);
+        for (i = 0; i < n; i++) {
+            var t = (pos.getY(i) - ymin) / span;  // 0 = wide base (root), 1 = apex (shoot tip)
+            var b = 0.32 + 0.68 * t;              // dark root -> full-tint tip
+            col[i * 3] = b; col[i * 3 + 1] = b; col[i * 3 + 2] = b;
+        }
+        geo.setAttribute('color', new THREE.BufferAttribute(col, 3));
+        geo.__asd3dGrad = true;
+    }
+    function updateArrows(now) {
+        if (!graph) return;
+        var links = graph.graphData().links;
+        for (var i = 0; i < links.length; i++) {
+            var arrow = links[i].__arrowObj;
+            if (!arrow || !arrow.material) continue;
+            var m = arrow.material;
+            if (!m.__asd3dStyled) {
+                m.transparent = true;
+                m.opacity = 0.8;                              // (1) translucent: layered petals, label shows through
+                if (!m.emissive) m.emissive = new THREE.Color();
+                m.emissive.set(links[i].color);              // (2) self-glow in the tip colour
+                applyConeGradient(arrow.geometry);           // (3) root->tip gradient
+                m.vertexColors = true;
+                m.__asd3dEmissiveBase = 0.4;
+                m.__asd3dPhase = (arrowSeq++ * 2.39996) % 6.28318;
+                m.needsUpdate = true;
+                m.__asd3dStyled = true;
+            }
+            if (reducedMotion) {                             // (4) shimmer: slow emissive breath, desynced
+                m.emissiveIntensity = m.__asd3dEmissiveBase;
+            } else {
+                var sh = Math.sin(now * 0.0016 + m.__asd3dPhase); // ~3.9s period
+                m.emissiveIntensity = m.__asd3dEmissiveBase * (0.7 + 0.3 * (sh * 0.5 + 0.5));
+            }
+        }
+    }
+
     function updateLod() {
         if (!active || !graph) return;
         var now = performance.now();
@@ -1718,7 +1820,7 @@ window.loadText = async function(text) {
             if (ctr && ctr.target) {
                 var ox = cp.x - ctr.target.x, oz = cp.z - ctr.target.z;
                 if (ox * ox + oz * oz > 1) {
-                    var ang = dt * 0.08;
+                    var ang = dt * idleOrbitSpeed;
                     var csA = Math.cos(ang), snA = Math.sin(ang);
                     cp.x = ctr.target.x + ox * csA - oz * snA;
                     cp.z = ctr.target.z + ox * snA + oz * csA;
@@ -1727,6 +1829,7 @@ window.loadText = async function(text) {
             }
         }
         try { checkParticleArrivals(); } catch (e) {}
+        try { updateArrows(now); } catch (e) {}
         var cam = graph.camera().position;
         var p11 = projectionTerm();
         var vh = window.innerHeight || 900;
@@ -1797,6 +1900,21 @@ window.loadText = async function(text) {
                     s.halo.visible = s.haloStrength > 0.02;
                 } else if (s.halo.visible) {
                     s.halo.visible = false;
+                }
+            }
+            // living glow: a slow breath in size + brightness so the garden feels
+            // alive; phase-offset per node, dimmed by aerial perspective, frozen
+            // when the user prefers reduced motion
+            if (s.bloom && s.bloomBase) {
+                var bdim = node.__asd3dDim || 1;
+                if (reducedMotion) {
+                    s.bloom.scale.set(s.bloomBase, s.bloomBase, 1);
+                    s.bloom.material.opacity = s.bloomOpacity * bdim;
+                } else {
+                    var breath = Math.sin(now * 0.0015 + s.bloomPhase); // ~4.2s period
+                    var bsc = s.bloomBase * (1 + 0.06 * breath);
+                    s.bloom.scale.set(bsc, bsc, 1);
+                    s.bloom.material.opacity = s.bloomOpacity * (0.82 + 0.18 * (breath * 0.5 + 0.5)) * bdim;
                 }
             }
         });
@@ -1876,7 +1994,17 @@ window.loadText = async function(text) {
             var tgtLabel = tgt ? (labelModeIs('title') ? (tgt.title || tgt.id) : tgt.id) : a.targetId;
             btn.textContent = '\\u25B8 ' + label;
             btn.setAttribute('aria-label', (a.transType || 'transition') + ' ' + label + ' to ' + tgtLabel);
-            btn.addEventListener('click', function () { triggerTransition(a); });
+            btn.addEventListener('click', function () {
+                // springy press feedback. It visibly plays for a self-loop click
+                // (the camera doesn't move, so this is the only cue alongside the
+                // node glow); on a navigation click the camera flight is the cue and
+                // this panel is immediately rebuilt for the destination node.
+                btn.classList.remove('asd3d-pop');
+                void btn.offsetWidth; // reflow so the animation restarts on rapid clicks
+                btn.classList.add('asd3d-pop');
+                triggerTransition(a);
+            });
+            btn.addEventListener('animationend', function () { btn.classList.remove('asd3d-pop'); });
             infoActions.appendChild(btn);
         });
     }
@@ -1923,6 +2051,16 @@ window.loadText = async function(text) {
                 approach = base.clone().multiplyScalar(0.5).add(sideView.multiplyScalar(0.5)).normalize();
             }
         }
+
+        // nudge the orbit centre slightly off the node, in the view plane, so the
+        // focused label is NOT pinned to the exact pivot. With pivot == label the
+        // idle orbit spins the world while the label sits dead-centre and looks
+        // frozen; a small offset makes the label itself drift gently as it floats.
+        var rt = new THREE.Vector3().crossVectors(new THREE.Vector3(0, 1, 0), approach);
+        if (rt.lengthSq() < 1e-6) rt.set(1, 0, 0);
+        rt.normalize();
+        var upv = new THREE.Vector3().crossVectors(approach, rt).normalize();
+        T1.add(rt.multiplyScalar(FLY_DIST * 0.07)).add(upv.multiplyScalar(FLY_DIST * 0.045));
 
         var P1 = T1.clone().add(approach.multiplyScalar(FLY_DIST));
 
@@ -2214,6 +2352,7 @@ window.loadText = async function(text) {
         statsEl.textContent = model.nodes.length + ' states \\u00b7 ' + model.links.length + ' transitions';
         particlesEnabled = !reducedMotion && model.links.length > 0 && model.links.length <= 400;
         graph.linkDirectionalParticles(particlesEnabled ? 2 : 0);
+        syncSettingsState();
         if (model.nodes.length === 0) {
             showStatus('No diagram nodes match the selected tags.', false);
         } else {
@@ -2281,11 +2420,11 @@ window.loadText = async function(text) {
             // shoot tip: a long pointed cone in the bright tip colour replaces the
             // old stubby arrowhead, so the stem ends in a new-shoot point
             .linkDirectionalArrowLength(7)
-            .linkDirectionalArrowRelPos(1)
+            .linkDirectionalArrowRelPos(1) // tips reach the node (label stays readable via the always-on-top chip)
             .linkDirectionalArrowColor(function (l) { return l.color; })
             .linkDirectionalParticleColor(function (l) { return l.color; })
             .linkDirectionalParticleWidth(0.7)
-            .linkDirectionalParticleSpeed(0.005)
+            .linkDirectionalParticleSpeed(particleSpeed)
             .linkLabel(linkTooltip)
             .onNodeClick(function (n, ev) {
                 // swallow the trailing click of a card-button gesture, which would
@@ -2483,9 +2622,63 @@ window.loadText = async function(text) {
         document.body.style.overflow = '';
         setBackgroundInert(false);
         hideCardTip();
+        toggleSettings(false);
         publishUrlState();
         openBtn.focus();
     }
+
+    // ---- settings flyout (S): tune the photon speed and the idle drift live ----
+    function settingsMult(el, def) { return (Math.round((+el.value) / def * 10) / 10).toFixed(1) + '\\u00d7'; }
+    function setSliderReadout(el, valEl, def) {
+        if (!el) return;
+        var m = settingsMult(el, def);
+        if (valEl) valEl.textContent = m;
+        el.setAttribute('aria-valuetext', m);
+    }
+    // reflect what is actually animating: particles are off under reduced-motion or
+    // on very large graphs, the idle orbit is off under reduced-motion. Disable the
+    // matching slider (rather than leave a live-looking control that does nothing)
+    // and explain why, so the "Motion" panel never lies to the user.
+    function syncSettingsState() {
+        if (speedParticleEl) speedParticleEl.disabled = !particlesEnabled;
+        if (speedOrbitEl) speedOrbitEl.disabled = reducedMotion;
+        setSliderReadout(speedParticleEl, speedParticleValEl, 5);
+        setSliderReadout(speedOrbitEl, speedOrbitValEl, 8);
+        if (settingsNoteEl) {
+            var note = reducedMotion ? 'Motion is reduced by your system setting.'
+                : (!particlesEnabled ? 'Particles are off for large graphs.' : '');
+            settingsNoteEl.textContent = note;
+            settingsNoteEl.hidden = !note;
+        }
+    }
+    var settingsReturnFocus = null;
+    function toggleSettings(force) {
+        if (!settingsEl) return;
+        var show = (typeof force === 'boolean') ? force : !settingsEl.classList.contains('show');
+        settingsEl.classList.toggle('show', show);
+        settingsEl.hidden = !show;
+        if (show) {
+            syncSettingsState();
+            // anchor just below the ACTUAL (possibly wrapped) top bar so the panel
+            // never covers the tag pills / fullscreen button on narrow viewports
+            if (topbarEl) settingsEl.style.top = (topbarEl.offsetHeight + 8) + 'px';
+            settingsReturnFocus = document.activeElement;
+            var first = [speedParticleEl, speedOrbitEl].filter(function (el) { return el && !el.disabled; })[0];
+            if (first) first.focus();
+        } else if (active && settingsReturnFocus && overlay.contains(settingsReturnFocus)) {
+            try { settingsReturnFocus.focus(); } catch (e) {}
+            settingsReturnFocus = null;
+        }
+    }
+    if (speedParticleEl) speedParticleEl.addEventListener('input', function () {
+        particleSpeed = (+speedParticleEl.value) * 0.001; // slider 0..20 -> 0..0.02
+        if (graph) graph.linkDirectionalParticleSpeed(particleSpeed);
+        setSliderReadout(speedParticleEl, speedParticleValEl, 5);
+    });
+    if (speedOrbitEl) speedOrbitEl.addEventListener('input', function () {
+        idleOrbitSpeed = (+speedOrbitEl.value) * 0.01; // slider 0..30 -> 0..0.30 rad/s
+        setSliderReadout(speedOrbitEl, speedOrbitValEl, 8);
+    });
 
     openBtn.addEventListener('click', open3D);
     exitBtn.addEventListener('click', close3D);
@@ -2509,6 +2702,18 @@ window.loadText = async function(text) {
             if (document.fullscreenElement) return; // browser exits fullscreen first
             e.preventDefault();
             close3D();
+            return;
+        }
+        if (e.key === 's' || e.key === 'S') {
+            // only block when the user is actually typing into a text field; range
+            // sliders and checkboxes must NOT swallow S, or the panel can't be closed
+            // with S once a slider is focused
+            var tgt = e.target;
+            var tg = (tgt && tgt.tagName) || '';
+            var typing = tg === 'TEXTAREA' || (tg === 'INPUT' && /^(text|search|email|url|tel|password|number)$/.test(tgt.type || ''));
+            if (typing) return;
+            e.preventDefault();
+            toggleSettings();
             return;
         }
         if (e.key === 'Tab') {
