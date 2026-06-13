@@ -168,6 +168,7 @@ td a:hover{text-decoration:underline;}
 #asd3d-overlay{position:fixed;inset:0;z-index:9999;background:#0b1226;display:none;}
 #asd3d-overlay.active{display:block;}
 #asd3d-canvas{position:absolute;inset:0;}
+.asd3d-vignette{position:absolute;inset:0;z-index:1;pointer-events:none;background:radial-gradient(ellipse at 50% 45%, rgba(0,0,0,0) 42%, rgba(0,0,0,0.28) 78%, rgba(0,0,0,0.55) 100%);}
 #asd3d-canvas .scene-tooltip{color:#dbe6ff;font-size:13px;}
 .asd3d-topbar{position:absolute;top:0;left:0;right:0;z-index:3;display:flex;align-items:center;flex-wrap:wrap;gap:8px 14px;padding:10px 16px;background:rgba(8,13,28,0.82);backdrop-filter:blur(8px);border-bottom:1px solid rgba(120,144,200,0.25);color:#e7ecf5;font-size:13px;box-sizing:border-box;}
 .asd3d-topbar .asd3d-title{font-weight:700;font-size:14px;margin-right:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:30vw;}
@@ -366,6 +367,7 @@ ${linksHtml}
 </div>
 <div id="asd3d-overlay" role="dialog" aria-modal="true" aria-label="3D state diagram browser">
     <div id="asd3d-canvas"></div>
+    <div class="asd3d-vignette"></div>
     <div class="asd3d-topbar">
         <button type="button" id="asd3d-exit" class="asd3d-btn" title="Back to 2D (Esc)">&#8592; 2D</button>
         <span class="asd3d-title">${safeAlpsTitle}</span>
@@ -1025,7 +1027,15 @@ window.loadText = async function(text) {
     // way the renderer and our sprite code share a single three instance.
     var THREE_SRC = 'https://unpkg.com/three@0.180.0/build/three.module.js';
     var FG3D_SRC = 'https://unpkg.com/3d-force-graph@1.80.0/dist/3d-force-graph.min.js';
-    var BG_COLOR = '#0b1226';
+    var BG_COLOR = '#0a120d'; // forest-black: near-black with a drop of green, not pure #000
+
+    // Garden palette for 3D (the 2D SVG keeps its own colours via getTransitionColor).
+    // Each transition reads as a stem: a dark root colour and a brighter shoot tip,
+    // semantics preserved (safe=green, idempotent=vine ochre, unsafe=garden red).
+    var GARDEN_TIP = { safe: '#74e29c', idempotent: '#b8923a', unsafe: '#9a3340' };
+    var GARDEN_ROOT = { safe: '#173f2e', idempotent: '#5c4a22', unsafe: '#4a1f25' };
+    function gardenTip(type) { return GARDEN_TIP[type] || '#8fae9d'; }
+    function gardenRoot(type) { return GARDEN_ROOT[type] || '#2a3d33'; }
     var SPRITE_SCALE = 16;  // canvas px per world unit
     var CARD_NEAR = 60;     // camera distance where the property card is fully visible
     var CARD_FADE = 35;     // fade range beyond CARD_NEAR
@@ -1222,7 +1232,8 @@ window.loadText = async function(text) {
                     transId: t.id,
                     transTitle: t.title || t.id,
                     transType: t.type || '',
-                    color: getTransitionColor(t.type),
+                    color: gardenTip(t.type),       // shoot tip (also used by card borders, glow, particles)
+                    stemColor: gardenRoot(t.type),  // dark root of the stem
                     props: tProps,
                     curvature: curvature,
                     rotation: rotation
@@ -1254,6 +1265,16 @@ window.loadText = async function(text) {
                 return a.transId.localeCompare(b.transId); // alphabetical, consistent everywhere
             });
         });
+
+        // degree = how many transitions touch a node; hubs bloom larger/brighter
+        var degreeOf = Object.create(null);
+        links.forEach(function (l) {
+            degreeOf[l.source] = (degreeOf[l.source] || 0) + 1;
+            degreeOf[l.target] = (degreeOf[l.target] || 0) + 1;
+        });
+        var maxDeg = 1;
+        nodes.forEach(function (n) { n.degree = degreeOf[n.id] || 0; if (n.degree > maxDeg) maxDeg = n.degree; });
+        nodes.forEach(function (n) { n.bloom = n.degree / maxDeg; }); // 0..1 prominence
         return { nodes: nodes, links: links };
     }
 
@@ -1522,10 +1543,28 @@ window.loadText = async function(text) {
 
     function makeNodeObject(node) {
         var group = new THREE.Group();
+        // hub bloom: a soft green glow behind the label, larger and brighter for
+        // high-degree hubs (the biggest bloom in the garden); distance + fog make
+        // far blooms recede (aerial perspective)
+        var bloom = null;
+        var bt = node.bloom || 0;
+        if (bt > 0.04) {
+            var bmat = new THREE.SpriteMaterial({
+                map: getHaloTexture(), transparent: true, depthWrite: false,
+                depthTest: false, blending: THREE.AdditiveBlending
+            });
+            bmat.color.set('#3fa66a');
+            bmat.opacity = 0.1 + bt * 0.38;
+            bloom = new THREE.Sprite(bmat);
+            var bs = 7 + bt * 28;
+            bloom.scale.set(bs, bs, 1);
+            bloom.renderOrder = 7; // behind chip(10) and card(11)
+            group.add(bloom);
+        }
         var chip = canvasSprite(drawChipCanvas(getNodeLabel(node)), true);
         chip.renderOrder = 10;
         group.add(chip);
-        node.__asd3d = { group: group, chip: chip, card: null };
+        node.__asd3d = { group: group, chip: chip, card: null, bloom: bloom };
         return group;
     }
 
@@ -1548,6 +1587,9 @@ window.loadText = async function(text) {
         s.cardButtons = drawn.buttons;
         s.cardProps = drawn.props;
         s.cardSize = { w: drawn.canvas.width, h: drawn.canvas.height };
+        s.cardBaseScale = { x: card.scale.x, y: card.scale.y };
+        s.cardShownAt = 0;
+        s.cardVisPrev = false;
     }
 
     function dropCard(s) {
@@ -1694,8 +1736,17 @@ window.loadText = async function(text) {
             }
             if (t > 0) ensureCard(node);
             if (s.card) {
+                var vis = t > 0.03;
+                if (vis && !s.cardVisPrev) s.cardShownAt = now; // just unfurled
+                s.cardVisPrev = vis;
                 s.card.material.opacity = t;
-                s.card.visible = t > 0.03;
+                s.card.visible = vis;
+                // bud unfurl: ease scale 0.9 -> 1.0 as the card opens
+                if (s.cardBaseScale) {
+                    var unf = s.cardShownAt ? Math.min(1, (now - s.cardShownAt) / 280) : 1;
+                    var k = 0.9 + 0.1 * easeInOut(unf);
+                    s.card.scale.set(s.cardBaseScale.x * k, s.cardBaseScale.y * k, 1);
+                }
                 // evict the card texture once the node has been out of range for
                 // a short grace period, so resident GPU textures stay bounded to
                 // the nearby set instead of every node the camera ever passed
@@ -1942,6 +1993,11 @@ window.loadText = async function(text) {
                 s.halo.material.dispose(); // texture is shared, keep it
                 s.halo = null;
             }
+            if (s.bloom) {
+                s.group.remove(s.bloom);
+                s.bloom.material.dispose(); // shared texture kept
+                s.bloom = null;
+            }
             node.__asd3d = null;
         });
     }
@@ -2164,16 +2220,20 @@ window.loadText = async function(text) {
             .height(window.innerHeight)
             .nodeThreeObject(makeNodeObject)
             .nodeLabel(nodeTooltip)
-            .linkColor(function (l) { return l.color; })
-            .linkOpacity(0.3)
-            .linkWidth(0.55) // a little body + translucency reads better than hairlines
-            .linkCurvature(function (l) { return l.curvature; })
+            // stem: dark root colour, translucent so overlaps read as foliage
+            .linkColor(function (l) { return l.stemColor; })
+            .linkOpacity(0.45)
+            .linkWidth(0.5)
+            .linkCurvature(function (l) { return l.curvature; }) // keep the vine curls / self-loops
             .linkCurveRotation(function (l) { return l.rotation; })
-            .linkDirectionalArrowLength(2.8)
-            .linkDirectionalArrowRelPos(0.6)
+            // shoot tip: a long pointed cone in the bright tip colour replaces the
+            // old stubby arrowhead, so the stem ends in a new-shoot point
+            .linkDirectionalArrowLength(7)
+            .linkDirectionalArrowRelPos(1)
             .linkDirectionalArrowColor(function (l) { return l.color; })
-            .linkDirectionalParticleWidth(0.8)
-            .linkDirectionalParticleSpeed(0.006)
+            .linkDirectionalParticleColor(function (l) { return l.color; })
+            .linkDirectionalParticleWidth(0.7)
+            .linkDirectionalParticleSpeed(0.005)
             .linkLabel(linkTooltip)
             .onNodeClick(function (n, ev) {
                 // ignore the node-click that rides along with a card-button click,
