@@ -162,6 +162,43 @@ td a:hover{text-decoration:underline;}
 .doc-tag{background-color:#FFFBEA;border-color:#FFE8A1;color:#8A6D1B;border:1px solid #FFE8A1;padding:3px 8px;font-size:0.8em;border-radius:4px;}
 .doc-tag.clickable{cursor:pointer;}
 .doc-tag.clickable:hover{background-color:#FFF3CC;}
+/* 3D browse mode */
+.asd3d-open-btn{display:inline-flex;align-items:center;gap:6px;padding:5px 16px;border:1px solid #2a3a66;border-radius:6px;background:linear-gradient(180deg,#1d2b50,#0e1730);color:#e7ecf5;font-size:13px;font-weight:600;cursor:pointer;}
+.asd3d-open-btn:hover{background:linear-gradient(180deg,#27396a,#142046);}
+#asd3d-overlay{position:fixed;inset:0;z-index:9999;background:#0b1226;display:none;}
+#asd3d-overlay.active{display:block;}
+#asd3d-canvas{position:absolute;inset:0;}
+#asd3d-canvas .scene-tooltip{color:#dbe6ff;font-size:13px;}
+.asd3d-topbar{position:absolute;top:0;left:0;right:0;z-index:3;display:flex;align-items:center;flex-wrap:wrap;gap:8px 14px;padding:10px 16px;background:rgba(8,13,28,0.82);backdrop-filter:blur(8px);border-bottom:1px solid rgba(120,144,200,0.25);color:#e7ecf5;font-size:13px;box-sizing:border-box;}
+.asd3d-topbar .asd3d-title{font-weight:700;font-size:14px;margin-right:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:30vw;}
+.asd3d-btn{padding:4px 12px;border:1px solid rgba(150,170,220,0.4);border-radius:6px;background:rgba(30,42,80,0.6);color:#e7ecf5;font-size:12.5px;cursor:pointer;}
+.asd3d-btn:hover{background:rgba(52,70,124,0.8);}
+.asd3d-tagbar{display:inline-flex;flex-wrap:wrap;gap:6px;align-items:center;}
+.asd3d-taglabel{color:#9fb0d0;margin-right:2px;}
+.asd3d-tag{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border:1px solid rgba(150,170,220,0.35);border-radius:999px;background:rgba(24,34,66,0.6);cursor:pointer;user-select:none;color:#cdd9f2;}
+.asd3d-tag input{margin:0;cursor:pointer;}
+.asd3d-tag.checked{background:#2f4a8a;border-color:#7aa2ff;color:#fff;}
+.asd3d-mode{display:inline-flex;border:1px solid rgba(150,170,220,0.35);border-radius:6px;overflow:hidden;}
+.asd3d-mode button{padding:4px 12px;border:0;background:transparent;color:#9fb0d0;font-size:12px;cursor:pointer;}
+.asd3d-mode button.on{background:#2f4a8a;color:#fff;}
+.asd3d-hud{position:absolute;left:16px;bottom:14px;z-index:3;color:#8fa2c8;font-size:12px;line-height:1.7;pointer-events:none;text-shadow:0 1px 2px rgba(0,0,0,0.6);}
+.asd3d-stats{position:absolute;right:16px;bottom:14px;z-index:3;color:#8fa2c8;font-size:12px;pointer-events:none;text-shadow:0 1px 2px rgba(0,0,0,0.6);}
+.asd3d-status{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:2;color:#c6d4f2;font-size:15px;flex-direction:column;gap:14px;text-align:center;padding:0 24px;}
+.asd3d-status[hidden]{display:none;}
+.asd3d-spinner{width:34px;height:34px;border:3px solid rgba(140,165,230,0.25);border-top-color:#7aa2ff;border-radius:50%;animation:asd3dspin 0.9s linear infinite;}
+@keyframes asd3dspin{to{transform:rotate(360deg);}}
+@media (prefers-reduced-motion: reduce){.asd3d-spinner{animation:none;}}
+.asd3d-info{position:absolute;left:50%;transform:translateX(-50%);bottom:52px;z-index:3;display:none;flex-direction:column;gap:8px;padding:10px 14px;border-radius:10px;background:rgba(13,20,42,0.92);border:1px solid rgba(122,162,255,0.45);color:#e7ecf5;font-size:13px;max-width:80vw;}
+.asd3d-info.show{display:flex;}
+.asd3d-info-head{display:flex;align-items:center;gap:10px;}
+.asd3d-info-title{font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:40vw;}
+.asd3d-info-actions{display:flex;flex-wrap:wrap;gap:6px;max-width:76vw;}
+.asd3d-info-actions:empty{display:none;}
+.asd3d-action{display:inline-flex;align-items:center;gap:6px;padding:4px 11px;border:2px solid #6f87c0;border-radius:7px;background:rgba(244,248,255,0.92);color:#1c2a4a;font-size:12.5px;font-weight:600;cursor:pointer;font-family:inherit;}
+.asd3d-action:hover{background:#fff;}
+.asd3d-spacer{flex:1;}
+.asd3d-btn:focus-visible,.asd3d-action:focus-visible,.asd3d-mode button:focus-visible,.asd3d-tag:focus-within{outline:2px solid #7aa2ff;outline-offset:2px;}
+.asd3d-inert{pointer-events:none;}
 </style>
 <script>
 // ALPS relationship data for parent-child highlighting
@@ -312,6 +349,10 @@ document.addEventListener('DOMContentLoaded', function() {
         <span class="selector-option"><input type="radio" name="sizeMode" value="half"><label> Compact</label></span>
         <span class="selector-option"><input type="radio" name="sizeMode" value="fit"><label> Fit to width</label></span>
     </div>
+    <div class="selector-row">
+        <span class="selector-label">View:</span>
+        <span class="selector-option"><button type="button" id="asd3d-open" class="asd3d-open-btn" title="Browse the state diagram in 3D space">3D View</button></span>
+    </div>
 ${tagSelectorHtml ? `    <div class="selector-row">${tagSelectorHtml}
         <span class="selector-option tag-only-option"><input type="checkbox" id="tag-only-mode" class="tag-only-checkbox" disabled><label for="tag-only-mode"> Show selected tags only</label></span>
     </div>` : ''}
@@ -319,6 +360,34 @@ ${tagSelectorHtml ? `    <div class="selector-row">${tagSelectorHtml}
 ${tableHtml}
 ${linksHtml}
 <div style="display:none"><code id="alps-profile">${escapedContent}</code></div>
+</div>
+<div id="asd3d-overlay" role="dialog" aria-modal="true" aria-label="3D state diagram browser">
+    <div id="asd3d-canvas"></div>
+    <div class="asd3d-topbar">
+        <button type="button" id="asd3d-exit" class="asd3d-btn" title="Back to 2D (Esc)">&#8592; 2D</button>
+        <span class="asd3d-title">${safeAlpsTitle}</span>
+        <span class="asd3d-mode" role="group" aria-label="Node label mode">
+            <button type="button" id="asd3d-label-id">ID</button>
+            <button type="button" id="asd3d-label-title">Title</button>
+        </span>
+        <span id="asd3d-tagbar" class="asd3d-tagbar"></span>
+        <span class="asd3d-spacer"></span>
+        <button type="button" id="asd3d-fs" class="asd3d-btn" title="Toggle fullscreen">&#x26F6;</button>
+    </div>
+    <div class="asd3d-hud" id="asd3d-hud"></div>
+    <div class="asd3d-stats" id="asd3d-stats"></div>
+    <div class="asd3d-info" id="asd3d-info">
+        <div class="asd3d-info-head">
+            <span class="asd3d-info-title" id="asd3d-info-title"></span>
+            <button type="button" class="asd3d-btn" id="asd3d-info-table">Show in table</button>
+            <button type="button" class="asd3d-btn" id="asd3d-info-clear" title="Clear selection" aria-label="Clear selection">&#10005;</button>
+        </div>
+        <div class="asd3d-info-actions" id="asd3d-info-actions" role="group" aria-label="Transitions from this state"></div>
+    </div>
+    <div class="asd3d-status" id="asd3d-status" hidden>
+        <div class="asd3d-spinner" id="asd3d-spinner"></div>
+        <div id="asd3d-status-text">Loading 3D engine&#8230;</div>
+    </div>
 </div>
 <script>
 // Tag filtering
@@ -365,6 +434,7 @@ const readUrlState = () => {
         tagOnly: params.get('tagOnly') === '1',
         label: params.get('label') === 'title' ? 'title' : 'id',
         size: normalizeSizeMode(params.get('size')),
+        mode: params.get('mode') === '3d' ? '3d' : '',
         hash: getCurrentHash()
     };
 };
@@ -375,6 +445,7 @@ const collectUrlState = () => {
         tagOnly: isTagOnlyMode(),
         label: getCurrentLabelMode(),
         size: getCurrentSizeMode(),
+        mode: (typeof window.asd3dIsActive === 'function' && window.asd3dIsActive()) ? '3d' : '',
         hash: currentDescriptorHash || getCurrentHash()
     };
 };
@@ -400,6 +471,11 @@ const replaceUrlState = (state) => {
         url.searchParams.set('size', size);
     } else {
         url.searchParams.delete('size');
+    }
+    if (state.mode === '3d') {
+        url.searchParams.set('mode', '3d');
+    } else {
+        url.searchParams.delete('mode');
     }
     url.hash = state.hash ? '#' + encodeURIComponent(state.hash) : '';
     window.history.replaceState(null, '', url.toString());
@@ -851,6 +927,9 @@ async function applyUrlState(state) {
         if (currentDescriptorHash) {
             setTimeout(() => scrollToDescriptor(currentDescriptorHash), 0);
         }
+        if (typeof window.asd3dApplyMode === 'function' && typeof nextState.mode !== 'undefined') {
+            window.asd3dApplyMode(nextState.mode === '3d');
+        }
     } finally {
         isApplyingUrlState = false;
     }
@@ -928,6 +1007,1286 @@ window.loadText = async function(text) {
         console.error('loadText error:', e);
     }
 };
+</script>
+<script>
+// ===== 3D Browse Mode =====
+// Fullscreen WebGL exploration of the state diagram. Three.js and 3d-force-graph
+// are lazy-loaded from CDN on first use so the 2D page stays untouched.
+// Node/edge derivation mirrors generateDotFromAlps() and reuses its global helpers.
+(function () {
+    'use strict';
+    // Version-locked pair: 3d-force-graph 1.80.0 requires three >=0.179 <1 and
+    // prefers window.THREE over its bundled copy, so we import the matching three
+    // ESM build and expose it as the global before loading the UMD bundle. That
+    // way the renderer and our sprite code share a single three instance.
+    var THREE_SRC = 'https://unpkg.com/three@0.180.0/build/three.module.js';
+    var FG3D_SRC = 'https://unpkg.com/3d-force-graph@1.80.0/dist/3d-force-graph.min.js';
+    var BG_COLOR = '#0b1226';
+    var SPRITE_SCALE = 16;  // canvas px per world unit
+    var CARD_NEAR = 60;     // camera distance where the property card is fully visible
+    var CARD_FADE = 35;     // fade range beyond CARD_NEAR
+    var MAX_OPEN_CARDS = 4; // only the nearest few nodes open into cards
+    // Clamped label scaling: chips scale with distance like real objects
+    // (keeps the sense of depth) but are clamped to a readable minimum and a
+    // sane maximum on screen, so far states stay identifiable.
+    var CHIP_WORLD_H = 3.2; // natural world height of a label chip
+    var CHIP_PX_MIN = 12;   // labels never shrink below this on-screen height
+    var CHIP_PX_MAX = 26;   // ...nor grow beyond this
+    var FONT_STACK = "-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif";
+
+    var overlay = document.getElementById('asd3d-overlay');
+    var canvasEl = document.getElementById('asd3d-canvas');
+    var openBtn = document.getElementById('asd3d-open');
+    var exitBtn = document.getElementById('asd3d-exit');
+    var fsBtn = document.getElementById('asd3d-fs');
+    var tagbar = document.getElementById('asd3d-tagbar');
+    var hudEl = document.getElementById('asd3d-hud');
+    var statsEl = document.getElementById('asd3d-stats');
+    var statusEl = document.getElementById('asd3d-status');
+    var statusText = document.getElementById('asd3d-status-text');
+    var spinnerEl = document.getElementById('asd3d-spinner');
+    var infoPanel = document.getElementById('asd3d-info');
+    var infoTitle = document.getElementById('asd3d-info-title');
+    var infoTableBtn = document.getElementById('asd3d-info-table');
+    var infoClearBtn = document.getElementById('asd3d-info-clear');
+    var infoActions = document.getElementById('asd3d-info-actions');
+    var btnLabelId = document.getElementById('asd3d-label-id');
+    var btnLabelTitle = document.getElementById('asd3d-label-title');
+    var mainContent = document.querySelector('.markdown-body');
+    if (!overlay || !canvasEl || !openBtn || !exitBtn) return;
+
+    var reducedMotion = Boolean(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+    var graph = null;
+    var active = false;
+    var libsPromise = null;
+    var lodTimer = null;
+    var selectedNodeId = '';
+    var currentNodes = [];
+    var lastTagKey = null;
+    var lastLabelMode = '';
+    var fitDone = false;
+    var tagBarBuilt = false;
+    var particlesEnabled = false;
+
+    hudEl.innerHTML = 'Drag: rotate \\u00b7 Right-drag: pan \\u00b7 Scroll: zoom<br>' +
+        'Click node: focus \\u00b7 Right-click node: show in table \\u00b7 Esc: back to 2D';
+
+    function loadScript(src) {
+        return new Promise(function (resolve, reject) {
+            var s = document.createElement('script');
+            s.src = src;
+            s.onload = function () { resolve(); };
+            s.onerror = function () { reject(new Error('Failed to load ' + src)); };
+            document.head.appendChild(s);
+        });
+    }
+
+    function ensureLibs() {
+        if (!libsPromise) {
+            var threeReady = window.THREE
+                ? Promise.resolve()
+                : import(THREE_SRC).then(function (mod) { window.THREE = mod; });
+            libsPromise = threeReady.then(function () {
+                return typeof ForceGraph3D === 'undefined' ? loadScript(FG3D_SRC) : null;
+            });
+            libsPromise.catch(function () { libsPromise = null; });
+        }
+        return libsPromise;
+    }
+
+    function labelModeIs(mode) { return getCurrentLabelMode() === mode; }
+    function getNodeLabel(node) { return labelModeIs('title') ? (node.title || node.id) : node.id; }
+
+    // ---- graph model (same derivation rules as generateDotFromAlps) ----
+    function buildFlatMap(descs, map) {
+        (descs || []).forEach(function (d) {
+            if (d.id && !map[d.id]) { map[d.id] = d; }
+            if (Array.isArray(d.descriptor)) { buildFlatMap(d.descriptor, map); }
+        });
+        return map;
+    }
+
+    function resolveChildId(child) {
+        if (child.id) return child.id;
+        if (child.href) {
+            var idx = child.href.indexOf('#');
+            return idx >= 0 ? child.href.substring(idx + 1) : '';
+        }
+        return '';
+    }
+
+    function buildGraphModel(filterIds) {
+        var data = window.alpsData || {};
+        var descriptors = (data.alps && data.alps.descriptor) || [];
+        var flatMap = buildFlatMap(descriptors, {});
+        var transitions = descriptors.filter(function (d) { return d.type && d.rt; });
+        var transitionEntries = transitions
+            .filter(function (t) { return t.id && t.rt; })
+            .map(function (t) {
+                return {
+                    trans: t,
+                    targetState: String(t.rt).replace('#', ''),
+                    sourceStates: findSourceStatesForTransition(t.id, descriptors)
+                };
+            });
+        var diagramNodeIds = new Set(transitions.map(function (t) { return String(t.rt).replace('#', ''); }));
+        transitionEntries.forEach(function (entry) {
+            entry.sourceStates.forEach(function (s) { diagramNodeIds.add(s); });
+        });
+
+        var visibleNodeIds = diagramNodeIds;
+        var visibleEntries = transitionEntries;
+        if (filterIds && filterIds.size > 0) {
+            visibleNodeIds = new Set();
+            diagramNodeIds.forEach(function (id) { if (filterIds.has(id)) visibleNodeIds.add(id); });
+            transitionEntries.forEach(function (entry) {
+                if (filterIds.has(entry.trans.id)) {
+                    visibleNodeIds.add(entry.targetState);
+                    entry.sourceStates.forEach(function (s) { visibleNodeIds.add(s); });
+                }
+            });
+            visibleEntries = transitionEntries
+                .map(function (entry) {
+                    return {
+                        trans: entry.trans,
+                        targetState: entry.targetState,
+                        sourceStates: entry.sourceStates.filter(function (s) {
+                            return visibleNodeIds.has(s) && visibleNodeIds.has(entry.targetState);
+                        })
+                    };
+                })
+                .filter(function (entry) { return entry.sourceStates.length > 0; });
+        }
+
+        function collectChildren(d, semanticOnly) {
+            var out = [];
+            (Array.isArray(d.descriptor) ? d.descriptor : []).forEach(function (child) {
+                var cid = resolveChildId(child);
+                if (!cid) return;
+                var resolved = flatMap[cid] || child;
+                var type = resolved.type || 'semantic';
+                if (!semanticOnly || type === 'semantic') {
+                    out.push({ id: cid, title: resolved.title || '' });
+                }
+            });
+            return out;
+        }
+
+        var nodes = [];
+        visibleNodeIds.forEach(function (id) {
+            var d = flatMap[id] || { id: id };
+            nodes.push({ id: id, title: d.title || '', props: collectChildren(d, true) });
+        });
+
+        var links = [];
+        var pairCount = {};
+        visibleEntries.forEach(function (entry) {
+            entry.sourceStates.forEach(function (s) {
+                var key = s + '\\t' + entry.targetState;
+                pairCount[key] = (pairCount[key] || 0) + 1;
+            });
+        });
+        var pairSeen = {};
+        visibleEntries.forEach(function (entry) {
+            var t = entry.trans;
+            var tProps = collectChildren(t, false);
+            entry.sourceStates.forEach(function (s) {
+                var key = s + '\\t' + entry.targetState;
+                var idx = pairSeen[key] || 0;
+                pairSeen[key] = idx + 1;
+                var n = pairCount[key];
+                var hasReverse = Boolean(pairCount[entry.targetState + '\\t' + s]) && s !== entry.targetState;
+                // straight by default; curve only where geometry would otherwise
+                // overlap (parallel edges, opposite directions, self-loops)
+                var curvature = 0;
+                var rotation = 0;
+                if (s === entry.targetState) {
+                    curvature = 0.5;
+                    rotation = (2 * Math.PI * idx) / n;
+                } else if (n > 1) {
+                    curvature = 0.2;
+                    rotation = (2 * Math.PI * idx) / n + (hasReverse ? 0.5 : 0);
+                } else if (hasReverse) {
+                    curvature = 0.15;
+                    rotation = 0.5;
+                }
+                links.push({
+                    source: s,
+                    target: entry.targetState,
+                    transId: t.id,
+                    transTitle: t.title || t.id,
+                    transType: t.type || '',
+                    color: getTransitionColor(t.type),
+                    props: tProps,
+                    curvature: curvature,
+                    rotation: rotation
+                });
+            });
+        });
+
+        // outgoing transitions per node, used as action buttons on the card
+        var actionsByNode = Object.create(null);
+        links.forEach(function (l) {
+            (actionsByNode[l.source] = actionsByNode[l.source] || []).push(l);
+        });
+        nodes.forEach(function (n) {
+            var seen = {};
+            n.actions = (actionsByNode[n.id] || []).filter(function (l) {
+                var k = l.transId + '\\u0001' + l.target;
+                if (seen[k]) return false;
+                seen[k] = true;
+                return true;
+            }).map(function (l) {
+                return {
+                    transId: l.transId,
+                    transTitle: l.transTitle,
+                    transType: l.transType,
+                    color: l.color,
+                    targetId: l.target
+                };
+            });
+        });
+        return { nodes: nodes, links: links };
+    }
+
+    // ---- sprite rendering ----
+    function makeCanvas(w, h) {
+        var c = document.createElement('canvas');
+        c.width = w;
+        c.height = h;
+        return c;
+    }
+
+    function roundRectPath(ctx, x, y, w, h, r) {
+        ctx.beginPath();
+        ctx.moveTo(x + r, y);
+        ctx.arcTo(x + w, y, x + w, y + h, r);
+        ctx.arcTo(x + w, y + h, x, y + h, r);
+        ctx.arcTo(x, y + h, x, y, r);
+        ctx.arcTo(x, y, x + w, y, r);
+        ctx.closePath();
+    }
+
+    function drawChipCanvas(text) {
+        var font = '600 28px ' + FONT_STACK;
+        var measure = makeCanvas(1, 1).getContext('2d');
+        measure.font = font;
+        var tw = Math.ceil(measure.measureText(text).width);
+        var padX = 16;
+        var h = 40;
+        var w = Math.min(tw + padX * 2, 520);
+        var c = makeCanvas(w, h);
+        var ctx = c.getContext('2d');
+        roundRectPath(ctx, 1, 1, w - 2, h - 2, 10);
+        ctx.fillStyle = 'rgba(244,248,255,0.94)';
+        ctx.fill();
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = 'rgba(122,162,255,0.55)';
+        ctx.stroke();
+        ctx.font = font;
+        ctx.fillStyle = '#101c38';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(text, w / 2, h / 2 + 1, w - padX);
+        return c;
+    }
+
+    function drawCardCanvas(node) {
+        var headFont = '700 28px ' + FONT_STACK;
+        var subFont = '400 21px ' + FONT_STACK;
+        var rowFont = '400 22px ' + FONT_STACK;
+        var btnFont = '600 22px ' + FONT_STACK;
+        var head = getNodeLabel(node);
+        var sub = '';
+        if (node.title && node.title !== node.id) {
+            sub = labelModeIs('title') ? node.id : node.title;
+        }
+        var maxRows = 8;
+        var rows = node.props.map(function (prop) {
+            return labelModeIs('title') ? (prop.title || prop.id) : prop.id;
+        });
+        var more = 0;
+        if (rows.length > maxRows) {
+            more = rows.length - maxRows;
+            rows = rows.slice(0, maxRows);
+        }
+        var actions = node.actions || [];
+        var btns = actions.slice(0, 6);
+        var moreBtns = actions.length - btns.length;
+        var btnH = 40;
+        var btnGap = 10;
+        var actionLabel = function (a) {
+            return '\\u25B8 ' + (labelModeIs('title') ? (a.transTitle || a.transId) : a.transId);
+        };
+        var m = makeCanvas(1, 1).getContext('2d');
+        m.font = headFont;
+        var w = m.measureText(head).width;
+        if (sub) {
+            m.font = subFont;
+            w = Math.max(w, m.measureText(sub).width);
+        }
+        m.font = rowFont;
+        rows.forEach(function (r) { w = Math.max(w, m.measureText(r).width + 26); });
+        if (more) w = Math.max(w, 120);
+        m.font = btnFont;
+        btns.forEach(function (a) { w = Math.max(w, m.measureText(actionLabel(a)).width + 62); });
+        w = Math.ceil(Math.min(Math.max(w + 48, 220), 460));
+        var headerH = 56 + (sub ? 30 : 0);
+        var rowH = 34;
+        var bodyRows = rows.length + (more ? 1 : 0);
+        var emptyH = node.props.length === 0 ? rowH : 0;
+        var actionsH = btns.length ? (18 + btns.length * (btnH + btnGap) + (moreBtns > 0 ? 26 : 0)) : 0;
+        var h = headerH + 14 + bodyRows * rowH + emptyH + actionsH + 18;
+        var c = makeCanvas(w, h);
+        var ctx = c.getContext('2d');
+        roundRectPath(ctx, 2, 2, w - 4, h - 4, 16);
+        ctx.fillStyle = 'rgba(248,250,255,0.97)';
+        ctx.fill();
+        ctx.lineWidth = 2.5;
+        ctx.strokeStyle = 'rgba(90,130,220,0.5)';
+        ctx.stroke();
+        ctx.fillStyle = '#0d1a36';
+        ctx.font = headFont;
+        ctx.textAlign = 'left';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(head, 24, 34, w - 48);
+        if (sub) {
+            ctx.fillStyle = '#5d6f94';
+            ctx.font = subFont;
+            ctx.fillText(sub, 24, 64, w - 48);
+        }
+        var y = headerH;
+        ctx.strokeStyle = 'rgba(90,130,220,0.25)';
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.moveTo(18, y);
+        ctx.lineTo(w - 18, y);
+        ctx.stroke();
+        y += 10;
+        ctx.font = rowFont;
+        if (node.props.length === 0) {
+            ctx.fillStyle = '#93a1bd';
+            ctx.fillText('(no properties)', 24, y + rowH / 2);
+            y += emptyH;
+        }
+        rows.forEach(function (text) {
+            ctx.fillStyle = '#6f87c0';
+            ctx.fillRect(24, y + rowH / 2 - 5, 10, 10);
+            ctx.fillStyle = '#22304f';
+            ctx.fillText(text, 44, y + rowH / 2 + 1, w - 68);
+            y += rowH;
+        });
+        if (more) {
+            ctx.fillStyle = '#7d8db1';
+            ctx.fillText('+ ' + more + ' more', 44, y + rowH / 2);
+            y += rowH;
+        }
+        // action buttons: clickable transitions out of this state, border-colored
+        // by type (safe green / unsafe red / idempotent gold)
+        var buttons = [];
+        if (btns.length) {
+            y += 8;
+            ctx.strokeStyle = 'rgba(90,130,220,0.25)';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.moveTo(18, y);
+            ctx.lineTo(w - 18, y);
+            ctx.stroke();
+            y += 10;
+            ctx.font = btnFont;
+            btns.forEach(function (a) {
+                var bx = 20;
+                var bw = w - 40;
+                roundRectPath(ctx, bx, y, bw, btnH, 9);
+                ctx.fillStyle = 'rgba(255,255,255,0.88)';
+                ctx.fill();
+                ctx.strokeStyle = a.color;
+                ctx.lineWidth = 2.5;
+                ctx.stroke();
+                ctx.fillStyle = '#1c2a4a';
+                ctx.fillText(actionLabel(a), bx + 14, y + btnH / 2 + 1, bw - 28);
+                buttons.push({ x: bx, y: y, w: bw, h: btnH, targetId: a.targetId, transId: a.transId, color: a.color });
+                y += btnH + btnGap;
+            });
+            if (moreBtns > 0) {
+                ctx.fillStyle = '#7d8db1';
+                ctx.font = rowFont;
+                ctx.fillText('+ ' + moreBtns + ' more transitions', 24, y + 12);
+            }
+        }
+        return { canvas: c, buttons: buttons };
+    }
+
+    function makeTexture(canvas) {
+        var texture = new THREE.CanvasTexture(canvas);
+        texture.minFilter = THREE.LinearFilter;
+        try { texture.colorSpace = 'srgb'; } catch (e) {}
+        return texture;
+    }
+
+    // Label chips use sizeAttenuation:false so they keep a constant on-screen
+    // size at any camera distance — far states stay identifiable, which a 2D
+    // fit-to-width view of a large graph cannot offer. depthTest:false keeps
+    // chips and cards always in front of lines, arrow cones and particles.
+    function canvasSprite(canvas, constantSize) {
+        var material = new THREE.SpriteMaterial({
+            map: makeTexture(canvas),
+            transparent: true,
+            depthWrite: false,
+            depthTest: false
+        });
+        if (constantSize) {
+            material.sizeAttenuation = false;
+            material.fog = false;
+        }
+        var sprite = new THREE.Sprite(material);
+        if (constantSize) {
+            sprite.userData.aspect = canvas.width / canvas.height;
+            applyChipScale(sprite);
+        } else {
+            sprite.scale.set(canvas.width / SPRITE_SCALE, canvas.height / SPRITE_SCALE, 1);
+        }
+        return sprite;
+    }
+
+    function projectionTerm() {
+        var p11 = 1.303; // projection term for the default 75-degree fov
+        try { p11 = graph.camera().projectionMatrix.elements[5] || p11; } catch (e) {}
+        return p11;
+    }
+
+    function applyChipScale(sprite) {
+        // placeholder scale until the per-frame LOD loop takes over
+        var sy = 2 * CHIP_PX_MIN / (projectionTerm() * (window.innerHeight || 900));
+        sprite.scale.set(sy * sprite.userData.aspect, sy, 1);
+    }
+
+    function makeNodeObject(node) {
+        var group = new THREE.Group();
+        var chip = canvasSprite(drawChipCanvas(getNodeLabel(node)), true);
+        chip.renderOrder = 10;
+        group.add(chip);
+        node.__asd3d = { group: group, chip: chip, card: null };
+        return group;
+    }
+
+    function disposeSprite(sprite) {
+        if (!sprite) return;
+        if (sprite.material.map) sprite.material.map.dispose();
+        sprite.material.dispose();
+    }
+
+    function ensureCard(node) {
+        var s = node.__asd3d;
+        if (!s || s.card) return;
+        var drawn = drawCardCanvas(node);
+        var card = canvasSprite(drawn.canvas);
+        card.renderOrder = 11;
+        card.material.opacity = 0;
+        card.visible = false;
+        s.group.add(card);
+        s.card = card;
+        s.cardButtons = drawn.buttons;
+        s.cardSize = { w: drawn.canvas.width, h: drawn.canvas.height };
+    }
+
+    function dropCard(s) {
+        if (!s || !s.card) return;
+        s.group.remove(s.card);
+        disposeSprite(s.card);
+        s.card = null;
+        s.cardButtons = null;
+        s.cardSize = null;
+    }
+
+    // ---- arrival glow: a halo flares on the target card when a particle
+    // reaches it (or when a transition button is used), then fades out ----
+    var haloTexture = null;
+
+    function getHaloTexture() {
+        if (haloTexture) return haloTexture;
+        var c = makeCanvas(128, 128);
+        var ctx = c.getContext('2d');
+        // bright at a mid radius (a soft ring) so when scaled to a card the glow
+        // lights up the card's edges — reads as the particle striking the border
+        var grad = ctx.createRadialGradient(64, 64, 10, 64, 64, 64);
+        grad.addColorStop(0.0, 'rgba(255,255,255,0.35)');
+        grad.addColorStop(0.45, 'rgba(255,255,255,0.9)');
+        grad.addColorStop(0.72, 'rgba(255,255,255,0.45)');
+        grad.addColorStop(1.0, 'rgba(255,255,255,0)');
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, 128, 128);
+        haloTexture = makeTexture(c);
+        return haloTexture;
+    }
+
+    function glowNode(node, color) {
+        var s = node.__asd3d;
+        if (!s) return;
+        // rate-limit: don't re-arm while the previous burst is still bright, so a
+        // node with many incoming links pulses gently instead of strobing
+        if (s.haloStrength > 0.4) return;
+        if (!s.halo) {
+            var material = new THREE.SpriteMaterial({
+                map: getHaloTexture(),
+                transparent: true,
+                depthWrite: false,
+                depthTest: false,
+                blending: THREE.AdditiveBlending // flash of light, not an occluder
+            });
+            s.halo = new THREE.Sprite(material);
+            s.halo.renderOrder = 20; // in FRONT of the card (11) so the burst is visible
+            s.group.add(s.halo);
+        }
+        s.halo.material.color.set(color || '#7aa2ff');
+        s.haloStrength = 1;
+    }
+
+    function checkParticleArrivals() {
+        if (!particlesEnabled) return; // no photons => nothing can arrive
+        var links = graph.graphData().links;
+        for (var i = 0; i < links.length; i++) {
+            var group = links[i].__photonsObj;
+            if (!group || !group.children || !group.children.length) continue;
+            var tgt = links[i].target;
+            if (!tgt || typeof tgt !== 'object') continue;
+            for (var j = 0; j < group.children.length; j++) {
+                var photon = group.children[j];
+                var p = photon.__progressRatio || 0;
+                var prev = photon.__asd3dPrev;
+                photon.__asd3dPrev = p;
+                if (typeof prev === 'number' && p < prev - 0.5) {
+                    // progress wrapped past 1: the particle reached the target
+                    glowNode(tgt, links[i].color);
+                }
+            }
+        }
+    }
+
+    // ---- level of detail (runs every frame) ----
+    // Chips: perspective-scaled with readability clamp + aerial-perspective
+    // dimming tied to the scene fog so far labels melt into the background.
+    // Cards: the nearest few nodes cross-fade from chip into a property card.
+    var lastLodTime = 0;
+
+    function updateLod() {
+        if (!active || !graph) return;
+        var now = performance.now();
+        var dt = lastLodTime ? Math.min(0.1, (now - lastLodTime) / 1000) : 0.016;
+        lastLodTime = now;
+        if (camTween) {
+            applyCamTween(camTween.dur > 0 ? Math.min(1, (now - camTween.start) / camTween.dur) : 1);
+        }
+        try { checkParticleArrivals(); } catch (e) {}
+        var cam = graph.camera().position;
+        var p11 = projectionTerm();
+        var vh = window.innerHeight || 900;
+        var fog = graph.scene().fog;
+        var aerialNear = fog ? fog.near * 0.6 : 300;
+        var aerialFar = fog ? fog.far * 0.9 : 1500;
+        var near = [];
+        currentNodes.forEach(function (node) {
+            var s = node.__asd3d;
+            if (!s || typeof node.x !== 'number') return;
+            var dx = cam.x - node.x;
+            var dy = cam.y - node.y;
+            var dz = cam.z - node.z;
+            var dist = Math.sqrt(dx * dx + dy * dy + dz * dz) || 1;
+            var pxNatural = CHIP_WORLD_H * p11 * vh / (2 * dist);
+            var px = Math.max(CHIP_PX_MIN, Math.min(CHIP_PX_MAX, pxNatural));
+            var sy = 2 * px / (p11 * vh);
+            s.chip.scale.set(sy * s.chip.userData.aspect, sy, 1);
+            // aerial perspective: labels fade toward the background with distance
+            var aerial = 1 - (dist - aerialNear) / Math.max(1, aerialFar - aerialNear);
+            node.__asd3dDim = Math.max(0.22, Math.min(1, aerial * 1.15));
+            node.__asd3dDist = dist;
+            var t = (CARD_NEAR + CARD_FADE - dist) / CARD_FADE;
+            node.__asd3dT = Math.max(0, Math.min(1, t));
+            if (node.__asd3dT > 0 && node.id !== selectedNodeId) near.push(node);
+        });
+        // keep cards to the nearest MAX_OPEN_CARDS so dense clusters stay readable
+        near.sort(function (a, b) { return b.__asd3dT - a.__asd3dT; });
+        near.slice(MAX_OPEN_CARDS).forEach(function (node) { node.__asd3dT = 0; });
+        currentNodes.forEach(function (node) {
+            var s = node.__asd3d;
+            if (!s) return;
+            var t = node.__asd3dT || 0;
+            if (node.id === selectedNodeId) {
+                // the selected card opens earlier and lingers longer (so a fly-to
+                // lands on an open card), but still fades when the camera leaves —
+                // never a tiny minified rectangle floating across the whole map
+                var dSel = node.__asd3dDist || 0;
+                var tSel = (CARD_NEAR * 2.5 + CARD_FADE - dSel) / CARD_FADE;
+                t = Math.max(t, Math.min(1, tSel));
+            }
+            if (t > 0) ensureCard(node);
+            if (s.card) {
+                s.card.material.opacity = t;
+                s.card.visible = t > 0.03;
+                // evict the card texture once the node has been out of range for
+                // a short grace period, so resident GPU textures stay bounded to
+                // the nearby set instead of every node the camera ever passed
+                if (t <= 0 && node.id !== selectedNodeId) {
+                    s.cardIdle = (s.cardIdle || 0) + 1;
+                    if (s.cardIdle > 90) dropCard(s);
+                } else {
+                    s.cardIdle = 0;
+                }
+            }
+            s.chip.material.opacity = (1 - t) * (node.__asd3dDim || 1);
+            s.chip.visible = t < 0.97;
+            if (s.halo) {
+                if (s.haloStrength > 0) {
+                    s.haloStrength = Math.max(0, s.haloStrength - dt * 2.2); // quick, light tap
+                    // a soft pulse sized to the card (not enveloping past it), so
+                    // it reads as a gentle absorption rather than a hard impact
+                    var base = (t > 0.5 && s.cardSize)
+                        ? Math.max(s.cardSize.w, s.cardSize.h) / SPRITE_SCALE * 0.72
+                        : CHIP_WORLD_H * 2.8;
+                    var sc = base * (0.92 + 0.14 * s.haloStrength);
+                    s.halo.scale.set(sc, sc, 1);
+                    s.halo.material.opacity = s.haloStrength * 0.4;
+                    s.halo.visible = s.haloStrength > 0.02;
+                } else if (s.halo.visible) {
+                    s.halo.visible = false;
+                }
+            }
+        });
+    }
+
+    function startLod() {
+        stopLod();
+        lastLodTime = 0;
+        var loop = function () {
+            updateLod();
+            lodTimer = window.requestAnimationFrame(loop);
+        };
+        lodTimer = window.requestAnimationFrame(loop);
+    }
+
+    function stopLod() {
+        if (lodTimer) {
+            window.cancelAnimationFrame(lodTimer);
+            lodTimer = null;
+        }
+    }
+
+    // ---- tooltips ----
+    function nodeTooltip(node) {
+        var text = node.id + (node.title && node.title !== node.id ? ' \\u2014 ' + node.title : '');
+        return escapeHtmlLabel(text);
+    }
+
+    function linkTooltip(link) {
+        var label = labelModeIs('title') ? link.transTitle : link.transId;
+        var html = '<div style="text-align:left">' +
+            '<span style="color:' + link.color + '">\\u25A0</span> <b>' + escapeHtmlLabel(label) + '</b>';
+        if (link.transType) {
+            html += ' <span style="opacity:0.75">(' + escapeHtmlLabel(link.transType) + ')</span>';
+        }
+        var props = link.props || [];
+        props.slice(0, 8).forEach(function (p) {
+            html += '<br>\\u2022 ' + escapeHtmlLabel(labelModeIs('title') ? (p.title || p.id) : p.id);
+        });
+        if (props.length > 8) {
+            html += '<br>+ ' + (props.length - 8) + ' more';
+        }
+        return html + '</div>';
+    }
+
+    // ---- selection / camera ----
+    var nodeById = {};
+
+    // Pin the focused node so the still-cooling force simulation can't drift it
+    // out from under the camera mid-flight (which left the card off to the side).
+    // Clear every pin first so stray pins can never accumulate and freeze the layout.
+    function unpinNode() {
+        currentNodes.forEach(function (n) {
+            if (typeof n.fx === 'number') { n.fx = undefined; n.fy = undefined; n.fz = undefined; }
+        });
+    }
+
+    function pinNode(node) {
+        unpinNode();
+        if (!node || typeof node.x !== 'number') return;
+        node.fx = node.x; node.fy = node.y; node.fz = node.z;
+    }
+
+    // Mirror the in-card transition buttons as real DOM buttons in the info
+    // panel: keyboard/screen-reader operable, and a reliable click path that
+    // does not depend on raycasting the (possibly faded/overlapped) card sprite.
+    function populateInfoActions(node) {
+        infoActions.textContent = '';
+        var actions = node.actions || [];
+        actions.forEach(function (a) {
+            var btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'asd3d-action';
+            btn.style.borderColor = a.color;
+            var label = labelModeIs('title') ? (a.transTitle || a.transId) : a.transId;
+            var tgt = nodeById[a.targetId];
+            var tgtLabel = tgt ? (labelModeIs('title') ? (tgt.title || tgt.id) : tgt.id) : a.targetId;
+            btn.textContent = '\\u25B8 ' + label;
+            btn.setAttribute('aria-label', (a.transType || 'transition') + ' ' + label + ' to ' + tgtLabel);
+            btn.addEventListener('click', function () { triggerTransition(a); });
+            infoActions.appendChild(btn);
+        });
+    }
+
+    // ---- crafted camera flight ----
+    // A transition click should feel like travelling along the edge, not a flat
+    // dolly: the camera swings along a gentle arc and lands at an angle that
+    // shows the edge it just traversed. Driven frame-by-frame from updateLod.
+    var FLY_DUR = 1150;
+    var FLY_DIST = 72;
+    var camTween = null;
+
+    function easeInOut(u) {
+        return u < 0.5 ? 4 * u * u * u : 1 - Math.pow(-2 * u + 2, 3) / 2;
+    }
+
+    function flyToNode(node, fromNode) {
+        if (typeof node.x !== 'number' || !graph) return;
+        var cam = graph.camera();
+        var controls = graph.controls();
+        var T1 = new THREE.Vector3(node.x, node.y, node.z);
+        var T0 = (controls && controls.target) ? controls.target.clone() : T1.clone();
+        var P0 = cam.position.clone();
+
+        // base approach = keep the current viewing direction (continuity)
+        var base = P0.clone().sub(T1);
+        if (base.lengthSq() < 1e-6) base.set(0, 0, 1);
+        base.normalize();
+
+        var approach = base;
+        if (fromNode && typeof fromNode.x === 'number') {
+            // reframe toward a side-on view of the traversed edge so it stays visible
+            var edge = new THREE.Vector3(node.x - fromNode.x, node.y - fromNode.y, node.z - fromNode.z);
+            if (edge.lengthSq() > 1e-6) {
+                edge.normalize();
+                var worldUp = new THREE.Vector3(0, 1, 0);
+                var side = new THREE.Vector3().crossVectors(edge, worldUp);
+                if (side.lengthSq() < 1e-6) side.set(1, 0, 0);
+                side.normalize();
+                var up2 = new THREE.Vector3().crossVectors(side, edge).normalize();
+                // keep the camera on the same side it is already on (no jarring flip)
+                if (side.dot(base) < 0) side.multiplyScalar(-1);
+                var sideView = side.multiplyScalar(0.8).add(up2.multiplyScalar(0.42)).add(edge.multiplyScalar(0.25)).normalize();
+                approach = base.clone().multiplyScalar(0.5).add(sideView.multiplyScalar(0.5)).normalize();
+            }
+        }
+
+        var P1 = T1.clone().add(approach.multiplyScalar(FLY_DIST));
+
+        // arc control point: lift the midpoint perpendicular to travel for a swing
+        var mid = P0.clone().add(P1).multiplyScalar(0.5);
+        var travel = P1.clone().sub(P0);
+        var len = travel.length() || 1;
+        var perp = new THREE.Vector3().crossVectors(travel.clone().normalize(), new THREE.Vector3(0, 1, 0));
+        if (perp.lengthSq() < 1e-6) perp.set(1, 0, 0);
+        perp.normalize();
+        var lift = Math.min(len * 0.28, 70);
+        var ctrl = mid.add(perp.multiplyScalar(lift * 0.45)).add(new THREE.Vector3(0, lift * 0.6, 0));
+
+        camTween = { P0: P0, ctrl: ctrl, P1: P1, T0: T0, T1: T1, start: performance.now(), dur: reducedMotion ? 0 : FLY_DUR };
+        if (camTween.dur === 0) applyCamTween(1);
+    }
+
+    function applyCamTween(u) {
+        if (!camTween || !graph) return;
+        var e = easeInOut(u);
+        var w0 = (1 - e) * (1 - e), w1 = 2 * (1 - e) * e, w2 = e * e;
+        var c = camTween;
+        var cam = graph.camera();
+        cam.position.set(
+            w0 * c.P0.x + w1 * c.ctrl.x + w2 * c.P1.x,
+            w0 * c.P0.y + w1 * c.ctrl.y + w2 * c.P1.y,
+            w0 * c.P0.z + w1 * c.ctrl.z + w2 * c.P1.z
+        );
+        var tx = c.T0.x + (c.T1.x - c.T0.x) * e;
+        var ty = c.T0.y + (c.T1.y - c.T0.y) * e;
+        var tz = c.T0.z + (c.T1.z - c.T0.z) * e;
+        var controls = graph.controls();
+        if (controls && controls.target) {
+            controls.target.set(tx, ty, tz);
+            controls.update();
+        } else {
+            cam.lookAt(tx, ty, tz);
+        }
+        if (u >= 1) camTween = null;
+    }
+
+    function selectNode(node, fromNode) {
+        selectedNodeId = node.id;
+        pinNode(node); // hold it still so the camera lands with the card centered
+        ensureCard(node);
+        infoTitle.textContent = node.id + (node.title && node.title !== node.id ? ' \\u2014 ' + node.title : '');
+        populateInfoActions(node);
+        infoPanel.classList.add('show');
+        flyToNode(node, fromNode);
+    }
+
+    function clearSelection() {
+        selectedNodeId = '';
+        unpinNode();
+        infoPanel.classList.remove('show');
+        infoActions.textContent = '';
+    }
+
+    function exitToTable(id) {
+        close3D();
+        if (id) {
+            setDescriptorHash(id);
+            scrollToDescriptor(id);
+        }
+    }
+
+    // ---- status ----
+    function showStatus(text, withSpinner) {
+        statusText.textContent = text;
+        spinnerEl.style.display = withSpinner ? '' : 'none';
+        statusEl.hidden = false;
+    }
+
+    function hideStatus() {
+        statusEl.hidden = true;
+    }
+
+    // ---- data refresh ----
+    function tagKey() {
+        return getSelectedTags().slice().sort().join(',');
+    }
+
+    function disposeAllNodeSprites() {
+        currentNodes.forEach(function (node) {
+            var s = node.__asd3d;
+            if (!s) return;
+            disposeSprite(s.chip);
+            dropCard(s);
+            if (s.halo) {
+                s.group.remove(s.halo);
+                s.halo.material.dispose(); // texture is shared, keep it
+                s.halo = null;
+            }
+            node.__asd3d = null;
+        });
+    }
+
+    // ---- card action buttons: raycast the click into the card texture ----
+    var raycaster = null;
+    var pointerNdc = null;
+    var pressedAt = null;
+
+    function pickCardButton(cx, cy) {
+        if (!raycaster || !graph) return null;
+        var rect = canvasEl.getBoundingClientRect();
+        if (!rect.width || !rect.height) return null;
+        var cards = [];
+        currentNodes.forEach(function (node) {
+            var s = node.__asd3d;
+            // any card the user can see (visibility gate, not the old 0.6 gate)
+            // is clickable, so faded cards don't show dead buttons
+            if (s && s.card && s.card.visible && s.card.material.opacity > 0.1 &&
+                s.cardButtons && s.cardButtons.length) {
+                s.card.__asd3dNode = node;
+                cards.push(s.card);
+            }
+        });
+        if (!cards.length) return null;
+        pointerNdc.set(
+            ((cx - rect.left) / rect.width) * 2 - 1,
+            -((cy - rect.top) / rect.height) * 2 + 1
+        );
+        raycaster.setFromCamera(pointerNdc, graph.camera());
+        var hits = raycaster.intersectObjects(cards, false);
+        // walk hits nearest-first; a transparent gap on a front card must not
+        // swallow a button on the card behind it
+        for (var h = 0; h < hits.length; h++) {
+            if (!hits[h].uv) continue;
+            var node = hits[h].object.__asd3dNode;
+            var s = node.__asd3d;
+            if (!s || !s.cardSize) continue;
+            var px = hits[h].uv.x * s.cardSize.w;
+            var py = (1 - hits[h].uv.y) * s.cardSize.h;
+            for (var i = 0; i < s.cardButtons.length; i++) {
+                var b = s.cardButtons[i];
+                if (px >= b.x && px <= b.x + b.w && py >= b.y && py <= b.y + b.h) return b;
+            }
+        }
+        return null;
+    }
+
+    function triggerTransition(btn) {
+        var target = nodeById[btn.targetId];
+        if (!target) return;
+        var from = nodeById[selectedNodeId];
+        selectNode(target, from);
+        // glow the destination as the flight lands
+        window.setTimeout(function () { glowNode(target, btn.color); }, reducedMotion ? 50 : FLY_DUR);
+    }
+
+    var hoverPending = false;
+
+    function setupCardButtonEvents() {
+        raycaster = new THREE.Raycaster();
+        pointerNdc = new THREE.Vector2();
+        canvasEl.addEventListener('pointerdown', function (e) {
+            pressedAt = { x: e.clientX, y: e.clientY };
+            camTween = null; // user is taking control of the camera
+        }, true);
+        canvasEl.addEventListener('pointerup', function (e) {
+            if (!active || !pressedAt) return;
+            var moved = Math.abs(e.clientX - pressedAt.x) + Math.abs(e.clientY - pressedAt.y);
+            pressedAt = null;
+            if (moved > 6) return; // movement => it was an orbit/pan drag, not a click
+            var hit = pickCardButton(e.clientX, e.clientY);
+            if (hit) {
+                e.stopPropagation();
+                e.preventDefault();
+                triggerTransition(hit);
+            }
+        }, true);
+        // cursor affordance: coalesce hit-testing to one rAF per move burst so
+        // high-frequency pointermove events don't each pay for a raycast
+        canvasEl.addEventListener('pointermove', function (e) {
+            if (!active || !graph || e.buttons || hoverPending) return;
+            hoverPending = true;
+            var cx = e.clientX, cy = e.clientY;
+            window.requestAnimationFrame(function () {
+                hoverPending = false;
+                if (active) canvasEl.style.cursor = pickCardButton(cx, cy) ? 'pointer' : '';
+            });
+        }, true);
+    }
+
+    function refreshGraphData(force) {
+        if (!graph) return;
+        var key = tagKey();
+        if (!force && key === lastTagKey) return;
+        lastTagKey = key;
+        lastLabelMode = getCurrentLabelMode();
+        var filterIds = getSelectedTags().length > 0 ? getSelectedDescriptorIds() : null;
+        var model = buildGraphModel(filterIds);
+        disposeAllNodeSprites();
+        CHIP_PX_MIN = model.nodes.length > 400 ? 10 : 12;
+        currentNodes = model.nodes;
+        nodeById = {};
+        model.nodes.forEach(function (n) { nodeById[n.id] = n; });
+        clearSelection();
+        fitDone = false;
+        graph.graphData(model);
+        statsEl.textContent = model.nodes.length + ' states \\u00b7 ' + model.links.length + ' transitions';
+        particlesEnabled = !reducedMotion && model.links.length > 0 && model.links.length <= 400;
+        graph.linkDirectionalParticles(particlesEnabled ? 2 : 0);
+        if (model.nodes.length === 0) {
+            showStatus('No diagram nodes match the selected tags.', false);
+        } else {
+            hideStatus();
+        }
+    }
+
+    function refreshLabels() {
+        if (!graph) return;
+        var mode = getCurrentLabelMode();
+        if (mode === lastLabelMode) return;
+        lastLabelMode = mode;
+        currentNodes.forEach(function (node) {
+            var s = node.__asd3d;
+            if (!s) return;
+            var canvas = drawChipCanvas(getNodeLabel(node));
+            var old = s.chip.material.map;
+            s.chip.material.map = makeTexture(canvas);
+            s.chip.material.needsUpdate = true;
+            s.chip.userData.aspect = canvas.width / canvas.height;
+            applyChipScale(s.chip);
+            if (old) old.dispose();
+            dropCard(s);
+        });
+        // re-render the DOM action buttons for the selected node in the new mode
+        var sel = nodeById[selectedNodeId];
+        if (sel) populateInfoActions(sel);
+    }
+
+    // ---- graph init ----
+    function applySceneExtents() {
+        try {
+            if (!currentNodes.length) return;
+            var bbox = graph.getGraphBbox();
+            if (bbox) {
+                var span = Math.max(bbox.x[1] - bbox.x[0], bbox.y[1] - bbox.y[0], bbox.z[1] - bbox.z[0], 120);
+                var fog = graph.scene().fog;
+                if (fog) {
+                    fog.near = span * 1.1;
+                    fog.far = span * 3.2;
+                }
+            }
+            graph.zoomToFit(reducedMotion ? 0 : 700, 60);
+        } catch (e) {}
+    }
+
+    function initGraph() {
+        if (graph) return;
+        // trackball controls: the library's animated camera transitions
+        // (zoomToFit, fly-to-node) are only reliable with this control type
+        graph = ForceGraph3D({ controlType: 'trackball' })(canvasEl)
+            .backgroundColor(BG_COLOR)
+            .showNavInfo(false)
+            .width(window.innerWidth)
+            .height(window.innerHeight)
+            .nodeThreeObject(makeNodeObject)
+            .nodeLabel(nodeTooltip)
+            .linkColor(function (l) { return l.color; })
+            .linkOpacity(0.35)
+            .linkCurvature(function (l) { return l.curvature; })
+            .linkCurveRotation(function (l) { return l.rotation; })
+            .linkDirectionalArrowLength(2.8)
+            .linkDirectionalArrowRelPos(0.6)
+            .linkDirectionalArrowColor(function (l) { return l.color; })
+            .linkDirectionalParticleWidth(0.8)
+            .linkDirectionalParticleSpeed(0.006)
+            .linkLabel(linkTooltip)
+            .onNodeClick(function (n, ev) {
+                // ignore the node-click that rides along with a card-button click,
+                // otherwise it races triggerTransition and can fly to the wrong node
+                if (ev && pickCardButton(ev.clientX, ev.clientY)) return;
+                selectNode(n);
+            })
+            .onNodeRightClick(function (node) { exitToTable(node.id); })
+            .onBackgroundClick(clearSelection)
+            .onEngineStop(function () {
+                if (fitDone) return;
+                fitDone = true;
+                applySceneExtents();
+            });
+        if (reducedMotion) {
+            graph.warmupTicks(120).cooldownTicks(0);
+        } else {
+            graph.cooldownTime(5000);
+        }
+        window.asd3dGraph = graph; // debug / power-user handle
+        setupCardButtonEvents();
+        try {
+            graph.d3Force('link').distance(90);
+            graph.d3Force('charge').strength(-300);
+        } catch (e) {}
+        try {
+            graph.scene().fog = new THREE.Fog(new THREE.Color(BG_COLOR), 400, 1600);
+        } catch (e) {}
+    }
+
+    // ---- tag bar (mirrors the 2D tag checkboxes; selected tags filter the 3D subgraph) ----
+    function findMainTagCheckbox(tag) {
+        return Array.from(document.querySelectorAll('.tag-trigger-checkbox')).find(function (el) {
+            return el.getAttribute('data-tag') === tag;
+        });
+    }
+
+    function buildTagBar() {
+        if (tagBarBuilt) return;
+        tagBarBuilt = true;
+        var tags = Object.keys(tagDescriptorMap);
+        if (!tags.length) return;
+        var lbl = document.createElement('span');
+        lbl.className = 'asd3d-taglabel';
+        lbl.textContent = 'Tags:';
+        tagbar.appendChild(lbl);
+        tags.forEach(function (tag) {
+            var wrap = document.createElement('label');
+            wrap.className = 'asd3d-tag';
+            var cb = document.createElement('input');
+            cb.type = 'checkbox';
+            cb.setAttribute('data-tag', tag);
+            var txt = document.createElement('span');
+            txt.textContent = tag;
+            wrap.appendChild(cb);
+            wrap.appendChild(txt);
+            tagbar.appendChild(wrap);
+            cb.addEventListener('change', function () {
+                wrap.classList.toggle('checked', cb.checked);
+                var main = findMainTagCheckbox(tag);
+                if (main && main.checked !== cb.checked) {
+                    main.checked = cb.checked;
+                    main.dispatchEvent(new Event('change'));
+                }
+                refreshGraphData(false);
+            });
+        });
+        Array.from(document.querySelectorAll('.tag-trigger-checkbox')).forEach(function (cb) {
+            cb.addEventListener('change', function () {
+                if (!active) return;
+                syncTagBar();
+                refreshGraphData(false);
+            });
+        });
+    }
+
+    function syncTagBar() {
+        var selected = new Set(getSelectedTags());
+        Array.from(tagbar.querySelectorAll('input[type="checkbox"]')).forEach(function (cb) {
+            var tag = cb.getAttribute('data-tag');
+            cb.checked = selected.has(tag);
+            cb.parentElement.classList.toggle('checked', cb.checked);
+        });
+    }
+
+    // ---- label mode buttons ----
+    function syncLabelButtons() {
+        var mode = getCurrentLabelMode();
+        btnLabelId.classList.toggle('on', mode === 'id');
+        btnLabelTitle.classList.toggle('on', mode === 'title');
+        btnLabelId.setAttribute('aria-pressed', mode === 'id' ? 'true' : 'false');
+        btnLabelTitle.setAttribute('aria-pressed', mode === 'title' ? 'true' : 'false');
+    }
+
+    function setLabelMode(mode) {
+        var radio = document.querySelector('input[name="labelMode"][value="' + mode + '"]');
+        if (radio && !radio.checked) {
+            radio.checked = true;
+            radio.dispatchEvent(new Event('change'));
+        }
+        syncLabelButtons();
+        refreshLabels();
+    }
+
+    btnLabelId.addEventListener('click', function () { setLabelMode('id'); });
+    btnLabelTitle.addEventListener('click', function () { setLabelMode('title'); });
+
+    // ---- open / close ----
+    function handleResize() {
+        if (graph && active) {
+            graph.width(window.innerWidth);
+            graph.height(window.innerHeight);
+        }
+    }
+
+    function setBackgroundInert(on) {
+        if (!mainContent) return;
+        if (on) {
+            try { mainContent.inert = true; } catch (e) {}
+            mainContent.setAttribute('aria-hidden', 'true');
+        } else {
+            try { mainContent.inert = false; } catch (e) {}
+            mainContent.removeAttribute('aria-hidden');
+        }
+    }
+
+    function getFocusable() {
+        return Array.from(overlay.querySelectorAll(
+            'button, input, [href], [tabindex]:not([tabindex="-1"])'
+        )).filter(function (el) {
+            return !el.disabled && el.offsetParent !== null;
+        });
+    }
+
+    function open3D() {
+        if (active) return;
+        active = true;
+        overlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+        setBackgroundInert(true);
+        publishUrlState();
+        showStatus('Loading 3D engine\\u2026', true);
+        ensureLibs().then(function () {
+            if (!active) return;
+            initGraph();
+            if (graph.resumeAnimation) graph.resumeAnimation();
+            handleResize();
+            buildTagBar();
+            syncTagBar();
+            syncLabelButtons();
+            refreshLabels();
+            refreshGraphData(false);
+            if (lastTagKey === null) refreshGraphData(true);
+            if (currentNodes.length > 0) hideStatus();
+            startLod();
+            exitBtn.focus();
+        }).catch(function (err) {
+            console.error('3D mode failed to load:', err);
+            showStatus('Failed to load the 3D libraries (network error). Press Esc to return to 2D and try again.', false);
+        });
+    }
+
+    function close3D() {
+        if (!active) return;
+        active = false;
+        stopLod();
+        if (graph && graph.pauseAnimation) graph.pauseAnimation();
+        try {
+            if (document.fullscreenElement && document.exitFullscreen) document.exitFullscreen();
+        } catch (e) {}
+        overlay.classList.remove('active');
+        document.body.style.overflow = '';
+        setBackgroundInert(false);
+        publishUrlState();
+        openBtn.focus();
+    }
+
+    openBtn.addEventListener('click', open3D);
+    exitBtn.addEventListener('click', close3D);
+    infoTableBtn.addEventListener('click', function () { exitToTable(selectedNodeId); });
+    infoClearBtn.addEventListener('click', clearSelection);
+    window.addEventListener('resize', handleResize);
+
+    fsBtn.addEventListener('click', function () {
+        try {
+            if (document.fullscreenElement) {
+                document.exitFullscreen();
+            } else if (overlay.requestFullscreen) {
+                overlay.requestFullscreen();
+            }
+        } catch (e) {}
+    });
+
+    document.addEventListener('keydown', function (e) {
+        if (!active) return;
+        if (e.key === 'Escape') {
+            if (document.fullscreenElement) return; // browser exits fullscreen first
+            e.preventDefault();
+            close3D();
+            return;
+        }
+        if (e.key === 'Tab') {
+            // trap focus inside the modal overlay
+            var focusable = getFocusable();
+            if (!focusable.length) return;
+            var first = focusable[0];
+            var last = focusable[focusable.length - 1];
+            var activeEl = document.activeElement;
+            if (!overlay.contains(activeEl)) {
+                e.preventDefault();
+                (e.shiftKey ? last : first).focus();
+            } else if (e.shiftKey && activeEl === first) {
+                e.preventDefault();
+                last.focus();
+            } else if (!e.shiftKey && activeEl === last) {
+                e.preventDefault();
+                first.focus();
+            }
+        }
+    });
+
+    // ---- URL state hooks (script above reads these) ----
+    window.asd3dIsActive = function () { return active; };
+    window.asd3dApplyMode = function (on) {
+        if (on && !active) {
+            open3D();
+        } else if (!on && active) {
+            close3D();
+        } else if (active && graph) {
+            syncTagBar();
+            syncLabelButtons();
+            refreshLabels();
+            refreshGraphData(false);
+        }
+    };
+
+    // honor ?mode=3d on initial load (the first applyUrlState ran before these hooks existed)
+    try {
+        if (new URLSearchParams(window.location.search).get('mode') === '3d') {
+            open3D();
+        }
+    } catch (e) {}
+})();
 </script>
 </body>
 </html>`;
