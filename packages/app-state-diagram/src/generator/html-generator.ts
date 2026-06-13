@@ -1072,6 +1072,7 @@ window.loadText = async function(text) {
     var fitDone = false;
     var tagBarBuilt = false;
     var particlesEnabled = false;
+    var autoRotate = false; // gentle ambient orbit on entry, until the user acts
 
     hudEl.innerHTML = 'Drag: rotate \\u00b7 Right-drag: pan \\u00b7 Scroll: zoom<br>' +
         'Click node: focus \\u00b7 Right-click node: show in table \\u00b7 Esc: back to 2D';
@@ -1327,34 +1328,48 @@ window.loadText = async function(text) {
         });
 
         var measure = makeCanvas(1, 1).getContext('2d');
-        var MARGIN = 22, COL_GAP = 16, MARKER_W = 22, MAX_TEXT = 240, rowH = 32;
+        var MARGIN = 22, COL_GAP = 16, MARKER_W = 22, MAX_TEXT = 230, rowH = 32;
+        var btnH = 34, btnGapY = 8;
+        var cellLabel = function (cell) { return cell.more ? ('+ ' + cell.more + ' more') : cell.label; };
 
-        // --- property grid (column-major, ~12 rows max per column) ---
-        var propCols = Math.max(1, Math.min(4, Math.ceil(props.length / 12)));
-        var propRowsPer = props.length ? Math.ceil(props.length / propCols) : 0;
+        // Lay items column-major into a grid bounded by maxRows (height) and
+        // maxCols (width). Overflow collapses into a trailing "+N more" cell;
+        // the complete list is always in the info panel and the 2D table.
+        function gridCells(items, maxRows, maxCols) {
+            var cap = maxRows * maxCols;
+            if (items.length <= cap) {
+                return { cells: items.slice(), cols: Math.max(1, Math.ceil(items.length / maxRows)) };
+            }
+            var shown = items.slice(0, cap - 1);
+            shown.push({ more: items.length - (cap - 1) });
+            return { cells: shown, cols: maxCols };
+        }
+
+        var pg = gridCells(props, 8, 3);
+        var propCells = pg.cells, propCols = pg.cols;
+        var propRowsPer = propCells.length ? Math.ceil(propCells.length / propCols) : 0;
         measure.font = rowFont;
         var propColW = [];
         for (var ci = 0; ci < propCols; ci++) {
             var wmax = 60;
             for (var ri = 0; ri < propRowsPer; ri++) {
                 var idx = ci * propRowsPer + ri;
-                if (idx < props.length) wmax = Math.max(wmax, measure.measureText(props[idx].label).width);
+                if (idx < propCells.length) wmax = Math.max(wmax, measure.measureText(cellLabel(propCells[idx])).width);
             }
             propColW[ci] = Math.min(wmax, MAX_TEXT) + MARKER_W;
         }
         var propsGridW = propColW.reduce(function (a, b) { return a + b; }, 0) + COL_GAP * (propCols - 1);
 
-        // --- button grid (column-major, ~9 rows max per column) ---
-        var btnH = 38, btnGapY = 9;
-        var btnCols = actions.length ? Math.max(1, Math.min(3, Math.ceil(actions.length / 9))) : 0;
-        var btnRowsPer = actions.length ? Math.ceil(actions.length / btnCols) : 0;
+        var bg = gridCells(actions, 6, 2);
+        var btnCells = bg.cells, btnCols = actions.length ? bg.cols : 0;
+        var btnRowsPer = btnCells.length ? Math.ceil(btnCells.length / btnCols) : 0;
         measure.font = btnFont;
         var btnColW = [];
         for (var cj = 0; cj < btnCols; cj++) {
             var bmax = 130;
             for (var rj = 0; rj < btnRowsPer; rj++) {
                 var bidx = cj * btnRowsPer + rj;
-                if (bidx < actions.length) bmax = Math.max(bmax, measure.measureText(actions[bidx].label).width + 28);
+                if (bidx < btnCells.length) bmax = Math.max(bmax, measure.measureText(cellLabel(btnCells[bidx])).width + 28);
             }
             btnColW[cj] = Math.min(bmax, 300);
         }
@@ -1364,10 +1379,10 @@ window.loadText = async function(text) {
         var headerW = measure.measureText(head).width;
         if (sub) { measure.font = subFont; headerW = Math.max(headerW, measure.measureText(sub).width); }
 
-        var w = Math.ceil(Math.min(Math.max(Math.max(headerW, propsGridW, btnsGridW) + MARGIN * 2, 240), 880));
+        var w = Math.ceil(Math.min(Math.max(Math.max(headerW, propsGridW, btnsGridW) + MARGIN * 2, 240), 760));
         var headerH = 52 + (sub ? 28 : 0);
-        var propsH = props.length ? propRowsPer * rowH : rowH;
-        var btnsH = actions.length ? (16 + btnRowsPer * (btnH + btnGapY)) : 0;
+        var propsH = propCells.length ? propRowsPer * rowH : rowH;
+        var btnsH = btnCells.length ? (16 + btnRowsPer * (btnH + btnGapY)) : 0;
         var h = headerH + 12 + propsH + btnsH + 16;
 
         var c = makeCanvas(w, h);
@@ -1405,13 +1420,19 @@ window.loadText = async function(text) {
             for (var cc = 0; cc < propCols; cc++) {
                 for (var rr = 0; rr < propRowsPer; rr++) {
                     var pidx = cc * propRowsPer + rr;
-                    if (pidx >= props.length) break;
+                    if (pidx >= propCells.length) break;
+                    var pcell = propCells[pidx];
                     var py = y + rr * rowH;
-                    ctx.fillStyle = '#6f87c0';
-                    ctx.fillRect(colX, py + rowH / 2 - 5, 10, 10);
-                    ctx.fillStyle = '#22304f';
-                    ctx.fillText(fitText(ctx, props[pidx].label, propColW[cc] - MARKER_W), colX + MARKER_W, py + rowH / 2 + 1);
-                    propRects.push({ x: colX, y: py, w: propColW[cc], h: rowH, id: props[pidx].id, title: props[pidx].title });
+                    if (pcell.more) {
+                        ctx.fillStyle = '#7d8db1';
+                        ctx.fillText('+ ' + pcell.more + ' more', colX, py + rowH / 2 + 1);
+                    } else {
+                        ctx.fillStyle = '#6f87c0';
+                        ctx.fillRect(colX, py + rowH / 2 - 5, 10, 10);
+                        ctx.fillStyle = '#22304f';
+                        ctx.fillText(fitText(ctx, pcell.label, propColW[cc] - MARKER_W), colX + MARKER_W, py + rowH / 2 + 1);
+                        propRects.push({ x: colX, y: py, w: propColW[cc], h: rowH, id: pcell.id, title: pcell.title });
+                    }
                 }
                 colX += propColW[cc] + COL_GAP;
             }
@@ -1419,7 +1440,7 @@ window.loadText = async function(text) {
         y += propsH;
 
         var buttons = [];
-        if (actions.length) {
+        if (btnCells.length) {
             y += 8;
             ctx.strokeStyle = 'rgba(90,130,220,0.25)';
             ctx.lineWidth = 1.5;
@@ -1430,19 +1451,24 @@ window.loadText = async function(text) {
             for (var bc = 0; bc < btnCols; bc++) {
                 for (var br = 0; br < btnRowsPer; br++) {
                     var aidx = bc * btnRowsPer + br;
-                    if (aidx >= actions.length) break;
-                    var a = actions[aidx];
+                    if (aidx >= btnCells.length) break;
+                    var a = btnCells[aidx];
                     var by = y + br * (btnH + btnGapY);
                     var bw = btnColW[bc];
-                    roundRectPath(ctx, bColX, by, bw, btnH, 9);
-                    ctx.fillStyle = 'rgba(255,255,255,0.9)';
-                    ctx.fill();
-                    ctx.strokeStyle = a.color;
-                    ctx.lineWidth = 2.5;
-                    ctx.stroke();
-                    ctx.fillStyle = '#1c2a4a';
-                    ctx.fillText(fitText(ctx, a.label, bw - 24), bColX + 13, by + btnH / 2 + 1);
-                    buttons.push({ x: bColX, y: by, w: bw, h: btnH, targetId: a.targetId, transId: a.transId, color: a.color, title: a.transTitle });
+                    if (a.more) {
+                        ctx.fillStyle = '#7d8db1';
+                        ctx.fillText('+ ' + a.more + ' more', bColX + 4, by + btnH / 2 + 1);
+                    } else {
+                        roundRectPath(ctx, bColX, by, bw, btnH, 9);
+                        ctx.fillStyle = 'rgba(255,255,255,0.9)';
+                        ctx.fill();
+                        ctx.strokeStyle = a.color;
+                        ctx.lineWidth = 2.5;
+                        ctx.stroke();
+                        ctx.fillStyle = '#1c2a4a';
+                        ctx.fillText(fitText(ctx, a.label, bw - 24), bColX + 13, by + btnH / 2 + 1);
+                        buttons.push({ x: bColX, y: by, w: bw, h: btnH, targetId: a.targetId, transId: a.transId, color: a.color, title: a.transTitle });
+                    }
                 }
                 bColX += btnColW[bc] + COL_GAP;
             }
@@ -1611,6 +1637,18 @@ window.loadText = async function(text) {
         lastLodTime = now;
         if (camTween) {
             applyCamTween(camTween.dur > 0 ? Math.min(1, (now - camTween.start) / camTween.dur) : 1);
+        } else if (autoRotate && !selectedNodeId) {
+            // slow ambient orbit around the graph centre (the controls target)
+            var ctr = graph.controls();
+            var cp = graph.camera().position;
+            if (ctr && ctr.target) {
+                var ox = cp.x - ctr.target.x, oz = cp.z - ctr.target.z;
+                var ang = dt * 0.09;
+                var csA = Math.cos(ang), snA = Math.sin(ang);
+                cp.x = ctr.target.x + ox * csA - oz * snA;
+                cp.z = ctr.target.z + ox * snA + oz * csA;
+                ctr.update();
+            }
         }
         try { checkParticleArrivals(); } catch (e) {}
         var cam = graph.camera().position;
@@ -1853,6 +1891,7 @@ window.loadText = async function(text) {
 
     function selectNode(node, fromNode) {
         selectedNodeId = node.id;
+        autoRotate = false; // focusing a node ends the ambient orbit
         pinNode(node); // hold it still so the camera lands with the card centered
         ensureCard(node);
         infoTitle.textContent = node.id + (node.title && node.title !== node.id ? ' \\u2014 ' + node.title : '');
@@ -2008,19 +2047,21 @@ window.loadText = async function(text) {
         canvasEl.addEventListener('pointerdown', function (e) {
             pressedAt = { x: e.clientX, y: e.clientY };
             camTween = null; // user is taking control of the camera
+            autoRotate = false;
             hideCardTip();
         }, true);
+        canvasEl.addEventListener('wheel', function () { autoRotate = false; }, { passive: true, capture: true });
         canvasEl.addEventListener('pointerup', function (e) {
             if (!active || !pressedAt) return;
             var moved = Math.abs(e.clientX - pressedAt.x) + Math.abs(e.clientY - pressedAt.y);
             pressedAt = null;
             if (moved > 6) return; // movement => it was an orbit/pan drag, not a click
             var hit = pickCardButton(e.clientX, e.clientY);
-            if (hit) {
-                e.stopPropagation();
-                e.preventDefault();
-                triggerTransition(hit);
-            }
+            // NOTE: do NOT stopPropagation here. TrackballControls listens for the
+            // pointerup to end its drag; swallowing it left the controls stuck in
+            // "dragging" so later moves/scrolls rotated/zoomed without a click.
+            // onNodeClick/onBackgroundClick guard against this same click instead.
+            if (hit) triggerTransition(hit);
         }, true);
         // hover: cursor affordance for buttons + a tooltip showing the title of
         // whatever property/transition is under the pointer. Coalesced to one
@@ -2102,6 +2143,13 @@ window.loadText = async function(text) {
                 }
             }
             graph.zoomToFit(reducedMotion ? 0 : 700, 60);
+            // once the whole graph is framed, drift into a slow ambient orbit
+            // (stops as soon as the user grabs/zooms or focuses a node)
+            if (!reducedMotion) {
+                window.setTimeout(function () {
+                    if (active && !selectedNodeId && !camTween) autoRotate = true;
+                }, 850);
+            }
         } catch (e) {}
     }
 
@@ -2117,7 +2165,8 @@ window.loadText = async function(text) {
             .nodeThreeObject(makeNodeObject)
             .nodeLabel(nodeTooltip)
             .linkColor(function (l) { return l.color; })
-            .linkOpacity(0.35)
+            .linkOpacity(0.3)
+            .linkWidth(0.55) // a little body + translucency reads better than hairlines
             .linkCurvature(function (l) { return l.curvature; })
             .linkCurveRotation(function (l) { return l.rotation; })
             .linkDirectionalArrowLength(2.8)
@@ -2133,7 +2182,10 @@ window.loadText = async function(text) {
                 selectNode(n);
             })
             .onNodeRightClick(function (node) { exitToTable(node.id); })
-            .onBackgroundClick(clearSelection)
+            .onBackgroundClick(function (ev) {
+                if (ev && pickCardButton(ev.clientX, ev.clientY)) return; // a card button got it
+                clearSelection();
+            })
             .onEngineStop(function () {
                 if (fitDone) return;
                 fitDone = true;
@@ -2146,6 +2198,16 @@ window.loadText = async function(text) {
         }
         window.asd3dGraph = graph; // debug / power-user handle
         setupCardButtonEvents();
+        try {
+            // clamp zoom so a stray gesture can't fly the camera into a node and
+            // blow a card up to fill the screen; tame the (sensitive) zoom speed
+            var ctrls = graph.controls();
+            if (ctrls) {
+                ctrls.minDistance = 45;
+                ctrls.maxDistance = 3000;
+                ctrls.zoomSpeed = 0.7;
+            }
+        } catch (e) {}
         try {
             graph.d3Force('link').distance(90);
             graph.d3Force('charge').strength(-300);
@@ -2290,6 +2352,7 @@ window.loadText = async function(text) {
     function close3D() {
         if (!active) return;
         active = false;
+        autoRotate = false;
         stopLod();
         if (graph && graph.pauseAnimation) graph.pauseAnimation();
         try {
