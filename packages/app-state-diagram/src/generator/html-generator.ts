@@ -1085,6 +1085,7 @@ window.loadText = async function(text) {
     var particlesEnabled = false;
     var lastInteractAt = 0;    // for the always-on idle orbit: pause while the user acts
     function noteInteract() { lastInteractAt = performance.now(); }
+    var cardPulseAt = 0;       // self-loop feedback: a quick card bounce when an action returns to the same state
 
     hudEl.innerHTML = 'Drag: rotate \\u00b7 Right-drag: pan \\u00b7 Scroll: zoom<br>' +
         'Click node: focus \\u00b7 Right-click node: show in table \\u00b7 Esc: back to 2D';
@@ -1708,14 +1709,15 @@ window.loadText = async function(text) {
         if (camTween) {
             applyCamTween(camTween.dur > 0 ? Math.min(1, (now - camTween.start) / camTween.dur) : 1);
         } else if (!reducedMotion && !cardOpenId && (now - lastInteractAt) > 1400) {
-            // always-on gentle drift: orbit the current look-at point for a
-            // floating feel. With a node focused this circles that node so you can
-            // study its form from every angle; paused while a card is open (reading).
+            // always-on gentle drift: orbit the look-at point (the focused node,
+            // if any) for a floating feel; paused while a card is open (reading)
+            // and right after the user acts. The NaN guard above self-heals if a
+            // controls update ever degenerates the camera.
             var ctr = graph.controls();
             var cp = graph.camera().position;
             if (ctr && ctr.target) {
                 var ox = cp.x - ctr.target.x, oz = cp.z - ctr.target.z;
-                if (ox * ox + oz * oz > 1) { // skip the degenerate (overhead) case
+                if (ox * ox + oz * oz > 1) {
                     var ang = dt * 0.08;
                     var csA = Math.cos(ang), snA = Math.sin(ang);
                     cp.x = ctr.target.x + ox * csA - oz * snA;
@@ -1762,6 +1764,13 @@ window.loadText = async function(text) {
                     // bud unfurl: ease scale 0.9 -> 1.0 as the card opens
                     var unf = s.cardShownAt ? Math.min(1, (now - s.cardShownAt) / 280) : 1;
                     var k = 0.9 + 0.1 * easeInOut(unf);
+                    // self-loop feedback: a single smooth bounce so an action that
+                    // returns to this same state still visibly reacts to the click
+                    if (cardPulseAt) {
+                        var pt = now - cardPulseAt;
+                        if (pt >= 0 && pt < 540) k *= 1 + 0.14 * Math.sin(pt / 540 * Math.PI);
+                        else cardPulseAt = 0;
+                    }
                     s.card.scale.set(s.cardBaseScale.x * k, s.cardBaseScale.y * k, 1);
                 }
                 // evict a closed card's texture after a grace period
@@ -1966,12 +1975,6 @@ window.loadText = async function(text) {
         flyToNode(node, fromNode);
     }
 
-    // toggle the detail card for the already-focused node (second click)
-    function toggleCard(node) {
-        cardOpenId = (cardOpenId === node.id) ? '' : node.id;
-        noteInteract();
-    }
-
     function clearSelection() {
         selectedNodeId = '';
         cardOpenId = '';
@@ -2028,6 +2031,7 @@ window.loadText = async function(text) {
     var raycaster = null;
     var pointerNdc = null;
     var pressedAt = null;
+    var cardClickAt = 0; // when a card button last fired, to swallow the trailing node/bg click
 
     function hitRect(px, py, r) {
         return px >= r.x && px <= r.x + r.w && py >= r.y && py <= r.y + r.h;
@@ -2055,8 +2059,10 @@ window.loadText = async function(text) {
         );
         raycaster.setFromCamera(pointerNdc, graph.camera());
         var hits = raycaster.intersectObjects(cards, false);
+        var onCard = false;
         for (var h = 0; h < hits.length; h++) {
             if (!hits[h].uv) continue;
+            onCard = true; // the pointer is over a card (even if not on an item)
             var node = hits[h].object.__asd3dNode;
             var s = node.__asd3d;
             if (!s || !s.cardSize) continue;
@@ -2074,7 +2080,9 @@ window.loadText = async function(text) {
                 }
             }
         }
-        return null;
+        // over a card but not on a button/prop (header, padding, gaps): still a
+        // card hit, so the caller can swallow the click and keep the card open
+        return onCard ? { type: 'card' } : null;
     }
 
     function pickCardButton(cx, cy) {
@@ -2112,12 +2120,26 @@ window.loadText = async function(text) {
         var target = nodeById[btn.targetId];
         if (!target) return;
         var from = nodeById[selectedNodeId];
-        selectNode(target, from);
+        var wasCardMode = !!cardOpenId; // were we navigating with a card open?
+        // self-loop: the action returns to the SAME state, so the camera won't
+        // move and the destination glow would land behind the open card. Give an
+        // unmistakable in-place reaction instead: bounce the card and glow now.
+        var selfLoop = target.id === selectedNodeId;
+        if (selfLoop) {
+            cardPulseAt = performance.now();
+            window.setTimeout(function () { glowNode(target, btn.color); }, reducedMotion ? 30 : 90);
+            return; // stay put — no fly, keep the card exactly where it is
+        }
+        selectNode(target, from);       // selectNode resets cardOpenId to ''
+        // continuity: if we moved from an open card, land with the card open too
+        if (wasCardMode) cardOpenId = target.id;
         // glow the destination as the flight lands
         window.setTimeout(function () { glowNode(target, btn.color); }, reducedMotion ? 50 : FLY_DUR);
     }
 
     var hoverPending = false;
+
+    var pressedOnCard = false;
 
     function setupCardButtonEvents() {
         raycaster = new THREE.Raycaster();
@@ -2127,19 +2149,30 @@ window.loadText = async function(text) {
             camTween = null; // user is taking control of the camera
             noteInteract(); // pause the idle orbit while the user acts
             hideCardTip();
+            // If the press starts on a card, OWN the whole gesture: stop it
+            // reaching the controls / force-graph so the card click can never be
+            // turned into a node-click (which re-selected) or background-click
+            // (which cleared) — those made the card revert or just vanish.
+            pressedOnCard = !!pickCardItem(e.clientX, e.clientY, true);
+            if (pressedOnCard) e.stopPropagation();
         }, true);
         canvasEl.addEventListener('wheel', noteInteract, { passive: true, capture: true });
         canvasEl.addEventListener('pointerup', function (e) {
             if (!active || !pressedAt) return;
             var moved = Math.abs(e.clientX - pressedAt.x) + Math.abs(e.clientY - pressedAt.y);
-            pressedAt = null;
-            if (moved > 6) return; // movement => it was an orbit/pan drag, not a click
-            var hit = pickCardButton(e.clientX, e.clientY);
-            // NOTE: do NOT stopPropagation here. TrackballControls listens for the
-            // pointerup to end its drag; swallowing it left the controls stuck in
-            // "dragging" so later moves/scrolls rotated/zoomed without a click.
-            // onNodeClick/onBackgroundClick guard against this same click instead.
-            if (hit) triggerTransition(hit);
+            var wasCard = pressedOnCard;
+            pressedAt = null; pressedOnCard = false;
+            if (!wasCard) return; // a node/background gesture — let force-graph handle it
+            e.stopPropagation();
+            cardClickAt = Date.now();
+            if (moved > 6) return; // it was a drag over the card, not a click
+            var picked = pickCardItem(e.clientX, e.clientY, true);
+            if (picked && picked.type === 'button') triggerTransition(picked.item);
+            // a click on the card body does nothing (the card stays open)
+        }, true);
+        // block the trailing 'click' of a card gesture from reaching force-graph
+        canvasEl.addEventListener('click', function (e) {
+            if (Date.now() - cardClickAt < 350) e.stopPropagation();
         }, true);
         // hover: cursor affordance for buttons + a tooltip showing the title of
         // whatever property/transition is under the pointer. Coalesced to one
@@ -2155,7 +2188,8 @@ window.loadText = async function(text) {
                 if (!active) return;
                 var hit = pickCardItem(cx, cy, true);
                 canvasEl.style.cursor = (hit && hit.type === 'button') ? 'pointer' : '';
-                if (hit) showCardTip(cx, cy, hit); else hideCardTip();
+                if (hit && (hit.type === 'button' || hit.type === 'prop')) showCardTip(cx, cy, hit);
+                else hideCardTip();
             });
         }, true);
         canvasEl.addEventListener('pointerleave', hideCardTip, true);
@@ -2229,8 +2263,8 @@ window.loadText = async function(text) {
 
     function initGraph() {
         if (graph) return;
-        // trackball controls: the library's animated camera transitions
-        // (zoomToFit, fly-to-node) are only reliable with this control type
+        // trackball controls: our custom arc fly (applyCamTween) drives the camera
+        // position directly each frame, which integrates cleanly with trackball
         graph = ForceGraph3D({ controlType: 'trackball' })(canvasEl)
             .backgroundColor(BG_COLOR)
             .showNavInfo(false)
@@ -2254,16 +2288,21 @@ window.loadText = async function(text) {
             .linkDirectionalParticleSpeed(0.005)
             .linkLabel(linkTooltip)
             .onNodeClick(function (n, ev) {
-                // ignore the node-click that rides along with a card-button click,
-                // otherwise it races triggerTransition and can fly to the wrong node
+                // swallow the trailing click of a card-button gesture, which would
+                // otherwise re-select the source node and undo the transition
+                if (Date.now() - cardClickAt < 350) return;
                 if (ev && pickCardButton(ev.clientX, ev.clientY)) return;
                 // first click focuses (card stays closed, form visible);
-                // clicking the already-focused node toggles its detail card
-                if (n.id === selectedNodeId) toggleCard(n);
-                else selectNode(n);
+                // clicking the already-focused node OPENS its card. We never close
+                // on node-click (that made a near-miss on a button drop the card,
+                // and double-fired clicks open-then-close it) — close via the
+                // info-panel x, the background, or by focusing another node.
+                if (n.id !== selectedNodeId) selectNode(n);
+                else if (cardOpenId !== n.id) { cardOpenId = n.id; noteInteract(); }
             })
             .onNodeRightClick(function (node) { exitToTable(node.id); })
             .onBackgroundClick(function (ev) {
+                if (Date.now() - cardClickAt < 350) return; // trailing click of a card-button gesture
                 if (ev && pickCardButton(ev.clientX, ev.clientY)) return; // a card button got it
                 clearSelection();
             })
