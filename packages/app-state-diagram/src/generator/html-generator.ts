@@ -1075,14 +1075,16 @@ window.loadText = async function(text) {
     var active = false;
     var libsPromise = null;
     var lodTimer = null;
-    var selectedNodeId = '';
+    var selectedNodeId = '';   // the focused node (camera flew to it, info panel shows it)
+    var cardOpenId = '';       // the node whose detail card is open (explicit click only)
     var currentNodes = [];
     var lastTagKey = null;
     var lastLabelMode = '';
     var fitDone = false;
     var tagBarBuilt = false;
     var particlesEnabled = false;
-    var autoRotate = false; // gentle ambient orbit on entry, until the user acts
+    var lastInteractAt = 0;    // for the always-on idle orbit: pause while the user acts
+    function noteInteract() { lastInteractAt = performance.now(); }
 
     hudEl.innerHTML = 'Drag: rotate \\u00b7 Right-drag: pan \\u00b7 Scroll: zoom<br>' +
         'Click node: focus \\u00b7 Right-click node: show in table \\u00b7 Esc: back to 2D';
@@ -1672,24 +1674,54 @@ window.loadText = async function(text) {
     // Cards: the nearest few nodes cross-fade from chip into a property card.
     var lastLodTime = 0;
 
+    function graphCentroid() {
+        var cx = 0, cy = 0, cz = 0, k = 0;
+        currentNodes.forEach(function (n) {
+            if (typeof n.x === 'number') { cx += n.x; cy += n.y; cz += n.z; k++; }
+        });
+        k = k || 1;
+        return { x: cx / k, y: cy / k, z: cz / k };
+    }
+
+    function recoverCamera() {
+        // self-heal if the camera position ever goes non-finite (a degenerate
+        // controls update can NaN it, which blanks the whole view)
+        var c = graphCentroid();
+        var cam = graph.camera();
+        var ctr = graph.controls();
+        cam.position.set(c.x, c.y + 20, c.z + 160);
+        if (ctr && ctr.target) { ctr.target.set(c.x, c.y, c.z); ctr.update(); }
+        camTween = null;
+        noteInteract();
+    }
+
     function updateLod() {
         if (!active || !graph) return;
         var now = performance.now();
         var dt = lastLodTime ? Math.min(0.1, (now - lastLodTime) / 1000) : 0.016;
         lastLodTime = now;
+        var camPos0 = graph.camera().position;
+        if (!isFinite(camPos0.x) || !isFinite(camPos0.y) || !isFinite(camPos0.z)) {
+            recoverCamera();
+            return;
+        }
         if (camTween) {
             applyCamTween(camTween.dur > 0 ? Math.min(1, (now - camTween.start) / camTween.dur) : 1);
-        } else if (autoRotate && !selectedNodeId) {
-            // slow ambient orbit around the graph centre (the controls target)
+        } else if (!reducedMotion && !cardOpenId && (now - lastInteractAt) > 1400) {
+            // always-on gentle drift: orbit the current look-at point for a
+            // floating feel. With a node focused this circles that node so you can
+            // study its form from every angle; paused while a card is open (reading).
             var ctr = graph.controls();
             var cp = graph.camera().position;
             if (ctr && ctr.target) {
                 var ox = cp.x - ctr.target.x, oz = cp.z - ctr.target.z;
-                var ang = dt * 0.09;
-                var csA = Math.cos(ang), snA = Math.sin(ang);
-                cp.x = ctr.target.x + ox * csA - oz * snA;
-                cp.z = ctr.target.z + ox * snA + oz * csA;
-                ctr.update();
+                if (ox * ox + oz * oz > 1) { // skip the degenerate (overhead) case
+                    var ang = dt * 0.08;
+                    var csA = Math.cos(ang), snA = Math.sin(ang);
+                    cp.x = ctr.target.x + ox * csA - oz * snA;
+                    cp.z = ctr.target.z + ox * snA + oz * csA;
+                    ctr.update();
+                }
             }
         }
         try { checkParticleArrivals(); } catch (e) {}
@@ -1699,7 +1731,6 @@ window.loadText = async function(text) {
         var fog = graph.scene().fog;
         var aerialNear = fog ? fog.near * 0.6 : 300;
         var aerialFar = fog ? fog.far * 0.9 : 1500;
-        var near = [];
         currentNodes.forEach(function (node) {
             var s = node.__asd3d;
             if (!s || typeof node.x !== 'number') return;
@@ -1714,57 +1745,41 @@ window.loadText = async function(text) {
             // aerial perspective: labels fade toward the background with distance
             var aerial = 1 - (dist - aerialNear) / Math.max(1, aerialFar - aerialNear);
             node.__asd3dDim = Math.max(0.22, Math.min(1, aerial * 1.15));
-            node.__asd3dDist = dist;
-            var t = (CARD_NEAR + CARD_FADE - dist) / CARD_FADE;
-            node.__asd3dT = Math.max(0, Math.min(1, t));
-            if (node.__asd3dT > 0 && node.id !== selectedNodeId) near.push(node);
         });
-        // keep cards to the nearest MAX_OPEN_CARDS so dense clusters stay readable
-        near.sort(function (a, b) { return b.__asd3dT - a.__asd3dT; });
-        near.slice(MAX_OPEN_CARDS).forEach(function (node) { node.__asd3dT = 0; });
+        // cards open ONLY on an explicit click (cardOpenId), so focusing a node
+        // shows its botanical form rather than instantly hiding it behind a card
         currentNodes.forEach(function (node) {
             var s = node.__asd3d;
             if (!s) return;
-            var t = node.__asd3dT || 0;
-            if (node.id === selectedNodeId) {
-                // the selected card opens earlier and lingers longer (so a fly-to
-                // lands on an open card), but still fades when the camera leaves —
-                // never a tiny minified rectangle floating across the whole map
-                var dSel = node.__asd3dDist || 0;
-                var tSel = (CARD_NEAR * 2.5 + CARD_FADE - dSel) / CARD_FADE;
-                t = Math.max(t, Math.min(1, tSel));
-            }
-            if (t > 0) ensureCard(node);
+            var open = (node.id === cardOpenId);
+            if (open) ensureCard(node);
             if (s.card) {
-                var vis = t > 0.03;
-                if (vis && !s.cardVisPrev) s.cardShownAt = now; // just unfurled
-                s.cardVisPrev = vis;
-                s.card.material.opacity = t;
-                s.card.visible = vis;
-                // bud unfurl: ease scale 0.9 -> 1.0 as the card opens
-                if (s.cardBaseScale) {
+                if (open && !s.cardVisPrev) s.cardShownAt = now; // just unfurled
+                s.cardVisPrev = open;
+                s.card.material.opacity = open ? 1 : 0;
+                s.card.visible = open;
+                if (open && s.cardBaseScale) {
+                    // bud unfurl: ease scale 0.9 -> 1.0 as the card opens
                     var unf = s.cardShownAt ? Math.min(1, (now - s.cardShownAt) / 280) : 1;
                     var k = 0.9 + 0.1 * easeInOut(unf);
                     s.card.scale.set(s.cardBaseScale.x * k, s.cardBaseScale.y * k, 1);
                 }
-                // evict the card texture once the node has been out of range for
-                // a short grace period, so resident GPU textures stay bounded to
-                // the nearby set instead of every node the camera ever passed
-                if (t <= 0 && node.id !== selectedNodeId) {
+                // evict a closed card's texture after a grace period
+                if (!open) {
                     s.cardIdle = (s.cardIdle || 0) + 1;
                     if (s.cardIdle > 90) dropCard(s);
                 } else {
                     s.cardIdle = 0;
                 }
             }
-            s.chip.material.opacity = (1 - t) * (node.__asd3dDim || 1);
-            s.chip.visible = t < 0.97;
+            s.chip.material.opacity = open ? 0 : (node.__asd3dDim || 1);
+            s.chip.visible = !open;
             if (s.halo) {
                 if (s.haloStrength > 0) {
                     s.haloStrength = Math.max(0, s.haloStrength - dt * 2.2); // quick, light tap
                     // a soft pulse sized to the card (not enveloping past it), so
                     // it reads as a gentle absorption rather than a hard impact
-                    var base = (t > 0.5 && s.cardSize)
+                    var base = (open && s.cardSize)
                         ? Math.max(s.cardSize.w, s.cardSize.h) / SPRITE_SCALE * 0.72
                         : CHIP_WORLD_H * 2.8;
                     var sc = base * (0.92 + 0.14 * s.haloStrength);
@@ -1937,22 +1952,29 @@ window.loadText = async function(text) {
         } else {
             cam.lookAt(tx, ty, tz);
         }
-        if (u >= 1) camTween = null;
+        if (u >= 1) { camTween = null; noteInteract(); } // settle before the idle orbit resumes
     }
 
     function selectNode(node, fromNode) {
         selectedNodeId = node.id;
-        autoRotate = false; // focusing a node ends the ambient orbit
-        pinNode(node); // hold it still so the camera lands with the card centered
-        ensureCard(node);
+        cardOpenId = '';   // focus shows the node's form; the card opens on a second click
+        noteInteract();
+        pinNode(node); // hold it still so the camera lands centered
         infoTitle.textContent = node.id + (node.title && node.title !== node.id ? ' \\u2014 ' + node.title : '');
         populateInfoActions(node);
         infoPanel.classList.add('show');
         flyToNode(node, fromNode);
     }
 
+    // toggle the detail card for the already-focused node (second click)
+    function toggleCard(node) {
+        cardOpenId = (cardOpenId === node.id) ? '' : node.id;
+        noteInteract();
+    }
+
     function clearSelection() {
         selectedNodeId = '';
+        cardOpenId = '';
         unpinNode();
         infoPanel.classList.remove('show');
         infoActions.textContent = '';
@@ -2103,10 +2125,10 @@ window.loadText = async function(text) {
         canvasEl.addEventListener('pointerdown', function (e) {
             pressedAt = { x: e.clientX, y: e.clientY };
             camTween = null; // user is taking control of the camera
-            autoRotate = false;
+            noteInteract(); // pause the idle orbit while the user acts
             hideCardTip();
         }, true);
-        canvasEl.addEventListener('wheel', function () { autoRotate = false; }, { passive: true, capture: true });
+        canvasEl.addEventListener('wheel', noteInteract, { passive: true, capture: true });
         canvasEl.addEventListener('pointerup', function (e) {
             if (!active || !pressedAt) return;
             var moved = Math.abs(e.clientX - pressedAt.x) + Math.abs(e.clientY - pressedAt.y);
@@ -2123,7 +2145,9 @@ window.loadText = async function(text) {
         // whatever property/transition is under the pointer. Coalesced to one
         // rAF per move burst so high-frequency events don't each pay a raycast.
         canvasEl.addEventListener('pointermove', function (e) {
-            if (!active || !graph || e.buttons || hoverPending) return;
+            if (!active || !graph) return;
+            if (e.buttons) { noteInteract(); return; } // dragging: keep the orbit paused
+            if (hoverPending) return;
             hoverPending = true;
             var cx = e.clientX, cy = e.clientY;
             window.requestAnimationFrame(function () {
@@ -2199,13 +2223,7 @@ window.loadText = async function(text) {
                 }
             }
             graph.zoomToFit(reducedMotion ? 0 : 700, 60);
-            // once the whole graph is framed, drift into a slow ambient orbit
-            // (stops as soon as the user grabs/zooms or focuses a node)
-            if (!reducedMotion) {
-                window.setTimeout(function () {
-                    if (active && !selectedNodeId && !camTween) autoRotate = true;
-                }, 850);
-            }
+            noteInteract(); // let the fit settle before the idle orbit drifts in
         } catch (e) {}
     }
 
@@ -2239,7 +2257,10 @@ window.loadText = async function(text) {
                 // ignore the node-click that rides along with a card-button click,
                 // otherwise it races triggerTransition and can fly to the wrong node
                 if (ev && pickCardButton(ev.clientX, ev.clientY)) return;
-                selectNode(n);
+                // first click focuses (card stays closed, form visible);
+                // clicking the already-focused node toggles its detail card
+                if (n.id === selectedNodeId) toggleCard(n);
+                else selectNode(n);
             })
             .onNodeRightClick(function (node) { exitToTable(node.id); })
             .onBackgroundClick(function (ev) {
@@ -2266,6 +2287,7 @@ window.loadText = async function(text) {
                 ctrls.minDistance = 45;
                 ctrls.maxDistance = 3000;
                 ctrls.zoomSpeed = 0.7;
+                ctrls.staticMoving = true; // no inertia drift; predictable with the idle orbit
             }
         } catch (e) {}
         try {
@@ -2387,6 +2409,7 @@ window.loadText = async function(text) {
         overlay.classList.add('active');
         document.body.style.overflow = 'hidden';
         setBackgroundInert(true);
+        noteInteract(); // don't orbit until the scene has settled after entry
         publishUrlState();
         showStatus('Loading 3D engine\\u2026', true);
         ensureLibs().then(function () {
@@ -2412,7 +2435,6 @@ window.loadText = async function(text) {
     function close3D() {
         if (!active) return;
         active = false;
-        autoRotate = false;
         stopLod();
         if (graph && graph.pauseAnimation) graph.pauseAnimation();
         try {
