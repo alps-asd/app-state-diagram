@@ -199,6 +199,9 @@ td a:hover{text-decoration:underline;}
 .asd3d-spacer{flex:1;}
 .asd3d-btn:focus-visible,.asd3d-action:focus-visible,.asd3d-mode button:focus-visible,.asd3d-tag:focus-within{outline:2px solid #7aa2ff;outline-offset:2px;}
 .asd3d-inert{pointer-events:none;}
+.asd3d-tip{position:fixed;z-index:5;display:none;max-width:320px;padding:6px 10px;border-radius:8px;background:rgba(13,20,42,0.96);border:1px solid rgba(122,162,255,0.5);color:#eef3ff;font-size:13px;line-height:1.35;pointer-events:none;box-shadow:0 4px 14px rgba(0,0,0,0.4);}
+.asd3d-tip b{font-weight:700;}
+.asd3d-tip .asd3d-tip-sub{display:block;margin-top:2px;color:#9fb0d0;font-size:11.5px;}
 </style>
 <script>
 // ALPS relationship data for parent-child highlighting
@@ -384,6 +387,7 @@ ${linksHtml}
         </div>
         <div class="asd3d-info-actions" id="asd3d-info-actions" role="group" aria-label="Transitions from this state"></div>
     </div>
+    <div class="asd3d-tip" id="asd3d-tip"></div>
     <div class="asd3d-status" id="asd3d-status" hidden>
         <div class="asd3d-spinner" id="asd3d-spinner"></div>
         <div id="asd3d-status-text">Loading 3D engine&#8230;</div>
@@ -1052,6 +1056,7 @@ window.loadText = async function(text) {
     var infoActions = document.getElementById('asd3d-info-actions');
     var btnLabelId = document.getElementById('asd3d-label-id');
     var btnLabelTitle = document.getElementById('asd3d-label-title');
+    var cardTip = document.getElementById('asd3d-tip');
     var mainContent = document.querySelector('.markdown-body');
     if (!overlay || !canvasEl || !openBtn || !exitBtn) return;
 
@@ -1244,6 +1249,8 @@ window.loadText = async function(text) {
                     color: l.color,
                     targetId: l.target
                 };
+            }).sort(function (a, b) {
+                return a.transId.localeCompare(b.transId); // alphabetical, consistent everywhere
             });
         });
         return { nodes: nodes, links: links };
@@ -1291,52 +1298,78 @@ window.loadText = async function(text) {
         return c;
     }
 
+    function fitText(ctx, text, maxW) {
+        if (ctx.measureText(text).width <= maxW) return text;
+        var t = text;
+        while (t.length > 1 && ctx.measureText(t + '\\u2026').width > maxW) t = t.slice(0, -1);
+        return t + '\\u2026';
+    }
+
+    // Renders a state card: header, ALL properties in a multi-column grid, and
+    // ALL outgoing transitions as color-coded buttons in a grid. Returns hit
+    // rects (with titles) for properties and buttons so hover can show the title
+    // and clicks can fire the transition.
     function drawCardCanvas(node) {
         var headFont = '700 28px ' + FONT_STACK;
         var subFont = '400 21px ' + FONT_STACK;
         var rowFont = '400 22px ' + FONT_STACK;
-        var btnFont = '600 22px ' + FONT_STACK;
+        var btnFont = '600 21px ' + FONT_STACK;
+        var titleMode = labelModeIs('title');
         var head = getNodeLabel(node);
-        var sub = '';
-        if (node.title && node.title !== node.id) {
-            sub = labelModeIs('title') ? node.id : node.title;
-        }
-        var maxRows = 8;
-        var rows = node.props.map(function (prop) {
-            return labelModeIs('title') ? (prop.title || prop.id) : prop.id;
+        var sub = (node.title && node.title !== node.id) ? (titleMode ? node.id : node.title) : '';
+
+        var props = node.props.map(function (p) {
+            return { id: p.id, title: p.title || '', label: titleMode ? (p.title || p.id) : p.id };
         });
-        var more = 0;
-        if (rows.length > maxRows) {
-            more = rows.length - maxRows;
-            rows = rows.slice(0, maxRows);
+        var actions = (node.actions || []).map(function (a) {
+            return { transId: a.transId, transTitle: a.transTitle, transType: a.transType, color: a.color,
+                targetId: a.targetId, label: '\\u25B8 ' + (titleMode ? (a.transTitle || a.transId) : a.transId) };
+        });
+
+        var measure = makeCanvas(1, 1).getContext('2d');
+        var MARGIN = 22, COL_GAP = 16, MARKER_W = 22, MAX_TEXT = 240, rowH = 32;
+
+        // --- property grid (column-major, ~12 rows max per column) ---
+        var propCols = Math.max(1, Math.min(4, Math.ceil(props.length / 12)));
+        var propRowsPer = props.length ? Math.ceil(props.length / propCols) : 0;
+        measure.font = rowFont;
+        var propColW = [];
+        for (var ci = 0; ci < propCols; ci++) {
+            var wmax = 60;
+            for (var ri = 0; ri < propRowsPer; ri++) {
+                var idx = ci * propRowsPer + ri;
+                if (idx < props.length) wmax = Math.max(wmax, measure.measureText(props[idx].label).width);
+            }
+            propColW[ci] = Math.min(wmax, MAX_TEXT) + MARKER_W;
         }
-        var actions = node.actions || [];
-        var btns = actions.slice(0, 6);
-        var moreBtns = actions.length - btns.length;
-        var btnH = 40;
-        var btnGap = 10;
-        var actionLabel = function (a) {
-            return '\\u25B8 ' + (labelModeIs('title') ? (a.transTitle || a.transId) : a.transId);
-        };
-        var m = makeCanvas(1, 1).getContext('2d');
-        m.font = headFont;
-        var w = m.measureText(head).width;
-        if (sub) {
-            m.font = subFont;
-            w = Math.max(w, m.measureText(sub).width);
+        var propsGridW = propColW.reduce(function (a, b) { return a + b; }, 0) + COL_GAP * (propCols - 1);
+
+        // --- button grid (column-major, ~9 rows max per column) ---
+        var btnH = 38, btnGapY = 9;
+        var btnCols = actions.length ? Math.max(1, Math.min(3, Math.ceil(actions.length / 9))) : 0;
+        var btnRowsPer = actions.length ? Math.ceil(actions.length / btnCols) : 0;
+        measure.font = btnFont;
+        var btnColW = [];
+        for (var cj = 0; cj < btnCols; cj++) {
+            var bmax = 130;
+            for (var rj = 0; rj < btnRowsPer; rj++) {
+                var bidx = cj * btnRowsPer + rj;
+                if (bidx < actions.length) bmax = Math.max(bmax, measure.measureText(actions[bidx].label).width + 28);
+            }
+            btnColW[cj] = Math.min(bmax, 300);
         }
-        m.font = rowFont;
-        rows.forEach(function (r) { w = Math.max(w, m.measureText(r).width + 26); });
-        if (more) w = Math.max(w, 120);
-        m.font = btnFont;
-        btns.forEach(function (a) { w = Math.max(w, m.measureText(actionLabel(a)).width + 62); });
-        w = Math.ceil(Math.min(Math.max(w + 48, 220), 460));
-        var headerH = 56 + (sub ? 30 : 0);
-        var rowH = 34;
-        var bodyRows = rows.length + (more ? 1 : 0);
-        var emptyH = node.props.length === 0 ? rowH : 0;
-        var actionsH = btns.length ? (18 + btns.length * (btnH + btnGap) + (moreBtns > 0 ? 26 : 0)) : 0;
-        var h = headerH + 14 + bodyRows * rowH + emptyH + actionsH + 18;
+        var btnsGridW = actions.length ? (btnColW.reduce(function (a, b) { return a + b; }, 0) + COL_GAP * (btnCols - 1)) : 0;
+
+        measure.font = headFont;
+        var headerW = measure.measureText(head).width;
+        if (sub) { measure.font = subFont; headerW = Math.max(headerW, measure.measureText(sub).width); }
+
+        var w = Math.ceil(Math.min(Math.max(Math.max(headerW, propsGridW, btnsGridW) + MARGIN * 2, 240), 880));
+        var headerH = 52 + (sub ? 28 : 0);
+        var propsH = props.length ? propRowsPer * rowH : rowH;
+        var btnsH = actions.length ? (16 + btnRowsPer * (btnH + btnGapY)) : 0;
+        var h = headerH + 12 + propsH + btnsH + 16;
+
         var c = makeCanvas(w, h);
         var ctx = c.getContext('2d');
         roundRectPath(ctx, 2, 2, w - 4, h - 4, 16);
@@ -1349,72 +1382,72 @@ window.loadText = async function(text) {
         ctx.font = headFont;
         ctx.textAlign = 'left';
         ctx.textBaseline = 'middle';
-        ctx.fillText(head, 24, 34, w - 48);
+        ctx.fillText(head, MARGIN, 32, w - MARGIN * 2);
         if (sub) {
             ctx.fillStyle = '#5d6f94';
             ctx.font = subFont;
-            ctx.fillText(sub, 24, 64, w - 48);
+            ctx.fillText(sub, MARGIN, 60, w - MARGIN * 2);
         }
+
         var y = headerH;
         ctx.strokeStyle = 'rgba(90,130,220,0.25)';
         ctx.lineWidth = 1.5;
-        ctx.beginPath();
-        ctx.moveTo(18, y);
-        ctx.lineTo(w - 18, y);
-        ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(16, y); ctx.lineTo(w - 16, y); ctx.stroke();
         y += 10;
+
+        var propRects = [];
         ctx.font = rowFont;
-        if (node.props.length === 0) {
+        if (props.length === 0) {
             ctx.fillStyle = '#93a1bd';
-            ctx.fillText('(no properties)', 24, y + rowH / 2);
-            y += emptyH;
+            ctx.fillText('(no properties)', MARGIN, y + rowH / 2);
+        } else {
+            var colX = MARGIN;
+            for (var cc = 0; cc < propCols; cc++) {
+                for (var rr = 0; rr < propRowsPer; rr++) {
+                    var pidx = cc * propRowsPer + rr;
+                    if (pidx >= props.length) break;
+                    var py = y + rr * rowH;
+                    ctx.fillStyle = '#6f87c0';
+                    ctx.fillRect(colX, py + rowH / 2 - 5, 10, 10);
+                    ctx.fillStyle = '#22304f';
+                    ctx.fillText(fitText(ctx, props[pidx].label, propColW[cc] - MARKER_W), colX + MARKER_W, py + rowH / 2 + 1);
+                    propRects.push({ x: colX, y: py, w: propColW[cc], h: rowH, id: props[pidx].id, title: props[pidx].title });
+                }
+                colX += propColW[cc] + COL_GAP;
+            }
         }
-        rows.forEach(function (text) {
-            ctx.fillStyle = '#6f87c0';
-            ctx.fillRect(24, y + rowH / 2 - 5, 10, 10);
-            ctx.fillStyle = '#22304f';
-            ctx.fillText(text, 44, y + rowH / 2 + 1, w - 68);
-            y += rowH;
-        });
-        if (more) {
-            ctx.fillStyle = '#7d8db1';
-            ctx.fillText('+ ' + more + ' more', 44, y + rowH / 2);
-            y += rowH;
-        }
-        // action buttons: clickable transitions out of this state, border-colored
-        // by type (safe green / unsafe red / idempotent gold)
+        y += propsH;
+
         var buttons = [];
-        if (btns.length) {
+        if (actions.length) {
             y += 8;
             ctx.strokeStyle = 'rgba(90,130,220,0.25)';
             ctx.lineWidth = 1.5;
-            ctx.beginPath();
-            ctx.moveTo(18, y);
-            ctx.lineTo(w - 18, y);
-            ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(16, y); ctx.lineTo(w - 16, y); ctx.stroke();
             y += 10;
             ctx.font = btnFont;
-            btns.forEach(function (a) {
-                var bx = 20;
-                var bw = w - 40;
-                roundRectPath(ctx, bx, y, bw, btnH, 9);
-                ctx.fillStyle = 'rgba(255,255,255,0.88)';
-                ctx.fill();
-                ctx.strokeStyle = a.color;
-                ctx.lineWidth = 2.5;
-                ctx.stroke();
-                ctx.fillStyle = '#1c2a4a';
-                ctx.fillText(actionLabel(a), bx + 14, y + btnH / 2 + 1, bw - 28);
-                buttons.push({ x: bx, y: y, w: bw, h: btnH, targetId: a.targetId, transId: a.transId, color: a.color });
-                y += btnH + btnGap;
-            });
-            if (moreBtns > 0) {
-                ctx.fillStyle = '#7d8db1';
-                ctx.font = rowFont;
-                ctx.fillText('+ ' + moreBtns + ' more transitions', 24, y + 12);
+            var bColX = MARGIN;
+            for (var bc = 0; bc < btnCols; bc++) {
+                for (var br = 0; br < btnRowsPer; br++) {
+                    var aidx = bc * btnRowsPer + br;
+                    if (aidx >= actions.length) break;
+                    var a = actions[aidx];
+                    var by = y + br * (btnH + btnGapY);
+                    var bw = btnColW[bc];
+                    roundRectPath(ctx, bColX, by, bw, btnH, 9);
+                    ctx.fillStyle = 'rgba(255,255,255,0.9)';
+                    ctx.fill();
+                    ctx.strokeStyle = a.color;
+                    ctx.lineWidth = 2.5;
+                    ctx.stroke();
+                    ctx.fillStyle = '#1c2a4a';
+                    ctx.fillText(fitText(ctx, a.label, bw - 24), bColX + 13, by + btnH / 2 + 1);
+                    buttons.push({ x: bColX, y: by, w: bw, h: btnH, targetId: a.targetId, transId: a.transId, color: a.color, title: a.transTitle });
+                }
+                bColX += btnColW[bc] + COL_GAP;
             }
         }
-        return { canvas: c, buttons: buttons };
+        return { canvas: c, buttons: buttons, props: propRects };
     }
 
     function makeTexture(canvas) {
@@ -1487,6 +1520,7 @@ window.loadText = async function(text) {
         s.group.add(card);
         s.card = card;
         s.cardButtons = drawn.buttons;
+        s.cardProps = drawn.props;
         s.cardSize = { w: drawn.canvas.width, h: drawn.canvas.height };
     }
 
@@ -1496,6 +1530,7 @@ window.loadText = async function(text) {
         disposeSprite(s.card);
         s.card = null;
         s.cardButtons = null;
+        s.cardProps = null;
         s.cardSize = null;
     }
 
@@ -1877,17 +1912,21 @@ window.loadText = async function(text) {
     var pointerNdc = null;
     var pressedAt = null;
 
-    function pickCardButton(cx, cy) {
+    function hitRect(px, py, r) {
+        return px >= r.x && px <= r.x + r.w && py >= r.y && py <= r.y + r.h;
+    }
+
+    // Raycast the pointer into the visible cards and return the property or
+    // button under it. Walks hits nearest-first so a transparent gap on a front
+    // card doesn't swallow an item on the card behind it.
+    function pickCardItem(cx, cy, includeProps) {
         if (!raycaster || !graph) return null;
         var rect = canvasEl.getBoundingClientRect();
         if (!rect.width || !rect.height) return null;
         var cards = [];
         currentNodes.forEach(function (node) {
             var s = node.__asd3d;
-            // any card the user can see (visibility gate, not the old 0.6 gate)
-            // is clickable, so faded cards don't show dead buttons
-            if (s && s.card && s.card.visible && s.card.material.opacity > 0.1 &&
-                s.cardButtons && s.cardButtons.length) {
+            if (s && s.card && s.card.visible && s.card.material.opacity > 0.1 && s.cardSize) {
                 s.card.__asd3dNode = node;
                 cards.push(s.card);
             }
@@ -1899,8 +1938,6 @@ window.loadText = async function(text) {
         );
         raycaster.setFromCamera(pointerNdc, graph.camera());
         var hits = raycaster.intersectObjects(cards, false);
-        // walk hits nearest-first; a transparent gap on a front card must not
-        // swallow a button on the card behind it
         for (var h = 0; h < hits.length; h++) {
             if (!hits[h].uv) continue;
             var node = hits[h].object.__asd3dNode;
@@ -1908,12 +1945,50 @@ window.loadText = async function(text) {
             if (!s || !s.cardSize) continue;
             var px = hits[h].uv.x * s.cardSize.w;
             var py = (1 - hits[h].uv.y) * s.cardSize.h;
-            for (var i = 0; i < s.cardButtons.length; i++) {
-                var b = s.cardButtons[i];
-                if (px >= b.x && px <= b.x + b.w && py >= b.y && py <= b.y + b.h) return b;
+            var i;
+            if (s.cardButtons) {
+                for (i = 0; i < s.cardButtons.length; i++) {
+                    if (hitRect(px, py, s.cardButtons[i])) return { type: 'button', item: s.cardButtons[i], node: node };
+                }
+            }
+            if (includeProps && s.cardProps) {
+                for (i = 0; i < s.cardProps.length; i++) {
+                    if (hitRect(px, py, s.cardProps[i])) return { type: 'prop', item: s.cardProps[i], node: node };
+                }
             }
         }
         return null;
+    }
+
+    function pickCardButton(cx, cy) {
+        var r = pickCardItem(cx, cy, false);
+        return (r && r.type === 'button') ? r.item : null;
+    }
+
+    function showCardTip(cx, cy, hit) {
+        if (!cardTip) return;
+        var it = hit.item;
+        var title, idLine;
+        if (hit.type === 'prop') {
+            title = it.title || it.id;
+            idLine = (it.title && it.title !== it.id) ? it.id : '';
+        } else {
+            title = it.title || it.transId;
+            idLine = (it.title && it.title !== it.transId) ? it.transId : '';
+            idLine = (idLine ? idLine + ' ' : '') + '\\u2192 ' + it.targetId;
+        }
+        cardTip.innerHTML = '<b>' + escapeHtmlLabel(title) + '</b>' +
+            (idLine ? '<span class="asd3d-tip-sub">' + escapeHtmlLabel(idLine) + '</span>' : '');
+        cardTip.style.display = 'block';
+        var tw = cardTip.offsetWidth, th = cardTip.offsetHeight;
+        var x = Math.min(cx + 16, window.innerWidth - tw - 8);
+        var y = Math.min(cy + 16, window.innerHeight - th - 8);
+        cardTip.style.left = x + 'px';
+        cardTip.style.top = y + 'px';
+    }
+
+    function hideCardTip() {
+        if (cardTip) cardTip.style.display = 'none';
     }
 
     function triggerTransition(btn) {
@@ -1933,6 +2008,7 @@ window.loadText = async function(text) {
         canvasEl.addEventListener('pointerdown', function (e) {
             pressedAt = { x: e.clientX, y: e.clientY };
             camTween = null; // user is taking control of the camera
+            hideCardTip();
         }, true);
         canvasEl.addEventListener('pointerup', function (e) {
             if (!active || !pressedAt) return;
@@ -1946,17 +2022,22 @@ window.loadText = async function(text) {
                 triggerTransition(hit);
             }
         }, true);
-        // cursor affordance: coalesce hit-testing to one rAF per move burst so
-        // high-frequency pointermove events don't each pay for a raycast
+        // hover: cursor affordance for buttons + a tooltip showing the title of
+        // whatever property/transition is under the pointer. Coalesced to one
+        // rAF per move burst so high-frequency events don't each pay a raycast.
         canvasEl.addEventListener('pointermove', function (e) {
             if (!active || !graph || e.buttons || hoverPending) return;
             hoverPending = true;
             var cx = e.clientX, cy = e.clientY;
             window.requestAnimationFrame(function () {
                 hoverPending = false;
-                if (active) canvasEl.style.cursor = pickCardButton(cx, cy) ? 'pointer' : '';
+                if (!active) return;
+                var hit = pickCardItem(cx, cy, true);
+                canvasEl.style.cursor = (hit && hit.type === 'button') ? 'pointer' : '';
+                if (hit) showCardTip(cx, cy, hit); else hideCardTip();
             });
         }, true);
+        canvasEl.addEventListener('pointerleave', hideCardTip, true);
     }
 
     function refreshGraphData(force) {
@@ -2217,6 +2298,7 @@ window.loadText = async function(text) {
         overlay.classList.remove('active');
         document.body.style.overflow = '';
         setBackgroundInert(false);
+        hideCardTip();
         publishUrlState();
         openBtn.focus();
     }
