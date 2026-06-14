@@ -581,12 +581,27 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
         ctx.font = headFont;
         ctx.textAlign = 'left';
         ctx.textBaseline = 'middle';
-        ctx.fillText(head, MARGIN, 32, w - MARGIN * 2);
+        ctx.fillText(head, MARGIN, 32, w - MARGIN * 2 - 34); // leave room for the close button
         if (sub) {
             ctx.fillStyle = '#5d6f94';
             ctx.font = subFont;
             ctx.fillText(sub, MARGIN, 60, w - MARGIN * 2);
         }
+        // close (x) button, top-right
+        var closeRect = { x: w - 42, y: 8, w: 34, h: 34 };
+        var ccx = closeRect.x + closeRect.w / 2, ccy = closeRect.y + closeRect.h / 2;
+        ctx.beginPath();
+        ctx.arc(ccx, ccy, 14, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(90,120,180,0.14)';
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(60,85,130,0.85)';
+        ctx.lineWidth = 2.4;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(ccx - 6, ccy - 6); ctx.lineTo(ccx + 6, ccy + 6);
+        ctx.moveTo(ccx + 6, ccy - 6); ctx.lineTo(ccx - 6, ccy + 6);
+        ctx.stroke();
+        ctx.lineCap = 'butt';
 
         var y = headerH;
         ctx.strokeStyle = 'rgba(90,130,220,0.25)';
@@ -657,7 +672,7 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
                 bColX += btnColW[bc] + COL_GAP;
             }
         }
-        return { canvas: c, buttons: buttons, props: propRects };
+        return { canvas: c, buttons: buttons, props: propRects, close: closeRect };
     }
 
     function makeTexture(canvas) {
@@ -810,6 +825,7 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
         s.card = card;
         s.cardButtons = drawn.buttons;
         s.cardProps = drawn.props;
+        s.cardClose = drawn.close;
         s.cardSize = { w: drawn.canvas.width, h: drawn.canvas.height };
         s.cardBaseScale = { x: card.scale.x, y: card.scale.y };
         s.cardShownAt = 0;
@@ -823,6 +839,7 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
         s.card = null;
         s.cardButtons = null;
         s.cardProps = null;
+        s.cardClose = null;
         s.cardSize = null;
     }
 
@@ -1503,6 +1520,7 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
             var px = hits[h].uv.x * s.cardSize.w;
             var py = (1 - hits[h].uv.y) * s.cardSize.h;
             var i;
+            if (s.cardClose && hitRect(px, py, s.cardClose)) return { type: 'close', node: node };
             if (s.cardButtons) {
                 for (i = 0; i < s.cardButtons.length; i++) {
                     if (hitRect(px, py, s.cardButtons[i])) return { type: 'button', item: s.cardButtons[i], node: node };
@@ -1603,6 +1621,7 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
             if (moved > 6) return; // it was a drag over the card, not a click
             var picked = pickCardItem(e.clientX, e.clientY, true);
             if (picked && picked.type === 'button') triggerTransition(picked.item);
+            else if (picked && picked.type === 'close') { cardOpenId = ''; noteInteract(); } // x button
             // a click on the card body does nothing (the card stays open)
         }, true);
         // block the trailing 'click' of a card gesture from reaching force-graph
@@ -1622,7 +1641,7 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
                 hoverPending = false;
                 if (!active) return;
                 var hit = pickCardItem(cx, cy, true);
-                canvasEl.style.cursor = (hit && hit.type === 'button') ? 'pointer' : '';
+                canvasEl.style.cursor = (hit && (hit.type === 'button' || hit.type === 'close')) ? 'pointer' : '';
                 if (hit && (hit.type === 'button' || hit.type === 'prop')) showCardTip(cx, cy, hit);
                 else hideCardTip();
             });
