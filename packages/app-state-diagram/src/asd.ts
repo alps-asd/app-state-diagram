@@ -43,6 +43,7 @@ program
   .option('-f, --format <format>', 'Output format (html|svg|dot|mermaid)')
   .option('-o, --output <file>', 'Output file (default: <input>.html)')
   .option('--label <mode>', 'Label mode: id or title')
+  .option('--theme <name>', '3D browse-mode theme: botanical (default) or cosmos')
   .option('--validate', 'Validate ALPS profile')
   .option('-w, --watch', 'Watch mode with live reload (requires Chrome with --remote-debugging-port=9222)')
   .option('--port <port>', 'CDP port for watch mode (default: 9222)', '9222')
@@ -152,7 +153,7 @@ Options:
       } else {
         // HTML: output standalone documentation
         const svgContent = await dotToSvg(dotContent);
-        output = generateHtml(document, svgContent, content);
+        output = generateHtml(document, svgContent, content, options.theme);
         outputExt = '.html';
       }
 

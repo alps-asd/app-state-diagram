@@ -35,7 +35,8 @@ function escapeJsonForScript(obj: unknown): string {
 export function generateHtml(
   alpsData: AlpsDocument,
   svgContent: string,
-  originalContent: string
+  originalContent: string,
+  theme = 'botanical'
 ): string {
   // Create relationship data for highlighting
   const relationships = buildRelationshipMap(alpsData);
@@ -71,6 +72,9 @@ export function generateHtml(
   const alpsDoc = typeof alpsDocRaw === 'object' ? (alpsDocRaw as { value?: string })?.value || '' : alpsDocRaw || '';
   const safeAlpsTitle = escapeHtml(alpsTitle);
   const safeAlpsDoc = escapeHtml(alpsDoc);
+
+  // 3D scene theme set, chosen at build time; whitelist so it is safe to inject.
+  const themeName = theme === 'cosmos' ? 'cosmos' : 'botanical';
 
   return `<!DOCTYPE html>
 <html>
@@ -946,6 +950,7 @@ window.loadText = async function(text) {
     }
 };
 </script>
+<script>window.ASD3D_THEME = ${JSON.stringify(themeName)};</script>
 <script>
 ${asd3dScript}
 </script>

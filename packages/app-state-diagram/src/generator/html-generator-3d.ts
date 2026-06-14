@@ -117,15 +117,45 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
     // way the renderer and our sprite code share a single three instance.
     var THREE_SRC = 'https://unpkg.com/three@0.180.0/build/three.module.js';
     var FG3D_SRC = 'https://unpkg.com/3d-force-graph@1.80.0/dist/3d-force-graph.min.js';
-    var BG_COLOR = '#0a120d'; // forest-black: near-black with a drop of green, not pure #000
+    // ---- Theme sets -------------------------------------------------------
+    // All of the 3D scene design lives here so the whole look can be swapped.
+    // The active set is chosen at build time via window.ASD3D_THEME (injected by
+    // the generator from the --theme CLI flag); unknown names fall back to
+    // botanical. Each theme declares its palette (background, per-type transition
+    // tip/root colours, hub-glow colour), the glow shape ('halo' soft disc vs
+    // 'star' diffraction flare), cone material, fog, and a background starfield
+    // count. botanical = a living garden; cosmos = deep space.
+    var THEMES = {
+        botanical: {
+            bg: '#0a120d', // forest-black: near-black with a drop of green
+            fog: { near: 400, far: 1600 },
+            tip:  { safe: '#74e29c', idempotent: '#b8923a', unsafe: '#9a3340', other: '#8fae9d' },
+            root: { safe: '#173f2e', idempotent: '#5c4a22', unsafe: '#4a1f25', other: '#2a3d33' },
+            bloomColor: '#3fa66a', glow: 'halo',
+            cone: { opacity: 0.8, emissive: 0.4, gradLo: 0.32 },
+            starfield: 0
+        },
+        cosmos: {
+            bg: '#05060f', // deep space
+            fog: { near: 600, far: 2600 },
+            tip:  { safe: '#76e7ff', idempotent: '#c7a4ff', unsafe: '#ff6f91', other: '#aab6d6' },
+            root: { safe: '#103246', idempotent: '#271c4a', unsafe: '#3a1130', other: '#1a2440' },
+            bloomColor: '#aaccff', glow: 'star',
+            cone: { opacity: 0.62, emissive: 0.9, gradLo: 0.2 },
+            starfield: 800
+        }
+    };
+    var THEME_NAME = (typeof window !== 'undefined' && window.ASD3D_THEME) || 'botanical';
+    var theme = THEMES[THEME_NAME] || THEMES.botanical;
+    var BG_COLOR = theme.bg;
 
-    // Garden palette for 3D (the 2D SVG keeps its own colours via getTransitionColor).
-    // Each transition reads as a stem: a dark root colour and a brighter shoot tip,
-    // semantics preserved (safe=green, idempotent=vine ochre, unsafe=garden red).
-    var GARDEN_TIP = { safe: '#74e29c', idempotent: '#b8923a', unsafe: '#9a3340' };
-    var GARDEN_ROOT = { safe: '#173f2e', idempotent: '#5c4a22', unsafe: '#4a1f25' };
-    function gardenTip(type) { return GARDEN_TIP[type] || '#8fae9d'; }
-    function gardenRoot(type) { return GARDEN_ROOT[type] || '#2a3d33'; }
+    // Per-transition palette (the 2D SVG keeps its own colours via getTransitionColor).
+    // Each transition reads as a tapered shape: a dark root colour and a brighter tip,
+    // semantics preserved (safe / idempotent / unsafe).
+    var GARDEN_TIP = theme.tip;
+    var GARDEN_ROOT = theme.root;
+    function gardenTip(type) { return GARDEN_TIP[type] || GARDEN_TIP.other; }
+    function gardenRoot(type) { return GARDEN_ROOT[type] || GARDEN_ROOT.other; }
     var SPRITE_SCALE = 16;  // canvas px per world unit
     var CARD_NEAR = 60;     // camera distance where the property card is fully visible
     var CARD_FADE = 35;     // fade range beyond CARD_NEAR
@@ -670,10 +700,10 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
         var bloomBase = 0, bloomOpacity = 0;
         if (sizeF > 0.04 || btDeg > 0.04) {
             var bmat = new THREE.SpriteMaterial({
-                map: getHaloTexture(), transparent: true, depthWrite: false,
+                map: getGlowTexture(), transparent: true, depthWrite: false,
                 depthTest: false, blending: THREE.AdditiveBlending
             });
-            bmat.color.set('#3fa66a');
+            bmat.color.set(theme.bloomColor);
             bloomOpacity = 0.1 + Math.max(btDeg, btRich * 0.7) * 0.38;
             bmat.opacity = bloomOpacity;
             bloom = new THREE.Sprite(bmat);
@@ -749,6 +779,36 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
         haloTexture = makeTexture(c);
         return haloTexture;
     }
+
+    var starTexture = null;
+    function getStarTexture() {
+        if (starTexture) return starTexture;
+        var c = makeCanvas(128, 128);
+        var ctx = c.getContext('2d');
+        // soft round core
+        var core = ctx.createRadialGradient(64, 64, 0, 64, 64, 44);
+        core.addColorStop(0.0, 'rgba(255,255,255,0.95)');
+        core.addColorStop(0.25, 'rgba(255,255,255,0.5)');
+        core.addColorStop(1.0, 'rgba(255,255,255,0)');
+        ctx.fillStyle = core;
+        ctx.fillRect(0, 0, 128, 128);
+        // 4-point diffraction flare (a crossed pair of fading bars)
+        ctx.globalCompositeOperation = 'lighter';
+        var hg = ctx.createLinearGradient(2, 64, 126, 64);
+        hg.addColorStop(0, 'rgba(255,255,255,0)');
+        hg.addColorStop(0.5, 'rgba(255,255,255,0.85)');
+        hg.addColorStop(1, 'rgba(255,255,255,0)');
+        ctx.fillStyle = hg; ctx.fillRect(2, 62.5, 124, 3);
+        var vg = ctx.createLinearGradient(64, 2, 64, 126);
+        vg.addColorStop(0, 'rgba(255,255,255,0)');
+        vg.addColorStop(0.5, 'rgba(255,255,255,0.85)');
+        vg.addColorStop(1, 'rgba(255,255,255,0)');
+        ctx.fillStyle = vg; ctx.fillRect(62.5, 2, 3, 124);
+        starTexture = makeTexture(c);
+        return starTexture;
+    }
+    // the hub glow shape is theme-driven: a soft disc (botanical) or a star flare (cosmos)
+    function getGlowTexture() { return theme.glow === 'star' ? getStarTexture() : getHaloTexture(); }
 
     function glowNode(node, color) {
         var s = node.__asd3d;
@@ -832,7 +892,7 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
         var col = new Float32Array(n * 3);
         for (i = 0; i < n; i++) {
             var t = (pos.getY(i) - ymin) / span;  // 0 = wide base (root), 1 = apex (shoot tip)
-            var b = 0.32 + 0.68 * t;              // dark root -> full-tint tip
+            var b = theme.cone.gradLo + (1 - theme.cone.gradLo) * t; // dark root -> full-tint tip
             col[i * 3] = b; col[i * 3 + 1] = b; col[i * 3 + 2] = b;
         }
         geo.setAttribute('color', new THREE.BufferAttribute(col, 3));
@@ -847,12 +907,12 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
             var m = arrow.material;
             if (!m.__asd3dStyled) {
                 m.transparent = true;
-                m.opacity = 0.8;                              // (1) translucent: layered petals, label shows through
+                m.opacity = theme.cone.opacity;              // (1) translucent: layered petals, label shows through
                 if (!m.emissive) m.emissive = new THREE.Color();
                 m.emissive.set(links[i].color);              // (2) self-glow in the tip colour
                 applyConeGradient(arrow.geometry);           // (3) root->tip gradient
                 m.vertexColors = true;
-                m.__asd3dEmissiveBase = 0.4;
+                m.__asd3dEmissiveBase = theme.cone.emissive;
                 m.__asd3dPhase = (arrowSeq++ * 2.39996) % 6.28318;
                 m.needsUpdate = true;
                 m.__asd3dStyled = true;
@@ -1541,8 +1601,30 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
             graph.d3Force('charge').strength(-300);
         } catch (e) {}
         try {
-            graph.scene().fog = new THREE.Fog(new THREE.Color(BG_COLOR), 400, 1600);
+            graph.scene().fog = new THREE.Fog(new THREE.Color(BG_COLOR), theme.fog.near, theme.fog.far);
+            if (theme.starfield) addStarfield(graph.scene(), theme.starfield);
         } catch (e) {}
+    }
+
+    // deep-space backdrop: a shell of unfogged points around the graph (cosmos only)
+    function addStarfield(scene, count) {
+        var pos = new Float32Array(count * 3);
+        for (var i = 0; i < count; i++) {
+            var u = Math.random() * 2 - 1, t = Math.random() * Math.PI * 2;
+            var r = 1400 + Math.random() * 1500, s = Math.sqrt(1 - u * u);
+            pos[i * 3] = r * s * Math.cos(t);
+            pos[i * 3 + 1] = r * u;
+            pos[i * 3 + 2] = r * s * Math.sin(t);
+        }
+        var geo = new THREE.BufferGeometry();
+        geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+        var mat = new THREE.PointsMaterial({
+            color: 0xeaf0ff, size: 2.6, sizeAttenuation: true,
+            transparent: true, opacity: 0.9, depthWrite: false, fog: false
+        });
+        var stars = new THREE.Points(geo, mat);
+        stars.renderOrder = -1;
+        scene.add(stars);
     }
 
     // ---- tag bar (mirrors the 2D tag checkboxes; selected tags filter the 3D subgraph) ----
