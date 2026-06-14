@@ -85,9 +85,10 @@ export function asd3dOverlay(safeAlpsTitle: string): string {
     <div class="asd3d-stats" id="asd3d-stats"></div>
     <div class="asd3d-settings" id="asd3d-settings" role="group" aria-label="Display settings" hidden>
         <h4>Settings</h4>
-        <label class="asd3d-settings-row"><span>Orb size<b id="asd3d-orb-size-val">1.0&#215;</b></span><input type="range" id="asd3d-orb-size" min="3" max="25" value="10"></label>
-        <label class="asd3d-settings-row"><span>Particle speed<b id="asd3d-speed-particle-val">1.0&#215;</b></span><input type="range" id="asd3d-speed-particle" min="0" max="20" value="5"></label>
-        <label class="asd3d-settings-row"><span>Idle rotation<b id="asd3d-speed-orbit-val">1.0&#215;</b></span><input type="range" id="asd3d-speed-orbit" min="0" max="30" value="8"></label>
+        <label class="asd3d-settings-row"><span>Orb size<b id="asd3d-orb-size-val">2.0&#215;</b></span><input type="range" id="asd3d-orb-size" min="3" max="25" value="20"></label>
+        <label class="asd3d-settings-row"><span>Ball speed<b id="asd3d-ball-speed-val">0.2&#215;</b></span><input type="range" id="asd3d-ball-speed" min="0" max="20" value="2"></label>
+        <label class="asd3d-settings-row"><span>Particle speed<b id="asd3d-speed-particle-val">0.8&#215;</b></span><input type="range" id="asd3d-speed-particle" min="0" max="20" value="4"></label>
+        <label class="asd3d-settings-row"><span>Idle rotation<b id="asd3d-speed-orbit-val">1.1&#215;</b></span><input type="range" id="asd3d-speed-orbit" min="0" max="30" value="9"></label>
         <p class="asd3d-settings-note" id="asd3d-settings-note" hidden></p>
     </div>
     <div class="asd3d-info" id="asd3d-info">
@@ -203,9 +204,11 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
     var speedParticleEl = document.getElementById('asd3d-speed-particle');
     var speedOrbitEl = document.getElementById('asd3d-speed-orbit');
     var orbSizeEl = document.getElementById('asd3d-orb-size');
+    var ballSpeedEl = document.getElementById('asd3d-ball-speed');
     var speedParticleValEl = document.getElementById('asd3d-speed-particle-val');
     var speedOrbitValEl = document.getElementById('asd3d-speed-orbit-val');
     var orbSizeValEl = document.getElementById('asd3d-orb-size-val');
+    var ballSpeedValEl = document.getElementById('asd3d-ball-speed-val');
     var settingsNoteEl = document.getElementById('asd3d-settings-note');
     var mainContent = document.querySelector('.markdown-body');
     if (!overlay || !canvasEl || !openBtn || !exitBtn) return;
@@ -226,9 +229,10 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
     var lastInteractAt = 0;    // for the always-on idle orbit: pause while the user acts
     function noteInteract() { lastInteractAt = performance.now(); }
     var cardPulseAt = 0;       // self-loop feedback: a quick card bounce when an action returns to the same state
-    var particleSpeed = 0.005; // photon flight speed, adjustable from the settings flyout
-    var idleOrbitSpeed = 0.08; // idle-drift angular speed (rad/s), adjustable too
-    var orbScale = 1.0;        // global multiplier on the inner "orb" glow size (Orb size slider)
+    var particleSpeed = 0.004; // photon flight speed, adjustable from the settings flyout
+    var idleOrbitSpeed = 0.09; // idle-drift angular speed (rad/s), adjustable too
+    var orbScale = 2.0;        // global multiplier on the inner "orb" glow size (Orb size slider)
+    var grainSpeed = 0.1;      // speed of the descriptor-grain swarm (0 = frozen)
     var bloomSeq = 0;          // per-node counter to desync the bloom breathing phase
     var arrowSeq = 0;          // per-arrow counter to desync the cone shimmer phase
 
@@ -743,12 +747,42 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
             body.scale.set(BOX_SIZE, BOX_SIZE, BOX_SIZE); // uniform
             group.add(body);
         }
+        // descriptor grains: one small translucent grey sphere per contained
+        // descriptor, scattered inside the box -- the literal, countable "contents"
+        var grains = null, grainPos = null, grainVel = null, grainScl = null;
+        var pc = node.props ? node.props.length : 0;
+        if (pc > 0) {
+            grains = new THREE.InstancedMesh(getGrainGeo(), getGrainMat(), pc);
+            grains.renderOrder = 8; // over the additive orb (7) so the grey grains stay countable
+            grainPos = new Float32Array(pc * 3); // local positions, animated each frame
+            grainVel = new Float32Array(pc * 3); // velocities (centre-seeking guidance)
+            grainScl = new Float32Array(pc);
+            var gm = new THREE.Matrix4(), gspread = BOX_SIZE * 0.32, j;
+            for (var gi = 0; gi < pc; gi++) {
+                j = gi * 3;
+                grainScl[gi] = (0.7 + Math.random() * 0.5) * 1.4; // small grain (+40% radius)
+                grainPos[j] = (Math.random() * 2 - 1) * gspread;
+                grainPos[j + 1] = (Math.random() * 2 - 1) * gspread;
+                grainPos[j + 2] = (Math.random() * 2 - 1) * gspread;
+                grainVel[j] = (Math.random() * 2 - 1) * 0.4;
+                grainVel[j + 1] = (Math.random() * 2 - 1) * 0.4;
+                grainVel[j + 2] = (Math.random() * 2 - 1) * 0.4;
+                gm.makeScale(grainScl[gi], grainScl[gi], grainScl[gi]);
+                gm.setPosition(grainPos[j], grainPos[j + 1], grainPos[j + 2]);
+                grains.setMatrixAt(gi, gm);
+                grains.setColorAt(gi, grainColor(node.props[gi].id)); // colourful per descriptor
+            }
+            grains.instanceMatrix.needsUpdate = true;
+            if (grains.instanceColor) grains.instanceColor.needsUpdate = true;
+            group.add(grains);
+        }
         var chip = canvasSprite(drawChipCanvas(getNodeLabel(node)), true);
         chip.center.set(LABEL_OFF_X, LABEL_OFF_Y); // nameplate: hang the label at the node's bottom-right
         chip.renderOrder = 10;
         group.add(chip);
         node.__asd3d = {
             group: group, chip: chip, card: null, bloom: bloom, body: body,
+            grains: grains, grainPos: grainPos, grainVel: grainVel, grainScl: grainScl,
             // breathing: base scale/opacity + a desynced phase so blooms pulse
             // organically rather than strobing in unison
             bloomBase: bloomBase, bloomOpacity: bloomOpacity,
@@ -847,6 +881,19 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
     var boxGeometry = null, boxEdges = null;
     function getBoxGeometry() { if (!boxGeometry) boxGeometry = new THREE.BoxGeometry(1, 1, 1); return boxGeometry; }
     function getBoxEdges() { if (!boxEdges) boxEdges = new THREE.EdgesGeometry(getBoxGeometry()); return boxEdges; }
+    // shared low-poly sphere + material for the "descriptor grains"; per-instance
+    // colour (instanceColor) tints each grain, so the white base lets the colour show
+    var grainGeo = null, grainMat = null;
+    function getGrainGeo() { if (!grainGeo) grainGeo = new THREE.SphereGeometry(1, 6, 5); return grainGeo; }
+    function getGrainMat() { if (!grainMat) grainMat = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.6, depthWrite: false }); return grainMat; }
+    // stable colourful hue per descriptor id (same descriptor -> same colour everywhere)
+    var grainColorTmp = null;
+    function grainColor(id) {
+        if (!grainColorTmp) grainColorTmp = new THREE.Color();
+        var h = 0; for (var k = 0; k < id.length; k++) h = (h * 31 + id.charCodeAt(k)) >>> 0;
+        grainColorTmp.setHSL((h % 360) / 360, 0.62, 0.62);
+        return grainColorTmp;
+    }
     // body/glow tint marks the state's character: a "get-only" state (every outgoing
     // transition is safe/navigation) reads in the safe colour; a state that also has
     // any non-get effect (do = unsafe/idempotent) reads in the unsafe colour.
@@ -944,6 +991,37 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
         geo.setAttribute('color', new THREE.BufferAttribute(col, 3));
         geo.__asd3dGrad = true;
     }
+    // ---- semantic balls: the descriptor grains drift inside their box using the
+    // reference "centre-seeking" guidance -- each grain steers toward the box centre
+    // and keeps its momentum, so the cluster swirls -- softly reflected off the walls.
+    var GRAIN_ACCEL = 0.03, GRAIN_HALF = 0, grainTmp = null;
+    function updateGrains(step) {
+        if (reducedMotion || grainSpeed <= 0) return;
+        if (!grainTmp) grainTmp = new THREE.Matrix4();
+        if (!GRAIN_HALF) GRAIN_HALF = BOX_SIZE * 0.46;
+        var sp = grainSpeed, acc = GRAIN_ACCEL * step, half = GRAIN_HALF;
+        currentNodes.forEach(function (node) {
+            var s = node.__asd3d;
+            if (!s || !s.grains) return;
+            var pos = s.grainPos, vel = s.grainVel, scl = s.grainScl, n = s.grains.count, i, j, x, y, z, d, gr;
+            for (i = 0; i < n; i++) {
+                j = i * 3; x = pos[j]; y = pos[j + 1]; z = pos[j + 2];
+                d = Math.sqrt(x * x + y * y + z * z) || 1;   // unit direction toward the box centre
+                vel[j] -= (x / d) * acc; vel[j + 1] -= (y / d) * acc; vel[j + 2] -= (z / d) * acc;
+                x += vel[j] * sp * step; y += vel[j + 1] * sp * step; z += vel[j + 2] * sp * step;
+                if (x > half) { x = half; vel[j] *= -0.6; } else if (x < -half) { x = -half; vel[j] *= -0.6; }
+                if (y > half) { y = half; vel[j + 1] *= -0.6; } else if (y < -half) { y = -half; vel[j + 1] *= -0.6; }
+                if (z > half) { z = half; vel[j + 2] *= -0.6; } else if (z < -half) { z = -half; vel[j + 2] *= -0.6; }
+                pos[j] = x; pos[j + 1] = y; pos[j + 2] = z;
+                gr = scl[i];
+                grainTmp.makeScale(gr, gr, gr);
+                grainTmp.setPosition(x, y, z);
+                s.grains.setMatrixAt(i, grainTmp);
+            }
+            s.grains.instanceMatrix.needsUpdate = true;
+        });
+    }
+
     function updateArrows(now) {
         if (!graph) return;
         var links = graph.graphData().links;
@@ -1017,6 +1095,7 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
         }
         try { checkParticleArrivals(); } catch (e) {}
         try { updateArrows(now); } catch (e) {}
+        try { updateGrains(Math.min(dt * 60, 3)); } catch (e) {}
         var cam = graph.camera().position;
         var p11 = projectionTerm();
         var vh = window.innerHeight || 900;
@@ -1045,12 +1124,19 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
             if (!s) return;
             var open = (node.id === cardOpenId);
             if (open) ensureCard(node);
+            // smooth cross-fade between the box/label and the card (snappy in, ~1s out)
+            // so a card doesn't pop in/out when focusing or navigating away
+            if (s.cardFade === undefined) s.cardFade = 0;
+            var fadeTarget = open ? 1 : 0;
+            if (reducedMotion) s.cardFade = fadeTarget;
+            else s.cardFade += (fadeTarget - s.cardFade) * Math.min(1, dt * (open ? CARD_FADE_IN : CARD_FADE_OUT));
+            var cf = s.cardFade;
             if (s.card) {
                 if (open && !s.cardVisPrev) s.cardShownAt = now; // just unfurled
                 s.cardVisPrev = open;
-                s.card.material.opacity = open ? 1 : 0;
-                s.card.visible = open;
-                if (open && s.cardBaseScale) {
+                s.card.material.opacity = cf;
+                s.card.visible = cf > 0.02;
+                if (cf > 0.02 && s.cardBaseScale) {
                     // bud unfurl: ease scale 0.9 -> 1.0 as the card opens
                     var unf = s.cardShownAt ? Math.min(1, (now - s.cardShownAt) / 280) : 1;
                     var k = 0.9 + 0.1 * easeInOut(unf);
@@ -1063,24 +1149,22 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
                     }
                     s.card.scale.set(s.cardBaseScale.x * k, s.cardBaseScale.y * k, 1);
                 }
-                // evict a closed card's texture after a grace period
-                if (!open) {
+                // evict a closed card's texture once it has fully faded out
+                if (!open && cf < 0.02) {
                     s.cardIdle = (s.cardIdle || 0) + 1;
-                    if (s.cardIdle > 90) dropCard(s);
+                    if (s.cardIdle > 60) dropCard(s);
                 } else {
                     s.cardIdle = 0;
                 }
             }
-            s.chip.material.opacity = open ? 0 : (node.__asd3dDim || 1);
-            s.chip.visible = !open;
+            s.chip.material.opacity = (1 - cf) * (node.__asd3dDim || 1);
+            s.chip.visible = cf < 0.98;
             if (s.body) {
-                // static glass box: only aerial-dimmed; hidden once the card opens
-                s.body.visible = !open;
-                if (!open) {
-                    var bd = node.__asd3dDim || 1;
-                    if (s.bodyMat) s.bodyMat.opacity = BODY_FACE_OPACITY * bd;
-                    if (s.bodyEdgeMat) s.bodyEdgeMat.opacity = BODY_EDGE_OPACITY * bd;
-                }
+                // box fades back in as the card fades out (and vice versa)
+                s.body.visible = cf < 0.98;
+                var bd = node.__asd3dDim || 1;
+                if (s.bodyMat) s.bodyMat.opacity = BODY_FACE_OPACITY * bd * (1 - cf);
+                if (s.bodyEdgeMat) s.bodyEdgeMat.opacity = BODY_EDGE_OPACITY * bd * (1 - cf);
             }
             if (s.halo) {
                 if (s.haloStrength > 0) {
@@ -1213,6 +1297,7 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
     var FLY_DUR = 1150;
     var FLY_DIST = 140;      // focus: settle far back to show the node AND its neighbourhood spread
     var CARD_READ_DIST = 78; // when a card opens, dive closer so the (world-sized) card stays legible
+    var CARD_FADE_IN = 7, CARD_FADE_OUT = 3; // exp lerp rates: snappy appear, ~1s smooth fade-out
     var camTween = null;
 
     function easeInOut(u) {
@@ -1366,6 +1451,11 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
                 if (s.bodyEdgeMat) s.bodyEdgeMat.dispose();
                 s.body = null; // shared box geometry + edges kept
             }
+            if (s.grains) {
+                s.group.remove(s.grains);
+                s.grains.dispose(); // instance buffers; shared geometry + material kept
+                s.grains = null;
+            }
             node.__asd3d = null;
         });
     }
@@ -1390,7 +1480,8 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
         var cards = [];
         currentNodes.forEach(function (node) {
             var s = node.__asd3d;
-            if (s && s.card && s.card.visible && s.card.material.opacity > 0.1 && s.cardSize) {
+            // only the actively-open card is interactive (not one fading out after a move)
+            if (node.id === cardOpenId && s && s.card && s.card.visible && s.card.material.opacity > 0.1 && s.cardSize) {
                 s.card.__asd3dNode = node;
                 cards.push(s.card);
             }
@@ -1651,7 +1742,7 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
             .linkDirectionalArrowRelPos(1) // tips reach the node (label stays readable via the always-on-top chip)
             .linkDirectionalArrowColor(function (l) { return l.color; })
             .linkDirectionalParticleColor(function (l) { return l.color; })
-            .linkDirectionalParticleWidth(0.7)
+            .linkDirectionalParticleWidth(0.45)
             .linkDirectionalParticleSpeed(particleSpeed)
             .linkLabel(linkTooltip)
             .onNodeClick(function (n, ev) {
@@ -1898,6 +1989,8 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
         setSliderReadout(speedParticleEl, speedParticleValEl, 5);
         setSliderReadout(speedOrbitEl, speedOrbitValEl, 8);
         setSliderReadout(orbSizeEl, orbSizeValEl, 10); // orb size works in any mode
+        if (ballSpeedEl) ballSpeedEl.disabled = reducedMotion; // grains are frozen under reduced motion
+        setSliderReadout(ballSpeedEl, ballSpeedValEl, 9);
         if (settingsNoteEl) {
             var note = reducedMotion ? 'Motion is reduced by your system setting.'
                 : (!particlesEnabled ? 'Particles are off for large graphs.' : '');
@@ -1917,7 +2010,7 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
             // never covers the tag pills / fullscreen button on narrow viewports
             if (topbarEl) settingsEl.style.top = (topbarEl.offsetHeight + 8) + 'px';
             settingsReturnFocus = document.activeElement;
-            var first = [orbSizeEl, speedParticleEl, speedOrbitEl].filter(function (el) { return el && !el.disabled; })[0];
+            var first = [orbSizeEl, ballSpeedEl, speedParticleEl, speedOrbitEl].filter(function (el) { return el && !el.disabled; })[0];
             if (first) first.focus();
         } else if (active && settingsReturnFocus && overlay.contains(settingsReturnFocus)) {
             try { settingsReturnFocus.focus(); } catch (e) {}
@@ -1927,6 +2020,10 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
     if (orbSizeEl) orbSizeEl.addEventListener('input', function () {
         orbScale = (+orbSizeEl.value) / 10; // slider 3..25 -> 0.3x..2.5x (live, no rebuild)
         setSliderReadout(orbSizeEl, orbSizeValEl, 10);
+    });
+    if (ballSpeedEl) ballSpeedEl.addEventListener('input', function () {
+        grainSpeed = (+ballSpeedEl.value) * 0.05; // slider 0..20 -> 0 (frozen) .. 1.0
+        setSliderReadout(ballSpeedEl, ballSpeedValEl, 9);
     });
     if (speedParticleEl) speedParticleEl.addEventListener('input', function () {
         particleSpeed = (+speedParticleEl.value) * 0.001; // slider 0..20 -> 0..0.02
@@ -1969,7 +2066,10 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
         if (e.key === 'Escape') {
             if (document.fullscreenElement) return; // browser exits fullscreen first
             e.preventDefault();
-            close3D();
+            // with a card open, Esc jumps to that descriptor's row in the 2D table;
+            // otherwise it just switches back to 2D
+            if (cardOpenId) exitToTable(cardOpenId);
+            else close3D();
             return;
         }
         if (e.key === 's' || e.key === 'S') {
