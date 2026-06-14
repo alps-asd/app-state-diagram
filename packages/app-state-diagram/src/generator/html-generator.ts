@@ -320,7 +320,7 @@ document.addEventListener('DOMContentLoaded', function() {
     </div>
     <div class="selector-row">
         <span class="selector-label">View:</span>
-        <span class="selector-option"><button type="button" id="asd3d-open" class="asd3d-open-btn" title="Browse the state diagram in 3D space">3D View</button></span>
+        <span class="selector-option"><button type="button" id="asd3d-open" class="asd3d-open-btn" title="Browse the state diagram in 3D space (Esc)">3D View</button></span>
     </div>
 ${tagSelectorHtml ? `    <div class="selector-row">${tagSelectorHtml}
         <span class="selector-option tag-only-option"><input type="checkbox" id="tag-only-mode" class="tag-only-checkbox" disabled><label for="tag-only-mode"> Show selected tags only</label></span>

@@ -83,8 +83,9 @@ export function asd3dOverlay(safeAlpsTitle: string): string {
     </div>
     <div class="asd3d-hud" id="asd3d-hud"></div>
     <div class="asd3d-stats" id="asd3d-stats"></div>
-    <div class="asd3d-settings" id="asd3d-settings" role="group" aria-label="Motion settings" hidden>
-        <h4>Motion</h4>
+    <div class="asd3d-settings" id="asd3d-settings" role="group" aria-label="Display settings" hidden>
+        <h4>Settings</h4>
+        <label class="asd3d-settings-row"><span>Orb size<b id="asd3d-orb-size-val">1.0&#215;</b></span><input type="range" id="asd3d-orb-size" min="3" max="25" value="10"></label>
         <label class="asd3d-settings-row"><span>Particle speed<b id="asd3d-speed-particle-val">1.0&#215;</b></span><input type="range" id="asd3d-speed-particle" min="0" max="20" value="5"></label>
         <label class="asd3d-settings-row"><span>Idle rotation<b id="asd3d-speed-orbit-val">1.0&#215;</b></span><input type="range" id="asd3d-speed-orbit" min="0" max="30" value="8"></label>
         <p class="asd3d-settings-note" id="asd3d-settings-note" hidden></p>
@@ -157,6 +158,16 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
     function gardenTip(type) { return GARDEN_TIP[type] || GARDEN_TIP.other; }
     function gardenRoot(type) { return GARDEN_ROOT[type] || GARDEN_ROOT.other; }
     var SPRITE_SCALE = 16;  // canvas px per world unit
+    var BODY_FACE_OPACITY = 0.12; // translucent glass-box faces (tunable)
+    var BODY_EDGE_OPACITY = 0.5;  // brighter box edges for 3D definition
+    // uniform box edge -- big enough to enclose the cone burst (cones reach ~11-15
+    // world units, so half-edge >=~15). Content is shown by the inner glow, not size.
+    var BOX_SIZE = 34;
+    // nudge the label off the busy centre toward the bottom-right (racing-game
+    // nameplate style) while keeping it attached to the node cluster. Tied to the
+    // chip's own constant on-screen size, so it stays a fixed, modest screen offset.
+    var LABEL_OFF_X = -0.22; // node sits this fraction-of-width left of the chip -> chip to the right
+    var LABEL_OFF_Y = 2.0;   // node sits above the chip top -> chip hangs below
     var CARD_NEAR = 60;     // camera distance where the property card is fully visible
     var CARD_FADE = 35;     // fade range beyond CARD_NEAR
     var MAX_OPEN_CARDS = 4; // only the nearest few nodes open into cards
@@ -191,8 +202,10 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
     var topbarEl = document.querySelector('.asd3d-topbar');
     var speedParticleEl = document.getElementById('asd3d-speed-particle');
     var speedOrbitEl = document.getElementById('asd3d-speed-orbit');
+    var orbSizeEl = document.getElementById('asd3d-orb-size');
     var speedParticleValEl = document.getElementById('asd3d-speed-particle-val');
     var speedOrbitValEl = document.getElementById('asd3d-speed-orbit-val');
+    var orbSizeValEl = document.getElementById('asd3d-orb-size-val');
     var settingsNoteEl = document.getElementById('asd3d-settings-note');
     var mainContent = document.querySelector('.markdown-body');
     if (!overlay || !canvasEl || !openBtn || !exitBtn) return;
@@ -215,6 +228,7 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
     var cardPulseAt = 0;       // self-loop feedback: a quick card bounce when an action returns to the same state
     var particleSpeed = 0.005; // photon flight speed, adjustable from the settings flyout
     var idleOrbitSpeed = 0.08; // idle-drift angular speed (rad/s), adjustable too
+    var orbScale = 1.0;        // global multiplier on the inner "orb" glow size (Orb size slider)
     var bloomSeq = 0;          // per-node counter to desync the bloom breathing phase
     var arrowSeq = 0;          // per-arrow counter to desync the cone shimmer phase
 
@@ -691,35 +705,54 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
         // hub bloom: a soft green glow behind the label, larger and brighter for
         // high-degree hubs (the biggest bloom in the garden); distance + fog make
         // far blooms recede (aerial perspective)
-        var bloom = null;
-        var btDeg = node.bloom || 0;        // connectivity -> brightness
-        var btRich = node.bloomSize || 0;   // content richness -> size
-        // size leans on content but keeps a floor from degree so lone-but-busy
-        // hubs still read; show a bloom if either signal is meaningful
+        // inner glow: the content INDICATOR inside the uniform box. Its SIZE encodes
+        // how much the state holds (content richness + connectivity); its COLOUR marks
+        // whether the state only navigates (get-only) or also has effects (has do).
+        var btDeg = node.bloom || 0;        // connectivity
+        var btRich = node.bloomSize || 0;   // content richness
         var sizeF = Math.max(btRich, btDeg * 0.6);
-        var bloomBase = 0, bloomOpacity = 0;
-        if (sizeF > 0.04 || btDeg > 0.04) {
-            var bmat = new THREE.SpriteMaterial({
-                map: getGlowTexture(), transparent: true, depthWrite: false,
-                depthTest: false, blending: THREE.AdditiveBlending
-            });
-            bmat.color.set(theme.bloomColor);
-            bloomOpacity = 0.1 + Math.max(btDeg, btRich * 0.7) * 0.38;
-            bmat.opacity = bloomOpacity;
-            bloom = new THREE.Sprite(bmat);
-            bloomBase = 7 + sizeF * 32;
-            bloom.scale.set(bloomBase, bloomBase, 1);
-            bloom.renderOrder = 7; // behind chip(10) and card(11)
-            group.add(bloom);
+        var bmat = new THREE.SpriteMaterial({
+            map: getGlowTexture(), transparent: true, depthWrite: false,
+            depthTest: false, blending: THREE.AdditiveBlending
+        });
+        bmat.color.set(bodyColor(node));
+        var bloomOpacity = 0.16 + Math.max(btDeg, btRich * 0.7) * 0.4;
+        bmat.opacity = bloomOpacity;
+        var bloom = new THREE.Sprite(bmat);
+        var bloomBase = 10 + sizeF * 30; // "orb" size ~10..40 -- the biggest (ProductDetail-class) spill a little past the box
+        bloom.scale.set(bloomBase, bloomBase, 1);
+        bloom.renderOrder = 7; // behind chip(10) and card(11)
+        group.add(bloom);
+        // node body: a translucent 3D glass box (faces + glowing edges) around the
+        // node. UNIFORM size -- big enough to enclose the cone burst -- so it reads as
+        // a consistent container; the amount of content is shown by the inner glow,
+        // and the colour (get-only vs has-do) by bodyColor. A real cube (not a
+        // billboard), so it turns with the view.
+        var body = null, bodyMat = null, bodyEdgeMat = null;
+        if ((node.degree || 0) >= 1) {
+            var bcol = new THREE.Color(bodyColor(node));
+            bodyMat = new THREE.MeshBasicMaterial({ color: bcol, transparent: true, opacity: BODY_FACE_OPACITY, depthWrite: false });
+            var boxMesh = new THREE.Mesh(getBoxGeometry(), bodyMat);
+            boxMesh.renderOrder = 5;
+            bodyEdgeMat = new THREE.LineBasicMaterial({ color: bcol, transparent: true, opacity: BODY_EDGE_OPACITY, depthWrite: false });
+            var boxEdgeLines = new THREE.LineSegments(getBoxEdges(), bodyEdgeMat);
+            boxEdgeLines.renderOrder = 6;
+            body = new THREE.Group();
+            body.add(boxMesh);
+            body.add(boxEdgeLines);
+            body.scale.set(BOX_SIZE, BOX_SIZE, BOX_SIZE); // uniform
+            group.add(body);
         }
         var chip = canvasSprite(drawChipCanvas(getNodeLabel(node)), true);
+        chip.center.set(LABEL_OFF_X, LABEL_OFF_Y); // nameplate: hang the label at the node's bottom-right
         chip.renderOrder = 10;
         group.add(chip);
         node.__asd3d = {
-            group: group, chip: chip, card: null, bloom: bloom,
+            group: group, chip: chip, card: null, bloom: bloom, body: body,
             // breathing: base scale/opacity + a desynced phase so blooms pulse
             // organically rather than strobing in unison
             bloomBase: bloomBase, bloomOpacity: bloomOpacity,
+            bodyMat: bodyMat, bodyEdgeMat: bodyEdgeMat,
             bloomPhase: (bloomSeq++ * 2.39996) % 6.28318
         };
         return group;
@@ -809,6 +842,19 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
     }
     // the hub glow shape is theme-driven: a soft disc (botanical) or a star flare (cosmos)
     function getGlowTexture() { return theme.glow === 'star' ? getStarTexture() : getHaloTexture(); }
+
+    // shared unit cube geometry + its edge lines for the node "body" box (scaled per node)
+    var boxGeometry = null, boxEdges = null;
+    function getBoxGeometry() { if (!boxGeometry) boxGeometry = new THREE.BoxGeometry(1, 1, 1); return boxGeometry; }
+    function getBoxEdges() { if (!boxEdges) boxEdges = new THREE.EdgesGeometry(getBoxGeometry()); return boxEdges; }
+    // body/glow tint marks the state's character: a "get-only" state (every outgoing
+    // transition is safe/navigation) reads in the safe colour; a state that also has
+    // any non-get effect (do = unsafe/idempotent) reads in the unsafe colour.
+    function bodyColor(node) {
+        var actions = node.actions || [];
+        var hasNonGet = actions.some(function (a) { return a.transType && a.transType !== 'safe'; });
+        return gardenTip(hasNonGet ? 'unsafe' : 'safe');
+    }
 
     function glowNode(node, color) {
         var s = node.__asd3d;
@@ -936,7 +982,20 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
             recoverCamera();
             return;
         }
-        if (camTween) {
+        if (introStart) {
+            // opening dolly-in: ease the camera from far to the cluster while it
+            // rotates; bail the moment a node fly or the user takes over
+            if (camTween || lastInteractAt > introStart + 50) {
+                introStart = 0;
+            } else {
+                var it = (now - introStart) / INTRO_DUR;
+                if (it >= 1) { introStart = 0; } // hand off to the idle orbit next frame
+                else {
+                    var ie = 1 - Math.pow(1 - it, 3); // ease-out: decelerate into arrival
+                    placeIntroCamera(introFrom + (introTo - introFrom) * ie, introAz + INTRO_SWEEP * ie);
+                }
+            }
+        } else if (camTween) {
             applyCamTween(camTween.dur > 0 ? Math.min(1, (now - camTween.start) / camTween.dur) : 1);
         } else if (!reducedMotion && !cardOpenId && (now - lastInteractAt) > 1400) {
             // always-on gentle drift: orbit the look-at point (the focused node,
@@ -1014,6 +1073,15 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
             }
             s.chip.material.opacity = open ? 0 : (node.__asd3dDim || 1);
             s.chip.visible = !open;
+            if (s.body) {
+                // static glass box: only aerial-dimmed; hidden once the card opens
+                s.body.visible = !open;
+                if (!open) {
+                    var bd = node.__asd3dDim || 1;
+                    if (s.bodyMat) s.bodyMat.opacity = BODY_FACE_OPACITY * bd;
+                    if (s.bodyEdgeMat) s.bodyEdgeMat.opacity = BODY_EDGE_OPACITY * bd;
+                }
+            }
             if (s.halo) {
                 if (s.haloStrength > 0) {
                     s.haloStrength = Math.max(0, s.haloStrength - dt * 2.2); // quick, light tap
@@ -1035,12 +1103,13 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
             // when the user prefers reduced motion
             if (s.bloom && s.bloomBase) {
                 var bdim = node.__asd3dDim || 1;
+                var ob = s.bloomBase * orbScale; // Orb size slider
                 if (reducedMotion) {
-                    s.bloom.scale.set(s.bloomBase, s.bloomBase, 1);
+                    s.bloom.scale.set(ob, ob, 1);
                     s.bloom.material.opacity = s.bloomOpacity * bdim;
                 } else {
                     var breath = Math.sin(now * 0.0015 + s.bloomPhase); // ~4.2s period
-                    var bsc = s.bloomBase * (1 + 0.06 * breath);
+                    var bsc = ob * (1 + 0.06 * breath);
                     s.bloom.scale.set(bsc, bsc, 1);
                     s.bloom.material.opacity = s.bloomOpacity * (0.82 + 0.18 * (breath * 0.5 + 0.5)) * bdim;
                 }
@@ -1142,14 +1211,16 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
     // dolly: the camera swings along a gentle arc and lands at an angle that
     // shows the edge it just traversed. Driven frame-by-frame from updateLod.
     var FLY_DUR = 1150;
-    var FLY_DIST = 72;
+    var FLY_DIST = 140;      // focus: settle far back to show the node AND its neighbourhood spread
+    var CARD_READ_DIST = 78; // when a card opens, dive closer so the (world-sized) card stays legible
     var camTween = null;
 
     function easeInOut(u) {
         return u < 0.5 ? 4 * u * u * u : 1 - Math.pow(-2 * u + 2, 3) / 2;
     }
 
-    function flyToNode(node, fromNode) {
+    function flyToNode(node, fromNode, dist) {
+        dist = dist || FLY_DIST;
         if (typeof node.x !== 'number' || !graph) return;
         var cam = graph.camera();
         var controls = graph.controls();
@@ -1188,9 +1259,9 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
         if (rt.lengthSq() < 1e-6) rt.set(1, 0, 0);
         rt.normalize();
         var upv = new THREE.Vector3().crossVectors(approach, rt).normalize();
-        T1.add(rt.multiplyScalar(FLY_DIST * 0.07)).add(upv.multiplyScalar(FLY_DIST * 0.045));
+        T1.add(rt.multiplyScalar(dist * 0.07)).add(upv.multiplyScalar(dist * 0.045));
 
-        var P1 = T1.clone().add(approach.multiplyScalar(FLY_DIST));
+        var P1 = T1.clone().add(approach.multiplyScalar(dist));
 
         // arc control point: lift the midpoint perpendicular to travel for a swing
         var mid = P0.clone().add(P1).multiplyScalar(0.5);
@@ -1288,6 +1359,12 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
                 s.group.remove(s.bloom);
                 s.bloom.material.dispose(); // shared texture kept
                 s.bloom = null;
+            }
+            if (s.body) {
+                s.group.remove(s.body);
+                if (s.bodyMat) s.bodyMat.dispose();
+                if (s.bodyEdgeMat) s.bodyEdgeMat.dispose();
+                s.body = null; // shared box geometry + edges kept
             }
             node.__asd3d = null;
         });
@@ -1396,9 +1473,10 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
             window.setTimeout(function () { glowNode(target, btn.color); }, reducedMotion ? 30 : 90);
             return; // stay put — no fly, keep the card exactly where it is
         }
-        selectNode(target, from);       // selectNode resets cardOpenId to ''
-        // continuity: if we moved from an open card, land with the card open too
-        if (wasCardMode) cardOpenId = target.id;
+        selectNode(target, from);       // selectNode resets cardOpenId to '' and flies to the spread distance
+        // continuity: if we moved from an open card, land with the card open too,
+        // and at the closer card-reading distance so the card stays legible
+        if (wasCardMode) { cardOpenId = target.id; flyToNode(target, from, CARD_READ_DIST); }
         // glow the destination as the flight lands
         window.setTimeout(function () { glowNode(target, btn.color); }, reducedMotion ? 50 : FLY_DUR);
     }
@@ -1511,20 +1589,42 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
     }
 
     // ---- graph init ----
+    // ---- opening dolly-in: rather than snapping to a far fit, start the camera way
+    // out and slip it slowly in toward the cluster while gently rotating, then hand
+    // off to the idle orbit. Cancelled the instant the user takes control.
+    var introStart = 0, introFrom = 0, introTo = 0, introAz = 0;
+    var introCx = 0, introCy = 0, introCz = 0;
+    var INTRO_DUR = 7000, INTRO_EL = 0.42, INTRO_SWEEP = 0.9;
+    function placeIntroCamera(dist, az) {
+        var cam = graph.camera(), ctr = graph.controls();
+        var ce = Math.cos(INTRO_EL), se = Math.sin(INTRO_EL);
+        cam.position.set(introCx + ce * Math.sin(az) * dist, introCy + se * dist, introCz + ce * Math.cos(az) * dist);
+        if (ctr && ctr.target) { ctr.target.set(introCx, introCy, introCz); ctr.update(); }
+        else cam.lookAt(introCx, introCy, introCz);
+    }
     function applySceneExtents() {
         try {
             if (!currentNodes.length) return;
             var bbox = graph.getGraphBbox();
+            var span = 600;
             if (bbox) {
-                var span = Math.max(bbox.x[1] - bbox.x[0], bbox.y[1] - bbox.y[0], bbox.z[1] - bbox.z[0], 120);
+                span = Math.max(bbox.x[1] - bbox.x[0], bbox.y[1] - bbox.y[0], bbox.z[1] - bbox.z[0], 120);
+                introCx = (bbox.x[0] + bbox.x[1]) / 2;
+                introCy = (bbox.y[0] + bbox.y[1]) / 2;
+                introCz = (bbox.z[0] + bbox.z[1]) / 2;
                 var fog = graph.scene().fog;
-                if (fog) {
-                    fog.near = span * 1.1;
-                    fog.far = span * 3.2;
-                }
+                if (fog) { fog.near = span * 1.1; fog.far = span * 3.2; }
+            } else {
+                var c = graphCentroid(); introCx = c.x; introCy = c.y; introCz = c.z;
             }
-            graph.zoomToFit(reducedMotion ? 0 : 700, 60);
-            noteInteract(); // let the fit settle before the idle orbit drifts in
+            var fit = span * 1.15;
+            introFrom = fit * 1.7;   // start a bit beyond the fit
+            introTo = fit * 0.78;    // arrive amongst the cluster
+            var camp = graph.camera().position;
+            introAz = Math.atan2(camp.x - introCx, camp.z - introCz); // continue from the current heading
+            if (reducedMotion) { placeIntroCamera(introTo, introAz); introStart = 0; return; }
+            placeIntroCamera(introFrom, introAz); // jump out to the far start, then ease in
+            introStart = performance.now();
         } catch (e) {}
     }
 
@@ -1565,12 +1665,15 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
                 // and double-fired clicks open-then-close it) — close via the
                 // info-panel x, the background, or by focusing another node.
                 if (n.id !== selectedNodeId) selectNode(n);
-                else if (cardOpenId !== n.id) { cardOpenId = n.id; noteInteract(); }
+                else if (cardOpenId !== n.id) { cardOpenId = n.id; noteInteract(); flyToNode(n, null, CARD_READ_DIST); }
             })
             .onNodeRightClick(function (node) { exitToTable(node.id); })
             .onBackgroundClick(function (ev) {
                 if (Date.now() - cardClickAt < 350) return; // trailing click of a card-button gesture
                 if (ev && pickCardButton(ev.clientX, ev.clientY)) return; // a card button got it
+                // a click off an open card just dismisses the card (keeps the node
+                // focused); a second background click then clears the selection
+                if (cardOpenId) { cardOpenId = ''; noteInteract(); return; }
                 clearSelection();
             })
             .onEngineStop(function () {
@@ -1794,6 +1897,7 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
         if (speedOrbitEl) speedOrbitEl.disabled = reducedMotion;
         setSliderReadout(speedParticleEl, speedParticleValEl, 5);
         setSliderReadout(speedOrbitEl, speedOrbitValEl, 8);
+        setSliderReadout(orbSizeEl, orbSizeValEl, 10); // orb size works in any mode
         if (settingsNoteEl) {
             var note = reducedMotion ? 'Motion is reduced by your system setting.'
                 : (!particlesEnabled ? 'Particles are off for large graphs.' : '');
@@ -1813,13 +1917,17 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
             // never covers the tag pills / fullscreen button on narrow viewports
             if (topbarEl) settingsEl.style.top = (topbarEl.offsetHeight + 8) + 'px';
             settingsReturnFocus = document.activeElement;
-            var first = [speedParticleEl, speedOrbitEl].filter(function (el) { return el && !el.disabled; })[0];
+            var first = [orbSizeEl, speedParticleEl, speedOrbitEl].filter(function (el) { return el && !el.disabled; })[0];
             if (first) first.focus();
         } else if (active && settingsReturnFocus && overlay.contains(settingsReturnFocus)) {
             try { settingsReturnFocus.focus(); } catch (e) {}
             settingsReturnFocus = null;
         }
     }
+    if (orbSizeEl) orbSizeEl.addEventListener('input', function () {
+        orbScale = (+orbSizeEl.value) / 10; // slider 3..25 -> 0.3x..2.5x (live, no rebuild)
+        setSliderReadout(orbSizeEl, orbSizeValEl, 10);
+    });
     if (speedParticleEl) speedParticleEl.addEventListener('input', function () {
         particleSpeed = (+speedParticleEl.value) * 0.001; // slider 0..20 -> 0..0.02
         if (graph) graph.linkDirectionalParticleSpeed(particleSpeed);
@@ -1847,7 +1955,17 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
     });
 
     document.addEventListener('keydown', function (e) {
-        if (!active) return;
+        if (!active) {
+            // Esc also ENTERS 3D from the 2D page (so Esc toggles 2D<->3D), unless a
+            // form field is focused
+            if (e.key === 'Escape') {
+                var et = e.target, etg = (et && et.tagName) || '';
+                if (etg === 'INPUT' || etg === 'TEXTAREA' || etg === 'SELECT') return;
+                e.preventDefault();
+                open3D();
+            }
+            return;
+        }
         if (e.key === 'Escape') {
             if (document.fullscreenElement) return; // browser exits fullscreen first
             e.preventDefault();
