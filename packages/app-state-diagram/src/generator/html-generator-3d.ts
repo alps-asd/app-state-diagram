@@ -89,6 +89,13 @@ export function asd3dOverlay(safeAlpsTitle: string): string {
         <label class="asd3d-settings-row"><span>Ball speed<b id="asd3d-ball-speed-val">0.2&#215;</b></span><input type="range" id="asd3d-ball-speed" min="0" max="20" value="2"></label>
         <label class="asd3d-settings-row"><span>Particle speed<b id="asd3d-speed-particle-val">0.8&#215;</b></span><input type="range" id="asd3d-speed-particle" min="0" max="20" value="4"></label>
         <label class="asd3d-settings-row"><span>Idle rotation<b id="asd3d-speed-orbit-val">1.1&#215;</b></span><input type="range" id="asd3d-speed-orbit" min="0" max="30" value="9"></label>
+        <label class="asd3d-settings-row"><span>Box hue<b id="asd3d-box-hue-val">0&#176;</b></span><input type="range" id="asd3d-box-hue" min="-180" max="180" step="5" value="0"></label>
+        <label class="asd3d-settings-row"><span>Box size<b id="asd3d-box-size-val">1.0&#215;</b></span><input type="range" id="asd3d-box-size" min="3" max="25" step="1" value="10"></label>
+        <label class="asd3d-settings-row"><span>Box opacity<b id="asd3d-box-opacity-val">1.0&#215;</b></span><input type="range" id="asd3d-box-opacity" min="0" max="30" step="1" value="10"></label>
+        <label class="asd3d-settings-row"><span>Bloom brightness<b id="asd3d-bloom-bright-val">1.0&#215;</b></span><input type="range" id="asd3d-bloom-bright" min="0" max="30" step="1" value="10"></label>
+        <label class="asd3d-settings-row"><span>Cross strength<b id="asd3d-cross-val">0.45</b></span><input type="range" id="asd3d-cross" min="0" max="100" step="5" value="45"></label>
+        <label class="asd3d-settings-row"><span>Fog depth<b id="asd3d-fog-val">1.0&#215;</b></span><input type="range" id="asd3d-fog" min="6" max="40" step="1" value="10"></label>
+        <label class="asd3d-settings-row"><span>Card size<b id="asd3d-card-size-val">1.15&#215;</b></span><input type="range" id="asd3d-card-size" min="50" max="300" step="5" value="115"></label>
         <p class="asd3d-settings-note" id="asd3d-settings-note" hidden></p>
     </div>
     <div class="asd3d-info" id="asd3d-info">
@@ -209,6 +216,20 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
     var speedOrbitValEl = document.getElementById('asd3d-speed-orbit-val');
     var orbSizeValEl = document.getElementById('asd3d-orb-size-val');
     var ballSpeedValEl = document.getElementById('asd3d-ball-speed-val');
+    var boxHueEl = document.getElementById('asd3d-box-hue');
+    var boxHueValEl = document.getElementById('asd3d-box-hue-val');
+    var boxSizeEl = document.getElementById('asd3d-box-size');
+    var boxSizeValEl = document.getElementById('asd3d-box-size-val');
+    var boxOpacityEl = document.getElementById('asd3d-box-opacity');
+    var boxOpacityValEl = document.getElementById('asd3d-box-opacity-val');
+    var bloomBrightEl = document.getElementById('asd3d-bloom-bright');
+    var bloomBrightValEl = document.getElementById('asd3d-bloom-bright-val');
+    var crossEl = document.getElementById('asd3d-cross');
+    var crossValEl = document.getElementById('asd3d-cross-val');
+    var fogEl = document.getElementById('asd3d-fog');
+    var fogValEl = document.getElementById('asd3d-fog-val');
+    var cardSizeEl = document.getElementById('asd3d-card-size');
+    var cardSizeValEl = document.getElementById('asd3d-card-size-val');
     var settingsNoteEl = document.getElementById('asd3d-settings-note');
     var mainContent = document.querySelector('.markdown-body');
     if (!overlay || !canvasEl || !openBtn || !exitBtn) return;
@@ -233,6 +254,13 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
     var idleOrbitSpeed = 0.09; // idle-drift angular speed (rad/s), adjustable too
     var orbScale = 2.0;        // global multiplier on the inner "orb" glow size (Orb size slider)
     var grainSpeed = 0.1;      // speed of the descriptor-grain swarm (0 = frozen)
+    var boxHue = 0;            // hue rotation (deg) applied to the glass-box colour only (Box hue slider)
+    var boxScale = 1.0;        // glass-box size multiplier (Box size slider)
+    var boxOpacity = 1.0;      // glass-box face/edge opacity multiplier (Box opacity slider)
+    var bloomBright = 1.0;     // orb/bloom brightness multiplier (Bloom brightness slider)
+    var crossStrength = 0.45;  // star-glow diffraction-cross opacity (Cross strength slider)
+    var fogScale = 1.0;        // multiplier on the fog near/far distances (Fog depth slider)
+    var baseFogNear = 0, baseFogFar = 0; // the fog distances the slider scales from
     var bloomSeq = 0;          // per-node counter to desync the bloom breathing phase
     var arrowSeq = 0;          // per-arrow counter to desync the cone shimmer phase
 
@@ -529,7 +557,7 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
             return { cells: shown, cols: maxCols };
         }
 
-        var pg = gridCells(props, 8, 3);
+        var pg = gridCells(props, 8, 4);
         var propCells = pg.cells, propCols = pg.cols;
         var propRowsPer = propCells.length ? Math.ceil(propCells.length / propCols) : 0;
         measure.font = rowFont;
@@ -749,7 +777,7 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
         // billboard), so it turns with the view.
         var body = null, bodyMat = null, bodyEdgeMat = null;
         if ((node.degree || 0) >= 1) {
-            var bcol = new THREE.Color(bodyColor(node));
+            var bcol = withBoxHue(new THREE.Color(bodyColor(node)));
             bodyMat = new THREE.MeshBasicMaterial({ color: bcol, transparent: true, opacity: BODY_FACE_OPACITY, depthWrite: false });
             var boxMesh = new THREE.Mesh(getBoxGeometry(), bodyMat);
             boxMesh.renderOrder = 5;
@@ -759,7 +787,7 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
             body = new THREE.Group();
             body.add(boxMesh);
             body.add(boxEdgeLines);
-            body.scale.set(BOX_SIZE, BOX_SIZE, BOX_SIZE); // uniform
+            body.scale.set(BOX_SIZE * boxScale, BOX_SIZE * boxScale, BOX_SIZE * boxScale); // uniform, live-scalable
             group.add(body);
         }
         // descriptor grains: one small translucent grey sphere per contained
@@ -772,7 +800,7 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
             grainPos = new Float32Array(pc * 3); // local positions, animated each frame
             grainVel = new Float32Array(pc * 3); // velocities (centre-seeking guidance)
             grainScl = new Float32Array(pc);
-            var gm = new THREE.Matrix4(), gspread = BOX_SIZE * 0.32, j;
+            var gm = new THREE.Matrix4(), gspread = BOX_SIZE * 0.32 * boxScale, j;
             for (var gi = 0; gi < pc; gi++) {
                 j = gi * 3;
                 grainScl[gi] = (0.7 + Math.random() * 0.5) * 1.4; // small grain (+40% radius)
@@ -792,6 +820,10 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
             group.add(grains);
         }
         var chip = canvasSprite(drawChipCanvas(getNodeLabel(node)), true);
+        // subtle depth: let labels recede into the fog with distance. fog.near sits
+        // ~one graph-width out, so focused/near labels stay crisp and only distant
+        // ones soften -- and the Fog depth slider tunes the amount.
+        chip.material.fog = true;
         chip.center.set(LABEL_OFF_X, LABEL_OFF_Y); // nameplate: hang the label at the node's bottom-right
         chip.renderOrder = 10;
         group.add(chip);
@@ -827,7 +859,7 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
         s.cardProps = drawn.props;
         s.cardClose = drawn.close;
         s.cardSize = { w: drawn.canvas.width, h: drawn.canvas.height };
-        s.cardBaseScale = { x: card.scale.x, y: card.scale.y };
+        s.cardBaseScale = { x: card.scale.x, y: card.scale.y }; // raw; cardScale applied per-frame
         s.cardShownAt = 0;
         s.cardVisPrev = false;
     }
@@ -865,10 +897,11 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
     }
 
     var starTexture = null;
-    function getStarTexture() {
-        if (starTexture) return starTexture;
-        var c = makeCanvas(128, 128);
-        var ctx = c.getContext('2d');
+    var starCanvas = null;
+    function drawStarCanvas() {
+        var ctx = starCanvas.getContext('2d');
+        ctx.clearRect(0, 0, 128, 128);
+        ctx.globalCompositeOperation = 'source-over';
         // soft round core
         var core = ctx.createRadialGradient(64, 64, 0, 64, 64, 44);
         core.addColorStop(0.0, 'rgba(255,255,255,0.95)');
@@ -876,20 +909,35 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
         core.addColorStop(1.0, 'rgba(255,255,255,0)');
         ctx.fillStyle = core;
         ctx.fillRect(0, 0, 128, 128);
-        // 4-point diffraction flare (a crossed pair of fading bars)
+        // 4-point diffraction flare (a crossed pair of fading bars); strength is the
+        // bar opacity, driven by the Cross strength slider
+        var cs = Math.max(0, Math.min(1, crossStrength));
         ctx.globalCompositeOperation = 'lighter';
         var hg = ctx.createLinearGradient(2, 64, 126, 64);
         hg.addColorStop(0, 'rgba(255,255,255,0)');
-        hg.addColorStop(0.5, 'rgba(255,255,255,0.85)');
+        hg.addColorStop(0.5, 'rgba(255,255,255,' + cs + ')');
         hg.addColorStop(1, 'rgba(255,255,255,0)');
         ctx.fillStyle = hg; ctx.fillRect(2, 62.5, 124, 3);
         var vg = ctx.createLinearGradient(64, 2, 64, 126);
         vg.addColorStop(0, 'rgba(255,255,255,0)');
-        vg.addColorStop(0.5, 'rgba(255,255,255,0.85)');
+        vg.addColorStop(0.5, 'rgba(255,255,255,' + cs + ')');
         vg.addColorStop(1, 'rgba(255,255,255,0)');
         ctx.fillStyle = vg; ctx.fillRect(62.5, 2, 3, 124);
-        starTexture = makeTexture(c);
+        ctx.globalCompositeOperation = 'source-over';
+    }
+    function getStarTexture() {
+        if (starTexture) return starTexture;
+        starCanvas = makeCanvas(128, 128);
+        drawStarCanvas();
+        starTexture = makeTexture(starCanvas);
         return starTexture;
+    }
+    // redraw the shared star texture at the current crossStrength; all bloom sprites
+    // using it update at once (no-op until the cosmos star glow has been built)
+    function rebuildStarTexture() {
+        if (!starCanvas) return;
+        drawStarCanvas();
+        if (starTexture) starTexture.needsUpdate = true;
     }
     // the hub glow shape is theme-driven: a soft disc (botanical) or a star flare (cosmos)
     function getGlowTexture() { return theme.glow === 'star' ? getStarTexture() : getHaloTexture(); }
@@ -918,6 +966,71 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
         var actions = node.actions || [];
         var hasNonGet = actions.some(function (a) { return a.transType && a.transType !== 'safe'; });
         return gardenTip(hasNonGet ? 'unsafe' : 'safe');
+    }
+    // rotate a THREE.Color's hue by the current boxHue (deg); mutates + returns it.
+    // applied to the GLASS BOX only (not the orb), so the box can be recoloured live.
+    function withBoxHue(color) {
+        if (!boxHue) return color;
+        var hsl = {}; color.getHSL(hsl);
+        var h = (hsl.h + boxHue / 360) % 1; if (h < 0) h += 1;
+        color.setHSL(h, hsl.s, hsl.l);
+        return color;
+    }
+    // recolour every existing glass box from its canonical bodyColor + boxHue (no
+    // compounding, since it re-derives from bodyColor each time)
+    function applyBoxHue() {
+        currentNodes.forEach(function (n) {
+            var s = n.__asd3d;
+            if (!s || !s.bodyMat) return;
+            var col = withBoxHue(new THREE.Color(bodyColor(n)));
+            s.bodyMat.color.copy(col);
+            if (s.bodyEdgeMat) s.bodyEdgeMat.color.copy(col);
+        });
+    }
+    // live-resize every glass box to the current boxScale (new nodes pick it up in
+    // makeNodeObject; grain walls track it in updateGrains)
+    function applyBoxScale() {
+        var sz = BOX_SIZE * boxScale;
+        currentNodes.forEach(function (n) {
+            var s = n.__asd3d;
+            if (s && s.body) s.body.scale.set(sz, sz, sz);
+        });
+    }
+    // push the current fogScale onto the live fog (Fog depth slider)
+    function applyFog() {
+        try {
+            var fog = graph.scene().fog;
+            if (fog && baseFogFar) { fog.near = baseFogNear * fogScale; fog.far = baseFogFar * fogScale; }
+        } catch (e) {}
+    }
+    // ---- persist the settings sliders to localStorage so a user's tuning (card
+    // size, box look, fog, etc.) carries to the next visit -- no need to re-find
+    // good values. Raw slider values keyed by element id; restored once the graph
+    // is built by replaying each slider's input handler.
+    var SETTINGS_KEY = 'asd3d-settings-v1';
+    var settingsRestored = false;
+    function settingsSliders() {
+        return [orbSizeEl, ballSpeedEl, speedParticleEl, speedOrbitEl, boxHueEl,
+                boxSizeEl, boxOpacityEl, bloomBrightEl, crossEl, fogEl, cardSizeEl];
+    }
+    function asd3dSaveSettings() {
+        try {
+            var v = {};
+            settingsSliders().forEach(function (el) { if (el) v[el.id] = el.value; });
+            window.localStorage.setItem(SETTINGS_KEY, JSON.stringify(v));
+        } catch (e) {}
+    }
+    function asd3dRestoreSettings() {
+        if (settingsRestored) return;
+        settingsRestored = true;
+        var v;
+        try { v = JSON.parse(window.localStorage.getItem(SETTINGS_KEY) || '{}'); } catch (e) { v = null; }
+        if (!v || typeof v !== 'object') return;
+        var els = settingsSliders();
+        // set every value first so a save() during apply sees the complete set
+        els.forEach(function (el) { if (el && (el.id in v)) el.value = v[el.id]; });
+        // then apply each by replaying its input handler (all are side-effect-safe)
+        els.forEach(function (el) { if (el && (el.id in v)) el.dispatchEvent(new Event('input', { bubbles: true })); });
     }
 
     function glowNode(node, color) {
@@ -1015,8 +1128,7 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
     function updateGrains(step) {
         if (reducedMotion || grainSpeed <= 0) return;
         if (!grainTmp) grainTmp = new THREE.Matrix4();
-        if (!GRAIN_HALF) GRAIN_HALF = BOX_SIZE * 0.46;
-        var sp = grainSpeed, acc = GRAIN_ACCEL * step, half = GRAIN_HALF;
+        var sp = grainSpeed, acc = GRAIN_ACCEL * step, half = BOX_SIZE * 0.46 * boxScale; // wall tracks box size
         currentNodes.forEach(function (node) {
             var s = node.__asd3d;
             if (!s || !s.grains) return;
@@ -1164,7 +1276,7 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
                         if (pt >= 0 && pt < 540) k *= 1 + 0.14 * Math.sin(pt / 540 * Math.PI);
                         else cardPulseAt = 0;
                     }
-                    s.card.scale.set(s.cardBaseScale.x * k, s.cardBaseScale.y * k, 1);
+                    s.card.scale.set(s.cardBaseScale.x * cardScale * k, s.cardBaseScale.y * cardScale * k, 1);
                 }
                 // evict a closed card's texture once it has fully faded out
                 if (!open && cf < 0.02) {
@@ -1180,8 +1292,8 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
                 // box fades back in as the card fades out (and vice versa)
                 s.body.visible = cf < 0.98;
                 var bd = node.__asd3dDim || 1;
-                if (s.bodyMat) s.bodyMat.opacity = BODY_FACE_OPACITY * bd * (1 - cf);
-                if (s.bodyEdgeMat) s.bodyEdgeMat.opacity = BODY_EDGE_OPACITY * bd * (1 - cf);
+                if (s.bodyMat) s.bodyMat.opacity = BODY_FACE_OPACITY * boxOpacity * bd * (1 - cf);
+                if (s.bodyEdgeMat) s.bodyEdgeMat.opacity = BODY_EDGE_OPACITY * boxOpacity * bd * (1 - cf);
             }
             if (s.halo) {
                 if (s.haloStrength > 0) {
@@ -1207,12 +1319,12 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
                 var ob = s.bloomBase * orbScale; // Orb size slider
                 if (reducedMotion) {
                     s.bloom.scale.set(ob, ob, 1);
-                    s.bloom.material.opacity = s.bloomOpacity * bdim;
+                    s.bloom.material.opacity = s.bloomOpacity * bloomBright * bdim;
                 } else {
                     var breath = Math.sin(now * 0.0015 + s.bloomPhase); // ~4.2s period
                     var bsc = ob * (1 + 0.06 * breath);
                     s.bloom.scale.set(bsc, bsc, 1);
-                    s.bloom.material.opacity = s.bloomOpacity * (0.82 + 0.18 * (breath * 0.5 + 0.5)) * bdim;
+                    s.bloom.material.opacity = s.bloomOpacity * bloomBright * (0.82 + 0.18 * (breath * 0.5 + 0.5)) * bdim;
                 }
             }
         });
@@ -1312,8 +1424,9 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
     // dolly: the camera swings along a gentle arc and lands at an angle that
     // shows the edge it just traversed. Driven frame-by-frame from updateLod.
     var FLY_DUR = 1150;
-    var FLY_DIST = 140;      // focus: settle far back to show the node AND its neighbourhood spread
+    var FLY_DIST = 170;      // focus: settle far back to show the node AND its neighbourhood spread
     var CARD_READ_DIST = 78; // when a card opens, dive closer so the (world-sized) card stays legible
+    var cardScale = 1.15;    // card billboard size multiplier (Card size slider), applied per-frame
     var CARD_FADE_IN = 7, CARD_FADE_OUT = 3; // exp lerp rates: snappy appear, ~1s smooth fade-out
     var camTween = null;
 
@@ -1723,10 +1836,11 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
                 introCy = (bbox.y[0] + bbox.y[1]) / 2;
                 introCz = (bbox.z[0] + bbox.z[1]) / 2;
                 var fog = graph.scene().fog;
-                if (fog) { fog.near = span * 1.1; fog.far = span * 3.2; }
+                if (fog) { baseFogNear = span * 1.1; baseFogFar = span * 3.2; applyFog(); }
             } else {
                 var c = graphCentroid(); introCx = c.x; introCy = c.y; introCz = c.z;
             }
+            asd3dRestoreSettings(); // replay saved slider values once, now that nodes/fog/star texture exist
             var fit = span * 1.15;
             introFrom = fit * 1.7;   // start a bit beyond the fit
             introTo = fit * 0.78;    // arrive amongst the cluster
@@ -1814,7 +1928,9 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
             graph.d3Force('charge').strength(-300);
         } catch (e) {}
         try {
+            baseFogNear = theme.fog.near; baseFogFar = theme.fog.far;
             graph.scene().fog = new THREE.Fog(new THREE.Color(BG_COLOR), theme.fog.near, theme.fog.far);
+            applyFog();
             if (theme.starfield) addStarfield(graph.scene(), theme.starfield);
         } catch (e) {}
     }
@@ -2039,19 +2155,62 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
     if (orbSizeEl) orbSizeEl.addEventListener('input', function () {
         orbScale = (+orbSizeEl.value) / 10; // slider 3..25 -> 0.3x..2.5x (live, no rebuild)
         setSliderReadout(orbSizeEl, orbSizeValEl, 10);
+        asd3dSaveSettings();
     });
     if (ballSpeedEl) ballSpeedEl.addEventListener('input', function () {
         grainSpeed = (+ballSpeedEl.value) * 0.05; // slider 0..20 -> 0 (frozen) .. 1.0
         setSliderReadout(ballSpeedEl, ballSpeedValEl, 9);
+        asd3dSaveSettings();
     });
     if (speedParticleEl) speedParticleEl.addEventListener('input', function () {
         particleSpeed = (+speedParticleEl.value) * 0.001; // slider 0..20 -> 0..0.02
         if (graph) graph.linkDirectionalParticleSpeed(particleSpeed);
         setSliderReadout(speedParticleEl, speedParticleValEl, 5);
+        asd3dSaveSettings();
     });
     if (speedOrbitEl) speedOrbitEl.addEventListener('input', function () {
         idleOrbitSpeed = (+speedOrbitEl.value) * 0.01; // slider 0..30 -> 0..0.30 rad/s
         setSliderReadout(speedOrbitEl, speedOrbitValEl, 8);
+        asd3dSaveSettings();
+    });
+    if (boxHueEl) boxHueEl.addEventListener('input', function () {
+        boxHue = +boxHueEl.value; // -180..180 deg, recolours the glass boxes only
+        if (boxHueValEl) boxHueValEl.textContent = boxHue + '\\u00b0';
+        applyBoxHue();
+        asd3dSaveSettings();
+    });
+    if (boxSizeEl) boxSizeEl.addEventListener('input', function () {
+        boxScale = (+boxSizeEl.value) / 10; // slider 3..25 -> 0.3x..2.5x
+        if (boxSizeValEl) boxSizeValEl.textContent = boxScale.toFixed(1) + '\\u00d7';
+        applyBoxScale();
+        asd3dSaveSettings();
+    });
+    if (boxOpacityEl) boxOpacityEl.addEventListener('input', function () {
+        boxOpacity = (+boxOpacityEl.value) / 10; // slider 0..30 -> 0..3.0 (applied per-frame)
+        if (boxOpacityValEl) boxOpacityValEl.textContent = boxOpacity.toFixed(1) + '\\u00d7';
+        asd3dSaveSettings();
+    });
+    if (bloomBrightEl) bloomBrightEl.addEventListener('input', function () {
+        bloomBright = (+bloomBrightEl.value) / 10; // slider 0..30 -> 0..3.0 (applied per-frame)
+        if (bloomBrightValEl) bloomBrightValEl.textContent = bloomBright.toFixed(1) + '\\u00d7';
+        asd3dSaveSettings();
+    });
+    if (crossEl) crossEl.addEventListener('input', function () {
+        crossStrength = (+crossEl.value) / 100; // slider 0..100 -> 0..1.0 cross opacity
+        if (crossValEl) crossValEl.textContent = crossStrength.toFixed(2);
+        rebuildStarTexture();
+        asd3dSaveSettings();
+    });
+    if (fogEl) fogEl.addEventListener('input', function () {
+        fogScale = (+fogEl.value) / 10; // slider 3..40 -> 0.3x..4.0x fog distance
+        if (fogValEl) fogValEl.textContent = fogScale.toFixed(1) + '\\u00d7';
+        applyFog();
+        asd3dSaveSettings();
+    });
+    if (cardSizeEl) cardSizeEl.addEventListener('input', function () {
+        cardScale = (+cardSizeEl.value) / 100; // slider 50..300 -> 0.5x..3.0x (applied per-frame)
+        if (cardSizeValEl) cardSizeValEl.textContent = cardScale.toFixed(2) + '\\u00d7';
+        asd3dSaveSettings();
     });
 
     openBtn.addEventListener('click', open3D);
