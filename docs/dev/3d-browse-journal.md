@@ -35,7 +35,7 @@ Running log to hand off between sessions. Newest entry on top. Pair this with
 - Tweaks: `FLY_DIST` 140→170, card billboard +15%, star cross weakened+tunable, Fog
   depth slider min capped at 0.6× so fog can't be cranked to swallow everything.
 
-**Part 2 — the three backlog items, now implemented (a later commit on this branch)**
+**Part 2 — backlog items #1 and #2 shipped; #3 tried and reverted (later commits)**
 1. **Far-zoom visibility floor.** The absolute fog + aerial dimmer used to fade the
    WHOLE graph to nothing when you pulled the camera back. Both are now **relative to
    the camera's distance to the cluster centre** (`updateLod`): a node only fades when
@@ -47,31 +47,33 @@ Running log to hand off between sessions. Newest entry on top. Pair this with
    takes the link tubes **out of the fog** (re-run after layout and after any width
    change), defaults bumped (opacity 0.45→0.6, width 0.5→0.8, colour still the calm
    stem), and new **Link width / Link opacity sliders** (persisted) let the user tune.
-3. **Orb-as-cell feeding.** `updateGrains` tracks the fraction of descriptor-grains
-   gathered within a central radius (`s.feed`, smoothed); the orb's brightness and size
-   **pulse with it** (`opacity *= 1 + feed·1.5`, scale `+feed·0.2`). The box reads as a
-   cell whose orb glows as nutrients arrive at the core and dims as they disperse.
+3. **Orb-as-cell feeding — TRIED, then REVERTED.** We made the orb brightness + size
+   pulse with the fraction of grains gathered at the box centre. On a content-rich node
+   (ProductDetail, 32 grains) the +150% peak blew the orb out to a blinding pink/white
+   blast — the user called it "気持ち悪い" and asked to revert. The grain swarm + plain
+   breathing are back as they were. If revisited: cap the boost much lower (≤ +30%),
+   scale it DOWN by grain count (big nodes shouldn't pulse hardest), and gate it on the
+   orb's base brightness so already-bright hubs don't saturate.
 
 ### Verification status — IMPORTANT
 
 - `tsc` clean; `pnpm test` **127/127**.
-- Sliders, persistence round-trip, the Part-2 #1 dim/fog **formulas**, #2 defog (all 291
-  links), and #3 feed **were verified numerically / by simulation** against real node
-  data via `preview_eval` (e.g. zoomed-out dim avg 0.68 vs the old 0.22; fog factor 0.27
-  vs the old 1.0=invisible; orb feed pulses 0.06–0.98 → up to +150% brightness).
-- **NOT yet seen running live.** The headless preview tab freezes `requestAnimationFrame`
-  when backgrounded, so the engine never settles and `updateLod`/`onEngineStop` don't
-  run there. **First task next session: open in a real foreground browser and eyeball
-  Part 2.** Likely tuning: the +150% feed peak may be too strong (lower the `feed·1.5`
-  factor); confirm the 0.35 dim floor / fog bracket feel right when zoomed out; check
-  link width 0.8 reads well without looking heavy.
+- Sliders, persistence round-trip, the Part-2 #1 dim/fog **formulas**, and #2 defog (all
+  291 links) **were verified numerically** against real node data via `preview_eval`
+  (e.g. zoomed-out dim avg 0.68 vs the old 0.22; fog factor 0.27 vs the old 1.0=invisible).
+  #3 (orb feeding) shipped then was reverted after a live look — see Part 2 #3.
+- **#1 and #2 not yet seen running live.** The headless preview tab freezes
+  `requestAnimationFrame` when backgrounded, so the engine never settles and
+  `updateLod`/`onEngineStop` don't run there. **Eyeball #1 (far-zoom floor) and #2
+  (links) in a real foreground browser.** Likely tuning: confirm the 0.35 dim floor /
+  fog bracket feel right when zoomed out; check link width 0.8 reads well without
+  looking heavy.
 
 ### Tuning knobs (constants in `html-generator-3d.ts`)
 
 - Depth dim floor `0.35` and slope `·0.55`; fog bracket factors `·0.5` / `·1.35`.
 - Link defaults `.linkOpacity(0.6) .linkWidth(0.8)`; sliders cover the rest.
-- Feed: central radius `half·0.34`, smoothing `step·0.15`, orb boost `feed·1.5`
-  (opacity) / `feed·0.2` (scale).
+- (Orb-feeding was removed — `updateGrains` no longer accumulates `s.feed`.)
 
 ### How to resume
 

@@ -1147,11 +1147,10 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
         if (reducedMotion || grainSpeed <= 0) return;
         if (!grainTmp) grainTmp = new THREE.Matrix4();
         var sp = grainSpeed, acc = GRAIN_ACCEL * step, half = BOX_SIZE * 0.46 * boxScale; // wall tracks box size
-        var feedR = half * 0.34; // a grain crossing INTO this central radius "delivers" to the orb
         currentNodes.forEach(function (node) {
             var s = node.__asd3d;
             if (!s || !s.grains) return;
-            var pos = s.grainPos, vel = s.grainVel, scl = s.grainScl, n = s.grains.count, i, j, x, y, z, d, gr, nd, nearNow = 0;
+            var pos = s.grainPos, vel = s.grainVel, scl = s.grainScl, n = s.grains.count, i, j, x, y, z, d, gr;
             for (i = 0; i < n; i++) {
                 j = i * 3; x = pos[j]; y = pos[j + 1]; z = pos[j + 2];
                 d = Math.sqrt(x * x + y * y + z * z) || 1;   // unit direction toward the box centre
@@ -1161,17 +1160,11 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
                 if (y > half) { y = half; vel[j + 1] *= -0.6; } else if (y < -half) { y = -half; vel[j + 1] *= -0.6; }
                 if (z > half) { z = half; vel[j + 2] *= -0.6; } else if (z < -half) { z = -half; vel[j + 2] *= -0.6; }
                 pos[j] = x; pos[j + 1] = y; pos[j + 2] = z;
-                nd = Math.sqrt(x * x + y * y + z * z);
-                if (nd < feedR) nearNow++; // grain currently delivering at the cell centre
                 gr = scl[i];
                 grainTmp.makeScale(gr, gr, gr);
                 grainTmp.setPosition(x, y, z);
                 s.grains.setMatrixAt(i, grainTmp);
             }
-            // the orb feeds on the grains gathered at the centre: brightness tracks the
-            // fraction near the core, smoothed so it pulses as the swarm breathes in/out
-            var nf = nearNow / Math.max(1, n);
-            s.feed = (s.feed || 0) + (nf - (s.feed || 0)) * Math.min(1, step * 0.15);
             s.grains.instanceMatrix.needsUpdate = true;
         });
     }
@@ -1353,17 +1346,14 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
             if (s.bloom && s.bloomBase) {
                 var bdim = node.__asd3dDim || 1;
                 var ob = s.bloomBase * orbScale; // Orb size slider
-                // orb feeds on arriving grains: a brightness + slight size pulse per
-                // delivery (off when grains are frozen)
-                var feed = (grainSpeed > 0 && !reducedMotion) ? (s.feed || 0) : 0;
                 if (reducedMotion) {
                     s.bloom.scale.set(ob, ob, 1);
                     s.bloom.material.opacity = s.bloomOpacity * bloomBright * bdim;
                 } else {
                     var breath = Math.sin(now * 0.0015 + s.bloomPhase); // ~4.2s period
-                    var bsc = ob * (1 + 0.06 * breath + feed * 0.2);
+                    var bsc = ob * (1 + 0.06 * breath);
                     s.bloom.scale.set(bsc, bsc, 1);
-                    s.bloom.material.opacity = s.bloomOpacity * bloomBright * (1 + feed * 1.5) * (0.82 + 0.18 * (breath * 0.5 + 0.5)) * bdim;
+                    s.bloom.material.opacity = s.bloomOpacity * bloomBright * (0.82 + 0.18 * (breath * 0.5 + 0.5)) * bdim;
                 }
             }
         });
