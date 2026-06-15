@@ -5,101 +5,77 @@ Running log to hand off between sessions. Newest entry on top. Pair this with
 
 ---
 
-## 2026-06-15 — settings sliders, persistence, label fog, card 4-col
+## 2026-06-15 — sliders & persistence, then depth/link/orb-feed pass
 
 ### Git state at handoff (READ THIS FIRST)
 
-- Working branch: **`claude/hopeful-hertz-8389d9`**, HEAD = **`9802b59`** ("3D: card
-  close (x) button").
-- This session's work is **UNCOMMITTED** on top of `9802b59` — a single modified file
-  `packages/app-state-diagram/src/generator/html-generator-3d.ts` (~+181/−22). Nothing
-  committed; commit when you/the user are ready (exclude the untracked
-  `.claude/launch.json`).
-- An **earlier, larger** line of work is preserved on branch
-  **`asd3d-enhancements-backup`** @ **`789ccf7`** ("3D: reference grid + starfield,
-  settings sliders, persistence, drag-to-pin"). We deliberately **reset back to
-  `9802b59`** and re-did a smaller, more conservative subset, because the user wanted
-  to proceed carefully from the "x button" baseline. Treat `789ccf7` as a parts bin,
-  not the trunk.
+- Working branch: **`claude/hopeful-hertz-8389d9`**, pushed to **`origin`**
+  (koriym/app-state-diagram fork). Everything below is **committed and pushed** — the
+  working tree is clean apart from the untracked `.claude/launch.json` (intentionally
+  excluded).
+- Baseline for this session was **`9802b59`** ("3D: card close (x) button"). We reset
+  back to it from an earlier big-bang branch and rebuilt a smaller, scoped subset.
+- The earlier big-bang work (floor/wall grid, camera-following starfield, drag-to-pin)
+  is parked on **`asd3d-enhancements-backup` @ `789ccf7`** — a parts bin, NOT the trunk.
+- No PR opened. To raise one: `koriym:claude/hopeful-hertz-8389d9` → `alps-asd:2.x`.
 
-### Why we reset to 9802b59
+### What shipped (all in `html-generator-3d.ts`)
 
-The user felt the big-bang branch (`789ccf7`: floor/wall grid, dense camera-following
-starfield, drag-to-pin, link defog/width) had drifted. We `git reset --hard 9802b59`
-(work safe on the backup branch) and rebuilt only what was explicitly requested, one
-small change at a time, verifying each. Lesson: **make one scoped change, verify, move
-on**; the user steers tightly here.
-
-### What changed this session (uncommitted, on top of 9802b59)
-
-Tweaks:
-- `FLY_DIST` 140 → **170** — focus camera settles a bit further from the box.
-- Card billboard **+15%** by default, now a live slider (was a fixed `CARD_SCALE`,
-  refactored to per-frame `cardScale`).
-- Star diffraction **cross weakened** (bar opacity 0.85 → default 0.45) and made tunable.
-- Card props grid **`gridCells(props, 8, 3)` → `(8, 4)`** — up to 4 columns (e.g.
-  ProductDetail's 32 props now show in one 4-col card instead of 3 cols + "+9 more").
-- **Label fog**: `chip.material.fog = true` (was false). Subtle — `fog.near` sits ~a
-  graph-width out, so focused/near labels stay crisp; only distant labels soften. Tuned
-  by the Fog depth slider.
-
-New settings sliders (all in the `S` panel, all persisted):
-- **Box hue** (−180…180°) — rotates the glass-box colour only (orb unchanged).
-- **Box size** (0.3–2.5×) — `boxScale`; grains' spread + wall track it.
-- **Box opacity** (0–3.0×) — `boxOpacity`, multiplied into the per-frame body opacity.
-- **Bloom brightness** (0–3.0×) — `bloomBright`, multiplied into the per-frame orb opacity.
-- **Cross strength** (0–1.0) — `crossStrength`; redraws the shared star texture (`rebuildStarTexture`).
-- **Fog depth** (0.6–4.0×) — `fogScale` scales `fog.near/far`. Min raised from 0.3× to
-  **0.6×** so fog can't be cranked strong enough to swallow everything.
-- **Card size** (0.5–3.0×) — `cardScale`, applied per-frame.
-
-Infrastructure:
+**Part 1 — settings sliders + persistence (commit `ecb7795`)**
+- `S`-panel sliders: Box hue / Box size / Box opacity / Bloom brightness / Cross
+  strength / Fog depth / Card size (plus the original Orb/Ball/Particle/Idle). Each is
+  live; box/bloom/card apply per-frame, hue/size/cross/fog via small `apply*` helpers.
 - **localStorage persistence** (`asd3dSaveSettings` / `asd3dRestoreSettings`, key
-  `asd3d-settings-v1`). Every slider value is saved on change and restored once after
-  the first layout settles, so the user never re-hunts for good values. Visibility
-  toggles are intentionally NOT persisted (there are none in this baseline).
+  `asd3d-settings-v1`): every slider value saved on change, restored once after the
+  first layout — no re-hunting good values.
+- **Label fog**: `chip.material.fog = true` (subtle; near labels stay crisp, distant
+  soften; tuned by the Fog depth slider).
+- **Card props grid → max 4 columns** (was 3; e.g. ProductDetail's 32 props in one
+  4-col card).
+- Tweaks: `FLY_DIST` 140→170, card billboard +15%, star cross weakened+tunable, Fog
+  depth slider min capped at 0.6× so fog can't be cranked to swallow everything.
 
-### Open issues / ideas raised by the user (next-session backlog)
+**Part 2 — the three backlog items, now implemented (a later commit on this branch)**
+1. **Far-zoom visibility floor.** The absolute fog + aerial dimmer used to fade the
+   WHOLE graph to nothing when you pulled the camera back. Both are now **relative to
+   the camera's distance to the cluster centre** (`updateLod`): a node only fades when
+   it is farther than the centre, and the fog band is bracketed to the camera distance
+   so the cluster never falls fully into fog. Floors: depth dim ≥ 0.35; fog `near =
+   max(base, camDist − span·0.5)`, `far = max(base, camDist + span·1.35)`. `sceneSpan`
+   is captured in `applySceneExtents`.
+2. **Link legibility.** Links were dark stems dissolving into the fog. Now `defogLinks`
+   takes the link tubes **out of the fog** (re-run after layout and after any width
+   change), defaults bumped (opacity 0.45→0.6, width 0.5→0.8, colour still the calm
+   stem), and new **Link width / Link opacity sliders** (persisted) let the user tune.
+3. **Orb-as-cell feeding.** `updateGrains` tracks the fraction of descriptor-grains
+   gathered within a central radius (`s.feed`, smoothed); the orb's brightness and size
+   **pulse with it** (`opacity *= 1 + feed·1.5`, scale `+feed·0.2`). The box reads as a
+   cell whose orb glows as nutrients arrive at the core and dims as they disperse.
 
-1. **Far-zoom invisibility (highest priority).** Zooming far out fogs/dims EVERYTHING
-   — boxes, orbs, labels — to nothing (see the user's two screenshots: crisp up close,
-   blank when pulled back). The user wants a **floor so things never fully disappear**.
-   Root cause: linear `THREE.Fog` reaches 100% at `fog.far`, and the aerial dimmer also
-   fades. The Fog-depth min bump (0.6×) only caps the *slider*, not the default fade.
-   Ideas to try: clamp the effective fog factor for boxes/orbs (custom fog via
-   `onBeforeCompile`, or a min-opacity floor by distance like the chip's 0.22), or make
-   `fog.far` scale with how far the camera can zoom so the cluster never leaves the fog
-   volume. Decide whether labels should keep fully fogging while boxes/orbs get a floor.
+### Verification status — IMPORTANT
 
-2. **Links barely visible — "is it the opacity?"** Partly, but mostly the **colour**.
-   At this baseline links use `stemColor` (dark root, e.g. `#103246`) at opacity 0.45,
-   width 0.5 — a dark line on a near-black, fogged background. Opacity alone won't fix
-   it. In the backup branch we tried bright `l.color` + width 1.1 → user called it
-   "気持ち悪い" (too much); a calm middle (slightly lighter stem, width ~1.0, and taking
-   links out of the fog so they don't dissolve at distance — `defogLinks` exists on
-   `789ccf7`) read better. Consider a **Link width / Link opacity slider** (both exist
-   on `789ccf7`) rather than hard-coding, and keep the colour calm.
+- `tsc` clean; `pnpm test` **127/127**.
+- Sliders, persistence round-trip, the Part-2 #1 dim/fog **formulas**, #2 defog (all 291
+  links), and #3 feed **were verified numerically / by simulation** against real node
+  data via `preview_eval` (e.g. zoomed-out dim avg 0.68 vs the old 0.22; fog factor 0.27
+  vs the old 1.0=invisible; orb feed pulses 0.06–0.98 → up to +150% brightness).
+- **NOT yet seen running live.** The headless preview tab freezes `requestAnimationFrame`
+  when backgrounded, so the engine never settles and `updateLod`/`onEngineStop` don't
+  run there. **First task next session: open in a real foreground browser and eyeball
+  Part 2.** Likely tuning: the +150% feed peak may be too strong (lower the `feed·1.5`
+  factor); confirm the 0.35 dim floor / fog bracket feel right when zoomed out; check
+  link width 0.8 reads well without looking heavy.
 
-3. **Orb-as-cell metaphor (creative direction).** The orb feels small; idea: the box is
-   a **cell**, and **nutrients arrive from outside** to feed it — when an incoming
-   grain/particle "collides" with the centre, the **orb brightens** (a pulse of
-   brightness on delivery) rather than the orb just being statically sized. This would
-   tie the descriptor-grain swarm and the link particles into a feeding animation. Worth
-   prototyping: on grain-reaches-centre (or link-particle-arrival), bump
-   `s.bloomOpacity`/scale briefly and decay. Could replace/augment the current passive
-   breathing.
+### Tuning knobs (constants in `html-generator-3d.ts`)
+
+- Depth dim floor `0.35` and slope `·0.55`; fog bracket factors `·0.5` / `·1.35`.
+- Link defaults `.linkOpacity(0.6) .linkWidth(0.8)`; sliders cover the rest.
+- Feed: central radius `half·0.34`, smoothing `step·0.15`, orb boost `feed·1.5`
+  (opacity) / `feed·0.2` (scale).
 
 ### How to resume
 
 1. Read [`3d-browse-dev-manual.md`](./3d-browse-dev-manual.md) (escaping rules + slider recipe).
-2. `pnpm --filter @alps-asd/app-state-diagram build` then generate both themes to /tmp.
-3. The current working tree already has this session's sliders + persistence. If you
-   want a clean A/B, `asd3d-cosmos-PREV.html` / `c47feec-ORIGINAL.html` may still be in
-   /tmp; otherwise regenerate from `9802b59` and `789ccf7`.
-4. Tackle backlog #1 (far-zoom floor) first — it's the user's main remaining complaint.
-
-### Verified this session
-
-`tsc` clean; `pnpm test` 127/127. Each slider checked numerically via `preview_eval`
-(e.g. box scale 34→68 at 2.0×, fog.far tripled at 3.0×, cross bar pixel 0→bright,
-persistence round-trips across reload). Label fog confirmed `true` on all 89 chips.
+2. `pnpm --filter @alps-asd/app-state-diagram build`, generate both themes to /tmp,
+   open `?mode=3d` in a real browser.
+3. Eyeball Part 2 live; tune the magnitudes above; commit.
