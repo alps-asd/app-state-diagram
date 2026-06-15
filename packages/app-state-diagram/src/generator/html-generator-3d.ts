@@ -96,6 +96,8 @@ export function asd3dOverlay(safeAlpsTitle: string): string {
         <label class="asd3d-settings-row"><span>Cross strength<b id="asd3d-cross-val">0.45</b></span><input type="range" id="asd3d-cross" min="0" max="100" step="5" value="45"></label>
         <label class="asd3d-settings-row"><span>Fog depth<b id="asd3d-fog-val">1.0&#215;</b></span><input type="range" id="asd3d-fog" min="6" max="40" step="1" value="10"></label>
         <label class="asd3d-settings-row"><span>Card size<b id="asd3d-card-size-val">1.15&#215;</b></span><input type="range" id="asd3d-card-size" min="50" max="300" step="5" value="115"></label>
+        <label class="asd3d-settings-row"><span>Link width<b id="asd3d-link-width-val">0.8</b></span><input type="range" id="asd3d-link-width" min="2" max="30" step="1" value="8"></label>
+        <label class="asd3d-settings-row"><span>Link opacity<b id="asd3d-link-opacity-val">0.60</b></span><input type="range" id="asd3d-link-opacity" min="10" max="100" step="5" value="60"></label>
         <p class="asd3d-settings-note" id="asd3d-settings-note" hidden></p>
     </div>
     <div class="asd3d-info" id="asd3d-info">
@@ -230,6 +232,10 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
     var fogValEl = document.getElementById('asd3d-fog-val');
     var cardSizeEl = document.getElementById('asd3d-card-size');
     var cardSizeValEl = document.getElementById('asd3d-card-size-val');
+    var linkWidthEl = document.getElementById('asd3d-link-width');
+    var linkWidthValEl = document.getElementById('asd3d-link-width-val');
+    var linkOpacityEl = document.getElementById('asd3d-link-opacity');
+    var linkOpacityValEl = document.getElementById('asd3d-link-opacity-val');
     var settingsNoteEl = document.getElementById('asd3d-settings-note');
     var mainContent = document.querySelector('.markdown-body');
     if (!overlay || !canvasEl || !openBtn || !exitBtn) return;
@@ -1003,6 +1009,18 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
             if (fog && baseFogFar) { fog.near = baseFogNear * fogScale; fog.far = baseFogFar * fogScale; }
         } catch (e) {}
     }
+    // links use the scene fog, so the dark stems dissolve into the background with
+    // distance ("hard to see"). Take the link tubes out of the fog so they keep their
+    // colour at any distance. Re-applied after every layout/width-rebuild.
+    function defogLinks() {
+        try {
+            var ls = graph.graphData().links;
+            for (var i = 0; i < ls.length; i++) {
+                var lo = ls[i].__lineObj;
+                if (lo && lo.material && lo.material.fog) { lo.material.fog = false; lo.material.needsUpdate = true; }
+            }
+        } catch (e) {}
+    }
     // ---- persist the settings sliders to localStorage so a user's tuning (card
     // size, box look, fog, etc.) carries to the next visit -- no need to re-find
     // good values. Raw slider values keyed by element id; restored once the graph
@@ -1010,7 +1028,7 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
     var SETTINGS_KEY = 'asd3d-settings-v1';
     var settingsRestored = false;
     function settingsSliders() {
-        return [orbSizeEl, ballSpeedEl, speedParticleEl, speedOrbitEl, boxHueEl,
+        return [orbSizeEl, ballSpeedEl, speedParticleEl, speedOrbitEl, boxHueEl, linkWidthEl, linkOpacityEl,
                 boxSizeEl, boxOpacityEl, bloomBrightEl, crossEl, fogEl, cardSizeEl];
     }
     function asd3dSaveSettings() {
@@ -1129,10 +1147,11 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
         if (reducedMotion || grainSpeed <= 0) return;
         if (!grainTmp) grainTmp = new THREE.Matrix4();
         var sp = grainSpeed, acc = GRAIN_ACCEL * step, half = BOX_SIZE * 0.46 * boxScale; // wall tracks box size
+        var feedR = half * 0.34; // a grain crossing INTO this central radius "delivers" to the orb
         currentNodes.forEach(function (node) {
             var s = node.__asd3d;
             if (!s || !s.grains) return;
-            var pos = s.grainPos, vel = s.grainVel, scl = s.grainScl, n = s.grains.count, i, j, x, y, z, d, gr;
+            var pos = s.grainPos, vel = s.grainVel, scl = s.grainScl, n = s.grains.count, i, j, x, y, z, d, gr, nd, nearNow = 0;
             for (i = 0; i < n; i++) {
                 j = i * 3; x = pos[j]; y = pos[j + 1]; z = pos[j + 2];
                 d = Math.sqrt(x * x + y * y + z * z) || 1;   // unit direction toward the box centre
@@ -1142,11 +1161,17 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
                 if (y > half) { y = half; vel[j + 1] *= -0.6; } else if (y < -half) { y = -half; vel[j + 1] *= -0.6; }
                 if (z > half) { z = half; vel[j + 2] *= -0.6; } else if (z < -half) { z = -half; vel[j + 2] *= -0.6; }
                 pos[j] = x; pos[j + 1] = y; pos[j + 2] = z;
+                nd = Math.sqrt(x * x + y * y + z * z);
+                if (nd < feedR) nearNow++; // grain currently delivering at the cell centre
                 gr = scl[i];
                 grainTmp.makeScale(gr, gr, gr);
                 grainTmp.setPosition(x, y, z);
                 s.grains.setMatrixAt(i, grainTmp);
             }
+            // the orb feeds on the grains gathered at the centre: brightness tracks the
+            // fraction near the core, smoothed so it pulses as the swarm breathes in/out
+            var nf = nearNow / Math.max(1, n);
+            s.feed = (s.feed || 0) + (nf - (s.feed || 0)) * Math.min(1, step * 0.15);
             s.grains.instanceMatrix.needsUpdate = true;
         });
     }
@@ -1229,8 +1254,17 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
         var p11 = projectionTerm();
         var vh = window.innerHeight || 900;
         var fog = graph.scene().fog;
-        var aerialNear = fog ? fog.near * 0.6 : 300;
-        var aerialFar = fog ? fog.far * 0.9 : 1500;
+        // camera distance to the cluster centre -- both the fog and the depth fade are
+        // made RELATIVE to it so pulling the camera back can't fade the whole graph to
+        // the background. The fog band is bracketed around the camera distance when the
+        // slider range would otherwise leave the cluster fully fogged ("visibility floor").
+        var cdx = cam.x - introCx, cdy = cam.y - introCy, cdz = cam.z - introCz;
+        var camDist = Math.sqrt(cdx * cdx + cdy * cdy + cdz * cdz) || 1;
+        if (fog && baseFogFar) {
+            var bn = baseFogNear * fogScale, bf = baseFogFar * fogScale;
+            fog.near = Math.max(bn, camDist - sceneSpan * 0.5);
+            fog.far = Math.max(bf, camDist + sceneSpan * 1.35);
+        }
         currentNodes.forEach(function (node) {
             var s = node.__asd3d;
             if (!s || typeof node.x !== 'number') return;
@@ -1242,9 +1276,11 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
             var px = Math.max(CHIP_PX_MIN, Math.min(CHIP_PX_MAX, pxNatural));
             var sy = 2 * px / (p11 * vh);
             s.chip.scale.set(sy * s.chip.userData.aspect, sy, 1);
-            // aerial perspective: labels fade toward the background with distance
-            var aerial = 1 - (dist - aerialNear) / Math.max(1, aerialFar - aerialNear);
-            node.__asd3dDim = Math.max(0.22, Math.min(1, aerial * 1.15));
+            // aerial perspective relative to the centre: a node only fades when it is
+            // FARTHER than the cluster centre, so zooming out (all nodes ~equidistant)
+            // keeps everything visible instead of dimming the whole graph to nothing.
+            var rel = (dist - camDist) / Math.max(sceneSpan, 1); // <0 nearer, >0 farther
+            node.__asd3dDim = Math.max(0.35, Math.min(1, 1 - Math.max(0, rel) * 0.55));
         });
         // cards open ONLY on an explicit click (cardOpenId), so focusing a node
         // shows its botanical form rather than instantly hiding it behind a card
@@ -1317,14 +1353,17 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
             if (s.bloom && s.bloomBase) {
                 var bdim = node.__asd3dDim || 1;
                 var ob = s.bloomBase * orbScale; // Orb size slider
+                // orb feeds on arriving grains: a brightness + slight size pulse per
+                // delivery (off when grains are frozen)
+                var feed = (grainSpeed > 0 && !reducedMotion) ? (s.feed || 0) : 0;
                 if (reducedMotion) {
                     s.bloom.scale.set(ob, ob, 1);
                     s.bloom.material.opacity = s.bloomOpacity * bloomBright * bdim;
                 } else {
                     var breath = Math.sin(now * 0.0015 + s.bloomPhase); // ~4.2s period
-                    var bsc = ob * (1 + 0.06 * breath);
+                    var bsc = ob * (1 + 0.06 * breath + feed * 0.2);
                     s.bloom.scale.set(bsc, bsc, 1);
-                    s.bloom.material.opacity = s.bloomOpacity * bloomBright * (0.82 + 0.18 * (breath * 0.5 + 0.5)) * bdim;
+                    s.bloom.material.opacity = s.bloomOpacity * bloomBright * (1 + feed * 1.5) * (0.82 + 0.18 * (breath * 0.5 + 0.5)) * bdim;
                 }
             }
         });
@@ -1817,6 +1856,7 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
     // off to the idle orbit. Cancelled the instant the user takes control.
     var introStart = 0, introFrom = 0, introTo = 0, introAz = 0;
     var introCx = 0, introCy = 0, introCz = 0;
+    var sceneSpan = 600; // graph extent; updateLod keeps fog + depth cues relative to it
     var INTRO_DUR = 7000, INTRO_EL = 0.42, INTRO_SWEEP = 0.9;
     function placeIntroCamera(dist, az) {
         var cam = graph.camera(), ctr = graph.controls();
@@ -1840,6 +1880,8 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
             } else {
                 var c = graphCentroid(); introCx = c.x; introCy = c.y; introCz = c.z;
             }
+            sceneSpan = span; // used by updateLod to keep fog/depth relative to zoom
+            defogLinks(); // keep link stems visible at distance
             asd3dRestoreSettings(); // replay saved slider values once, now that nodes/fog/star texture exist
             var fit = span * 1.15;
             introFrom = fit * 1.7;   // start a bit beyond the fit
@@ -1865,8 +1907,8 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
             .nodeLabel(nodeTooltip)
             // stem: dark root colour, translucent so overlaps read as foliage
             .linkColor(function (l) { return l.stemColor; })
-            .linkOpacity(0.45)
-            .linkWidth(0.5)
+            .linkOpacity(0.6)
+            .linkWidth(0.8)
             .linkCurvature(function (l) { return l.curvature; }) // keep the vine curls / self-loops
             .linkCurveRotation(function (l) { return l.rotation; })
             // shoot tip: a long pointed cone in the bright tip colour replaces the
@@ -2210,6 +2252,18 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
     if (cardSizeEl) cardSizeEl.addEventListener('input', function () {
         cardScale = (+cardSizeEl.value) / 100; // slider 50..300 -> 0.5x..3.0x (applied per-frame)
         if (cardSizeValEl) cardSizeValEl.textContent = cardScale.toFixed(2) + '\\u00d7';
+        asd3dSaveSettings();
+    });
+    if (linkWidthEl) linkWidthEl.addEventListener('input', function () {
+        var w = (+linkWidthEl.value) / 10; // slider 2..30 -> 0.2..3.0
+        if (linkWidthValEl) linkWidthValEl.textContent = w.toFixed(1);
+        if (graph) { graph.linkWidth(w); defogLinks(); setTimeout(defogLinks, 60); } // width rebuilds tubes -> re-defog
+        asd3dSaveSettings();
+    });
+    if (linkOpacityEl) linkOpacityEl.addEventListener('input', function () {
+        var o = (+linkOpacityEl.value) / 100; // slider 10..100 -> 0.10..1.00
+        if (linkOpacityValEl) linkOpacityValEl.textContent = o.toFixed(2);
+        if (graph) graph.linkOpacity(o);
         asd3dSaveSettings();
     });
 
