@@ -153,7 +153,7 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
             root: { safe: '#103246', idempotent: '#271c4a', unsafe: '#3a1130', other: '#1a2440' },
             bloomColor: '#aaccff', glow: 'star',
             cone: { opacity: 0.62, emissive: 0.9, gradLo: 0.2 },
-            starfield: 800
+            starfield: 20000
         }
     };
     var THEME_NAME = (typeof window !== 'undefined' && window.ASD3D_THEME) || 'botanical';
@@ -448,7 +448,13 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
                     targetId: l.target
                 };
             }).sort(function (a, b) {
-                return a.transId.localeCompare(b.transId); // alphabetical, consistent everywhere
+                // do-actions (unsafe/idempotent) first, then go-actions (safe);
+                // alphabetical within each group. Column-major layout then fills a
+                // column with do's and lets go's continue in the same column.
+                var ga = a.transType === 'safe' ? 1 : 0;
+                var gb = b.transType === 'safe' ? 1 : 0;
+                if (ga !== gb) return ga - gb;
+                return a.transId.localeCompare(b.transId);
             });
         });
 
@@ -563,7 +569,7 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
             return { cells: shown, cols: maxCols };
         }
 
-        var pg = gridCells(props, 8, 4);
+        var pg = gridCells(props, 10, 4);
         var propCells = pg.cells, propCols = pg.cols;
         var propRowsPer = propCells.length ? Math.ceil(propCells.length / propCols) : 0;
         measure.font = rowFont;
@@ -578,7 +584,7 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
         }
         var propsGridW = propColW.reduce(function (a, b) { return a + b; }, 0) + COL_GAP * (propCols - 1);
 
-        var bg = gridCells(actions, 6, 2);
+        var bg = gridCells(actions, 8, 4);
         var btnCells = bg.cells, btnCols = actions.length ? bg.cols : 0;
         var btnRowsPer = btnCells.length ? Math.ceil(btnCells.length / btnCols) : 0;
         measure.font = btnFont;
@@ -597,7 +603,7 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
         var headerW = measure.measureText(head).width;
         if (sub) { measure.font = subFont; headerW = Math.max(headerW, measure.measureText(sub).width); }
 
-        var w = Math.ceil(Math.min(Math.max(Math.max(headerW, propsGridW, btnsGridW) + MARGIN * 2, 240), 760));
+        var w = Math.ceil(Math.min(Math.max(Math.max(headerW, propsGridW, btnsGridW) + MARGIN * 2, 240), 1040));
         var headerH = 52 + (sub ? 28 : 0);
         var propsH = propCells.length ? propRowsPer * rowH : rowH;
         var btnsH = btnCells.length ? (16 + btnRowsPer * (btnH + btnGapY)) : 0;
@@ -902,6 +908,7 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
         return haloTexture;
     }
 
+    var starField = null;    // background starfield THREE.Points (cosmos only)
     var starTexture = null;
     var starCanvas = null;
     function drawStarCanvas() {
@@ -1243,6 +1250,13 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
         try { checkParticleArrivals(); } catch (e) {}
         try { updateArrows(now); } catch (e) {}
         try { updateGrains(Math.min(dt * 60, 3)); } catch (e) {}
+        // very slow starfield rotation for a subtle drift against the camera
+        if (starField && !reducedMotion) {
+            try {
+                starField.rotation.y = now * 0.00003;
+                starField.rotation.x = now * 0.00002;
+            } catch (e) {}
+        }
         var cam = graph.camera().position;
         var p11 = projectionTerm();
         var vh = window.innerHeight || 900;
@@ -1950,7 +1964,7 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
             var ctrls = graph.controls();
             if (ctrls) {
                 ctrls.minDistance = 45;
-                ctrls.maxDistance = 3000;
+                ctrls.maxDistance = 5000;
                 ctrls.zoomSpeed = 0.7;
                 ctrls.staticMoving = true; // no inertia drift; predictable with the idle orbit
             }
@@ -1967,25 +1981,33 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
         } catch (e) {}
     }
 
-    // deep-space backdrop: a shell of unfogged points around the graph (cosmos only)
+    // deep-space backdrop: a distant shell of unfogged points far beyond the graph.
+    // Stars sit at the outermost depth so they appear tiny and never clip through fog.
     function addStarfield(scene, count) {
         var pos = new Float32Array(count * 3);
+        var col = new Float32Array(count * 3);
         for (var i = 0; i < count; i++) {
             var u = Math.random() * 2 - 1, t = Math.random() * Math.PI * 2;
             var r = 1400 + Math.random() * 1500, s = Math.sqrt(1 - u * u);
             pos[i * 3] = r * s * Math.cos(t);
-            pos[i * 3 + 1] = r * u;
+            pos[i * 3 + 1] = r * u * 0.6;
             pos[i * 3 + 2] = r * s * Math.sin(t);
+            // subtle colour variation: mostly cool white with occasional warm tints
+            var base = 0.7 + Math.random() * 0.3;
+            col[i * 3] = base;
+            col[i * 3 + 1] = base * (0.82 + Math.random() * 0.18);
+            col[i * 3 + 2] = 0.82 + Math.random() * 0.18;
         }
         var geo = new THREE.BufferGeometry();
         geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+        geo.setAttribute('color', new THREE.BufferAttribute(col, 3));
         var mat = new THREE.PointsMaterial({
-            color: 0xeaf0ff, size: 2.6, sizeAttenuation: true,
+            size: 2.0, sizeAttenuation: true, vertexColors: true,
             transparent: true, opacity: 0.9, depthWrite: false, fog: false
         });
-        var stars = new THREE.Points(geo, mat);
-        stars.renderOrder = -1;
-        scene.add(stars);
+        starField = new THREE.Points(geo, mat);
+        starField.renderOrder = -1;
+        scene.add(starField);
     }
 
     // ---- tag bar (mirrors the 2D tag checkboxes; selected tags filter the 3D subgraph) ----
