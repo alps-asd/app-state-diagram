@@ -57,10 +57,10 @@ certainly typed a backtick or `${` inside the JS.
 # build (tsc only; required before generating)
 pnpm --filter @alps-asd/app-state-diagram build
 
-# generate a demo HTML to inspect (default theme = botanical)
-node packages/app-state-diagram/dist/asd.js docs/demo/amazon/alps.json -o /tmp/asd3d.html
+# generate a demo HTML to inspect (--3d is required to embed 3D browse mode; default theme = botanical)
+node packages/app-state-diagram/dist/asd.js --3d docs/demo/amazon/alps.json -o /tmp/asd3d.html
 # cosmos theme
-node packages/app-state-diagram/dist/asd.js --theme cosmos docs/demo/amazon/alps.json -o /tmp/asd3d-cosmos.html
+node packages/app-state-diagram/dist/asd.js --3d --theme cosmos docs/demo/amazon/alps.json -o /tmp/asd3d-cosmos.html
 
 # tests — must stay green (currently 127: 86 app + 41 mcp)
 pnpm test

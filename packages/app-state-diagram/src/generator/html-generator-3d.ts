@@ -271,7 +271,7 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
     var arrowSeq = 0;          // per-arrow counter to desync the cone shimmer phase
 
     hudEl.innerHTML = 'Drag: rotate \\u00b7 Right-drag: pan \\u00b7 Scroll: zoom<br>' +
-        'Click node: focus \\u00b7 Right-click: table \\u00b7 S: settings \\u00b7 Esc: back to 2D';
+        'Click node: focus \\u00b7 Right-click: table \\u00b7 S: settings \\u00b7 Esc: back to 2D<br>Depth: entry near \\u2192 deep states far';
 
     function loadScript(src) {
         return new Promise(function (resolve, reject) {
@@ -1805,6 +1805,56 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
         canvasEl.addEventListener('pointerleave', hideCardTip, true);
     }
 
+    // ---- semantic Z-axis: depth-from-entry layering ----
+    // The entry state is the first state descriptor in the ALPS profile order
+    // (ALPS convention: the author lists the entry state first). We BFS from it
+    // and fix each node's Z to its depth, so the 3D space reads as "how deep
+    // into the app you are." Cycles are handled naturally by BFS (a node keeps
+    // the depth at which it was first reached). Self-loops are ignored.
+    var DEPTH_LEVEL_DISTANCE = 80;
+    function assignDepthLevels(model, descriptors) {
+        var nodeIds = {};
+        model.nodes.forEach(function (n) { nodeIds[n.id] = true; });
+        // find the entry state: first top-level descriptor that is a diagram node
+        var entryId = null;
+        (descriptors || []).forEach(function (d) {
+            if (entryId || !d.id) return;
+            if (nodeIds[d.id]) entryId = d.id;
+        });
+        if (!entryId && model.nodes.length > 0) entryId = model.nodes[0].id;
+        // BFS from the entry state
+        var depth = {};
+        var queue = [];
+        depth[entryId] = 0;
+        queue.push(entryId);
+        // adjacency: source -> [target states]
+        var adj = {};
+        model.links.forEach(function (l) {
+            var s = typeof l.source === 'object' ? l.source.id : l.source;
+            var t = typeof l.target === 'object' ? l.target.id : l.target;
+            if (s === t) return; // skip self-loops
+            if (!adj[s]) adj[s] = [];
+            adj[s].push(t);
+        });
+        while (queue.length) {
+            var cur = queue.shift();
+            var neighbors = adj[cur] || [];
+            for (var i = 0; i < neighbors.length; i++) {
+                var nb = neighbors[i];
+                if (depth[nb] === undefined && nodeIds[nb]) {
+                    depth[nb] = depth[cur] + 1;
+                    queue.push(nb);
+                }
+            }
+        }
+        // assign fz: deeper states go further back (negative Z = away from camera)
+        model.nodes.forEach(function (n) {
+            var d = depth[n.id] !== undefined ? depth[n.id] : 0;
+            n.fz = -d * DEPTH_LEVEL_DISTANCE;
+            n.z = n.fz; // start at the fixed position
+        });
+    }
+
     function refreshGraphData(force) {
         if (!graph) return;
         var key = tagKey();
@@ -1820,6 +1870,9 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
         model.nodes.forEach(function (n) { nodeById[n.id] = n; });
         clearSelection();
         fitDone = false;
+        var data = window.alpsData || {};
+        var descriptors = (data.alps && data.alps.descriptor) || [];
+        assignDepthLevels(model, descriptors);
         graph.graphData(model);
         statsEl.textContent = model.nodes.length + ' states \\u00b7 ' + model.links.length + ' transitions';
         particlesEnabled = !reducedMotion && model.links.length > 0 && model.links.length <= 400;

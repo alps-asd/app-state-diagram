@@ -36,7 +36,8 @@ export function generateHtml(
   alpsData: AlpsDocument,
   svgContent: string,
   originalContent: string,
-  theme = 'botanical'
+  theme = 'botanical',
+  enable3d = false
 ): string {
   // Create relationship data for highlighting
   const relationships = buildRelationshipMap(alpsData);
@@ -167,7 +168,7 @@ td a:hover{text-decoration:underline;}
 .doc-tag{background-color:#FFFBEA;border-color:#FFE8A1;color:#8A6D1B;border:1px solid #FFE8A1;padding:3px 8px;font-size:0.8em;border-radius:4px;}
 .doc-tag.clickable{cursor:pointer;}
 .doc-tag.clickable:hover{background-color:#FFF3CC;}
-${asd3dStyles}
+${enable3d ? asd3dStyles : ''}
 </style>
 <script>
 // ALPS relationship data for parent-child highlighting
@@ -318,10 +319,10 @@ document.addEventListener('DOMContentLoaded', function() {
         <span class="selector-option"><input type="radio" name="sizeMode" value="half"><label> Compact</label></span>
         <span class="selector-option"><input type="radio" name="sizeMode" value="fit"><label> Fit to width</label></span>
     </div>
-    <div class="selector-row">
+${enable3d ? `    <div class="selector-row">
         <span class="selector-label">View:</span>
         <span class="selector-option"><button type="button" id="asd3d-open" class="asd3d-open-btn" title="Browse the state diagram in 3D space (Esc)">3D View</button></span>
-    </div>
+    </div>` : ''}
 ${tagSelectorHtml ? `    <div class="selector-row">${tagSelectorHtml}
         <span class="selector-option tag-only-option"><input type="checkbox" id="tag-only-mode" class="tag-only-checkbox" disabled><label for="tag-only-mode"> Show selected tags only</label></span>
     </div>` : ''}
@@ -330,7 +331,7 @@ ${tableHtml}
 ${linksHtml}
 <div style="display:none"><code id="alps-profile">${escapedContent}</code></div>
 </div>
-${asd3dOverlay(safeAlpsTitle)}
+${enable3d ? asd3dOverlay(safeAlpsTitle) : ''}
 <script>
 // Tag filtering
 const tagDescriptorMap = ${escapeJsonForScript(tagDescriptorMap)};
@@ -376,7 +377,7 @@ const readUrlState = () => {
         tagOnly: params.get('tagOnly') === '1',
         label: params.get('label') === 'title' ? 'title' : 'id',
         size: normalizeSizeMode(params.get('size')),
-        mode: params.get('mode') === '3d' ? '3d' : '',
+        ${enable3d ? `mode: params.get('mode') === '3d' ? '3d' : '',` : `mode: '',`}
         hash: getCurrentHash()
     };
 };
@@ -387,7 +388,7 @@ const collectUrlState = () => {
         tagOnly: isTagOnlyMode(),
         label: getCurrentLabelMode(),
         size: getCurrentSizeMode(),
-        mode: (typeof window.asd3dIsActive === 'function' && window.asd3dIsActive()) ? '3d' : '',
+        ${enable3d ? `mode: (typeof window.asd3dIsActive === 'function' && window.asd3dIsActive()) ? '3d' : '',` : `mode: '',`}
         hash: currentDescriptorHash || getCurrentHash()
     };
 };
@@ -414,11 +415,11 @@ const replaceUrlState = (state) => {
     } else {
         url.searchParams.delete('size');
     }
-    if (state.mode === '3d') {
+${enable3d ? `    if (state.mode === '3d') {
         url.searchParams.set('mode', '3d');
     } else {
         url.searchParams.delete('mode');
-    }
+    }` : `    url.searchParams.delete('mode');`}
     url.hash = state.hash ? '#' + encodeURIComponent(state.hash) : '';
     window.history.replaceState(null, '', url.toString());
 };
@@ -869,9 +870,9 @@ async function applyUrlState(state) {
         if (currentDescriptorHash) {
             setTimeout(() => scrollToDescriptor(currentDescriptorHash), 0);
         }
-        if (typeof window.asd3dApplyMode === 'function' && typeof nextState.mode !== 'undefined') {
+${enable3d ? `        if (typeof window.asd3dApplyMode === 'function' && typeof nextState.mode !== 'undefined') {
             window.asd3dApplyMode(nextState.mode === '3d');
-        }
+        }` : ``}
     } finally {
         isApplyingUrlState = false;
     }
@@ -950,10 +951,10 @@ window.loadText = async function(text) {
     }
 };
 </script>
-<script>window.ASD3D_THEME = ${JSON.stringify(themeName)};</script>
+${enable3d ? `<script>window.ASD3D_THEME = ${JSON.stringify(themeName)};</script>
 <script>
 ${asd3dScript}
-</script>
+</script>` : ''}
 </body>
 </html>`;
 }
