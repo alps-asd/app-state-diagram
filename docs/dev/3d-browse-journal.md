@@ -7,6 +7,11 @@ Running log to hand off between sessions. Newest entry on top. Pair this with
 
 ## 2026-06-15 — sliders & persistence, then depth/link/orb-feed pass
 
+> **Historical entry.** The work below now lives on `alps3d` (PR #253) and the
+> `claude/hopeful-hertz-8389d9` fork branch is deleted. The live checks listed as
+> pending under "Verification status" were completed before that PR went up. Kept as a
+> record of the session, not as current handoff state.
+
 ### Git state at handoff (READ THIS FIRST)
 
 - Working branch: **`claude/hopeful-hertz-8389d9`**, pushed to **`origin`**

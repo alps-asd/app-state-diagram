@@ -7,19 +7,24 @@ will most often make (adding a settings slider, tuning visuals).
 
 ## 1. Where the code lives
 
-Everything for 3D browse mode is in **one file**:
+The 3D browse mode spans two files:
 
-```
-packages/app-state-diagram/src/generator/html-generator-3d.ts
+```text
+packages/app-state-diagram/src/generator/html-generator-3d.ts  # the 3D app itself
+packages/app-state-diagram/src/generator/html-generator.ts     # generateHtml(): entry control, URL state, splicing
 ```
 
-It exports three things, all consumed by `generateHtml()` in `html-generator.ts`:
+`html-generator-3d.ts` exports three things, all consumed by `generateHtml()`:
 
 | Export | Type | What it is |
 |--------|------|-----------|
 | `asd3dStyles` | `string` (template literal) | the `<style>` CSS for the 3D overlay |
 | `asd3dOverlay(safeAlpsTitle)` | `string` function | the overlay markup (topbar, HUD, settings panel, info panel, canvas) |
 | `asd3dScript` | `string` (template literal) | the entire browse-mode JS as one IIFE |
+
+`html-generator.ts` owns the integration contract: the `--3d` opt-in flag, the "3D View"
+entry control, the `mode=3d` URL state (`readUrlState` / `collectUrlState` /
+`replaceUrlState` / `applyUrlState`), and the unconditional Viz.js `<script>` for 2D.
 
 `generateHtml()` splices these into the generated HTML document. So the "3D app" is
 JavaScript-inside-a-TypeScript-template-literal-string. **This shapes every edit you
@@ -47,8 +52,9 @@ certainly typed a backtick or `${` inside the JS.
 
 - **three@0.180.0** (loaded as an ESM module via dynamic `import()` from unpkg; lands
   on `window.THREE`) and **3d-force-graph@1.80.0** (UMD `<script>`).
-- Both are **lazy-loaded on `open3D()`** — the 2D page (Viz.js/WASM) and the 3D engine
-  never load together. Entering 3D fetches them from unpkg.
+- Both are **lazy-loaded on `open3D()`** and fetched from unpkg only when you enter 3D.
+  Viz.js is emitted unconditionally by `html-generator.ts`, so once you are in 3D both
+  the 2D and the 3D engines are live in the same document.
 - A debug handle is exposed: `window.asd3dGraph` is the ForceGraph3D instance.
 
 ## 4. Build / generate / test / preview
