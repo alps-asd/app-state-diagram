@@ -16116,6 +16116,7 @@ window.loadText = async function(text) {
     var cardOpenId = '';       // the node whose detail card is open (explicit click only)
     var currentNodes = [];
     var lastTagKey = null;
+    var lastAlpsData = null;   // graph cache is keyed on the document identity too, not just the tags
     var lastLabelMode = '';
     var fitDone = false;
     var tagBarBuilt = false;
@@ -16138,7 +16139,7 @@ window.loadText = async function(text) {
     var arrowSeq = 0;          // per-arrow counter to desync the cone shimmer phase
 
     hudEl.innerHTML = 'Drag: rotate \u00b7 Right-drag: pan \u00b7 Scroll: zoom<br>' +
-        'Click node: focus \u00b7 Right-click: table \u00b7 S: settings \u00b7 Esc: back to 2D';
+        'Click node: focus \u00b7 Right-click: table \u00b7 S: settings \u00b7 Esc: back to 2D<br>Depth: entry near \u2192 deep states far';
 
     function loadScript(src) {
         return new Promise(function (resolve, reject) {
@@ -17672,11 +17673,63 @@ window.loadText = async function(text) {
         canvasEl.addEventListener('pointerleave', hideCardTip, true);
     }
 
+    // ---- semantic Z-axis: depth-from-entry layering ----
+    // The entry state is the first state descriptor in the ALPS profile order
+    // (ALPS convention: the author lists the entry state first). We BFS from it
+    // and fix each node's Z to its depth, so the 3D space reads as "how deep
+    // into the app you are." Cycles are handled naturally by BFS (a node keeps
+    // the depth at which it was first reached). Self-loops are ignored.
+    var DEPTH_LEVEL_DISTANCE = 80;
+    function assignDepthLevels(model, descriptors) {
+        var nodeIds = {};
+        model.nodes.forEach(function (n) { nodeIds[n.id] = true; });
+        // find the entry state: first top-level descriptor that is a diagram node
+        var entryId = null;
+        (descriptors || []).forEach(function (d) {
+            if (entryId || !d.id) return;
+            if (nodeIds[d.id]) entryId = d.id;
+        });
+        if (!entryId && model.nodes.length > 0) entryId = model.nodes[0].id;
+        // BFS from the entry state
+        var depth = {};
+        var queue = [];
+        depth[entryId] = 0;
+        queue.push(entryId);
+        // adjacency: source -> [target states]
+        var adj = {};
+        model.links.forEach(function (l) {
+            var s = typeof l.source === 'object' ? l.source.id : l.source;
+            var t = typeof l.target === 'object' ? l.target.id : l.target;
+            if (s === t) return; // skip self-loops
+            if (!adj[s]) adj[s] = [];
+            adj[s].push(t);
+        });
+        while (queue.length) {
+            var cur = queue.shift();
+            var neighbors = adj[cur] || [];
+            for (var i = 0; i < neighbors.length; i++) {
+                var nb = neighbors[i];
+                if (depth[nb] === undefined && nodeIds[nb]) {
+                    depth[nb] = depth[cur] + 1;
+                    queue.push(nb);
+                }
+            }
+        }
+        // assign fz: deeper states go further back (negative Z = away from camera)
+        model.nodes.forEach(function (n) {
+            var d = depth[n.id] !== undefined ? depth[n.id] : 0;
+            n.fz = -d * DEPTH_LEVEL_DISTANCE;
+            n.z = n.fz; // start at the fixed position
+        });
+    }
+
     function refreshGraphData(force) {
         if (!graph) return;
         var key = tagKey();
-        if (!force && key === lastTagKey) return;
+        var dataRef = window.alpsData || null;
+        if (!force && key === lastTagKey && dataRef === lastAlpsData) return;
         lastTagKey = key;
+        lastAlpsData = dataRef;
         lastLabelMode = getCurrentLabelMode();
         var filterIds = getSelectedTags().length > 0 ? getSelectedDescriptorIds() : null;
         var model = buildGraphModel(filterIds);
@@ -17687,6 +17740,9 @@ window.loadText = async function(text) {
         model.nodes.forEach(function (n) { nodeById[n.id] = n; });
         clearSelection();
         fitDone = false;
+        var data = window.alpsData || {};
+        var descriptors = (data.alps && data.alps.descriptor) || [];
+        assignDepthLevels(model, descriptors);
         graph.graphData(model);
         statsEl.textContent = model.nodes.length + ' states \u00b7 ' + model.links.length + ' transitions';
         particlesEnabled = !reducedMotion && model.links.length > 0 && model.links.length <= 400;
@@ -17987,6 +18043,7 @@ window.loadText = async function(text) {
         overlay.classList.add('active');
         document.body.style.overflow = 'hidden';
         setBackgroundInert(true);
+        exitBtn.focus(); // the background is inert from here on: keep focus inside the dialog while the libs load
         noteInteract(); // don't orbit until the scene has settled after entry
         publishUrlState();
         showStatus('Loading 3D engine\u2026', true);
@@ -18003,7 +18060,6 @@ window.loadText = async function(text) {
             if (lastTagKey === null) refreshGraphData(true);
             if (currentNodes.length > 0) hideStatus();
             startLod();
-            exitBtn.focus();
         }).catch(function (err) {
             console.error('3D mode failed to load:', err);
             showStatus('Failed to load the 3D libraries (network error). Press Esc to return to 2D and try again.', false);
