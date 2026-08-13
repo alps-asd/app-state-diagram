@@ -249,6 +249,7 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
     var cardOpenId = '';       // the node whose detail card is open (explicit click only)
     var currentNodes = [];
     var lastTagKey = null;
+    var lastAlpsData = null;   // graph cache is keyed on the document identity too, not just the tags
     var lastLabelMode = '';
     var fitDone = false;
     var tagBarBuilt = false;
@@ -1858,8 +1859,10 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
     function refreshGraphData(force) {
         if (!graph) return;
         var key = tagKey();
-        if (!force && key === lastTagKey) return;
+        var dataRef = window.alpsData || null;
+        if (!force && key === lastTagKey && dataRef === lastAlpsData) return;
         lastTagKey = key;
+        lastAlpsData = dataRef;
         lastLabelMode = getCurrentLabelMode();
         var filterIds = getSelectedTags().length > 0 ? getSelectedDescriptorIds() : null;
         var model = buildGraphModel(filterIds);
@@ -2173,6 +2176,7 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
         overlay.classList.add('active');
         document.body.style.overflow = 'hidden';
         setBackgroundInert(true);
+        exitBtn.focus(); // the background is inert from here on: keep focus inside the dialog while the libs load
         noteInteract(); // don't orbit until the scene has settled after entry
         publishUrlState();
         showStatus('Loading 3D engine\\u2026', true);
@@ -2189,7 +2193,6 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
             if (lastTagKey === null) refreshGraphData(true);
             if (currentNodes.length > 0) hideStatus();
             startLod();
-            exitBtn.focus();
         }).catch(function (err) {
             console.error('3D mode failed to load:', err);
             showStatus('Failed to load the 3D libraries (network error). Press Esc to return to 2D and try again.', false);
