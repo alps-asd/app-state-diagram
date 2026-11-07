@@ -251,13 +251,11 @@ function convertDescriptor(desc: any): AlpsDescriptor {
     descriptor.doc = doc;
   }
 
-  // Extract nested descriptors
+  // Extract nested descriptors with all their attributes, recursively, so a
+  // nested definition (rt, tag, doc, deeper children) reads the same as in
+  // JSON instead of being reduced to href/id/type
   if (desc.descriptor && Array.isArray(desc.descriptor)) {
-    descriptor.descriptor = desc.descriptor.map((nested: any) => ({
-      href: nested['@_href'],
-      id: nested['@_id'],
-      type: nested['@_type'],
-    }));
+    descriptor.descriptor = desc.descriptor.map(convertDescriptor);
   }
 
   // Remove undefined values

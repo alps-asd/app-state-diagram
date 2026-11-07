@@ -85,15 +85,22 @@ export function addXmlDescriptor(profilePath: string, input: AddDescriptorInput)
     }
   }
 
+  // Defined at the top level and referenced from the parent via href, as in
+  // the JSON store: projections only read top-level definitions.
   if (input.parent) {
     const parent = findXmlDescriptorById(profile.alpsNode, input.parent);
     if (!parent) throw new Error(`Parent descriptor not found: ${input.parent}`);
-    elementChildren(parent).push(descriptor);
-  } else {
-    alpsChildren(profile.alpsNode).push(descriptor);
+    const ref = `#${input.id}`;
+    const children = elementChildren(parent);
+    if (!children.some((child) => elementName(child) === "descriptor" && getAttr(child, "href") === ref)) {
+      setElementChildren(parent, [...children, makeElement("descriptor", [], orderedAttrs([["href", ref]]))]);
+    }
   }
+  alpsChildren(profile.alpsNode).push(descriptor);
   writeXmlProfile(profile);
-  return { id: input.id, createdChildren, warnings };
+  const result: AddDescriptorResult = { id: input.id, createdChildren, warnings };
+  if (input.parent) result.referencedFrom = input.parent;
+  return result;
 }
 
 export function setXmlDescriptorTags(profilePath: string, input: SetTagsInput): SetTagsResult {

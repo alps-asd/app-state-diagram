@@ -392,7 +392,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
             },
             parent: {
               type: "string",
-              description: "Nest the new descriptor inside this existing descriptor (default: top level)",
+              description: "Existing descriptor that should contain the new one (e.g. the state offering a transition). The new descriptor is defined at the top level and referenced from the parent via an href fragment, so diagrams, overview and paths include it",
             },
           },
           required: ["file", "id"],

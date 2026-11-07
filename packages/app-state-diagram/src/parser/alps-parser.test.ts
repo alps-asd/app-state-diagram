@@ -61,6 +61,33 @@ describe('parseAlpsAuto', () => {
     });
   });
 
+  it('keeps every attribute of nested XML definitions, at any depth', () => {
+    const doc = parseAlpsAuto(`
+      <alps>
+        <descriptor id="Cart">
+          <descriptor id="doCheckout" type="unsafe" rt="#Done" tag="flow-purchase" title="Checkout">
+            <doc format="markdown">Pay for the cart</doc>
+            <descriptor id="card" def="https://schema.org/creditCard"/>
+          </descriptor>
+          <descriptor href="#goHome"/>
+        </descriptor>
+      </alps>
+    `);
+    const cart = doc.alps.descriptor?.[0];
+    expect(cart?.descriptor).toEqual([
+      {
+        id: 'doCheckout',
+        type: 'unsafe',
+        rt: '#Done',
+        tag: 'flow-purchase',
+        title: 'Checkout',
+        doc: { value: 'Pay for the cart', format: 'markdown' },
+        descriptor: [{ id: 'card', title: 'card', def: 'https://schema.org/creditCard' }],
+      },
+      { href: '#goHome' },
+    ]);
+  });
+
   it('throws readable parse errors', () => {
     expect(() => parseAlps('{', 'JSON')).toThrow('Invalid JSON format');
     expect(() => parseAlps('<not-alps/>', 'XML')).toThrow('No alps element found');

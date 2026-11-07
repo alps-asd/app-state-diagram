@@ -19,6 +19,7 @@ This page documents all validation errors, warnings, and suggestions reported by
 - [W002](#w002) Safe transition naming
 - [W003](#w003) Unsafe/idempotent transition naming
 - [W004](#w004) Orphan descriptor
+- [W006](#w006) Transition defined inside another descriptor
 
 **Suggestions**
 - [S001](#s001) Add doc to transition
@@ -184,6 +185,26 @@ This page documents all validation errors, warnings, and suggestions reported by
 **How to fix:**
 1. Add a transition that references this descriptor
 2. Or remove the unused descriptor
+
+---
+
+<a id="w006"></a>
+### W006: Transition defined inside another descriptor
+
+**Why:** The state diagram, overview and path finding read transitions from the top level of the profile, and read which state offers a transition from `href` references. A transition defined inline inside a state is valid ALPS, but it would not appear in any diagram.
+
+**How to fix:** Move the definition to the top level and reference it from the state:
+```diff
+  {
+    "id": "Cart",
+    "descriptor": [
+-     { "id": "doCheckout", "type": "unsafe", "rt": "#Done" }
++     { "href": "#doCheckout" }
+    ]
+- }
++ },
++ { "id": "doCheckout", "type": "unsafe", "rt": "#Done" }
+```
 
 ---
 

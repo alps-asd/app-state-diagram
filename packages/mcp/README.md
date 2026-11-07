@@ -204,7 +204,7 @@ Add a new descriptor to a JSON or XML ALPS profile. Containers reference childre
 - `title`, `doc`, `tag` (optional) — long docs auto-externalize to `alps/docs/<id>.md`
 - `rt` (optional): transition target; bare ids are normalized to `#fragments`
 - `children` (optional): child ids referenced as `href` fragments
-- `parent` (optional): nest inside an existing descriptor
+- `parent` (optional): an existing descriptor that should contain the new one (e.g. the state offering a transition). The new descriptor is defined at the top level and the parent references it via `href`, so diagrams, overview and paths include it
 
 **Example prompt:**
 > "Register name and age as person"
@@ -292,6 +292,7 @@ Existing local `doc.href` layouts keep working: any safe local href is honored a
 | W002 | Warning | Safe transition should start with "go" |
 | W003 | Warning | Unsafe/idempotent should start with "do" |
 | W005 | Warning | Tag not defined in the vocabulary file |
+| W006 | Warning | Transition defined inside another descriptor (not shown in diagrams) |
 | S001 | Suggestion | Consider adding doc to transition |
 
 See [Validation Reference](../../dev-docs/validation-reference.md) for detailed explanations.

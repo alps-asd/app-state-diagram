@@ -194,6 +194,19 @@ export class AlpsValidator {
         });
       }
 
+      // W006 - Transition defined inline inside another descriptor. The state
+      // graph (diagrams, overview, paths) only reads top-level transitions,
+      // so a nested definition would silently drop out of every projection.
+      if (isTransition && desc.id && path !== 'alps.descriptor') {
+        warnings.push({
+          code: 'W006',
+          severity: 'warning',
+          message: `Transition "${desc.id}" is defined inside another descriptor and will not appear in diagrams; define it at the top level and reference it with {"href": "#${desc.id}"}`,
+          path: descPath,
+          id: desc.id
+        });
+      }
+
       // S001 - Consider adding doc to transitions
       if (isTransition && !desc.doc) {
         suggestions.push({
