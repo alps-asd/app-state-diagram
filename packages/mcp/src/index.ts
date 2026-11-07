@@ -29,7 +29,7 @@ import { AlpsValidator } from "@alps-asd/app-state-diagram/validator/index.js";
 import { generateDot } from "@alps-asd/app-state-diagram/generator/dot-generator.js";
 import { dotToSvg } from "@alps-asd/app-state-diagram/generator/svg-generator.js";
 import { generateMermaid } from "@alps-asd/app-state-diagram/generator/mermaid-generator.js";
-import { FileResolver } from "@alps-asd/app-state-diagram/resolver/index.js";
+import { FileResolver, inlineExternalDocs, readExternalDoc } from "@alps-asd/app-state-diagram/resolver/index.js";
 import { extractGraph, findPaths, formatPath, findContainers, getDescriptorIdsByTags } from "@alps-asd/app-state-diagram/graph/index.js";
 import { addDescriptor, setDescriptorTags, renameDescriptor } from "./descriptor-store.js";
 import { setDescriptorDoc, resolveDoc, resolveSafeLocalPath, INLINE_DOC_MAX_LENGTH } from "./doc-store.js";
@@ -215,7 +215,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
       {
         name: "alps_search",
         description:
-          "Filter descriptors in an ALPS profile by type, tag, and/or free text (matched against id, title, and doc). Returns compact summaries.",
+          "Filter descriptors in an ALPS profile by type, tag, and/or free text (matched against id, title, and doc, including docs externalized to alps/docs/<id>.md). Returns compact summaries.",
         inputSchema: {
           type: "object" as const,
           properties: {
@@ -608,12 +608,22 @@ export async function handleAlpsEditorUrl(args: Record<string, unknown> | undefi
     };
   }
 
-  const url = createAlpsEditorUrl(alpsContent);
+  // The editor cannot read local files: share a self-contained copy in
+  // which externalized docs (alps/docs/<id>.md via doc.href) are inlined
+  const shared = inlineExternalDocs(alpsContent, path.dirname(path.resolve(file)));
+  const url = createAlpsEditorUrl(shared.content);
   const lines = [
     "✅ ALPS Editor URL generated",
     "",
     url,
   ];
+
+  if (shared.inlined.length > 0) {
+    lines.push(
+      "",
+      `Included ${shared.inlined.length} external doc file(s) so the shared profile is self-contained: ${shared.inlined.join(", ")}`
+    );
+  }
 
   if (url.length > URL_LENGTH_WARNING_THRESHOLD) {
     lines.push(
@@ -1213,9 +1223,14 @@ export async function handleAlpsSearch(args: Record<string, unknown> | undefined
   }
 
   try {
-    const { document } = await loadProfile(file);
+    const { document, baseDir } = await loadProfile(file);
     const descriptors = allDescriptors(document);
     const needle = text?.toLowerCase();
+    // Externalized docs (doc.href to alps/docs/<id>.md) are searched too
+    const searchableDoc = (desc: AlpsDescriptor): string => {
+      const href = typeof desc.doc === "object" ? desc.doc?.href : undefined;
+      return `${docText(desc.doc)} ${readExternalDoc(baseDir, href) ?? ""}`;
+    };
     const tagList = tag ? tag.split(/[\s,]+/).filter(Boolean) : [];
     const tagSet = tagList.length > 0 ? new Set(tagList) : null;
     const matches = descriptors.filter((desc) => {
@@ -1229,7 +1244,7 @@ export async function handleAlpsSearch(args: Record<string, unknown> | undefined
         return false;
       }
       if (needle) {
-        const haystack = `${desc.id} ${desc.title || ""} ${docText(desc.doc)}`.toLowerCase();
+        const haystack = `${desc.id} ${desc.title || ""} ${searchableDoc(desc)}`.toLowerCase();
         if (!haystack.includes(needle)) {
           return false;
         }

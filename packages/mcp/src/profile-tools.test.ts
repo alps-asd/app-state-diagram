@@ -15,8 +15,10 @@ const {
   handleAlpsAddDescriptor,
   handleAlpsSetTags,
   handleAlpsRename,
+  handleAlpsEditorUrl,
 } = require('./index');
 const { DOC_DIR } = require('./doc-store');
+const zlib = require('zlib');
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
@@ -208,6 +210,16 @@ describe('handleAlpsSearch', () => {
     ]);
   });
 
+  it('should match text inside docs externalized to alps/docs', async () => {
+    await handleAlpsSetDoc({ file: profilePath, id: 'Checkout', doc: '# Checkout\n\nPayment is captured on shipment.' });
+
+    const result = await handleAlpsSearch({ file: profilePath, text: 'captured on shipment' });
+
+    expect(parseResult(result).descriptors).toEqual([
+      { id: 'Checkout', type: 'semantic', tags: ['checkout'], doc: `(external: ${DOC_DIR}/Checkout.md)` },
+    ]);
+  });
+
   it('should resolve external href references', async () => {
     fs.writeFileSync(
       path.join(dir, 'shared.json'),
@@ -257,6 +269,39 @@ describe('handleAlpsSearch', () => {
 
     expect(result.isError).toBe(true);
     expect(result.content[0].text).toContain('Error:');
+  });
+});
+
+describe('handleAlpsEditorUrl with externalized docs', () => {
+  const decode = (text: string) => {
+    const fragment = text.match(/#profile=([A-Za-z0-9_-]+)/)![1];
+    return zlib.inflateRawSync(Buffer.from(fragment, 'base64url')).toString('utf-8');
+  };
+
+  it('should share a self-contained profile with external docs inlined', async () => {
+    await handleAlpsSetDoc({ file: profilePath, id: 'Checkout', doc: '# Checkout\n\nPayment is captured on shipment.' });
+
+    const result = await handleAlpsEditorUrl({ file: profilePath });
+
+    expect(result.isError).toBe(false);
+    expect(result.content[0].text).toContain(
+      `Included 1 external doc file(s) so the shared profile is self-contained: ${DOC_DIR}/Checkout.md`
+    );
+    const shared = JSON.parse(decode(result.content[0].text));
+    const checkout = shared.alps.descriptor.find((d: { id: string }) => d.id === 'Checkout');
+    expect(checkout.doc).toEqual({
+      href: `${DOC_DIR}/Checkout.md`,
+      format: 'markdown',
+      value: '# Checkout\n\nPayment is captured on shipment.\n',
+    });
+    expect(fs.readFileSync(profilePath, 'utf-8')).not.toContain('captured on shipment');
+  });
+
+  it('should share the file unchanged when no doc is externalized', async () => {
+    const result = await handleAlpsEditorUrl({ file: profilePath });
+
+    expect(decode(result.content[0].text)).toBe(fs.readFileSync(profilePath, 'utf-8'));
+    expect(result.content[0].text).not.toContain('external doc file');
   });
 });
 
