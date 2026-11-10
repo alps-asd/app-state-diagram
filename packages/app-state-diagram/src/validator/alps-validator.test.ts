@@ -313,6 +313,39 @@ describe('AlpsValidator', () => {
     });
   });
 
+  describe('W006 - Transition defined inside another descriptor', () => {
+    it('should warn when a transition is defined inline inside a state', () => {
+      const alps = {
+        alps: {
+          descriptor: [
+            { id: 'Cart', descriptor: [{ id: 'doCheckout', type: 'unsafe', rt: '#Done' }] },
+            { id: 'Done' }
+          ]
+        }
+      };
+      const result = validator.validate(alps);
+      const w006 = result.warnings.filter(w => w.code === 'W006');
+      expect(w006).toHaveLength(1);
+      expect(w006[0]).toMatchObject({ id: 'doCheckout', path: 'alps.descriptor[0].descriptor[0]' });
+      expect(w006[0].message).toContain('{"href": "#doCheckout"}');
+      expect(result.isValid).toBe(true);
+    });
+
+    it('should not warn for top-level transitions referenced by href', () => {
+      const alps = {
+        alps: {
+          descriptor: [
+            { id: 'Cart', descriptor: [{ href: '#doCheckout' }, { id: 'price' }] },
+            { id: 'doCheckout', type: 'unsafe', rt: '#Done' },
+            { id: 'Done' }
+          ]
+        }
+      };
+      const result = validator.validate(alps);
+      expect(result.warnings.filter(w => w.code === 'W006')).toHaveLength(0);
+    });
+  });
+
   describe('isValid', () => {
     it('should be true when no errors', () => {
       const alps = {

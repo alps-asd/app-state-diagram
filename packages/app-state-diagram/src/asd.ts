@@ -14,6 +14,7 @@ import { generateMermaid } from './generator/mermaid-generator';
 import { dotToSvg, dotToSvgHighQuality } from './generator/svg-generator';
 import { generateHtml } from './generator/html-generator';
 import { FileResolver } from './resolver/file-resolver';
+import { inlineExternalDocs } from './resolver/doc-inliner';
 import { startWatch } from './watch';
 import { AlpsValidator } from './validator';
 import { AlpsMerger } from './merger';
@@ -129,6 +130,21 @@ Options:
         return;
       }
 
+      const format = options.format || 'html';
+
+      // HTML only: bring externalized docs (doc.href to local files such as
+      // alps/docs/<id>.md) into the profile, so the table and the embedded
+      // profile show them instead of empty docs. Diagram formats do not
+      // use docs.
+      let sourceContent = content;
+      if (!['mermaid', 'dot', 'svg'].includes(format)) {
+        const selfContained = inlineExternalDocs(content, basePath);
+        if (selfContained.inlined.length > 0) {
+          sourceContent = selfContained.content;
+          document = parseAlpsAuto(sourceContent);
+        }
+      }
+
       // Resolve external references
       const resolver = new FileResolver(basePath);
       document = await resolver.resolve(document);
@@ -140,7 +156,6 @@ Options:
       let output: string;
       let outputExt: string;
 
-      const format = options.format || 'html';
       if (format === 'mermaid') {
         output = generateMermaid(document);
         outputExt = '.mmd';
@@ -154,7 +169,7 @@ Options:
       } else {
         // HTML: output standalone documentation
         const svgContent = await dotToSvg(dotContent);
-        output = generateHtml(document, svgContent, content, options.theme, Boolean(options['3d']));
+        output = generateHtml(document, svgContent, sourceContent, options.theme, Boolean(options['3d']));
         outputExt = '.html';
       }
 

@@ -1,6 +1,9 @@
 import * as fs from "fs";
 import * as os from "os";
 import * as path from "path";
+import { parseAlpsAuto } from "@alps-asd/app-state-diagram/parser/alps-parser.js";
+import { extractGraph } from "@alps-asd/app-state-diagram/graph/index.js";
+import { AlpsValidator } from "@alps-asd/app-state-diagram/validator/index.js";
 import { addDescriptor, renameDescriptor, setDescriptorTags } from "./descriptor-store.js";
 import { DOC_DIR, setDescriptorDoc } from "./doc-store.js";
 import {
@@ -228,13 +231,68 @@ describe("XML write support", () => {
     expect(readXml()).toContain('<descriptor id="goExternal" type="safe" rt="shared.xml#Cart">');
   });
 
-  it("nests new XML descriptors under a parent", () => {
-    addDescriptor(profilePath, { id: "headline", parent: "section" });
-    expectXmlEquivalentTo(XML_FIXTURE.replace(
-      '<descriptor id="section">\n      <descriptor href="#Cart"/>\n    </descriptor>',
-      '<descriptor id="section"><descriptor href="#Cart"/><descriptor id="headline"/></descriptor>'
-    ));
+  it("defines XML descriptors at the top level and references them from the parent", () => {
+    expect(addDescriptor(profilePath, { id: "headline", parent: "section" })).toEqual({
+      id: "headline",
+      createdChildren: [],
+      warnings: [],
+      referencedFrom: "section",
+    });
+    expectXmlEquivalentTo(XML_FIXTURE
+      .replace(
+        '<descriptor id="section">\n      <descriptor href="#Cart"/>\n    </descriptor>',
+        '<descriptor id="section"><descriptor href="#Cart"/><descriptor href="#headline"/></descriptor>'
+      )
+      .replace("</alps>", '  <descriptor id="headline"/>\n</alps>'));
     expect(() => addDescriptor(profilePath, { id: "stray", parent: "ghost" })).toThrow("Parent descriptor not found: ghost");
+  });
+
+  it("rejects an XML transition under a nested parent without writing", () => {
+    expect(() => addDescriptor(profilePath, { id: "doIt", type: "safe", rt: "Cart", parent: "section" })).toThrow(
+      'Transition "doIt" cannot be added under nested descriptor "section"'
+    );
+    expect(readXml()).toBe(XML_FIXTURE);
+  });
+
+  it("keeps an XML transition added under a parent visible to the state graph", () => {
+    addDescriptor(profilePath, { id: "doCheckout", type: "unsafe", rt: "Cart", parent: "Home", tag: "flow-purchase" });
+    const document = parseAlpsAuto(readXml());
+    expect(new AlpsValidator().validate(document).errors).toEqual([]);
+    const checkout = extractGraph(document).transitions.find((t) => t.id === "doCheckout");
+    expect(checkout).toEqual({ id: "doCheckout", type: "unsafe", title: "doCheckout", from: ["Home"], to: "Cart" });
+  });
+
+  it("does not duplicate an href the XML parent already holds", () => {
+    fs.writeFileSync(profilePath, '<alps><descriptor id="Home"><descriptor href="#greeting"/></descriptor></alps>');
+    addDescriptor(profilePath, { id: "greeting", parent: "Home" });
+    expect(readXml().match(/href="#greeting"/g)).toHaveLength(1);
+    expect(readXml()).toContain('id="greeting"');
+  });
+
+  it("leaves numeric text and character references of untouched XML nodes as written", () => {
+    const untouched = '<descriptor id="Other" title="caf&#233; &amp; co"><doc>1.0</doc></descriptor><descriptor id="Code"><doc>007 &#x3042;</doc></descriptor>';
+    fs.writeFileSync(profilePath, `<alps><descriptor id="Home"/>${untouched}</alps>`);
+    addDescriptor(profilePath, { id: "x" });
+    const xml = readXml();
+    expect(xml).toContain('<descriptor id="Other" title="caf&#233; &amp; co">');
+    expect(xml).toContain("<doc>1.0</doc>");
+    expect(xml).toContain("<doc>007 &#x3042;</doc>");
+  });
+
+  it("escapes written XML values and decodes references in attributes it rewrites", () => {
+    fs.writeFileSync(profilePath, '<alps><descriptor id="Home" tag="&#x3042; R&amp;D &#233;t&#233;"/></alps>');
+    expect(setDescriptorTags(profilePath, { id: "Home", add: ['Q"A'], remove: ["R&D"] })).toEqual({
+      id: "Home",
+      tags: ["あ", "été", 'Q"A'],
+      added: ['Q"A'],
+      removed: ["R&D"],
+    });
+    addDescriptor(profilePath, { id: "fish", title: 'Fish & "Chips" <b>' });
+    setDescriptorDoc(profilePath, "fish", "a < b & c");
+    const document = parseAlpsAuto(readXml());
+    const [home, fish] = document.alps.descriptor ?? [];
+    expect(home.tag).toBe('あ été Q"A');
+    expect(fish).toMatchObject({ title: 'Fish & "Chips" <b>', doc: "a < b & c" });
   });
 
   it("inserts XML docs before existing child descriptors", () => {

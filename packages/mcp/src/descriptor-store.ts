@@ -23,7 +23,11 @@ export interface AddDescriptorInput {
   tag?: string;
   /** Child descriptor ids; referenced as href fragments from the new descriptor */
   children?: string[];
-  /** Id of an existing descriptor to nest the new one inside (default: top level) */
+  /**
+   * Id of an existing descriptor that should contain the new one. The new
+   * descriptor is still defined at the top level; the parent references it
+   * with an href fragment.
+   */
   parent?: string;
 }
 
@@ -33,6 +37,8 @@ export interface AddDescriptorResult {
   createdChildren: string[];
   /** Warnings (e.g. rt target does not exist yet) */
   warnings: string[];
+  /** Parent that now references the new descriptor via an href fragment */
+  referencedFrom?: string;
 }
 
 export interface SetTagsInput {
@@ -98,9 +104,7 @@ export function addDescriptor(profilePath: string, input: AddDescriptorInput): A
   if (!root.alps || typeof root.alps !== "object") {
     throw new Error("Missing alps property");
   }
-  if (!Array.isArray(root.alps.descriptor)) {
-    root.alps.descriptor = [];
-  }
+  root.alps.descriptor = toDescriptorList(root.alps.descriptor);
   const topLevel = root.alps.descriptor as AlpsDescriptor[];
 
   if (findDescriptorById(topLevel, input.id)) {
@@ -140,21 +144,32 @@ export function addDescriptor(profilePath: string, input: AddDescriptorInput): A
     }
   }
 
+  // The definition always goes to the top level. A parent references it
+  // via an href fragment instead of nesting the definition inline: every
+  // projection (diagrams, overview, paths, the browser editor) reads
+  // containment from href references to top-level definitions, so an
+  // inline nested transition would silently drop out of all of them.
   if (input.parent) {
     const parent = findDescriptorById(topLevel, input.parent);
     if (!parent) {
       throw new Error(`Parent descriptor not found: ${input.parent}`);
     }
-    if (!Array.isArray(parent.descriptor)) {
-      parent.descriptor = [];
+    if (input.type && input.type !== "semantic" && !topLevel.includes(parent)) {
+      throw new Error(`Transition "${input.id}" cannot be added under nested descriptor "${input.parent}": transitions appear in diagrams only when referenced from a top-level state`);
     }
-    parent.descriptor.push(descriptor);
-  } else {
-    topLevel.push(descriptor);
+    parent.descriptor = toDescriptorList(parent.descriptor);
+    if (!parent.descriptor.some(child => child.href === `#${input.id}`)) {
+      parent.descriptor.push({ href: `#${input.id}` });
+    }
   }
+  topLevel.push(descriptor);
 
   fs.writeFileSync(absPath, serializeLike(root, content), "utf-8");
-  return { id: input.id, createdChildren, warnings };
+  const result: AddDescriptorResult = { id: input.id, createdChildren, warnings };
+  if (input.parent) {
+    result.referencedFrom = input.parent;
+  }
+  return result;
 }
 
 /**
@@ -261,4 +276,12 @@ export function renameDescriptor(profilePath: string, oldId: string, newId: stri
   }
   fs.writeFileSync(absPath, serializeLike(root, content), "utf-8");
   return result;
+}
+
+/** A descriptor value as a list; a single descriptor object becomes a one-element list */
+function toDescriptorList(value: unknown): AlpsDescriptor[] {
+  if (Array.isArray(value)) {
+    return value as AlpsDescriptor[];
+  }
+  return value !== null && typeof value === "object" ? [value as AlpsDescriptor] : [];
 }

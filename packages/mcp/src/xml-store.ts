@@ -3,19 +3,16 @@ import * as path from "path";
 import { XMLBuilder, XMLParser, XMLValidator } from "fast-xml-parser";
 import type { AddDescriptorInput, AddDescriptorResult, RenameResult, SetTagsInput, SetTagsResult } from "./descriptor-store.js";
 import type { DocPlacement, SetDocResult } from "./doc-store.js";
-import { DOC_DIR, resolveSafeLocalPath, safeFileName, shouldExternalize } from "./doc-utils.js";
+import { decodeXmlReferences, DOC_DIR, resolveSafeLocalPath, safeFileName, shouldExternalize, XML_ROUNDTRIP_OPTIONS } from "./doc-utils.js";
 
 const ATTRS = ":@";
 const ATTR_PREFIX = "@_";
 const TEXT = "#text";
 const COMMENT = "#comment";
 const CDATA = "#cdata";
-const XML_OPTIONS = {
-  preserveOrder: true,
-  ignoreAttributes: false,
-  commentPropName: COMMENT,
-  cdataPropName: CDATA,
-} as const;
+// Text and references stay as written: values are encoded by encodeXml() on write and attributes decoded by decodeXmlReferences() on read.
+const XML_OPTIONS = XML_ROUNDTRIP_OPTIONS;
+const XML_ESCAPES: Record<string, string> = { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" };
 
 type XmlAttrs = Record<string, string>;
 type XmlNode = Record<string, unknown>;
@@ -85,15 +82,25 @@ export function addXmlDescriptor(profilePath: string, input: AddDescriptorInput)
     }
   }
 
+  // Defined at the top level and referenced from the parent via href, as in
+  // the JSON store: projections only read top-level definitions.
   if (input.parent) {
     const parent = findXmlDescriptorById(profile.alpsNode, input.parent);
     if (!parent) throw new Error(`Parent descriptor not found: ${input.parent}`);
-    elementChildren(parent).push(descriptor);
-  } else {
-    alpsChildren(profile.alpsNode).push(descriptor);
+    if (input.type && input.type !== "semantic" && !alpsChildren(profile.alpsNode).includes(parent)) {
+      throw new Error(`Transition "${input.id}" cannot be added under nested descriptor "${input.parent}": transitions appear in diagrams only when referenced from a top-level state`);
+    }
+    const ref = `#${input.id}`;
+    const children = elementChildren(parent);
+    if (!children.some((child) => elementName(child) === "descriptor" && getAttr(child, "href") === ref)) {
+      setElementChildren(parent, [...children, makeElement("descriptor", [], orderedAttrs([["href", ref]]))]);
+    }
   }
+  alpsChildren(profile.alpsNode).push(descriptor);
   writeXmlProfile(profile);
-  return { id: input.id, createdChildren, warnings };
+  const result: AddDescriptorResult = { id: input.id, createdChildren, warnings };
+  if (input.parent) result.referencedFrom = input.parent;
+  return result;
 }
 
 export function setXmlDescriptorTags(profilePath: string, input: SetTagsInput): SetTagsResult {
@@ -233,7 +240,8 @@ function makeElement(name: string, children: XmlNode[], attrs?: XmlAttrs): XmlNo
   if (attrs && Object.keys(attrs).length > 0) node[ATTRS] = attrs;
   return node;
 }
-function textNode(text: string): XmlNode { return { [TEXT]: text }; }
+function textNode(text: string): XmlNode { return { [TEXT]: encodeXml(text) }; }
+function encodeXml(value: string): string { return value.replace(/[&<>"]/g, (char) => XML_ESCAPES[char]); }
 function attrsOf(node: XmlNode, create = false): XmlAttrs | undefined {
   const attrs = node[ATTRS];
   if (attrs && typeof attrs === "object" && !Array.isArray(attrs)) return attrs as XmlAttrs;
@@ -248,9 +256,9 @@ function attrsOf(node: XmlNode, create = false): XmlAttrs | undefined {
 }
 function getAttr(node: XmlNode, name: string): string | undefined {
   const value = attrsOf(node)?.[`${ATTR_PREFIX}${name}`];
-  return value === undefined ? undefined : String(value);
+  return value === undefined ? undefined : decodeXmlReferences(String(value));
 }
-function setAttr(node: XmlNode, name: string, value: string): void { attrsOf(node, true)![`${ATTR_PREFIX}${name}`] = value; }
+function setAttr(node: XmlNode, name: string, value: string): void { attrsOf(node, true)![`${ATTR_PREFIX}${name}`] = encodeXml(value); }
 function deleteAttr(node: XmlNode, name: string): void {
   const attrs = attrsOf(node);
   if (!attrs) return;
@@ -260,6 +268,6 @@ function deleteAttr(node: XmlNode, name: string): void {
 function setElementAttrs(node: XmlNode, attrs: XmlAttrs): void { if (Object.keys(attrs).length === 0) delete node[ATTRS]; else node[ATTRS] = attrs; }
 function orderedAttrs(entries: Array<[string, string]>): XmlAttrs {
   const attrs: XmlAttrs = {};
-  for (const [name, value] of entries) attrs[`${ATTR_PREFIX}${name}`] = value;
+  for (const [name, value] of entries) attrs[`${ATTR_PREFIX}${name}`] = encodeXml(value);
   return attrs;
 }

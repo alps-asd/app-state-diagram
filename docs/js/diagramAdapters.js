@@ -1355,42 +1355,53 @@ window.addEventListener('resize', autoSelectSizeMode);
         return this.generateDotFromAlps(alpsData);
     }
 
+    /**
+     * Convert a <descriptor> element. Nested definitions keep all of their
+     * attributes (doc, tag, def, rt, deeper children) like the CLI parser
+     * (packages/app-state-diagram/src/parser/alps-parser.ts); nested href
+     * references keep their { href, id } shape.
+     */
+    xmlDescriptorToObject(desc) {
+        const descriptor = {
+            id: desc.getAttribute('id'),
+            title: desc.getAttribute('title') || desc.getAttribute('id'),
+            type: desc.getAttribute('type'),
+            rt: desc.getAttribute('rt'),
+            tag: desc.getAttribute('tag'),
+            def: desc.getAttribute('def'), // Schema.org definition indicates ontology
+            rel: desc.getAttribute('rel')
+        };
+
+        // Extract doc element text content
+        const docElement = desc.querySelector(':scope > doc');
+        if (docElement) {
+            descriptor.doc = docElement.textContent.trim();
+        }
+
+        // Nested descriptors - only direct children
+        const nestedDescs = Array.from(desc.children).filter(child => child.tagName === 'descriptor');
+        if (nestedDescs.length > 0) {
+            descriptor.descriptor = nestedDescs.map(nested => {
+                const href = nested.getAttribute('href');
+                const id = nested.getAttribute('id');
+                if (!id) {
+                    return { href, id };
+                }
+                return { href, ...this.xmlDescriptorToObject(nested) };
+            });
+        }
+
+        return descriptor;
+    }
+
     xmlToAlpsObject(xmlDoc) {
         const alpsElement = xmlDoc.documentElement;
         const descriptors = [];
 
-        // Extract only top-level descriptors from XML
+        // Extract top-level descriptors from XML (nested ones are converted recursively)
         const descriptorElements = xmlDoc.querySelectorAll('alps > descriptor');
         descriptorElements.forEach(desc => {
-            const descriptor = {
-                id: desc.getAttribute('id'),
-                title: desc.getAttribute('title') || desc.getAttribute('id'),
-                type: desc.getAttribute('type'),
-                rt: desc.getAttribute('rt'),
-                tag: desc.getAttribute('tag'),
-                def: desc.getAttribute('def'), // Schema.org definition indicates ontology
-                rel: desc.getAttribute('rel')
-            };
-
-            // Extract doc element text content
-            const docElement = desc.querySelector(':scope > doc');
-            if (docElement) {
-                descriptor.doc = docElement.textContent.trim();
-            }
-
-            // Extract nested descriptors (href references) - only direct children
-            const nestedDescs = Array.from(desc.children).filter(child => child.tagName === 'descriptor');
-            if (nestedDescs.length > 0) {
-                descriptor.descriptor = [];
-                nestedDescs.forEach(nested => {
-                    descriptor.descriptor.push({
-                        href: nested.getAttribute('href'),
-                        id: nested.getAttribute('id')
-                    });
-                });
-            }
-
-            descriptors.push(descriptor);
+            descriptors.push(this.xmlDescriptorToObject(desc));
         });
 
         // Extract link elements

@@ -22,6 +22,12 @@ describe('parseAlpsAuto', () => {
     expect(docText(doc.alps.descriptor?.[0].doc)).toBe('hello');
   });
 
+  it('keeps numeric-looking XML doc text as written', () => {
+    const doc = parseAlpsAuto('<alps><descriptor id="v"><doc>1.0</doc></descriptor><descriptor id="c"><doc>007</doc></descriptor></alps>');
+    expect(docText(doc.alps.descriptor?.[0].doc)).toBe('1.0');
+    expect(docText(doc.alps.descriptor?.[1].doc)).toBe('007');
+  });
+
   it('parses XML doc href and format attributes', () => {
     const doc = parseAlpsAuto(
       '<alps><descriptor id="x"><doc href="alps-doc/x.md" format="markdown"/></descriptor></alps>'
@@ -59,6 +65,33 @@ describe('parseAlpsAuto', () => {
       href: '#Home',
       descriptor: [{ href: '#goCart' }],
     });
+  });
+
+  it('keeps every attribute of nested XML definitions, at any depth', () => {
+    const doc = parseAlpsAuto(`
+      <alps>
+        <descriptor id="Cart">
+          <descriptor id="doCheckout" type="unsafe" rt="#Done" tag="flow-purchase" title="Checkout">
+            <doc format="markdown">Pay for the cart</doc>
+            <descriptor id="card" def="https://schema.org/creditCard"/>
+          </descriptor>
+          <descriptor href="#goHome"/>
+        </descriptor>
+      </alps>
+    `);
+    const cart = doc.alps.descriptor?.[0];
+    expect(cart?.descriptor).toEqual([
+      {
+        id: 'doCheckout',
+        type: 'unsafe',
+        rt: '#Done',
+        tag: 'flow-purchase',
+        title: 'Checkout',
+        doc: { value: 'Pay for the cart', format: 'markdown' },
+        descriptor: [{ id: 'card', title: 'card', def: 'https://schema.org/creditCard' }],
+      },
+      { href: '#goHome' },
+    ]);
   });
 
   it('throws readable parse errors', () => {

@@ -1,6 +1,8 @@
 import * as fs from "fs";
 import * as os from "os";
 import * as path from "path";
+import { parseAlpsAuto } from "@alps-asd/app-state-diagram/parser/alps-parser.js";
+import { extractGraph } from "@alps-asd/app-state-diagram/graph/index.js";
 import { addDescriptor, setDescriptorTags, renameDescriptor } from "./descriptor-store.js";
 
 let dir: string;
@@ -53,10 +55,50 @@ describe("addDescriptor", () => {
     expect(goCart).toEqual({ id: "goCart", type: "safe", rt: "#Cart" });
   });
 
-  it("nests inside an existing parent", () => {
+  it("defines the descriptor at the top level and references it from the parent", () => {
+    const result = addDescriptor(profilePath, { id: "greeting", parent: "Home" });
+    expect(result).toEqual({ id: "greeting", createdChildren: [], warnings: [], referencedFrom: "Home" });
+    const profile = read();
+    const home = profile.alps.descriptor.find((d: { id?: string }) => d.id === "Home");
+    expect(home.descriptor).toEqual([{ href: "#greeting" }]);
+    expect(profile.alps.descriptor).toContainEqual({ id: "greeting" });
+  });
+
+  it("keeps a transition added under a parent visible to the state graph", () => {
+    fs.writeFileSync(
+      profilePath,
+      JSON.stringify({ alps: { descriptor: [{ id: "Cart" }, { id: "Done" }] } }, null, 2) + "\n"
+    );
+    addDescriptor(profilePath, { id: "doCheckout", type: "unsafe", rt: "Done", parent: "Cart" });
+    const profile = read();
+    expect(profile.alps.descriptor[0]).toEqual({ id: "Cart", descriptor: [{ href: "#doCheckout" }] });
+    expect(profile.alps.descriptor).toContainEqual({ id: "doCheckout", type: "unsafe", rt: "#Done" });
+    const graph = extractGraph(parseAlpsAuto(fs.readFileSync(profilePath, "utf-8")));
+    expect(graph.transitions).toEqual([
+      { id: "doCheckout", type: "unsafe", title: undefined, from: ["Cart"], to: "Done" },
+    ]);
+  });
+
+  it("does not duplicate an href the parent already holds", () => {
+    fs.writeFileSync(
+      profilePath,
+      JSON.stringify({ alps: { descriptor: [{ id: "Home", descriptor: [{ href: "#greeting" }] }] } }, null, 2) + "\n"
+    );
     addDescriptor(profilePath, { id: "greeting", parent: "Home" });
     const home = read().alps.descriptor.find((d: { id?: string }) => d.id === "Home");
-    expect(home.descriptor).toEqual([{ id: "greeting" }]);
+    expect(home.descriptor).toEqual([{ href: "#greeting" }]);
+  });
+
+  it("keeps a single-object descriptor value at the top level and in the parent", () => {
+    fs.writeFileSync(
+      profilePath,
+      JSON.stringify({ alps: { descriptor: { id: "Home", descriptor: { href: "#About" } } } }, null, 2) + "\n"
+    );
+    addDescriptor(profilePath, { id: "greeting", parent: "Home" });
+    expect(read().alps.descriptor).toEqual([
+      { id: "Home", descriptor: [{ href: "#About" }, { href: "#greeting" }] },
+      { id: "greeting" },
+    ]);
   });
 
   it("appends to an existing parent descriptor array", () => {
@@ -76,7 +118,7 @@ describe("addDescriptor", () => {
     addDescriptor(profilePath, { id: "greeting", parent: "Home" });
 
     const home = read().alps.descriptor.find((d: { id?: string }) => d.id === "Home");
-    expect(home.descriptor).toEqual([{ href: "#existing" }, { id: "greeting" }]);
+    expect(home.descriptor).toEqual([{ href: "#existing" }, { href: "#greeting" }]);
   });
 
   it("rejects empty or whitespace ids", () => {
@@ -91,6 +133,16 @@ describe("addDescriptor", () => {
 
   it("rejects unknown parents", () => {
     expect(() => addDescriptor(profilePath, { id: "x", parent: "nope" })).toThrow("Parent descriptor not found");
+  });
+
+  it("rejects a transition under a nested parent without writing, but accepts a field there", () => {
+    const content = JSON.stringify({ alps: { descriptor: [{ id: "Home", descriptor: [{ id: "section" }] }, { id: "Done" }] } }, null, 2) + "\n";
+    fs.writeFileSync(profilePath, content);
+    expect(() => addDescriptor(profilePath, { id: "doIt", type: "unsafe", rt: "Done", parent: "section" })).toThrow(
+      'Transition "doIt" cannot be added under nested descriptor "section"'
+    );
+    expect(fs.readFileSync(profilePath, "utf-8")).toBe(content);
+    expect(addDescriptor(profilePath, { id: "headline", parent: "section" }).referencedFrom).toBe("section");
   });
 
   it("preserves indentation", () => {

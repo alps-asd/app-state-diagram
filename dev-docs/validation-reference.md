@@ -204,6 +204,25 @@ Warnings indicate potential issues or deviations from best practices.
 { "id": "doSubmitOrder", "type": "unsafe", "rt": "#Confirmation" }
 ```
 
+### W006: Transition defined inside another descriptor
+
+**Message:** `Transition "{id}" is defined inside another descriptor and will not appear in diagrams; define it at the top level and reference it with {"href": "#{id}"}`
+
+**Cause:** A `safe`/`unsafe`/`idempotent` descriptor is defined inline inside a state. This is valid ALPS, but the state graph (diagrams, `alps_overview`, `alps_paths`, tag-filtered views) reads transitions from the top level only, so the transition would silently disappear from every projection.
+
+**Solution:** Define the transition at the top level and reference it from the state with `href`. `alps_add_descriptor` with `parent` writes this form.
+
+```json
+// Triggers warning
+{ "id": "Cart", "descriptor": [
+  { "id": "doCheckout", "type": "unsafe", "rt": "#Done" }
+] }
+
+// No warning
+{ "id": "Cart", "descriptor": [{ "href": "#doCheckout" }] },
+{ "id": "doCheckout", "type": "unsafe", "rt": "#Done" }
+```
+
 ## Suggestions (S-codes)
 
 Suggestions are optional improvements to enhance your ALPS profile.
@@ -244,4 +263,5 @@ Suggestions are optional improvements to enhance your ALPS profile.
 | W001 | Warning | Missing title |
 | W002 | Warning | Safe transition should start with "go" |
 | W003 | Warning | Unsafe/idempotent should start with "do" |
+| W006 | Warning | Transition defined inside another descriptor |
 | S001 | Suggestion | Consider adding doc to transition |

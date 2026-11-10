@@ -29,7 +29,7 @@ import { AlpsValidator } from "@alps-asd/app-state-diagram/validator/index.js";
 import { generateDot } from "@alps-asd/app-state-diagram/generator/dot-generator.js";
 import { dotToSvg } from "@alps-asd/app-state-diagram/generator/svg-generator.js";
 import { generateMermaid } from "@alps-asd/app-state-diagram/generator/mermaid-generator.js";
-import { FileResolver } from "@alps-asd/app-state-diagram/resolver/index.js";
+import { FileResolver, inlineExternalDocs, readExternalDoc } from "@alps-asd/app-state-diagram/resolver/index.js";
 import { extractGraph, findPaths, formatPath, findContainers, getDescriptorIdsByTags } from "@alps-asd/app-state-diagram/graph/index.js";
 import { addDescriptor, setDescriptorTags, renameDescriptor } from "./descriptor-store.js";
 import { setDescriptorDoc, resolveDoc, resolveSafeLocalPath, INLINE_DOC_MAX_LENGTH } from "./doc-store.js";
@@ -215,7 +215,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
       {
         name: "alps_search",
         description:
-          "Filter descriptors in an ALPS profile by type, tag, and/or free text (matched against id, title, and doc). Returns compact summaries.",
+          "Filter descriptors in an ALPS profile by type, tag, and/or free text (matched against id, title, and doc, including docs externalized to alps/docs/<id>.md). Returns compact summaries.",
         inputSchema: {
           type: "object" as const,
           properties: {
@@ -392,7 +392,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
             },
             parent: {
               type: "string",
-              description: "Nest the new descriptor inside this existing descriptor (default: top level)",
+              description: "Existing descriptor that should contain the new one (e.g. the state offering a transition). The new descriptor is defined at the top level and referenced from the parent via an href fragment; a transition then appears in diagrams when it has an rt, and in overview and paths when that rt is local (#id). A transition's parent must be a top-level state",
             },
           },
           required: ["file", "id"],
@@ -608,12 +608,34 @@ export async function handleAlpsEditorUrl(args: Record<string, unknown> | undefi
     };
   }
 
-  const url = createAlpsEditorUrl(alpsContent);
+  // The editor cannot read local files: share a self-contained copy in
+  // which externalized docs (alps/docs/<id>.md via doc.href) are inlined
+  const shared = inlineExternalDocs(alpsContent, path.dirname(path.resolve(file)));
+  let url = createAlpsEditorUrl(shared.content);
+  // Docs are externalized because they are long: when they push the URL
+  // past what chat tools carry, share the profile without them instead
+  let omittedLength = 0;
+  if (shared.inlined.length > 0 && url.length > URL_LENGTH_WARNING_THRESHOLD) {
+    omittedLength = url.length;
+    url = createAlpsEditorUrl(alpsContent);
+  }
   const lines = [
     "✅ ALPS Editor URL generated",
     "",
     url,
   ];
+
+  if (omittedLength > 0) {
+    lines.push(
+      "",
+      `Left out ${shared.inlined.length} external doc file(s) to keep the URL shareable (with them it would be ${omittedLength} characters); their docs appear empty in the editor: ${shared.inlined.join(", ")}`
+    );
+  } else if (shared.inlined.length > 0) {
+    lines.push(
+      "",
+      `Included ${shared.inlined.length} external doc file(s) so the shared profile is self-contained: ${shared.inlined.join(", ")}`
+    );
+  }
 
   if (url.length > URL_LENGTH_WARNING_THRESHOLD) {
     lines.push(
@@ -1103,12 +1125,13 @@ function descriptorTags(desc: AlpsDescriptor): string[] {
 }
 
 /**
- * Short doc excerpt for search results; external docs show their href
+ * Short doc excerpt for search results. A readable linked file wins over
+ * the inline value (as in alps_descriptor), so such docs show their href.
  */
-function docPreview(desc: AlpsDescriptor): string | undefined {
-  const text = docText(desc.doc);
+function docPreview(desc: AlpsDescriptor, baseDir: string): string | undefined {
+  const href = typeof desc.doc === "object" ? desc.doc?.href : undefined;
+  const text = href !== undefined && readExternalDoc(baseDir, href) !== undefined ? "" : docText(desc.doc);
   if (!text) {
-    const href = typeof desc.doc === "object" ? desc.doc?.href : undefined;
     return href ? `(external: ${href})` : undefined;
   }
   return text.length > DOC_PREVIEW_LENGTH ? `${text.slice(0, DOC_PREVIEW_LENGTH)}…` : text;
@@ -1117,9 +1140,9 @@ function docPreview(desc: AlpsDescriptor): string | undefined {
 /**
  * Compact descriptor summary returned by alps_search
  */
-function summarize(desc: AlpsDescriptor) {
+function summarize(desc: AlpsDescriptor, baseDir: string) {
   const tags = descriptorTags(desc);
-  const doc = docPreview(desc);
+  const doc = docPreview(desc, baseDir);
   return {
     id: desc.id!,
     type: desc.type || "semantic",
@@ -1213,9 +1236,14 @@ export async function handleAlpsSearch(args: Record<string, unknown> | undefined
   }
 
   try {
-    const { document } = await loadProfile(file);
+    const { document, baseDir } = await loadProfile(file);
     const descriptors = allDescriptors(document);
     const needle = text?.toLowerCase();
+    // A readable linked doc file is searched instead of the inline value
+    const searchableDoc = (desc: AlpsDescriptor): string => {
+      const href = typeof desc.doc === "object" ? desc.doc?.href : undefined;
+      return readExternalDoc(baseDir, href) ?? docText(desc.doc);
+    };
     const tagList = tag ? tag.split(/[\s,]+/).filter(Boolean) : [];
     const tagSet = tagList.length > 0 ? new Set(tagList) : null;
     const matches = descriptors.filter((desc) => {
@@ -1229,17 +1257,18 @@ export async function handleAlpsSearch(args: Record<string, unknown> | undefined
         return false;
       }
       if (needle) {
-        const haystack = `${desc.id} ${desc.title || ""} ${docText(desc.doc)}`.toLowerCase();
+        const haystack = `${desc.id} ${desc.title || ""} ${searchableDoc(desc)}`.toLowerCase();
         if (!haystack.includes(needle)) {
           return false;
         }
       }
       return true;
     });
+    const summaries = matches.map((desc) => summarize(desc, baseDir));
     if ((args?.format as string | undefined) === "markdown") {
-      return { content: [{ type: "text", text: descriptorsToMarkdownTable(matches.map(summarize)) }] };
+      return { content: [{ type: "text", text: descriptorsToMarkdownTable(summaries) }] };
     }
-    return jsonResult({ count: matches.length, descriptors: matches.map(summarize) });
+    return jsonResult({ count: matches.length, descriptors: summaries });
   } catch (error) {
     const errorMessage = toErrorMessage(error);
     return {

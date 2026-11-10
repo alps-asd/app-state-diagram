@@ -1,5 +1,5 @@
 import { SEMANTIC_TERMS } from './semanticTerms.js';
-import { DiagramAdapterManager } from './diagramAdapters.js?v=tag-filter-20260606b';
+import { DiagramAdapterManager } from './diagramAdapters.js?v=nested-xml-20261107';
 
 class AlpsEditor {
     constructor() {
