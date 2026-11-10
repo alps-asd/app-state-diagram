@@ -204,7 +204,7 @@ Add a new descriptor to a JSON or XML ALPS profile. Containers reference childre
 - `title`, `doc`, `tag` (optional) — long docs auto-externalize to `alps/docs/<id>.md`
 - `rt` (optional): transition target; bare ids are normalized to `#fragments`
 - `children` (optional): child ids referenced as `href` fragments
-- `parent` (optional): an existing descriptor that should contain the new one (e.g. the state offering a transition). The new descriptor is defined at the top level and the parent references it via `href`, so diagrams, overview and paths include it. A transition's parent must be a top-level state; a nested parent is rejected because the transition would have no source state
+- `parent` (optional): an existing descriptor that should contain the new one (e.g. the state offering a transition). The new descriptor is defined at the top level and the parent references it via `href`. A transition added this way appears in diagrams when it has an `rt`, and in overview and paths when that `rt` is local (`#id`). A transition's parent must be a top-level state; a nested parent is rejected because the transition would have no source state
 
 **Example prompt:**
 > "Register name and age as person"
