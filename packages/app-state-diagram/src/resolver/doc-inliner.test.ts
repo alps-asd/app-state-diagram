@@ -126,6 +126,13 @@ describe('inlineExternalDocs (XML)', () => {
     expect(inlineExternalDocs(content, dir)).toEqual({ content, inlined: [] });
   });
 
+  it('keeps numeric-looking text unchanged when rewriting the profile', () => {
+    const content = '<alps><doc href="README.md"/><descriptor id="Code"><doc>007</doc><descriptor id="v"><doc>1.10</doc></descriptor></descriptor></alps>';
+    const result = inlineExternalDocs(content, dir).content;
+    expect(result).toContain('<doc>007</doc>');
+    expect(result).toContain('<doc>1.10</doc>');
+  });
+
   it('returns malformed XML and documents without alps unchanged', () => {
     expect(inlineExternalDocs('<alps', dir)).toEqual({ content: '<alps', inlined: [] });
     expect(inlineExternalDocs('<alps><descriptor></alps>', dir).inlined).toEqual([]);
@@ -160,6 +167,20 @@ describe('resolveSafeLocalPath', () => {
     } finally {
       fs.rmSync(outside, { recursive: true, force: true });
     }
+  });
+
+  it('rejects a dangling symlink pointing outside the base directory', () => {
+    const outside = fs.mkdtempSync(path.join(os.tmpdir(), 'doc-inliner-outside-'));
+    try {
+      fs.symlinkSync(path.join(outside, 'target.md'), path.join(dir, 'dangling.md'));
+      expect(resolveSafeLocalPath(dir, 'dangling.md')).toBeUndefined();
+    } finally {
+      fs.rmSync(outside, { recursive: true, force: true });
+    }
+  });
+
+  it('rejects paths running through a regular file', () => {
+    expect(resolveSafeLocalPath(dir, 'README.md/a.md')).toBeUndefined();
   });
 
   it('accepts not-yet-existing files inside the base directory', () => {

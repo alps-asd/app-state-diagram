@@ -28,6 +28,7 @@ const XML_OPTIONS = {
   attributeNamePrefix: '@_',
   commentPropName: '#comment',
   cdataPropName: '#cdata',
+  parseTagValue: false,
 } as const;
 
 /**
@@ -53,12 +54,21 @@ export function resolveSafeLocalPath(baseDir: string, href: string): string | un
   }
   // Compare real paths so a symlinked component cannot escape baseDir.
   // The target file may not exist yet (first write), so check the
-  // deepest existing ancestor instead.
+  // deepest existing ancestor instead. lstat stops at a dangling symlink,
+  // so realpath throws and the path is rejected.
   try {
     const baseReal = fs.realpathSync(baseDir);
     let existing = abs;
-    while (!fs.existsSync(existing)) {
-      existing = path.dirname(existing);
+    for (;;) {
+      try {
+        fs.lstatSync(existing);
+        break;
+      } catch (error) {
+        if ((error as NodeJS.ErrnoException).code !== 'ENOENT') {
+          return undefined;
+        }
+        existing = path.dirname(existing);
+      }
     }
     const existingReal = fs.realpathSync(existing);
     if (existingReal !== baseReal && !existingReal.startsWith(baseReal + path.sep)) {
