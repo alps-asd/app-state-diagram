@@ -392,7 +392,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
             },
             parent: {
               type: "string",
-              description: "Existing descriptor that should contain the new one (e.g. the state offering a transition). The new descriptor is defined at the top level and referenced from the parent via an href fragment, so diagrams, overview and paths include it",
+              description: "Existing descriptor that should contain the new one (e.g. the state offering a transition). The new descriptor is defined at the top level and referenced from the parent via an href fragment, so diagrams, overview and paths include it. A transition's parent must be a top-level state",
             },
           },
           required: ["file", "id"],

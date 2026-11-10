@@ -247,6 +247,13 @@ describe("XML write support", () => {
     expect(() => addDescriptor(profilePath, { id: "stray", parent: "ghost" })).toThrow("Parent descriptor not found: ghost");
   });
 
+  it("rejects an XML transition under a nested parent without writing", () => {
+    expect(() => addDescriptor(profilePath, { id: "doIt", type: "safe", rt: "Cart", parent: "section" })).toThrow(
+      'Transition "doIt" cannot be added under nested descriptor "section"'
+    );
+    expect(readXml()).toBe(XML_FIXTURE);
+  });
+
   it("keeps an XML transition added under a parent visible to the state graph", () => {
     addDescriptor(profilePath, { id: "doCheckout", type: "unsafe", rt: "Cart", parent: "Home", tag: "flow-purchase" });
     const document = parseAlpsAuto(readXml());

@@ -135,6 +135,16 @@ describe("addDescriptor", () => {
     expect(() => addDescriptor(profilePath, { id: "x", parent: "nope" })).toThrow("Parent descriptor not found");
   });
 
+  it("rejects a transition under a nested parent without writing, but accepts a field there", () => {
+    const content = JSON.stringify({ alps: { descriptor: [{ id: "Home", descriptor: [{ id: "section" }] }, { id: "Done" }] } }, null, 2) + "\n";
+    fs.writeFileSync(profilePath, content);
+    expect(() => addDescriptor(profilePath, { id: "doIt", type: "unsafe", rt: "Done", parent: "section" })).toThrow(
+      'Transition "doIt" cannot be added under nested descriptor "section"'
+    );
+    expect(fs.readFileSync(profilePath, "utf-8")).toBe(content);
+    expect(addDescriptor(profilePath, { id: "headline", parent: "section" }).referencedFrom).toBe("section");
+  });
+
   it("preserves indentation", () => {
     addDescriptor(profilePath, { id: "person", children: ["name"] });
     const content = fs.readFileSync(profilePath, "utf-8");

@@ -154,6 +154,9 @@ export function addDescriptor(profilePath: string, input: AddDescriptorInput): A
     if (!parent) {
       throw new Error(`Parent descriptor not found: ${input.parent}`);
     }
+    if (input.type && input.type !== "semantic" && !topLevel.includes(parent)) {
+      throw new Error(`Transition "${input.id}" cannot be added under nested descriptor "${input.parent}": transitions appear in diagrams only when referenced from a top-level state`);
+    }
     parent.descriptor = toDescriptorList(parent.descriptor);
     if (!parent.descriptor.some(child => child.href === `#${input.id}`)) {
       parent.descriptor.push({ href: `#${input.id}` });

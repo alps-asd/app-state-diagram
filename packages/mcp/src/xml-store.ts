@@ -87,6 +87,9 @@ export function addXmlDescriptor(profilePath: string, input: AddDescriptorInput)
   if (input.parent) {
     const parent = findXmlDescriptorById(profile.alpsNode, input.parent);
     if (!parent) throw new Error(`Parent descriptor not found: ${input.parent}`);
+    if (input.type && input.type !== "semantic" && !alpsChildren(profile.alpsNode).includes(parent)) {
+      throw new Error(`Transition "${input.id}" cannot be added under nested descriptor "${input.parent}": transitions appear in diagrams only when referenced from a top-level state`);
+    }
     const ref = `#${input.id}`;
     const children = elementChildren(parent);
     if (!children.some((child) => elementName(child) === "descriptor" && getAttr(child, "href") === ref)) {
