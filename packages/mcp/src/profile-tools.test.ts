@@ -220,6 +220,23 @@ describe('handleAlpsSearch', () => {
     ]);
   });
 
+  it('should search and preview the linked file instead of an inline value it overrides', async () => {
+    fs.mkdirSync(path.join(dir, DOC_DIR), { recursive: true });
+    fs.writeFileSync(path.join(dir, DOC_DIR, 'Cart.md'), 'Fresh file text\n');
+    fs.writeFileSync(profilePath, JSON.stringify({ alps: { descriptor: [
+      { id: 'Cart', doc: { href: `${DOC_DIR}/Cart.md`, value: 'Stale inline text' } },
+      { id: 'Gone', doc: { href: `${DOC_DIR}/missing.md`, value: 'Kept inline text' } },
+    ] } }));
+
+    expect(parseResult(await handleAlpsSearch({ file: profilePath, text: 'stale' })).count).toBe(0);
+    expect(parseResult(await handleAlpsSearch({ file: profilePath, text: 'fresh' })).descriptors).toEqual([
+      { id: 'Cart', type: 'semantic', doc: `(external: ${DOC_DIR}/Cart.md)` },
+    ]);
+    expect(parseResult(await handleAlpsSearch({ file: profilePath, text: 'kept inline' })).descriptors).toEqual([
+      { id: 'Gone', type: 'semantic', doc: 'Kept inline text' },
+    ]);
+  });
+
   it('should resolve external href references', async () => {
     fs.writeFileSync(
       path.join(dir, 'shared.json'),

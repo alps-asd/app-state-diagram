@@ -1125,12 +1125,13 @@ function descriptorTags(desc: AlpsDescriptor): string[] {
 }
 
 /**
- * Short doc excerpt for search results; external docs show their href
+ * Short doc excerpt for search results. A readable linked file wins over
+ * the inline value (as in alps_descriptor), so such docs show their href.
  */
-function docPreview(desc: AlpsDescriptor): string | undefined {
-  const text = docText(desc.doc);
+function docPreview(desc: AlpsDescriptor, baseDir: string): string | undefined {
+  const href = typeof desc.doc === "object" ? desc.doc?.href : undefined;
+  const text = href !== undefined && readExternalDoc(baseDir, href) !== undefined ? "" : docText(desc.doc);
   if (!text) {
-    const href = typeof desc.doc === "object" ? desc.doc?.href : undefined;
     return href ? `(external: ${href})` : undefined;
   }
   return text.length > DOC_PREVIEW_LENGTH ? `${text.slice(0, DOC_PREVIEW_LENGTH)}…` : text;
@@ -1139,9 +1140,9 @@ function docPreview(desc: AlpsDescriptor): string | undefined {
 /**
  * Compact descriptor summary returned by alps_search
  */
-function summarize(desc: AlpsDescriptor) {
+function summarize(desc: AlpsDescriptor, baseDir: string) {
   const tags = descriptorTags(desc);
-  const doc = docPreview(desc);
+  const doc = docPreview(desc, baseDir);
   return {
     id: desc.id!,
     type: desc.type || "semantic",
@@ -1238,10 +1239,10 @@ export async function handleAlpsSearch(args: Record<string, unknown> | undefined
     const { document, baseDir } = await loadProfile(file);
     const descriptors = allDescriptors(document);
     const needle = text?.toLowerCase();
-    // Externalized docs (doc.href to alps/docs/<id>.md) are searched too
+    // A readable linked doc file is searched instead of the inline value
     const searchableDoc = (desc: AlpsDescriptor): string => {
       const href = typeof desc.doc === "object" ? desc.doc?.href : undefined;
-      return `${docText(desc.doc)} ${readExternalDoc(baseDir, href) ?? ""}`;
+      return readExternalDoc(baseDir, href) ?? docText(desc.doc);
     };
     const tagList = tag ? tag.split(/[\s,]+/).filter(Boolean) : [];
     const tagSet = tagList.length > 0 ? new Set(tagList) : null;
@@ -1263,10 +1264,11 @@ export async function handleAlpsSearch(args: Record<string, unknown> | undefined
       }
       return true;
     });
+    const summaries = matches.map((desc) => summarize(desc, baseDir));
     if ((args?.format as string | undefined) === "markdown") {
-      return { content: [{ type: "text", text: descriptorsToMarkdownTable(matches.map(summarize)) }] };
+      return { content: [{ type: "text", text: descriptorsToMarkdownTable(summaries) }] };
     }
-    return jsonResult({ count: matches.length, descriptors: matches.map(summarize) });
+    return jsonResult({ count: matches.length, descriptors: summaries });
   } catch (error) {
     const errorMessage = toErrorMessage(error);
     return {
