@@ -1,6 +1,6 @@
 // Path safety and profile serialization are shared with the CLI (HTML
 // output reads the same doc files), so they live in one place
-export { resolveSafeLocalPath, serializeLike, XML_ROUNDTRIP_OPTIONS } from "@alps-asd/app-state-diagram/resolver/doc-inliner.js";
+export { decodeXmlReferences, resolveSafeLocalPath, serializeLike, XML_ROUNDTRIP_OPTIONS } from "@alps-asd/app-state-diagram/resolver/doc-inliner.js";
 
 export const DOC_DIR = "alps/docs";
 export const INLINE_DOC_MAX_LENGTH = 200;

@@ -166,6 +166,19 @@ describe('inlineExternalDocs (XML)', () => {
     expect(result).toContain('<doc>&#x3042; &amp; more</doc>');
   });
 
+  it('resolves hrefs written with entity and character references', () => {
+    fs.writeFileSync(path.join(dir, 'alps', 'docs', 'A&B.md'), 'Ampersand doc\n');
+    const content = '<alps><descriptor id="Amp"><doc href="alps/docs/A&amp;B.md"/></descriptor>'
+      + '<descriptor id="Hex"><doc href="alps/docs/&#x4F;rder.md"/></descriptor>'
+      + '<descriptor id="Dec"><doc href="alps/docs/&#79;rder.md"/></descriptor></alps>';
+    const result = inlineExternalDocs(content, dir);
+    expect(result.inlined).toEqual(['alps/docs/A&B.md', 'alps/docs/Order.md']);
+    expect(result.content).toContain('href="alps/docs/A&amp;B.md"');
+    const doc = parseAlpsAuto(result.content);
+    expect(docText(doc.alps.descriptor?.[0].doc)).toBe('Ampersand doc');
+    expect(docText(doc.alps.descriptor?.[2].doc)).toContain('Cancel until shipment');
+  });
+
   it('returns malformed XML and documents without alps unchanged', () => {
     expect(inlineExternalDocs('<alps', dir)).toEqual({ content: '<alps', inlined: [] });
     expect(inlineExternalDocs('<alps><descriptor></alps>', dir).inlined).toEqual([]);

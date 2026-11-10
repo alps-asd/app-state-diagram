@@ -200,7 +200,8 @@ function inlineXmlDocs(content: string, baseDir: string): InlineDocsResult {
       const name = elementName(child);
       if (name === 'doc') {
         const attrs = child[':@'] as Record<string, string> | undefined;
-        const href = attrs?.['@_href'];
+        const rawHref = attrs?.['@_href'];
+        const href = rawHref && decodeXmlReferences(rawHref);
         if (href) {
           const text = readExternalDoc(baseDir, href);
           if (text !== undefined) {
@@ -219,6 +220,21 @@ function inlineXmlDocs(content: string, baseDir: string): InlineDocsResult {
   }
   const xml = new XMLBuilder({ ...XML_ROUNDTRIP_OPTIONS, format: true }).build(tree);
   return { content: xml.replace(/^\n/, '').replace(/\n*$/, '\n'), inlined };
+}
+
+const XML_NAMED_ENTITIES: Record<string, string> = { amp: '&', lt: '<', gt: '>', quot: '"', apos: "'" };
+
+/** Decode the predefined entities and character references left in values read with XML_ROUNDTRIP_OPTIONS */
+export function decodeXmlReferences(value: string): string {
+  return value.replace(/&(?:#x([0-9a-fA-F]+)|#([0-9]+)|(amp|lt|gt|quot|apos));/g, (_match, hex: string | undefined, dec: string | undefined, name: string | undefined) => {
+    if (hex) {
+      return String.fromCodePoint(parseInt(hex, 16));
+    }
+    if (dec) {
+      return String.fromCodePoint(parseInt(dec, 10));
+    }
+    return XML_NAMED_ENTITIES[name as string];
+  });
 }
 
 function elementName(node: XmlNode): string | undefined {

@@ -3,17 +3,16 @@ import * as path from "path";
 import { XMLBuilder, XMLParser, XMLValidator } from "fast-xml-parser";
 import type { AddDescriptorInput, AddDescriptorResult, RenameResult, SetTagsInput, SetTagsResult } from "./descriptor-store.js";
 import type { DocPlacement, SetDocResult } from "./doc-store.js";
-import { DOC_DIR, resolveSafeLocalPath, safeFileName, shouldExternalize, XML_ROUNDTRIP_OPTIONS } from "./doc-utils.js";
+import { decodeXmlReferences, DOC_DIR, resolveSafeLocalPath, safeFileName, shouldExternalize, XML_ROUNDTRIP_OPTIONS } from "./doc-utils.js";
 
 const ATTRS = ":@";
 const ATTR_PREFIX = "@_";
 const TEXT = "#text";
 const COMMENT = "#comment";
 const CDATA = "#cdata";
-// Text and references stay as written: values are encoded by encodeXml() on write and attributes decoded by decodeXml() on read.
+// Text and references stay as written: values are encoded by encodeXml() on write and attributes decoded by decodeXmlReferences() on read.
 const XML_OPTIONS = XML_ROUNDTRIP_OPTIONS;
 const XML_ESCAPES: Record<string, string> = { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" };
-const XML_NAMED_ENTITIES: Record<string, string> = { amp: "&", lt: "<", gt: ">", quot: '"', apos: "'" };
 
 type XmlAttrs = Record<string, string>;
 type XmlNode = Record<string, unknown>;
@@ -240,13 +239,6 @@ function makeElement(name: string, children: XmlNode[], attrs?: XmlAttrs): XmlNo
 }
 function textNode(text: string): XmlNode { return { [TEXT]: encodeXml(text) }; }
 function encodeXml(value: string): string { return value.replace(/[&<>"]/g, (char) => XML_ESCAPES[char]); }
-function decodeXml(value: string): string {
-  return value.replace(/&(?:#x([0-9a-fA-F]+)|#([0-9]+)|(amp|lt|gt|quot|apos));/g, (_match, hex: string | undefined, dec: string | undefined, name: string | undefined) => {
-    if (hex) return String.fromCodePoint(parseInt(hex, 16));
-    if (dec) return String.fromCodePoint(parseInt(dec, 10));
-    return XML_NAMED_ENTITIES[name!];
-  });
-}
 function attrsOf(node: XmlNode, create = false): XmlAttrs | undefined {
   const attrs = node[ATTRS];
   if (attrs && typeof attrs === "object" && !Array.isArray(attrs)) return attrs as XmlAttrs;
@@ -261,7 +253,7 @@ function attrsOf(node: XmlNode, create = false): XmlAttrs | undefined {
 }
 function getAttr(node: XmlNode, name: string): string | undefined {
   const value = attrsOf(node)?.[`${ATTR_PREFIX}${name}`];
-  return value === undefined ? undefined : decodeXml(String(value));
+  return value === undefined ? undefined : decodeXmlReferences(String(value));
 }
 function setAttr(node: XmlNode, name: string, value: string): void { attrsOf(node, true)![`${ATTR_PREFIX}${name}`] = encodeXml(value); }
 function deleteAttr(node: XmlNode, name: string): void {
