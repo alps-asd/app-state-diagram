@@ -10,12 +10,18 @@ const ATTR_PREFIX = "@_";
 const TEXT = "#text";
 const COMMENT = "#comment";
 const CDATA = "#cdata";
+// parseTagValue/processEntities off: text and references pass through as written,
+// so values written by this module go through encodeXml() and are read through decodeXml().
 const XML_OPTIONS = {
   preserveOrder: true,
   ignoreAttributes: false,
   commentPropName: COMMENT,
   cdataPropName: CDATA,
+  parseTagValue: false,
+  processEntities: false,
 } as const;
+const XML_ESCAPES: Record<string, string> = { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" };
+const XML_NAMED_ENTITIES: Record<string, string> = { amp: "&", lt: "<", gt: ">", quot: '"', apos: "'" };
 
 type XmlAttrs = Record<string, string>;
 type XmlNode = Record<string, unknown>;
@@ -240,7 +246,15 @@ function makeElement(name: string, children: XmlNode[], attrs?: XmlAttrs): XmlNo
   if (attrs && Object.keys(attrs).length > 0) node[ATTRS] = attrs;
   return node;
 }
-function textNode(text: string): XmlNode { return { [TEXT]: text }; }
+function textNode(text: string): XmlNode { return { [TEXT]: encodeXml(text) }; }
+function encodeXml(value: string): string { return value.replace(/[&<>"]/g, (char) => XML_ESCAPES[char]); }
+function decodeXml(value: string): string {
+  return value.replace(/&(?:#x([0-9a-fA-F]+)|#([0-9]+)|(amp|lt|gt|quot|apos));/g, (_match, hex: string | undefined, dec: string | undefined, name: string | undefined) => {
+    if (hex) return String.fromCodePoint(parseInt(hex, 16));
+    if (dec) return String.fromCodePoint(parseInt(dec, 10));
+    return XML_NAMED_ENTITIES[name!];
+  });
+}
 function attrsOf(node: XmlNode, create = false): XmlAttrs | undefined {
   const attrs = node[ATTRS];
   if (attrs && typeof attrs === "object" && !Array.isArray(attrs)) return attrs as XmlAttrs;
@@ -255,9 +269,9 @@ function attrsOf(node: XmlNode, create = false): XmlAttrs | undefined {
 }
 function getAttr(node: XmlNode, name: string): string | undefined {
   const value = attrsOf(node)?.[`${ATTR_PREFIX}${name}`];
-  return value === undefined ? undefined : String(value);
+  return value === undefined ? undefined : decodeXml(String(value));
 }
-function setAttr(node: XmlNode, name: string, value: string): void { attrsOf(node, true)![`${ATTR_PREFIX}${name}`] = value; }
+function setAttr(node: XmlNode, name: string, value: string): void { attrsOf(node, true)![`${ATTR_PREFIX}${name}`] = encodeXml(value); }
 function deleteAttr(node: XmlNode, name: string): void {
   const attrs = attrsOf(node);
   if (!attrs) return;
@@ -267,6 +281,6 @@ function deleteAttr(node: XmlNode, name: string): void {
 function setElementAttrs(node: XmlNode, attrs: XmlAttrs): void { if (Object.keys(attrs).length === 0) delete node[ATTRS]; else node[ATTRS] = attrs; }
 function orderedAttrs(entries: Array<[string, string]>): XmlAttrs {
   const attrs: XmlAttrs = {};
-  for (const [name, value] of entries) attrs[`${ATTR_PREFIX}${name}`] = value;
+  for (const [name, value] of entries) attrs[`${ATTR_PREFIX}${name}`] = encodeXml(value);
   return attrs;
 }

@@ -89,6 +89,18 @@ describe("addDescriptor", () => {
     expect(home.descriptor).toEqual([{ href: "#greeting" }]);
   });
 
+  it("keeps a single-object descriptor value at the top level and in the parent", () => {
+    fs.writeFileSync(
+      profilePath,
+      JSON.stringify({ alps: { descriptor: { id: "Home", descriptor: { href: "#About" } } } }, null, 2) + "\n"
+    );
+    addDescriptor(profilePath, { id: "greeting", parent: "Home" });
+    expect(read().alps.descriptor).toEqual([
+      { id: "Home", descriptor: [{ href: "#About" }, { href: "#greeting" }] },
+      { id: "greeting" },
+    ]);
+  });
+
   it("appends to an existing parent descriptor array", () => {
     fs.writeFileSync(
       profilePath,

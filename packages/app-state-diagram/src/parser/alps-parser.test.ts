@@ -22,6 +22,12 @@ describe('parseAlpsAuto', () => {
     expect(docText(doc.alps.descriptor?.[0].doc)).toBe('hello');
   });
 
+  it('keeps numeric-looking XML doc text as written', () => {
+    const doc = parseAlpsAuto('<alps><descriptor id="v"><doc>1.0</doc></descriptor><descriptor id="c"><doc>007</doc></descriptor></alps>');
+    expect(docText(doc.alps.descriptor?.[0].doc)).toBe('1.0');
+    expect(docText(doc.alps.descriptor?.[1].doc)).toBe('007');
+  });
+
   it('parses XML doc href and format attributes', () => {
     const doc = parseAlpsAuto(
       '<alps><descriptor id="x"><doc href="alps-doc/x.md" format="markdown"/></descriptor></alps>'

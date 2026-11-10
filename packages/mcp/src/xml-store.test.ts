@@ -262,6 +262,32 @@ describe("XML write support", () => {
     expect(readXml()).toContain('id="greeting"');
   });
 
+  it("leaves numeric text and character references of untouched XML nodes as written", () => {
+    const untouched = '<descriptor id="Other" title="caf&#233; &amp; co"><doc>1.0</doc></descriptor><descriptor id="Code"><doc>007 &#x3042;</doc></descriptor>';
+    fs.writeFileSync(profilePath, `<alps><descriptor id="Home"/>${untouched}</alps>`);
+    addDescriptor(profilePath, { id: "x" });
+    const xml = readXml();
+    expect(xml).toContain('<descriptor id="Other" title="caf&#233; &amp; co">');
+    expect(xml).toContain("<doc>1.0</doc>");
+    expect(xml).toContain("<doc>007 &#x3042;</doc>");
+  });
+
+  it("escapes written XML values and decodes references in attributes it rewrites", () => {
+    fs.writeFileSync(profilePath, '<alps><descriptor id="Home" tag="&#x3042; R&amp;D &#233;t&#233;"/></alps>');
+    expect(setDescriptorTags(profilePath, { id: "Home", add: ['Q"A'], remove: ["R&D"] })).toEqual({
+      id: "Home",
+      tags: ["あ", "été", 'Q"A'],
+      added: ['Q"A'],
+      removed: ["R&D"],
+    });
+    addDescriptor(profilePath, { id: "fish", title: 'Fish & "Chips" <b>' });
+    setDescriptorDoc(profilePath, "fish", "a < b & c");
+    const document = parseAlpsAuto(readXml());
+    const [home, fish] = document.alps.descriptor ?? [];
+    expect(home.tag).toBe('あ été Q"A');
+    expect(fish).toMatchObject({ title: 'Fish & "Chips" <b>', doc: "a < b & c" });
+  });
+
   it("inserts XML docs before existing child descriptors", () => {
     expect(setDescriptorDoc(profilePath, "section", "Section doc.")).toEqual({
       id: "section",

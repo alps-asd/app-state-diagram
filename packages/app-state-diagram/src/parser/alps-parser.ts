@@ -84,6 +84,8 @@ function parseAlpsXml(content: string): AlpsDocument {
       ignoreAttributes: false,
       attributeNamePrefix: '@_',
       textNodeName: '#text',
+      // Keep doc text such as "1.0" or "007" as written; numbers would be dropped as docs
+      parseTagValue: false,
       isArray: (name) => name === 'descriptor' || name === 'link',
     });
 

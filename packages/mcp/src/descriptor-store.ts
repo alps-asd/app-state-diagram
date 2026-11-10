@@ -104,9 +104,7 @@ export function addDescriptor(profilePath: string, input: AddDescriptorInput): A
   if (!root.alps || typeof root.alps !== "object") {
     throw new Error("Missing alps property");
   }
-  if (!Array.isArray(root.alps.descriptor)) {
-    root.alps.descriptor = [];
-  }
+  root.alps.descriptor = toDescriptorList(root.alps.descriptor);
   const topLevel = root.alps.descriptor as AlpsDescriptor[];
 
   if (findDescriptorById(topLevel, input.id)) {
@@ -156,9 +154,7 @@ export function addDescriptor(profilePath: string, input: AddDescriptorInput): A
     if (!parent) {
       throw new Error(`Parent descriptor not found: ${input.parent}`);
     }
-    if (!Array.isArray(parent.descriptor)) {
-      parent.descriptor = [];
-    }
+    parent.descriptor = toDescriptorList(parent.descriptor);
     if (!parent.descriptor.some(child => child.href === `#${input.id}`)) {
       parent.descriptor.push({ href: `#${input.id}` });
     }
@@ -277,4 +273,12 @@ export function renameDescriptor(profilePath: string, oldId: string, newId: stri
   }
   fs.writeFileSync(absPath, serializeLike(root, content), "utf-8");
   return result;
+}
+
+/** A descriptor value as a list; a single descriptor object becomes a one-element list */
+function toDescriptorList(value: unknown): AlpsDescriptor[] {
+  if (Array.isArray(value)) {
+    return value as AlpsDescriptor[];
+  }
+  return value !== null && typeof value === "object" ? [value as AlpsDescriptor] : [];
 }

@@ -29,7 +29,7 @@ const XML_OPTIONS = {
   commentPropName: '#comment',
   cdataPropName: '#cdata',
   parseTagValue: false,
-  // Keep entity and character references as written; inserted doc text is escaped by escapeXmlText().
+  // Keep entity and character references as written; inserted doc text must be escaped.
   processEntities: false,
 } as const;
 
@@ -186,7 +186,7 @@ function inlineXmlDocs(content: string, baseDir: string): InlineDocsResult {
         if (href && !hasValue) {
           const text = readExternalDoc(baseDir, href);
           if (text !== undefined) {
-            child.doc = [{ '#text': escapeXmlText(text) }];
+            child.doc = [{ '#text': text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;') }];
             addUnique(inlined, href);
           }
         }
@@ -205,10 +205,6 @@ function inlineXmlDocs(content: string, baseDir: string): InlineDocsResult {
 
 function elementName(node: XmlNode): string | undefined {
   return Object.keys(node).find(key => key !== ':@');
-}
-
-function escapeXmlText(text: string): string {
-  return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
 /** Child nodes of an element (in preserve-order trees an element's value is always an array) */
