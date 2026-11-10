@@ -611,14 +611,26 @@ export async function handleAlpsEditorUrl(args: Record<string, unknown> | undefi
   // The editor cannot read local files: share a self-contained copy in
   // which externalized docs (alps/docs/<id>.md via doc.href) are inlined
   const shared = inlineExternalDocs(alpsContent, path.dirname(path.resolve(file)));
-  const url = createAlpsEditorUrl(shared.content);
+  let url = createAlpsEditorUrl(shared.content);
+  // Docs are externalized because they are long: when they push the URL
+  // past what chat tools carry, share the profile without them instead
+  let omittedLength = 0;
+  if (shared.inlined.length > 0 && url.length > URL_LENGTH_WARNING_THRESHOLD) {
+    omittedLength = url.length;
+    url = createAlpsEditorUrl(alpsContent);
+  }
   const lines = [
     "✅ ALPS Editor URL generated",
     "",
     url,
   ];
 
-  if (shared.inlined.length > 0) {
+  if (omittedLength > 0) {
+    lines.push(
+      "",
+      `Left out ${shared.inlined.length} external doc file(s) to keep the URL shareable (with them it would be ${omittedLength} characters); their docs appear empty in the editor: ${shared.inlined.join(", ")}`
+    );
+  } else if (shared.inlined.length > 0) {
     lines.push(
       "",
       `Included ${shared.inlined.length} external doc file(s) so the shared profile is self-contained: ${shared.inlined.join(", ")}`

@@ -94,16 +94,19 @@ export async function startWatch(
   console.log('Waiting for editor to load...');
   await waitForEditor(port);
 
+  const watcher = watch(absolutePath);
+
   // Send initial content
   let isFirstSend = true;
   const sendToBrowser = async () => {
     try {
       // The browser editor cannot read local doc files, so send a copy
       // with externalized docs (doc.href) inlined
-      const fileContent = inlineExternalDocs(
-        fs.readFileSync(absolutePath, 'utf-8'),
-        path.dirname(absolutePath)
-      ).content;
+      const baseDir = path.dirname(absolutePath);
+      const selfContained = inlineExternalDocs(fs.readFileSync(absolutePath, 'utf-8'), baseDir);
+      const fileContent = selfContained.content;
+      // Editing an inlined doc file must refresh the preview as well
+      watcher.add(selfContained.inlined.map(href => path.resolve(baseDir, href)));
 
       const client = await CDP({ port });
       const { Runtime } = client;
@@ -134,5 +137,5 @@ export async function startWatch(
   console.log('Press Ctrl+C to stop.\n');
 
   // Watch for changes
-  watch(absolutePath).on('change', sendToBrowser);
+  watcher.on('change', sendToBrowser);
 }

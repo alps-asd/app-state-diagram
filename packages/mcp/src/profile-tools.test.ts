@@ -297,6 +297,23 @@ describe('handleAlpsEditorUrl with externalized docs', () => {
     expect(fs.readFileSync(profilePath, 'utf-8')).not.toContain('captured on shipment');
   });
 
+  it('should leave external docs out when they would make the URL too long to share', async () => {
+    // Incompressible text, so the deflated URL really grows past the limit
+    const long = Array.from({ length: 6000 }, (_, i) => Math.sin(i).toString(36).slice(2)).join(' ');
+    await handleAlpsSetDoc({ file: profilePath, id: 'Checkout', doc: long });
+
+    const result = await handleAlpsEditorUrl({ file: profilePath });
+
+    expect(result.isError).toBe(false);
+    const text = result.content[0].text;
+    expect(text).toMatch(new RegExp(
+      `Left out 1 external doc file\\(s\\) to keep the URL shareable \\(with them it would be \\d+ characters\\); their docs appear empty in the editor: ${DOC_DIR}/Checkout.md`
+    ));
+    expect(text).not.toContain('Included');
+    expect(text).not.toContain('Slack and similar tools');
+    expect(decode(text)).toBe(fs.readFileSync(profilePath, 'utf-8'));
+  });
+
   it('should share the file unchanged when no doc is externalized', async () => {
     const result = await handleAlpsEditorUrl({ file: profilePath });
 

@@ -130,13 +130,19 @@ Options:
         return;
       }
 
-      // Bring externalized docs (doc.href to local files such as
-      // alps/docs/<id>.md) into the profile, so the HTML table and the
-      // embedded profile show them instead of empty docs
-      const selfContained = inlineExternalDocs(content, basePath);
-      const sourceContent = selfContained.content;
-      if (selfContained.inlined.length > 0) {
-        document = parseAlpsAuto(sourceContent);
+      const format = options.format || 'html';
+
+      // HTML only: bring externalized docs (doc.href to local files such as
+      // alps/docs/<id>.md) into the profile, so the table and the embedded
+      // profile show them instead of empty docs. Diagram formats do not
+      // use docs.
+      let sourceContent = content;
+      if (!['mermaid', 'dot', 'svg'].includes(format)) {
+        const selfContained = inlineExternalDocs(content, basePath);
+        if (selfContained.inlined.length > 0) {
+          sourceContent = selfContained.content;
+          document = parseAlpsAuto(sourceContent);
+        }
       }
 
       // Resolve external references
@@ -150,7 +156,6 @@ Options:
       let output: string;
       let outputExt: string;
 
-      const format = options.format || 'html';
       if (format === 'mermaid') {
         output = generateMermaid(document);
         outputExt = '.mmd';

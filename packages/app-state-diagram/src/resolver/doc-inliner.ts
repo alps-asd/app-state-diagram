@@ -22,13 +22,25 @@ export interface InlineDocsResult {
   inlined: string[];
 }
 
-const XML_OPTIONS = {
+/**
+ * fast-xml-parser options for reading a profile and writing it back.
+ * parseTagValue is off so text that looks like a number ("007", "1.0")
+ * survives the round trip unchanged. Shared with the MCP XML store.
+ */
+export const XML_ROUNDTRIP_OPTIONS = {
   preserveOrder: true,
   ignoreAttributes: false,
   attributeNamePrefix: '@_',
   commentPropName: '#comment',
   cdataPropName: '#cdata',
+  parseTagValue: false,
 } as const;
+
+/** File types that may be read as a doc (anything else is not documentation) */
+const DOC_EXTENSIONS = new Set(['.md', '.markdown', '.txt', '.html', '.htm', '.adoc', '.rst']);
+
+/** Largest doc file that is read; larger files are treated as not being a doc */
+export const MAX_EXTERNAL_DOC_BYTES = 256 * 1024;
 
 /**
  * Resolve a local href (doc.href, describedby link) against the profile
@@ -72,10 +84,15 @@ export function resolveSafeLocalPath(baseDir: string, href: string): string | un
 
 /**
  * Read the content of a local doc file linked by doc.href, or undefined
- * when the href is unsafe, remote, or does not point to a readable file
+ * when the href is unsafe, remote, or does not point to a readable file.
+ *
+ * The content ends up in generated HTML and shared editor URLs, so only
+ * documentation is read: a text/markup extension, no hidden path segment
+ * (".env", ".git/..."), and at most MAX_EXTERNAL_DOC_BYTES. A profile
+ * cannot use doc.href to pull in other files that sit next to it.
  */
 export function readExternalDoc(baseDir: string, href: string | undefined): string | undefined {
-  if (!href) {
+  if (!href || !isDocFileName(href)) {
     return undefined;
   }
   const docPath = resolveSafeLocalPath(baseDir, href);
@@ -83,7 +100,8 @@ export function readExternalDoc(baseDir: string, href: string | undefined): stri
     return undefined;
   }
   try {
-    if (!fs.statSync(docPath).isFile()) {
+    const stat = fs.statSync(docPath);
+    if (!stat.isFile() || stat.size > MAX_EXTERNAL_DOC_BYTES) {
       return undefined;
     }
     return fs.readFileSync(docPath, 'utf-8');
@@ -92,10 +110,18 @@ export function readExternalDoc(baseDir: string, href: string | undefined): stri
   }
 }
 
+function isDocFileName(href: string): boolean {
+  if (href.split('/').some(segment => segment.startsWith('.') && segment !== '.')) {
+    return false;
+  }
+  return DOC_EXTENSIONS.has(path.extname(href).toLowerCase());
+}
+
 /**
  * Return a self-contained copy of an ALPS profile (JSON or XML) in which
- * every doc that links a local file via href and has no inline value of
- * its own carries the file content as its value
+ * every doc that links a local file via href carries the file content as
+ * its value. The linked file wins over an inline value, the same order
+ * the MCP server uses when it resolves a doc (alps_descriptor).
  */
 export function inlineExternalDocs(content: string, baseDir: string): InlineDocsResult {
   if (content.trim().startsWith('{')) {
@@ -114,7 +140,7 @@ function inlineJsonDocs(content: string, baseDir: string): InlineDocsResult {
   const inlined: string[] = [];
   const inlineDoc = (owner: { doc?: unknown }): void => {
     const doc = owner.doc as { href?: unknown; value?: unknown } | undefined;
-    if (!doc || typeof doc !== 'object' || typeof doc.href !== 'string' || doc.value) {
+    if (!doc || typeof doc !== 'object' || typeof doc.href !== 'string') {
       return;
     }
     const text = readExternalDoc(baseDir, doc.href);
@@ -141,7 +167,7 @@ function inlineJsonDocs(content: string, baseDir: string): InlineDocsResult {
   if (inlined.length === 0) {
     return { content, inlined };
   }
-  return { content: serializeJsonLike(root, content), inlined };
+  return { content: serializeLike(root, content), inlined };
 }
 
 type XmlNode = Record<string, unknown>;
@@ -149,7 +175,7 @@ type XmlNode = Record<string, unknown>;
 function inlineXmlDocs(content: string, baseDir: string): InlineDocsResult {
   let tree: XmlNode[];
   try {
-    tree = new XMLParser(XML_OPTIONS).parse(content) as XmlNode[];
+    tree = new XMLParser(XML_ROUNDTRIP_OPTIONS).parse(content) as XmlNode[];
   } catch {
     return { content, inlined: [] };
   }
@@ -164,11 +190,7 @@ function inlineXmlDocs(content: string, baseDir: string): InlineDocsResult {
       if (name === 'doc') {
         const attrs = child[':@'] as Record<string, string> | undefined;
         const href = attrs?.['@_href'];
-        const hasValue = elementChildren(child).some(c => {
-          const text = c['#text'];
-          return elementName(c) === '#cdata' || (text !== undefined && String(text).trim() !== '');
-        });
-        if (href && !hasValue) {
+        if (href) {
           const text = readExternalDoc(baseDir, href);
           if (text !== undefined) {
             child.doc = [{ '#text': text }];
@@ -184,7 +206,7 @@ function inlineXmlDocs(content: string, baseDir: string): InlineDocsResult {
   if (inlined.length === 0) {
     return { content, inlined };
   }
-  const xml = new XMLBuilder({ ...XML_OPTIONS, format: true }).build(tree);
+  const xml = new XMLBuilder({ ...XML_ROUNDTRIP_OPTIONS, format: true }).build(tree);
   return { content: xml.replace(/^\n/, '').replace(/\n*$/, '\n'), inlined };
 }
 
@@ -206,7 +228,7 @@ function addUnique(list: string[], value: string): void {
 /**
  * Serialize JSON keeping the original file's indentation and trailing newline
  */
-function serializeJsonLike(root: unknown, original: string): string {
+export function serializeLike(root: unknown, original: string): string {
   const indentMatch = original.match(/^([ \t]+)"/m);
   const indent = indentMatch ? indentMatch[1] : '  ';
   const json = JSON.stringify(root, null, indent);

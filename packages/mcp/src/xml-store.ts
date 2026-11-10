@@ -3,19 +3,14 @@ import * as path from "path";
 import { XMLBuilder, XMLParser, XMLValidator } from "fast-xml-parser";
 import type { AddDescriptorInput, AddDescriptorResult, RenameResult, SetTagsInput, SetTagsResult } from "./descriptor-store.js";
 import type { DocPlacement, SetDocResult } from "./doc-store.js";
-import { DOC_DIR, resolveSafeLocalPath, safeFileName, shouldExternalize } from "./doc-utils.js";
+import { DOC_DIR, resolveSafeLocalPath, safeFileName, shouldExternalize, XML_ROUNDTRIP_OPTIONS } from "./doc-utils.js";
 
 const ATTRS = ":@";
 const ATTR_PREFIX = "@_";
 const TEXT = "#text";
 const COMMENT = "#comment";
 const CDATA = "#cdata";
-const XML_OPTIONS = {
-  preserveOrder: true,
-  ignoreAttributes: false,
-  commentPropName: COMMENT,
-  cdataPropName: CDATA,
-} as const;
+const XML_OPTIONS = XML_ROUNDTRIP_OPTIONS;
 
 type XmlAttrs = Record<string, string>;
 type XmlNode = Record<string, unknown>;
