@@ -19,6 +19,7 @@ This page documents all validation errors, warnings, and suggestions reported by
 - [W002](#w002) Safe transition naming
 - [W003](#w003) Unsafe/idempotent transition naming
 - [W004](#w004) Orphan descriptor
+- [W005](#w005) Unknown tag
 - [W006](#w006) Transition defined inside another descriptor
 
 **Suggestions**
@@ -185,6 +186,17 @@ This page documents all validation errors, warnings, and suggestions reported by
 **How to fix:**
 1. Add a transition that references this descriptor
 2. Or remove the unused descriptor
+
+---
+
+<a id="w005"></a>
+### W005: Unknown tag
+
+**Why:** A tag used in the profile is not defined in the tag vocabulary file. It is often a typo (`flow-purchace`) that silently splits one group of descriptors in two. Only the MCP `validate_alps` tool reports this, and only when a vocabulary file is passed to it.
+
+**How to fix:**
+1. Correct the tag to one defined in the vocabulary
+2. Or add the new tag to the vocabulary file
 
 ---
 

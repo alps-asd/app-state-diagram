@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
-import { inlineExternalDocs, readExternalDoc, resolveSafeLocalPath } from './doc-inliner';
+import { inlineExternalDocs, readExternalDoc, resolveSafeLocalPath, MAX_EXTERNAL_DOC_BYTES } from './doc-inliner';
 import { parseAlpsAuto, docText } from '../parser/alps-parser';
 
 let dir: string;
@@ -53,9 +53,16 @@ describe('inlineExternalDocs (JSON)', () => {
     expect(inlineExternalDocs(content, dir)).toEqual({ content, inlined: [] });
   });
 
-  it('never overrides an inline value', () => {
-    const content = json({ descriptor: [{ id: 'Order', doc: { href: 'alps/docs/Order.md', value: 'Summary' } }] });
-    expect(inlineExternalDocs(content, dir).inlined).toEqual([]);
+  it('prefers the linked file over an inline value, like resolveDoc in the MCP server', () => {
+    const content = json({ descriptor: [
+      { id: 'Order', doc: { href: 'alps/docs/Order.md', value: 'Summary' } },
+      { id: 'Gone', doc: { href: 'alps/docs/missing.md', value: 'Kept' } },
+    ] });
+    const result = inlineExternalDocs(content, dir);
+    expect(result.inlined).toEqual(['alps/docs/Order.md']);
+    const parsed = JSON.parse(result.content);
+    expect(parsed.alps.descriptor[0].doc.value).toContain('Cancel until shipment');
+    expect(parsed.alps.descriptor[1].doc.value).toBe('Kept');
   });
 
   it('skips missing, unsafe, remote, and directory hrefs', () => {
@@ -110,10 +117,29 @@ describe('inlineExternalDocs (XML)', () => {
     expect(docText(order?.descriptor?.[0].doc)).toContain('Cancel until shipment');
   });
 
-  it('keeps explicit text and CDATA values', () => {
+  it('prefers the linked file over explicit text and CDATA values', () => {
     const doc = parseAlpsAuto(inlineExternalDocs(XML, dir).content);
-    expect(docText(doc.alps.descriptor?.[1].doc)).toBe('Explicit summary');
-    expect(docText(doc.alps.descriptor?.[2].doc)).toBe('Kept');
+    expect(docText(doc.alps.descriptor?.[1].doc)).toContain('Cancel until shipment');
+    expect(docText(doc.alps.descriptor?.[2].doc)).toContain('Cancel until shipment');
+  });
+
+  it('keeps inline text when the linked file cannot be read', () => {
+    const content = '<alps><descriptor id="Order"><doc href="alps/docs/missing.md">Kept</doc></descriptor></alps>';
+    expect(inlineExternalDocs(content, dir)).toEqual({ content, inlined: [] });
+  });
+
+  it('leaves number-like text of other elements untouched', () => {
+    const content = `<alps>
+  <title>Shop 1.0</title>
+  <descriptor id="Order"><doc href="alps/docs/Order.md"/></descriptor>
+  <descriptor id="code"><doc>007</doc></descriptor>
+  <descriptor id="rate"><doc>1.50</doc></descriptor>
+</alps>
+`;
+    const result = inlineExternalDocs(content, dir);
+    expect(result.inlined).toEqual(['alps/docs/Order.md']);
+    expect(result.content).toContain('<doc>007</doc>');
+    expect(result.content).toContain('<doc>1.50</doc>');
   });
 
   it('returns the content unchanged when there is nothing to inline', () => {
@@ -140,14 +166,6 @@ describe('inlineExternalDocs (XML)', () => {
     expect(result).toContain('<doc>&#x3042; &amp; more</doc>');
   });
 
-  it('keeps a linked doc that has element content, and inlines one holding only a comment', () => {
-    const content = '<alps><descriptor id="Html"><doc href="README.md" format="html"><p>Kept</p></doc></descriptor>'
-      + '<descriptor id="Commented"><doc href="README.md"><!-- todo --></doc></descriptor></alps>';
-    const result = inlineExternalDocs(content, dir);
-    expect(result.content).toContain('<p>Kept</p>');
-    expect(result.content).toContain('Root overview');
-  });
-
   it('returns malformed XML and documents without alps unchanged', () => {
     expect(inlineExternalDocs('<alps', dir)).toEqual({ content: '<alps', inlined: [] });
     expect(inlineExternalDocs('<alps><descriptor></alps>', dir).inlined).toEqual([]);
@@ -162,6 +180,29 @@ describe('readExternalDoc', () => {
     expect(readExternalDoc(dir, 'alps/docs')).toBeUndefined();
     expect(readExternalDoc(dir, 'missing.md')).toBeUndefined();
     expect(readExternalDoc(dir, 'file:///etc/hosts')).toBeUndefined();
+  });
+
+  it('reads documentation files only, never other files next to the profile', () => {
+    fs.writeFileSync(path.join(dir, '.env'), 'SECRET=xyz\n');
+    fs.writeFileSync(path.join(dir, 'id_rsa'), 'key');
+    fs.writeFileSync(path.join(dir, 'config.json'), '{}');
+    fs.mkdirSync(path.join(dir, '.git'));
+    fs.writeFileSync(path.join(dir, '.git', 'notes.md'), 'hidden');
+    fs.writeFileSync(path.join(dir, 'NOTES.TXT'), 'upper');
+    for (const href of ['.env', 'id_rsa', 'config.json', '.git/notes.md']) {
+      expect(readExternalDoc(dir, href)).toBeUndefined();
+    }
+    expect(readExternalDoc(dir, 'NOTES.TXT')).toBe('upper');
+    expect(readExternalDoc(dir, './README.md')).toBe('Root overview\n');
+    const content = json({ descriptor: [{ id: 'd', doc: { href: '.env' } }] });
+    expect(inlineExternalDocs(content, dir)).toEqual({ content, inlined: [] });
+  });
+
+  it('does not read files larger than the limit', () => {
+    fs.writeFileSync(path.join(dir, 'big.md'), 'x'.repeat(MAX_EXTERNAL_DOC_BYTES + 1));
+    fs.writeFileSync(path.join(dir, 'fits.md'), 'x'.repeat(MAX_EXTERNAL_DOC_BYTES));
+    expect(readExternalDoc(dir, 'big.md')).toBeUndefined();
+    expect(readExternalDoc(dir, 'fits.md')).toHaveLength(MAX_EXTERNAL_DOC_BYTES);
   });
 });
 

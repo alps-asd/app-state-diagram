@@ -21,11 +21,12 @@ import {
   INLINE_DOC_MAX_LENGTH,
   resolveSafeLocalPath,
   safeFileName,
+  serializeLike,
   shouldExternalize,
 } from "./doc-utils.js";
 import { setXmlDescriptorDoc } from "./xml-store.js";
 
-export { DOC_DIR, INLINE_DOC_MAX_LENGTH, resolveSafeLocalPath, shouldExternalize };
+export { DOC_DIR, INLINE_DOC_MAX_LENGTH, resolveSafeLocalPath, serializeLike, shouldExternalize };
 
 export type DocPlacement = "auto" | "inline" | "external";
 
@@ -145,14 +146,4 @@ export function resolveDoc(
     }
   }
   return { text: doc.value || "", href: doc.href, format: doc.format };
-}
-
-/**
- * Serialize JSON keeping the original file's indentation and trailing newline
- */
-export function serializeLike(root: unknown, original: string): string {
-  const indentMatch = original.match(/^([ \t]+)"/m);
-  const indent = indentMatch ? indentMatch[1] : "  ";
-  const json = JSON.stringify(root, null, indent);
-  return original.endsWith("\n") ? `${json}\n` : json;
 }

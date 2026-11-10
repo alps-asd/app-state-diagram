@@ -86,7 +86,7 @@ Prefers local `dot` command (better multibyte support), falls back to WASM-based
 ### Validation Codes
 
 - **Errors (E001-E011)**: Missing id/href, missing rt, invalid type, broken references, duplicate ids
-- **Warnings (W001-W004)**: Missing title, naming conventions (go*/do* prefixes), orphan descriptors
+- **Warnings (W001-W006)**: Missing title, naming conventions (go*/do* prefixes), orphan descriptors, unknown tag (W005, reported by the MCP `validate_alps` tool when a tag vocabulary is given), transition defined inside another descriptor (W006)
 - **Suggestions (S001-S003)**: Documentation improvements
 
 ### Build Configuration

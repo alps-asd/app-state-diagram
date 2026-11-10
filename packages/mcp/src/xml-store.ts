@@ -3,23 +3,15 @@ import * as path from "path";
 import { XMLBuilder, XMLParser, XMLValidator } from "fast-xml-parser";
 import type { AddDescriptorInput, AddDescriptorResult, RenameResult, SetTagsInput, SetTagsResult } from "./descriptor-store.js";
 import type { DocPlacement, SetDocResult } from "./doc-store.js";
-import { DOC_DIR, resolveSafeLocalPath, safeFileName, shouldExternalize } from "./doc-utils.js";
+import { DOC_DIR, resolveSafeLocalPath, safeFileName, shouldExternalize, XML_ROUNDTRIP_OPTIONS } from "./doc-utils.js";
 
 const ATTRS = ":@";
 const ATTR_PREFIX = "@_";
 const TEXT = "#text";
 const COMMENT = "#comment";
 const CDATA = "#cdata";
-// parseTagValue/processEntities off: text and references pass through as written,
-// so values written by this module go through encodeXml() and are read through decodeXml().
-const XML_OPTIONS = {
-  preserveOrder: true,
-  ignoreAttributes: false,
-  commentPropName: COMMENT,
-  cdataPropName: CDATA,
-  parseTagValue: false,
-  processEntities: false,
-} as const;
+// Text and references stay as written: values are encoded by encodeXml() on write and attributes decoded by decodeXml() on read.
+const XML_OPTIONS = XML_ROUNDTRIP_OPTIONS;
 const XML_ESCAPES: Record<string, string> = { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" };
 const XML_NAMED_ENTITIES: Record<string, string> = { amp: "&", lt: "<", gt: ">", quot: '"', apos: "'" };
 
