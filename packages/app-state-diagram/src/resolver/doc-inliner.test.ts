@@ -179,6 +179,12 @@ describe('inlineExternalDocs (XML)', () => {
     expect(docText(doc.alps.descriptor?.[2].doc)).toContain('Cancel until shipment');
   });
 
+  it('skips hrefs with character references outside Unicode instead of failing', () => {
+    const content = '<alps><descriptor id="X"><doc href="alps/docs/&#x110000;.md"/></descriptor>'
+      + '<descriptor id="Y"><doc href="alps/docs/&#99999999;.md"/></descriptor></alps>';
+    expect(inlineExternalDocs(content, dir)).toEqual({ content, inlined: [] });
+  });
+
   it('returns malformed XML and documents without alps unchanged', () => {
     expect(inlineExternalDocs('<alps', dir)).toEqual({ content: '<alps', inlined: [] });
     expect(inlineExternalDocs('<alps><descriptor></alps>', dir).inlined).toEqual([]);

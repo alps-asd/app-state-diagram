@@ -224,16 +224,17 @@ function inlineXmlDocs(content: string, baseDir: string): InlineDocsResult {
 
 const XML_NAMED_ENTITIES: Record<string, string> = { amp: '&', lt: '<', gt: '>', quot: '"', apos: "'" };
 
-/** Decode the predefined entities and character references left in values read with XML_ROUNDTRIP_OPTIONS */
+/**
+ * Decode the predefined entities and character references left in values read with XML_ROUNDTRIP_OPTIONS.
+ * A reference beyond U+10FFFF is not a character and stays as written.
+ */
 export function decodeXmlReferences(value: string): string {
-  return value.replace(/&(?:#x([0-9a-fA-F]+)|#([0-9]+)|(amp|lt|gt|quot|apos));/g, (_match, hex: string | undefined, dec: string | undefined, name: string | undefined) => {
-    if (hex) {
-      return String.fromCodePoint(parseInt(hex, 16));
+  return value.replace(/&(?:#x([0-9a-fA-F]+)|#([0-9]+)|(amp|lt|gt|quot|apos));/g, (match, hex: string | undefined, dec: string | undefined, name: string | undefined) => {
+    if (hex === undefined && dec === undefined) {
+      return XML_NAMED_ENTITIES[name as string];
     }
-    if (dec) {
-      return String.fromCodePoint(parseInt(dec, 10));
-    }
-    return XML_NAMED_ENTITIES[name as string];
+    const codePoint = hex !== undefined ? parseInt(hex, 16) : parseInt(dec as string, 10);
+    return codePoint <= 0x10ffff ? String.fromCodePoint(codePoint) : match;
   });
 }
 
