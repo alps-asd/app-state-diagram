@@ -29,6 +29,8 @@ const XML_OPTIONS = {
   commentPropName: '#comment',
   cdataPropName: '#cdata',
   parseTagValue: false,
+  // Keep entity and character references as written; inserted doc text is escaped by escapeXmlText().
+  processEntities: false,
 } as const;
 
 /**
@@ -175,13 +177,16 @@ function inlineXmlDocs(content: string, baseDir: string): InlineDocsResult {
         const attrs = child[':@'] as Record<string, string> | undefined;
         const href = attrs?.['@_href'];
         const hasValue = elementChildren(child).some(c => {
-          const text = c['#text'];
-          return elementName(c) === '#cdata' || (text !== undefined && String(text).trim() !== '');
+          const childName = elementName(c);
+          if (childName === '#comment') {
+            return false;
+          }
+          return childName !== '#text' || String(c['#text']).trim() !== '';
         });
         if (href && !hasValue) {
           const text = readExternalDoc(baseDir, href);
           if (text !== undefined) {
-            child.doc = [{ '#text': text }];
+            child.doc = [{ '#text': escapeXmlText(text) }];
             addUnique(inlined, href);
           }
         }
@@ -200,6 +205,10 @@ function inlineXmlDocs(content: string, baseDir: string): InlineDocsResult {
 
 function elementName(node: XmlNode): string | undefined {
   return Object.keys(node).find(key => key !== ':@');
+}
+
+function escapeXmlText(text: string): string {
+  return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
 /** Child nodes of an element (in preserve-order trees an element's value is always an array) */

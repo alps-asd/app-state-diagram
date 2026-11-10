@@ -133,6 +133,21 @@ describe('inlineExternalDocs (XML)', () => {
     expect(result).toContain('<doc>1.10</doc>');
   });
 
+  it('keeps character and entity references unchanged when rewriting the profile', () => {
+    const content = '<alps><doc href="README.md"/><descriptor id="Cafe" title="caf&#233; &amp; &lt;x&gt;"><doc>&#x3042; &amp; more</doc></descriptor></alps>';
+    const result = inlineExternalDocs(content, dir).content;
+    expect(result).toContain('title="caf&#233; &amp; &lt;x&gt;"');
+    expect(result).toContain('<doc>&#x3042; &amp; more</doc>');
+  });
+
+  it('keeps a linked doc that has element content, and inlines one holding only a comment', () => {
+    const content = '<alps><descriptor id="Html"><doc href="README.md" format="html"><p>Kept</p></doc></descriptor>'
+      + '<descriptor id="Commented"><doc href="README.md"><!-- todo --></doc></descriptor></alps>';
+    const result = inlineExternalDocs(content, dir);
+    expect(result.content).toContain('<p>Kept</p>');
+    expect(result.content).toContain('Root overview');
+  });
+
   it('returns malformed XML and documents without alps unchanged', () => {
     expect(inlineExternalDocs('<alps', dir)).toEqual({ content: '<alps', inlined: [] });
     expect(inlineExternalDocs('<alps><descriptor></alps>', dir).inlined).toEqual([]);
