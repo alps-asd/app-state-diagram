@@ -8,6 +8,8 @@
  * generateHtml(); editing the 3D mode happens here.
  */
 
+import { escapeHtml } from './table-functions';
+
 export const asd3dStyles = `/* 3D browse mode */
 .asd3d-open-btn{background:none;border:0;border-radius:0;padding:0;margin:0;color:inherit;font:inherit;cursor:pointer;}
 .asd3d-open-btn:hover{text-decoration:underline;}
@@ -66,7 +68,8 @@ export const asd3dStyles = `/* 3D browse mode */
 .asd3d-settings-note{margin:2px 0 0;font-size:11px;line-height:1.4;color:#9fb0d0;}
 .asd3d-settings-note[hidden]{display:none;}`;
 
-export function asd3dOverlay(safeAlpsTitle: string): string {
+export function asd3dOverlay(alpsTitle: string): string {
+  const safeAlpsTitle = escapeHtml(alpsTitle);
   return `<div id="asd3d-overlay" role="dialog" aria-modal="true" aria-label="3D state diagram browser">
     <div id="asd3d-canvas"></div>
     <div class="asd3d-vignette"></div>
@@ -126,8 +129,14 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
     // prefers window.THREE over its bundled copy, so we import the matching three
     // ESM build and expose it as the global before loading the UMD bundle. That
     // way the renderer and our sprite code share a single three instance.
+    // WARNING: defogLinks() and checkParticleArrivals() reach into 3d-force-graph
+    // private internals (__lineObj, __photonsObj, __progressRatio). They degrade
+    // silently, so a version bump will quietly break link defogging and arrival
+    // glows. Re-verify those two functions when bumping FG3D_SRC.
     var THREE_SRC = 'https://unpkg.com/three@0.180.0/build/three.module.js';
+    var THREE_SRI = 'sha384-wyxAlyAVVsyc7KN24a4+m1tMTC2BwrjQyLgLStDaUBDmwK+gWUMULWHSS0NRoZKv';
     var FG3D_SRC = 'https://unpkg.com/3d-force-graph@1.80.0/dist/3d-force-graph.min.js';
+    var FG3D_SRI = 'sha384-Y7bC2PBKu8ujxtvo5+Z61OeGdSVRzFsYWBK4i5dnL/U6aFDTodk61qOUkTfInaxS';
     // ---- Theme sets -------------------------------------------------------
     // All of the 3D scene design lives here so the whole look can be swapped.
     // The active set is chosen at build time via window.ASD3D_THEME (injected by
@@ -274,10 +283,11 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
     hudEl.innerHTML = 'Drag: rotate \\u00b7 Right-drag: pan \\u00b7 Scroll: zoom<br>' +
         'Click node: focus \\u00b7 Right-click: table \\u00b7 S: settings \\u00b7 Esc: back to 2D<br>Depth: entry near \\u2192 deep states far';
 
-    function loadScript(src) {
+    function loadScript(src, integrity) {
         return new Promise(function (resolve, reject) {
             var s = document.createElement('script');
             s.src = src;
+            if (integrity) { s.integrity = integrity; s.crossOrigin = 'anonymous'; }
             s.onload = function () { resolve(); };
             s.onerror = function () { reject(new Error('Failed to load ' + src)); };
             document.head.appendChild(s);
@@ -286,15 +296,35 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
 
     function ensureLibs() {
         if (!libsPromise) {
+            // three >=0.179 ships no UMD build, so we can't SRI a classic script
+            // for it. Instead we load the ESM build as a module script with SRI
+            // (which populates the SRI-verified module cache), then import() the
+            // same URL resolves from that cache. A tampered response fails the
+            // integrity check and the import() rejects.
             var threeReady = window.THREE
                 ? Promise.resolve()
-                : import(THREE_SRC).then(function (mod) { window.THREE = mod; });
+                : loadModuleScript(THREE_SRC, THREE_SRI).then(function () {
+                    return import(THREE_SRC);
+                }).then(function (mod) { window.THREE = mod; });
             libsPromise = threeReady.then(function () {
-                return typeof ForceGraph3D === 'undefined' ? loadScript(FG3D_SRC) : null;
+                return typeof ForceGraph3D === 'undefined' ? loadScript(FG3D_SRC, FG3D_SRI) : null;
             });
             libsPromise.catch(function () { libsPromise = null; });
         }
         return libsPromise;
+    }
+
+    function loadModuleScript(src, integrity) {
+        return new Promise(function (resolve, reject) {
+            var s = document.createElement('script');
+            s.type = 'module';
+            s.src = src;
+            s.integrity = integrity;
+            s.crossOrigin = 'anonymous';
+            s.onload = function () { resolve(); };
+            s.onerror = function () { reject(new Error('Failed to load ' + src)); };
+            document.head.appendChild(s);
+        });
     }
 
     function labelModeIs(mode) { return getCurrentLabelMode() === mode; }
@@ -1150,7 +1180,7 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
     // ---- semantic balls: the descriptor grains drift inside their box using the
     // reference "centre-seeking" guidance -- each grain steers toward the box centre
     // and keeps its momentum, so the cluster swirls -- softly reflected off the walls.
-    var GRAIN_ACCEL = 0.03, GRAIN_HALF = 0, grainTmp = null;
+    var GRAIN_ACCEL = 0.03, grainTmp = null;
     function updateGrains(step) {
         if (reducedMotion || grainSpeed <= 0) return;
         if (!grainTmp) grainTmp = new THREE.Matrix4();
@@ -1420,9 +1450,15 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
     // Pin the focused node so the still-cooling force simulation can't drift it
     // out from under the camera mid-flight (which left the card off to the side).
     // Clear every pin first so stray pins can never accumulate and freeze the layout.
+    // Only fx/fy are released: fz is the semantic depth layer (set by
+    // assignDepthLevels), so unpinning must restore it rather than clear it,
+    // otherwise the node drifts off its Z plane once the simulation reheats.
     function unpinNode() {
         currentNodes.forEach(function (n) {
-            if (typeof n.fx === 'number') { n.fx = undefined; n.fy = undefined; n.fz = undefined; }
+            if (typeof n.fx === 'number') {
+                n.fx = undefined; n.fy = undefined;
+                n.fz = typeof n.__asd3dDepthFz === 'number' ? n.__asd3dDepthFz : undefined;
+            }
         });
     }
 
@@ -1848,10 +1884,20 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
                 }
             }
         }
-        // assign fz: deeper states go further back (negative Z = away from camera)
+        // assign fz: deeper states go further back (negative Z = away from camera).
+        // Nodes unreachable from the entry state (disconnected components) get a
+        // distinct fallback layer one step beyond the deepest reachable state, so
+        // they don't sit on the entry plane and contradict the "entry near -> deep
+        // states far" HUD promise.
+        var maxDepth = 0;
         model.nodes.forEach(function (n) {
             var d = depth[n.id] !== undefined ? depth[n.id] : 0;
+            if (d > maxDepth) maxDepth = d;
+        });
+        model.nodes.forEach(function (n) {
+            var d = depth[n.id] !== undefined ? depth[n.id] : maxDepth + 1;
             n.fz = -d * DEPTH_LEVEL_DISTANCE;
+            n.__asd3dDepthFz = n.fz; // keep the semantic layer so unpinNode can restore it
             n.z = n.fz; // start at the fixed position
         });
     }
@@ -2190,7 +2236,6 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
             syncLabelButtons();
             refreshLabels();
             refreshGraphData(false);
-            if (lastTagKey === null) refreshGraphData(true);
             if (currentNodes.length > 0) hideStatus();
             startLod();
         }).catch(function (err) {

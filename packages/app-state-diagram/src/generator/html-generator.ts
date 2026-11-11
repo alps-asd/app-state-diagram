@@ -331,7 +331,7 @@ ${tableHtml}
 ${linksHtml}
 <div style="display:none"><code id="alps-profile">${escapedContent}</code></div>
 </div>
-${enable3d ? asd3dOverlay(safeAlpsTitle) : ''}
+${enable3d ? asd3dOverlay(alpsTitle) : ''}
 <script>
 // Tag filtering
 const tagDescriptorMap = ${escapeJsonForScript(tagDescriptorMap)};
