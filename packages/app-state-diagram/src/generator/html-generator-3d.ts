@@ -1613,13 +1613,13 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
     }
 
     function exitToTable(id) {
+        var row = id && document.getElementById('descriptor-' + id);
+        var link = row && row.querySelector('.descriptor-id-link');
+        if (link) returnFocusEl = link; // close3D focuses it before the row scrolls into view
         close3D();
         if (id) {
             setDescriptorHash(id);
             scrollToDescriptor(id);
-            var row = document.getElementById('descriptor-' + id);
-            var link = row && row.querySelector('.descriptor-id-link');
-            if (link) link.focus({ preventScroll: true });
         }
     }
 
