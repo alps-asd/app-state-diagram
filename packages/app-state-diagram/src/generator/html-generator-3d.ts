@@ -2404,9 +2404,10 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
     });
 
     // radios, checkboxes and range sliders keep focus after a click; they must not swallow shortcut keys
+    var TEXT_INPUT_TYPES = /^(text|search|email|url|tel|password|number)$/;
     function isTyping(el) {
         var tag = (el && el.tagName) || '';
-        return tag === 'TEXTAREA' || (tag === 'INPUT' && /^(text|search|email|url|tel|password|number)$/.test(el.type || ''));
+        return tag === 'TEXTAREA' || (tag === 'INPUT' && TEXT_INPUT_TYPES.test(el.type || ''));
     }
 
     document.addEventListener('keydown', function (e) {
