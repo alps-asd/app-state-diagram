@@ -2403,15 +2403,16 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
         } catch (e) {}
     });
 
-    function isFormField(el) {
+    // radios, checkboxes and range sliders keep focus after a click; they must not swallow shortcut keys
+    function isTyping(el) {
         var tag = (el && el.tagName) || '';
-        return tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT';
+        return tag === 'TEXTAREA' || (tag === 'INPUT' && /^(text|search|email|url|tel|password|number)$/.test(el.type || ''));
     }
 
     document.addEventListener('keydown', function (e) {
         var toggleKey = e.key === '3' && !e.repeat && !e.ctrlKey && !e.metaKey && !e.altKey;
         if (!active) {
-            if (toggleKey && !isFormField(e.target)) {
+            if (toggleKey && !isTyping(e.target) && e.target.tagName !== 'SELECT') {
                 e.preventDefault();
                 open3D();
             }
@@ -2428,13 +2429,7 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
             return;
         }
         if (e.key === 's' || e.key === 'S') {
-            // only block when the user is actually typing into a text field; range
-            // sliders and checkboxes must NOT swallow S, or the panel can't be closed
-            // with S once a slider is focused
-            var tgt = e.target;
-            var tg = (tgt && tgt.tagName) || '';
-            var typing = tg === 'TEXTAREA' || (tg === 'INPUT' && /^(text|search|email|url|tel|password|number)$/.test(tgt.type || ''));
-            if (typing) return;
+            if (isTyping(e.target)) return;
             e.preventDefault();
             toggleSettings();
             return;
