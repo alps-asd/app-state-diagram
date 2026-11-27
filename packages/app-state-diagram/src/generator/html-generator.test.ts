@@ -15,16 +15,15 @@ describe('generateHtml 3D branching', () => {
   it('omits all 3D markers when enable3d is false', () => {
     const html = generateHtml(doc, '<svg></svg>', '', 'botanical', false);
 
-    expect(html).not.toContain('asd3d-open');
     expect(html).not.toContain('asd3d-overlay');
     expect(html).not.toContain('asd3dScript');
     expect(html).not.toContain('ASD3D_THEME');
   });
 
-  it('includes the 3D open button, overlay and script when enable3d is true', () => {
+  it('embeds the overlay and script but no 2D entry button when enable3d is true', () => {
     const html = generateHtml(doc, '<svg></svg>', '', 'botanical', true);
 
-    expect(html).toContain('id="asd3d-open"');
+    expect(html).not.toContain('asd3d-open');
     expect(html).toContain('id="asd3d-overlay"');
     expect(html).toContain('ASD3D_THEME');
     expect(html).toContain('3D Browse Mode');

@@ -11,8 +11,6 @@
 import { escapeHtml } from './table-functions';
 
 export const asd3dStyles = `/* 3D browse mode */
-.asd3d-open-btn{background:none;border:0;border-radius:0;padding:0;margin:0;color:inherit;font:inherit;cursor:pointer;}
-.asd3d-open-btn:hover{text-decoration:underline;}
 #asd3d-overlay{position:fixed;inset:0;z-index:9999;background:#0b1226;display:none;}
 #asd3d-overlay.active{display:block;}
 #asd3d-canvas{position:absolute;inset:0;}
@@ -74,7 +72,7 @@ export function asd3dOverlay(alpsTitle: string): string {
     <div id="asd3d-canvas"></div>
     <div class="asd3d-vignette"></div>
     <div class="asd3d-topbar" id="asd3d-topbar">
-        <button type="button" id="asd3d-exit" class="asd3d-btn" title="Back to 2D (Esc)">&#8592; 2D</button>
+        <button type="button" id="asd3d-exit" class="asd3d-btn" title="Back to 2D (Esc or 3)">&#8592; 2D</button>
         <span class="asd3d-title">${safeAlpsTitle}</span>
         <span class="asd3d-mode" role="group" aria-label="Node label mode">
             <button type="button" id="asd3d-label-id">ID</button>
@@ -200,7 +198,6 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
 
     var overlay = document.getElementById('asd3d-overlay');
     var canvasEl = document.getElementById('asd3d-canvas');
-    var openBtn = document.getElementById('asd3d-open');
     var exitBtn = document.getElementById('asd3d-exit');
     var fsBtn = document.getElementById('asd3d-fs');
     var tagbar = document.getElementById('asd3d-tagbar');
@@ -247,7 +244,7 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
     var linkOpacityValEl = document.getElementById('asd3d-link-opacity-val');
     var settingsNoteEl = document.getElementById('asd3d-settings-note');
     var mainContent = document.querySelector('.markdown-body');
-    if (!overlay || !canvasEl || !openBtn || !exitBtn) return;
+    if (!overlay || !canvasEl || !exitBtn) return;
 
     var reducedMotion = Boolean(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
     var graph = null;
@@ -281,7 +278,7 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
     var arrowSeq = 0;          // per-arrow counter to desync the cone shimmer phase
 
     hudEl.innerHTML = 'Drag: rotate \\u00b7 Right-drag: pan \\u00b7 Scroll: zoom<br>' +
-        'Click node: focus \\u00b7 Right-click: table \\u00b7 S: settings \\u00b7 Esc: back to 2D<br>Depth: entry near \\u2192 deep states far';
+        'Click node: focus \\u00b7 Right-click: table \\u00b7 S: settings \\u00b7 Esc / 3: back to 2D<br>Depth: entry near \\u2192 deep states far';
 
     function loadScript(src, integrity) {
         return new Promise(function (resolve, reject) {
@@ -1616,6 +1613,9 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
     }
 
     function exitToTable(id) {
+        var row = id && document.getElementById('descriptor-' + id);
+        var link = row && row.querySelector('.descriptor-id-link');
+        if (link) returnFocusEl = link; // close3D focuses it before the row scrolls into view
         close3D();
         if (id) {
             setDescriptorHash(id);
@@ -2216,9 +2216,11 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
         });
     }
 
+    var returnFocusEl = null;
     function open3D() {
         if (active) return;
         active = true;
+        returnFocusEl = document.activeElement;
         overlay.classList.add('active');
         document.body.style.overflow = 'hidden';
         setBackgroundInert(true);
@@ -2258,7 +2260,13 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
         hideCardTip();
         toggleSettings(false);
         publishUrlState();
-        openBtn.focus();
+        var back = returnFocusEl;
+        returnFocusEl = null;
+        if (back && back !== document.body && document.contains(back) && !overlay.contains(back) && back.focus) {
+            back.focus({ preventScroll: true });
+        } else if (overlay.contains(document.activeElement)) {
+            document.activeElement.blur();
+        }
     }
 
     // ---- settings flyout (S): tune the photon speed and the idle drift live ----
@@ -2380,7 +2388,6 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
         asd3dSaveSettings();
     });
 
-    openBtn.addEventListener('click', open3D);
     exitBtn.addEventListener('click', close3D);
     infoTableBtn.addEventListener('click', function () { exitToTable(selectedNodeId); });
     infoClearBtn.addEventListener('click', clearSelection);
@@ -2396,35 +2403,34 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
         } catch (e) {}
     });
 
+    // radios, checkboxes and range sliders keep focus after a click; they must not swallow shortcut keys
+    var TEXT_INPUT_TYPES = /^(text|search|email|url|tel|password|number)$/;
+    function isTyping(el) {
+        var tag = (el && el.tagName) || '';
+        return tag === 'TEXTAREA' || (tag === 'INPUT' && TEXT_INPUT_TYPES.test(el.type || ''));
+    }
+
     document.addEventListener('keydown', function (e) {
+        var toggleKey = e.key === '3' && !e.repeat && !e.ctrlKey && !e.metaKey && !e.altKey;
         if (!active) {
-            // Esc also ENTERS 3D from the 2D page (so Esc toggles 2D<->3D), unless a
-            // form field is focused
-            if (e.key === 'Escape') {
-                var et = e.target, etg = (et && et.tagName) || '';
-                if (etg === 'INPUT' || etg === 'TEXTAREA' || etg === 'SELECT') return;
+            if (toggleKey && !isTyping(e.target) && e.target.tagName !== 'SELECT') {
                 e.preventDefault();
                 open3D();
             }
             return;
         }
-        if (e.key === 'Escape') {
-            if (document.fullscreenElement) return; // browser exits fullscreen first
+        var isEsc = e.key === 'Escape';
+        if (isEsc || toggleKey) {
+            if (isEsc && document.fullscreenElement) return; // browser exits fullscreen first
             e.preventDefault();
-            // with a card open, Esc jumps to that descriptor's row in the 2D table;
-            // otherwise it just switches back to 2D
+            // with a card open, jump to that descriptor's row in the 2D table;
+            // otherwise just switch back to 2D
             if (cardOpenId) exitToTable(cardOpenId);
             else close3D();
             return;
         }
         if (e.key === 's' || e.key === 'S') {
-            // only block when the user is actually typing into a text field; range
-            // sliders and checkboxes must NOT swallow S, or the panel can't be closed
-            // with S once a slider is focused
-            var tgt = e.target;
-            var tg = (tgt && tgt.tagName) || '';
-            var typing = tg === 'TEXTAREA' || (tg === 'INPUT' && /^(text|search|email|url|tel|password|number)$/.test(tgt.type || ''));
-            if (typing) return;
+            if (isTyping(e.target)) return;
             e.preventDefault();
             toggleSettings();
             return;

@@ -22,9 +22,10 @@ packages/app-state-diagram/src/generator/html-generator.ts     # generateHtml():
 | `asd3dOverlay(safeAlpsTitle)` | `string` function | the overlay markup (topbar, HUD, settings panel, info panel, canvas) |
 | `asd3dScript` | `string` (template literal) | the entire browse-mode JS as one IIFE |
 
-`html-generator.ts` owns the integration contract: the `--3d` opt-in flag, the "3D View"
-entry control, the `mode=3d` URL state (`readUrlState` / `collectUrlState` /
-`replaceUrlState` / `applyUrlState`), and the unconditional Viz.js `<script>` for 2D.
+`html-generator.ts` owns the integration contract: the `--3d` opt-in flag, the `mode=3d`
+URL state (`readUrlState` / `collectUrlState` / `replaceUrlState` / `applyUrlState`), and
+the unconditional Viz.js `<script>` for 2D. The 2D page has no visible 3D control: the `3`
+key (handled in `asd3dScript`) or `?mode=3d` enters 3D; `3` or Esc returns to 2D.
 
 `generateHtml()` splices these into the generated HTML document. So the "3D app" is
 JavaScript-inside-a-TypeScript-template-literal-string. **This shapes every edit you
