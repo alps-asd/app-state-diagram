@@ -1617,6 +1617,9 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
         if (id) {
             setDescriptorHash(id);
             scrollToDescriptor(id);
+            var row = document.getElementById('descriptor-' + id);
+            var link = row && row.querySelector('.descriptor-id-link');
+            if (link) link.focus({ preventScroll: true });
         }
     }
 
@@ -2260,7 +2263,7 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
         var back = returnFocusEl;
         returnFocusEl = null;
         if (back && back !== document.body && document.contains(back) && !overlay.contains(back) && back.focus) {
-            back.focus();
+            back.focus({ preventScroll: true });
         } else if (overlay.contains(document.activeElement)) {
             document.activeElement.blur();
         }
@@ -2414,18 +2417,14 @@ export const asd3dScript = `// ===== 3D Browse Mode =====
             }
             return;
         }
-        if (e.key === 'Escape') {
-            if (document.fullscreenElement) return; // browser exits fullscreen first
+        var isEsc = e.key === 'Escape';
+        if (isEsc || toggleKey) {
+            if (isEsc && document.fullscreenElement) return; // browser exits fullscreen first
             e.preventDefault();
-            // with a card open, Esc jumps to that descriptor's row in the 2D table;
-            // otherwise it just switches back to 2D
+            // with a card open, jump to that descriptor's row in the 2D table;
+            // otherwise just switch back to 2D
             if (cardOpenId) exitToTable(cardOpenId);
             else close3D();
-            return;
-        }
-        if (toggleKey) {
-            e.preventDefault();
-            close3D();
             return;
         }
         if (e.key === 's' || e.key === 'S') {
